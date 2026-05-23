@@ -277,7 +277,6 @@ def make_log_mae_plot(summary_rows: list[dict[str, object]]) -> None:
         parts.append(svg_text(left - 12, y + 4, method_label, text_anchor="end", class_="method-hi" if is_hi else "method"))
         parts.append(svg_text(xlog(value) + 9, y + 4, f"{value:.2f}", class_="value-hi" if is_hi else "value"))
 
-    parts.append(svg_text(56, height - 20, "Published DFT data from Della Pia et al., J. Chem. Phys. 157, 134701 (2022); GFN entries from CP2K/tblite single points in this work.", class_="subtitle"))
     parts.append("</svg>\n")
     (FIGURES / "dmc_ice13_relative_mae_all_methods_log.svg").write_text("\n".join(parts))
 

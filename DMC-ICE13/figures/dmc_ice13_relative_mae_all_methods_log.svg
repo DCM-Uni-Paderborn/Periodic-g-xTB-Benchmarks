@@ -257,5 +257,4 @@
 <circle cx="1178.2" cy="1455.6" r="5.7" fill="#ffffff" stroke="#c44e52" stroke-width="2.0" stroke-opacity="0.95"/>
 <text x="273.0" y="1459.6" text-anchor="end" class="method-hi">GFN1-xTB</text>
 <text x="1187.2" y="1459.6" class="value-hi">13.11</text>
-<text x="56.0" y="1580.0" class="subtitle">Published DFT data from Della Pia et al., J. Chem. Phys. 157, 134701 (2022); GFN entries from CP2K/tblite single points in this work.</text>
 </svg>
