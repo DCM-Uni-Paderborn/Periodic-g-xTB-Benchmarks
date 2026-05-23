@@ -996,8 +996,8 @@ def make_error_range_plot(rows_energy: list[dict[str, object]]) -> None:
         ]
 
     methods = [
-        ("GFN1 opt", errors_for("cell_opt", "gamma", "GFN1-xTB")),
-        ("GFN2 opt", errors_for("cell_opt", "gamma", "GFN2-xTB")),
+        ("GFN1-xTB opt", errors_for("cell_opt", "gamma", "GFN1-xTB")),
+        ("GFN2-xTB opt", errors_for("cell_opt", "gamma", "GFN2-xTB")),
         ("DMC-X23", [DMC_X23[str(system["id"])][0] - float(system["ref_energy"]) for system in SYSTEMS]),
     ]
 
@@ -1014,22 +1014,29 @@ def make_error_range_plot(rows_energy: list[dict[str, object]]) -> None:
 
     svg = FIGURES / "x23b_error_ranges_prl3_style.svg"
     script = f"""
-set terminal svg enhanced font 'Helvetica,12' size 900,470
+set terminal svg enhanced font 'Helvetica,13' size 960,470
 set object 100 rectangle from screen 0,0 to screen 1,1 fillcolor rgb 'white' behind
 set output '{svg}'
-set border lw 1.2
-set tics out nomirror
-set grid xtics lc rgb '#d8d8d8' lw 0.6
+set border 3 lw 1.4 lc rgb '#333333'
+set tics out nomirror scale 0.7
+set grid xtics lc rgb '#e2e2e2' lw 0.7
 set xrange [-50:240]
 set yrange [0.4:3.6]
+set lmargin 15
+set rmargin 4
+set tmargin 2
+set bmargin 4
 set xlabel 'Deviation from X23b / kJ mol^{-1}'
-set ytics ('GFN1 opt' 1, 'GFN2 opt' 2, 'DMC-X23' 3)
-set key top right spacing 1.15 samplen 2
-set arrow 1 from 0,0.45 to 0,3.55 nohead lw 1.2 lc rgb '#555555'
-set object 1 rectangle from -4.184,0.45 to 4.184,3.55 fillcolor rgb '#e8e8e8' behind
-plot '{dat}' using 5:1:3:7 with xerrorbars pt 7 ps 0.85 lw 1.8 lc rgb '#4C78A8' title 'min--max range', \\
-     '' using 8:1 with points pt 5 ps 1.0 lc rgb '#E45756' title 'mean signed error', \\
-     '' using 9:1 with points pt 9 ps 1.0 lc rgb '#54A24B' title 'MAE'
+set ytics ('GFN1-xTB opt' 1, 'GFN2-xTB opt' 2, 'DMC-X23' 3)
+set key top right box spacing 1.15 samplen 1.8
+set bars 0.45
+set arrow 1 from 0,0.45 to 0,3.55 nohead lw 1.3 lc rgb '#555555'
+set object 1 rectangle from -4.184,0.45 to 4.184,3.55 fillcolor rgb '#f0f0f0' behind
+plot '{dat}' using 5:1:3:7 with xerrorbars pt 0 lw 1.6 lc rgb '#9c9c9c' title 'min--max', \\
+     '' using 5:1:4:6 with xerrorbars pt 0 lw 5.0 lc rgb '#4C78A8' title 'interquartile range', \\
+     '' using 5:1 with points pt 7 ps 1.05 lc rgb '#4C78A8' title 'median', \\
+     '' using 8:1 with points pt 5 ps 1.05 lc rgb '#E45756' title 'mean signed error', \\
+     '' using 9:1 with points pt 9 ps 1.05 lc rgb '#54A24B' title 'MAE'
 """
     subprocess.run(["gnuplot"], input=script.encode(), check=True)
     if shutil.which("rsvg-convert") is not None:
@@ -1105,22 +1112,30 @@ def make_volume_comparison_plot(rows_volume: list[dict[str, object]]) -> None:
 
     svg = FIGURES / "x23b_volume_comparison_boese.svg"
     script = f"""
-set terminal svg enhanced font 'Helvetica,12' size 900,560
+set terminal svg enhanced font 'Helvetica,13' size 960,560
 set object 100 rectangle from screen 0,0 to screen 1,1 fillcolor rgb 'white' behind
 set output '{svg}'
-set border lw 1.2
-set tics out nomirror
-set grid xtics lc rgb '#d8d8d8' lw 0.6
+set border 3 lw 1.4 lc rgb '#333333'
+set tics out nomirror scale 0.7
+set grid xtics lc rgb '#e2e2e2' lw 0.7
 set xrange [-25:30]
 set yrange [0.4:5.6]
+set lmargin 16
+set rmargin 4
+set tmargin 2
+set bmargin 4
 set xlabel 'Relative cell-volume error / %'
 set ytics ('BLYP+D3' 1, 'PBE+D3' 2, 'RPBE+D3' 3, 'GFN2-xTB opt' 4, 'GFN1-xTB opt' 5)
-set key top right spacing 1.15 samplen 2
-set arrow 1 from 0,0.45 to 0,5.55 nohead lw 1.2 lc rgb '#555555'
-set object 1 rectangle from -5,0.45 to 5,5.55 fillcolor rgb '#eeeeee' behind
-plot '{dat}' using 5:1:3:7 with xerrorbars pt 7 ps 0.85 lw 1.8 lc rgb '#4C78A8' title 'min--max range', \\
-     '' using 8:1 with points pt 5 ps 1.0 lc rgb '#E45756' title 'mean signed error', \\
-     '' using 9:1 with points pt 9 ps 1.0 lc rgb '#54A24B' title 'MAE'
+set key bottom right box spacing 1.15 samplen 1.8
+set bars 0.45
+set arrow 1 from 0,0.45 to 0,5.55 nohead lw 1.3 lc rgb '#555555'
+set arrow 2 from -25,3.5 to 30,3.5 nohead lw 1.0 lc rgb '#aaaaaa'
+set object 1 rectangle from -5,0.45 to 5,5.55 fillcolor rgb '#f0f0f0' behind
+plot '{dat}' using 5:1:3:7 with xerrorbars pt 0 lw 1.6 lc rgb '#9c9c9c' title 'min--max', \\
+     '' using 5:1:4:6 with xerrorbars pt 0 lw 5.0 lc rgb '#4C78A8' title 'interquartile range', \\
+     '' using 5:1 with points pt 7 ps 1.05 lc rgb '#4C78A8' title 'median', \\
+     '' using 8:1 with points pt 5 ps 1.05 lc rgb '#E45756' title 'mean signed error', \\
+     '' using 9:1 with points pt 9 ps 1.05 lc rgb '#54A24B' title 'MAE'
 """
     subprocess.run(["gnuplot"], input=script.encode(), check=True)
     if shutil.which("rsvg-convert") is not None:
