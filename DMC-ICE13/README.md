@@ -10,8 +10,8 @@ J. Chem. Phys. 157, 134701 (2022), DOI: 10.1063/5.0102645.
 
 - `poscars/`: POSCAR geometries for the 13 DMC-ICE13 polymorphs.
 - `inputs/`: Gamma-only CP2K input files for GFN1-xTB and GFN2-xTB.
-- `kpoint_inputs/`: explicit Gamma-centered 3x3x3, 4x4x4, and 5x5x5
-  k-point CP2K input files.
+- `kpoint_inputs/`: explicit 1x1x1, 2x2x2, 3x3x3, 4x4x4, and 5x5x5
+  MacDonald k-point CP2K input files.
 - `runs/`: Gamma-only CP2K inputs and outputs for each method and polymorph.
 - `runs_kpoints/`: CP2K inputs and outputs for the k-point benchmark.
 - `data/results.json`: raw CP2K total energies, per-water energies, relative
@@ -50,7 +50,8 @@ tblite:
 - `OMP_NUM_THREADS`: `4`
 
 The primary comparison uses the Gamma-centered 3x3x3 k-point mesh, matching
-the non-hybrid DFT single-point setup in the DMC-ICE13 reference. The 4x4x4
-mesh, matching the hybrid-XC setup, and the 5x5x5 dense check are included to
-document k-point convergence. All energies in the CSV summaries are relative to
-ice Ih and reported in kJ mol-1 per water molecule.
+the non-hybrid DFT single-point setup in the DMC-ICE13 reference. The explicit
+1x1x1 mesh verifies equivalence to the Gamma-only calculation, the 2x2x2 mesh
+documents the approach to convergence, and the 4x4x4 and 5x5x5 checks confirm
+that the 3x3x3 aggregate statistics are converged. All energies in the CSV
+summaries are relative to ice Ih and reported in kJ mol-1 per water molecule.

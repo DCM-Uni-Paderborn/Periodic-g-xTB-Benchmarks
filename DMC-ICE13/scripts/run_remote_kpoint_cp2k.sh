@@ -9,7 +9,7 @@ CP2K_PARALLEL_JOBS=${CP2K_PARALLEL_JOBS:-4}
 
 phases=(Ih II III IV VI VII VIII IX XI XIII XIV XV XVII)
 methods=(GFN1 GFN2)
-meshes=(k333 k444 k555)
+meshes=(k111 k222 k333 k444 k555)
 
 cd "$(dirname "$0")/.."
 

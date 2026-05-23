@@ -46,6 +46,22 @@ MESHES = [
         "della_pia_role": "Gamma-only reference",
     },
     {
+        "id": "k111",
+        "label": "1x1x1",
+        "nk_total": 1,
+        "scheme": "MACDONALD 1 1 1 0.0 0.0 0.0",
+        "shift": "0.0 0.0 0.0",
+        "della_pia_role": "explicit one-point MacDonald mesh",
+    },
+    {
+        "id": "k222",
+        "label": "2x2x2",
+        "nk_total": 8,
+        "scheme": "MACDONALD 2 2 2 0.25 0.25 0.25",
+        "shift": "0.25 0.25 0.25",
+        "della_pia_role": "coarse Gamma-centered convergence check",
+    },
+    {
         "id": "k333",
         "label": "3x3x3",
         "nk_total": 27,
@@ -228,7 +244,7 @@ def make_plots(stats_rows: list[dict[str, object]]) -> None:
             )
 
     script = f"""
-set terminal svg enhanced font 'Helvetica,12' size 760,500
+set terminal svg enhanced font 'Helvetica,12' size 840,500
 set object 1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb 'white' behind
 set output '{FIGURES / 'dmc_ice13_kpoint_mae.svg'}'
 set border lw 1.2
@@ -237,9 +253,9 @@ set grid ytics lc rgb '#d0d0d0' lw 0.6
 set key top right spacing 1.2 samplen 2
 set xlabel 'k-point mesh'
 set ylabel 'Relative-energy error / kJ mol^{{-1}} per H_2O'
-set xrange [0.75:4.25]
+set xrange [0.75:6.25]
 set yrange [0:*]
-set xtics ('Gamma' 1, '3x3x3' 2, '4x4x4' 3, '5x5x5' 4)
+set xtics ('Gamma' 1, '1x1x1' 2, '2x2x2' 3, '3x3x3' 4, '4x4x4' 5, '5x5x5' 6)
 set style line 1 lc rgb '#c44e52' lw 2.2 pt 7 ps 0.9
 set style line 2 lc rgb '#4c72b0' lw 2.2 pt 9 ps 0.9
 plot '{dat}' using 1:3 with linespoints ls 1 title 'GFN1-xTB MAE', \\
