@@ -39,10 +39,11 @@ geometries and DMC reference values are documented through the paper DOI above.
 ## CP2K setup used
 
 The calculations were run with a CP2K 2026.1 development build interfaced to
-tblite:
+tblite. The current Spark default is available as
+`/home/kuehne88/bin/cp2k-current-tblite.psmp`:
 
-- CP2K source revision: `95e0cafc31`
-- CP2K flags: `omp libint fftw3 libxc parallel scalapack mpi_f08 xsmm spglib
+- CP2K source revision: `0622d442e4`
+- CP2K flags: `omp fftw3 libxc parallel scalapack mpi_f08 xsmm spglib
   libdftd4 dftd4_v3 mctc-lib tblite`
 - tblite: `0.5.0`
 - `TBLITE/ACCURACY`: `0.1`

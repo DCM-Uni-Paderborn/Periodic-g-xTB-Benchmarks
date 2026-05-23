@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-source /home/kuehne88/cp2k-xtb/cp2k/tools/toolchain/install/setup
-
-CP2K=${CP2K:-/home/kuehne88/cp2k-xtb/cp2k/build/bin/cp2k.psmp}
+CP2K=${CP2K:-/home/kuehne88/bin/cp2k-current-tblite.psmp}
 export OMP_NUM_THREADS=${OMP_NUM_THREADS:-4}
 CP2K_PARALLEL_JOBS=${CP2K_PARALLEL_JOBS:-4}
 
