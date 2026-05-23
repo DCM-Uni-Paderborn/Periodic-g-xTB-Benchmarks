@@ -14,8 +14,11 @@ J. Chem. Phys. 157, 134701 (2022), DOI: 10.1063/5.0102645.
 - `data/results.json`: raw CP2K total energies, per-water energies, relative
   energies with respect to ice Ih, and error statistics.
 - `data/dmc_ice13_relative_energies.csv`: relative energies and GFN errors.
-- `data/dmc_ice13_relative_mae_comparison.csv`: comparison with selected
-  published DFT data from the DMC-ICE13 paper.
+- `data/dmc_ice13_relative_mae_comparison.csv`: comparison with the published
+  DFT data from the DMC-ICE13 paper.
+- `data/dmc_ice13_published_dft_absolute_energies.csv`: published DMC and DFT
+  absolute lattice energies from the DMC-ICE13 paper, used to compute the
+  relative-energy MAE ranking.
 - `figures/`: SVG and PNG plots generated from the benchmark data.
 - `scripts/`: extraction, analysis, plotting, and remote run scripts.
 
@@ -37,4 +40,3 @@ tblite:
 
 All energies in the CSV summaries are relative to ice Ih and reported in
 kJ mol-1 per water molecule.
-
