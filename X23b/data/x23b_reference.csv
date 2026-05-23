@@ -1,0 +1,24 @@
+system,label,molecules_per_cell,input_volume_A3,x23b_reported_ref_volume_A3,x23b_reported_ref_volume_molecules,x23b_same_cell_ref_volume_A3,x23b_ref_lattice_energy_kJmol,structure_source
+14-cyclohexanedione,"1,4-Cyclohexanedione",2,279.550201,262.500000,2,262.500000,90.000000,refdata X23 experimental CIF
+acetic_acid,Acetic acid,4,297.269491,288.800000,4,288.800000,73.600000,refdata X23 experimental CIF
+adamantane,Adamantane,2,393.072631,357.600000,2,357.600000,71.800000,refdata X23 experimental CIF
+ammonia,Ammonia,4,135.045176,121.500000,4,121.500000,38.700000,refdata X23 experimental CIF
+anthracene,Anthracene,2,456.469453,441.200000,2,441.200000,110.400000,refdata X23 experimental CIF
+benzene,Benzene,4,474.069978,444.300000,4,444.300000,54.800000,refdata X23 experimental CIF
+co2,Carbon dioxide,4,177.883611,164.800000,4,164.800000,29.400000,refdata X23 experimental CIF
+cyanamide,Cyanamide,8,415.654022,407.900000,8,407.900000,81.500000,refdata X23 experimental CIF
+cytosine,Cytosine,4,472.424253,440.300000,4,440.300000,163.500000,refdata X23 experimental CIF
+ethylcarbamate,Ethyl carbamate,2,248.773079,231.200000,2,231.200000,88.200000,refdata X23 experimental CIF
+formamide,Formamide,4,224.074792,211.900000,4,211.900000,81.100000,refdata X23 experimental CIF
+hexamine,Hexamine,1,165.351022,321.600000,2,160.800000,84.100000,complete refdata X23 Quantum ESPRESSO crystal input
+imidazole,Imidazole,4,348.758564,336.400000,4,336.400000,90.400000,refdata X23 experimental CIF
+naphthalene,Naphthalene,2,340.830621,329.700000,2,329.700000,81.300000,refdata X23 experimental CIF
+oxalic_acid_alpha,Oxalic acid alpha,4,312.592248,293.200000,4,293.200000,98.800000,refdata X23 experimental CIF
+oxalic_acid_beta,Oxalic acid beta,2,156.865917,150.500000,2,150.500000,96.800000,refdata X23 experimental CIF
+pyrazine,Pyrazine,2,203.639816,189.600000,2,189.600000,64.300000,refdata X23 experimental CIF
+pyrazole,Pyrazole,8,698.267312,662.500000,8,662.500000,78.800000,refdata X23 experimental CIF
+succinic_acid,Succinic acid,2,239.283683,233.300000,2,233.300000,130.100000,refdata X23 experimental CIF
+triazine,s-Triazine,6,586.821774,528.000000,6,528.000000,62.600000,refdata X23 experimental CIF
+trioxane,s-Trioxane,6,616.544469,580.700000,6,580.700000,64.600000,refdata X23 experimental CIF
+uracil,Uracil,4,463.386269,442.000000,4,442.000000,136.200000,refdata X23 experimental CIF
+urea,Urea,2,145.059850,140.800000,2,140.800000,102.100000,refdata X23 experimental CIF

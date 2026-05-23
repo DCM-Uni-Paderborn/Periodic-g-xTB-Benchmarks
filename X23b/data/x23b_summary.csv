@@ -1,0 +1,13 @@
+quantity,calculation,mesh,method,ME,MAE,RMSE,MaxAE
+lattice_energy_kJmol,single_point,gamma,GFN1-xTB,-133.822824,136.814096,204.145624,667.340715
+lattice_energy_kJmol,single_point,gamma,GFN2-xTB,-135.571144,135.861921,203.501495,667.728746
+lattice_energy_kJmol,single_point,k111,GFN1-xTB,-133.822824,136.814096,204.145624,667.340715
+lattice_energy_kJmol,single_point,k111,GFN2-xTB,-135.571144,135.861921,203.501495,667.728746
+lattice_energy_kJmol,single_point,k222,GFN1-xTB,-123.510419,123.782031,190.311404,647.889250
+lattice_energy_kJmol,single_point,k222,GFN2-xTB,-124.317673,124.330076,187.268168,642.898721
+lattice_energy_kJmol,single_point,k333,GFN1-xTB,-123.399120,123.668533,190.241567,647.865122
+lattice_energy_kJmol,single_point,k333,GFN2-xTB,-124.168949,124.258733,187.178346,642.853746
+lattice_energy_kJmol,cell_opt,gamma,GFN1-xTB,28.430036,35.483569,60.414405,223.958443
+lattice_energy_kJmol,cell_opt,gamma,GFN2-xTB,22.577415,33.057171,56.993882,218.471017
+volume_error_percent,cell_opt,gamma,GFN1-xTB,-4.229385,10.073102,11.688943,20.633223
+volume_error_percent,cell_opt,gamma,GFN2-xTB,-0.383981,7.759144,10.026543,25.819090
