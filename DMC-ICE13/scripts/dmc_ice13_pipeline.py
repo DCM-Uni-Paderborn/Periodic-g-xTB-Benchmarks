@@ -195,6 +195,10 @@ def parse_energy(output: Path) -> float | None:
 
 
 def analyse(root: Path) -> dict:
+    geometry_path = root / "data" / "geometries.json"
+    if not geometry_path.exists():
+        geometry_path = root / "geometries.json"
+    geometries = json.loads(geometry_path.read_text())
     results = {}
     for method in ("GFN1", "GFN2"):
         values = {}
@@ -207,7 +211,7 @@ def analyse(root: Path) -> dict:
             continue
         per_h2o = {}
         for phase in PHASES:
-            geom = json.loads((root / "geometries.json").read_text())[phase]
+            geom = geometries[phase]
             n_h2o = geom["counts"]["O"]
             per_h2o[phase] = values[phase] / n_h2o
         ih = per_h2o["Ih"]
@@ -230,12 +234,19 @@ def analyse(root: Path) -> dict:
 
 
 def main() -> None:
-    root = Path(__file__).resolve().parent
-    data = parse_poscars(root / "SI_ucl.txt")
-    (root / "geometries.json").write_text(json.dumps(data, indent=2))
-    write_inputs(data, root)
+    root = Path(__file__).resolve().parents[1]
+    data_dir = root / "data"
+    data_dir.mkdir(exist_ok=True)
+    si_candidates = [root / "SI_ucl.txt", Path(__file__).resolve().parent / "SI_ucl.txt"]
+    si_text = next((path for path in si_candidates if path.exists()), None)
+    if si_text is not None:
+        data = parse_poscars(si_text)
+        (data_dir / "geometries.json").write_text(json.dumps(data, indent=2))
+        write_inputs(data, root)
+    elif not (data_dir / "geometries.json").exists():
+        raise FileNotFoundError("Need SI_ucl.txt or data/geometries.json to analyse DMC-ICE13.")
     results = analyse(root)
-    (root / "results.json").write_text(json.dumps(results, indent=2))
+    (data_dir / "results.json").write_text(json.dumps(results, indent=2))
     print(json.dumps(results, indent=2))
 
 

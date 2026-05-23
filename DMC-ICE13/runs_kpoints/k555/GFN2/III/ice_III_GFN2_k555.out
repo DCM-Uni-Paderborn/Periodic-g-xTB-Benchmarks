@@ -10,31 +10,31 @@
  DBCSR| Use MPI memory allocation                                              F (U)
  DBCSR| Use RMA algorithm                                                      F (U)
  DBCSR| Use Communication thread                                               T (U)
- DBCSR| Communication thread load                                             75 (D)
+ DBCSR| Communication thread load                                             87 (D)
  DBCSR| MPI: My process id                                                     0
  DBCSR| MPI: Number of processes                                               1
- DBCSR| OMP: Current number of threads                                         4
- DBCSR| OMP: Max number of threads                                             4
+ DBCSR| OMP: Current number of threads                                         1
+ DBCSR| OMP: Max number of threads                                             1
  DBCSR| Split modifier for TAS multiplication algorithm                  1.0E+00 (U)
 
 
-  **** **** ******  **  PROGRAM STARTED AT               2026-05-23 20:16:29.776
+  **** **** ******  **  PROGRAM STARTED AT               2026-05-23 22:21:29.611
  ***** ** ***  *** **   PROGRAM STARTED ON                            spark-c86c
  **    ****   ******    PROGRAM STARTED BY                              kuehne88
- ***** **    ** ** **   PROGRAM PROCESS ID                               2115370
+ ***** **    ** ** **   PROGRAM PROCESS ID                               2194141
   **** **  *******  **  PROGRAM STARTED IN /home/kuehne88/periodic-gfn2-benchmar
                                            ks/DMC-ICE13/runs_kpoints/k555/GFN2/I
                                            II
 
  CP2K| version string:                 CP2K version 2026.1 (Development Version)
- CP2K| source code revision number:                                   95e0cafc31
- CP2K| cp2kflags: omp libint fftw3 libxc parallel scalapack mpi_f08 xsmm spglib 
- CP2K|            libdftd4 dftd4_v3 mctc-lib tblite
+ CP2K| source code revision number:                                   0622d442e4
+ CP2K| cp2kflags: omp fftw3 libxc parallel scalapack mpi_f08 xsmm spglib libdftd
+ CP2K|            4 dftd4_v3 mctc-lib tblite
  CP2K| is freely available from                            https://www.cp2k.org/
- CP2K| Program compiled at                                   2026-05-10 16:03:07
+ CP2K| Program compiled at                                   2026-05-23 22:05:08
  CP2K| Program compiled on                                            spark-c86c
  CP2K| Program compiled for                                              aarch64
- CP2K| Data directory path                     /home/kuehne88/cp2k-xtb/cp2k/data
+ CP2K| Data directory path    /home/kuehne88/cp2k-master-tblite-20260523/install
  CP2K| Input file name                                     ice_III_GFN2_k555.inp
 
  GLOBAL| Force Environment number                                              1
@@ -59,14 +59,14 @@
  GLOBAL| MPI I/O enabled                                                       T
  GLOBAL| Total number of message passing processes                             1
  GLOBAL| Number of distributed systems (nodes)                                 1
- GLOBAL| Number of threads for this process                                    4
+ GLOBAL| Number of threads for this process                                    1
  GLOBAL| This output is from process                                           0
  GLOBAL| OpenMP stack size per thread (OMP_STACKSIZE)                    default
  GLOBAL| CPU model name                                                  UNKNOWN
  GLOBAL| CPUID                                                              2200
  GLOBAL| Compiled for CPUID                                                 2000
 
- *** HINT in environment.F:974 :: The compiler target flags (arm_arch64)   ***
+ *** HINT in environment.F:970 :: The compiler target flags (arm_arch64)   ***
  *** used to build this binary cannot exploit all extensions of this CPU   ***
  *** model (arm_sve256). Consider compiler target flags as part of FCFLAGS ***
  *** and CFLAGS (ARCH file).                                               ***
@@ -75,12 +75,12 @@
  MEMORY| system memory details [Kb]
  MEMORY|                        rank 0           min           max       average
  MEMORY| MemTotal            125508532     125508532     125508532     125508532
- MEMORY| MemFree             114444792     114444792     114444792     114444792
- MEMORY| Buffers                363388        363388        363388        363388
- MEMORY| Cached                5074800       5074800       5074800       5074800
- MEMORY| Slab                  1135000       1135000       1135000       1135000
- MEMORY| SReclaimable           476836        476836        476836        476836
- MEMORY| MemLikelyFree       120359816     120359816     120359816     120359816
+ MEMORY| MemFree             101510924     101510924     101510924     101510924
+ MEMORY| Buffers                861292        861292        861292        861292
+ MEMORY| Cached               11587608      11587608      11587608      11587608
+ MEMORY| Slab                  1510352       1510352       1510352       1510352
+ MEMORY| SReclaimable           832620        832620        832620        832620
+ MEMORY| MemLikelyFree       114792444     114792444     114792444     114792444
 
 
  *** WARNING in cell_methods.F:457 :: Cell vectors are read but cell   ***
@@ -156,28 +156,28 @@
 
   Step     Update method      Time    Convergence         Total energy    Change
   ------------------------------------------------------------------------------
-     1 TBLite/Diag 0.40E+00    1.2     0.73363298       -60.9088475815 -6.09E+01
-     2 TBLite/Diag 0.40E+00    1.1     0.07381517       -61.0641057769 -1.55E-01
-     3 TBLite/Diag 0.40E+00    1.1     0.09674879       -61.1257733904 -6.17E-02
-     4 TBLite/Diag 0.40E+00    1.1     0.06432893       -61.1136446571  1.21E-02
-     5 TBLite/Diag 0.40E+00    1.2     0.04313542       -61.1285186164 -1.49E-02
-     6 TBLite/Diag 0.40E+00    1.2     0.00167464       -61.1285183905  2.26E-07
-     7 TBLite/Diag 0.40E+00    1.1     0.00061170       -61.1285214984 -3.11E-06
-     8 TBLite/Diag 0.40E+00    1.0     0.00017671       -61.1285214578  4.06E-08
-     9 TBLite/Diag 0.40E+00    1.2     0.00009528       -61.1285215533 -9.55E-08
-    10 TBLite/Diag 0.40E+00    1.1     0.00001633       -61.1285215553 -1.96E-09
-    11 TBLite/Diag 0.40E+00    1.2     0.00000075       -61.1285215553 -1.70E-12
-    12 TBLite/Diag 0.40E+00    1.1     0.00000024       -61.1285215553 -5.04E-13
-    13 TBLite/Diag 0.40E+00    1.1     0.00000017       -61.1285215553 -2.34E-13
-    14 TBLite/Diag 0.40E+00    1.2     5.8257E-09       -61.1285215553  5.68E-14
-    15 TBLite/Diag 0.40E+00    1.2     7.1358E-09       -61.1285215553 -3.55E-14
-    16 TBLite/Diag 0.40E+00    1.2     4.5239E-09       -61.1285215553 -1.42E-14
-    17 TBLite/Diag 0.40E+00    1.1     2.1982E-10       -61.1285215553  3.55E-14
+     1 TBLite/Diag 0.40E+00    1.6     0.73363298       -60.9088475815 -6.09E+01
+     2 TBLite/Diag 0.40E+00    0.9     0.07381517       -61.0641057769 -1.55E-01
+     3 TBLite/Diag 0.40E+00    0.7     0.09674879       -61.1257733904 -6.17E-02
+     4 TBLite/Diag 0.40E+00    0.7     0.06432893       -61.1136446571  1.21E-02
+     5 TBLite/Diag 0.40E+00    0.7     0.04313542       -61.1285186164 -1.49E-02
+     6 TBLite/Diag 0.40E+00    0.7     0.00167464       -61.1285183905  2.26E-07
+     7 TBLite/Diag 0.40E+00    0.7     0.00061170       -61.1285214984 -3.11E-06
+     8 TBLite/Diag 0.40E+00    0.7     0.00017671       -61.1285214578  4.06E-08
+     9 TBLite/Diag 0.40E+00    0.7     0.00009528       -61.1285215533 -9.55E-08
+    10 TBLite/Diag 0.40E+00    0.7     0.00001633       -61.1285215553 -1.96E-09
+    11 TBLite/Diag 0.40E+00    0.7     0.00000075       -61.1285215553 -1.70E-12
+    12 TBLite/Diag 0.40E+00    0.7     0.00000024       -61.1285215553 -5.04E-13
+    13 TBLite/Diag 0.40E+00    0.7     0.00000017       -61.1285215553 -2.42E-13
+    14 TBLite/Diag 0.40E+00    0.7     5.8257E-09       -61.1285215553  6.39E-14
+    15 TBLite/Diag 0.40E+00    0.7     7.1358E-09       -61.1285215553 -2.13E-14
+    16 TBLite/Diag 0.40E+00    0.7     4.5239E-09       -61.1285215553 -2.84E-14
+    17 TBLite/Diag 0.40E+00    0.7     2.1981E-10       -61.1285215553  3.55E-14
 
   *** SCF run converged in    17 steps ***
 
 
-  Core Hamiltonian energy:                                    -61.64853247601469
+  Core Hamiltonian energy:                                    -61.64853247601470
   Repulsive potential energy:                                   0.28747690827391
   Electrostatic energy:                                         0.26834410321357
   Self-consistent dispersion energy:                           -0.04367729577724
@@ -226,7 +226,7 @@
  Host                                                  1           0           0
  -------------------------------------------------------------------------------
 
- MEMORY| Estimated peak process memory [MiB]                                 349
+ MEMORY| Estimated peak process memory [MiB]                                 348
 
  -------------------------------------------------------------------------------
  -                                                                             -
@@ -288,10 +288,6 @@
  Molecules.
  https://doi.org/10.26434/chemrxiv.8326202.v1
 
- A. Togo, I. Tanaka.
- arXiv, 1808.01590 (2018).
- Spglib : a software library for crystal symmetry search.
-
  S. Grimme, C. Bannwarth, P. Shushkov.
  J. Chem. Theory Comput. 13, 1989 (2017).
  A Robust and Accurate Tight-Binding Quantum Chemical Method for Structures, 
@@ -334,40 +330,45 @@
  -------------------------------------------------------------------------------
  SUBROUTINE                       CALLS  ASD         SELF TIME        TOTAL TIME
                                 MAXIMUM       AVERAGE  MAXIMUM  AVERAGE  MAXIMUM
- CP2K                                 1  1.0    0.010    0.010   20.159   20.159
- qs_energies                          1  2.0    0.000    0.000   20.145   20.145
- scf_env_do_scf                       1  3.0    0.000    0.000   19.658   19.658
- scf_env_do_scf_inner_loop           17  4.0    0.371    0.371   19.658   19.658
- qs_scf_new_mos_kp                   17  5.0    0.000    0.000   18.690   18.690
- do_general_diag_kp                  17  6.0    0.034    0.034   18.690   18.690
- kpoint_density_transform            17  7.0    0.007    0.007    7.158    7.158
- copy_fm_to_dbcsr                  4250  8.0    0.013    0.013    5.470    5.470
- copy_dbcsr_to_fm                  8750  6.9    0.040    0.040    5.191    5.191
- dbcsr_complete_redistribute      13000  8.3    1.995    1.995    5.161    5.161
- rskp_transform                    4375  6.9    3.169    3.169    3.169    3.169
- dbcsr_finalize                   33676  8.6    0.071    0.071    3.128    3.128
- dbcsr_copy                        5814  8.3    0.016    0.016    3.088    3.088
- dbcsr_copy_into_existing          4250 10.0    3.062    3.062    3.072    3.072
- dbcsr_merge_all                  13000 10.3    2.518    2.518    2.798    2.798
- cp_cfm_geeig                      2125  7.0    0.004    0.004    1.585    1.585
- transform_dmat                    2125  8.0    1.491    1.491    1.491    1.491
- dbcsr_desymmetrize_deep          17500  7.4    1.029    1.029    1.452    1.452
- dbcsr_create_new                 46211  8.3    1.347    1.347    1.373    1.373
- cp_cfm_heevd                      2125  8.0    0.001    0.001    1.146    1.146
- cp_cfm_heevd_base                 2125  9.0    1.145    1.145    1.145    1.145
- qs_ks_update_qs_env                 17  5.0    0.000    0.000    0.527    0.527
- rebuild_ks_matrix                   17  6.0    0.000    0.000    0.501    0.501
- build_tblite_ks_matrix              17  7.0    0.485    0.485    0.501    0.501
- copy_fm_to_dbcsr_bc               4250  9.0    0.056    0.056    0.447    0.447
+ CP2K                                 1  1.0    0.008    0.008   14.239   14.239
+ qs_energies                          1  2.0    0.000    0.000   14.226   14.226
+ scf_env_do_scf                       1  3.0    0.000    0.000   13.390   13.390
+ scf_env_do_scf_inner_loop           17  4.0    0.392    0.392   13.390   13.390
+ qs_scf_new_mos_kp                   17  5.0    0.000    0.000   12.327   12.327
+ do_general_diag_kp                  17  6.0    0.031    0.031   12.327   12.327
+ kpoint_density_transform            17  7.0    0.006    0.006    3.369    3.369
+ rskp_transform                    4375  6.9    3.250    3.250    3.250    3.250
+ dbcsr_complete_redistribute      13000  8.3    2.027    2.027    2.467    2.467
+ copy_dbcsr_to_fm                  8750  6.9    0.025    0.025    2.448    2.448
+ copy_fm_to_dbcsr                  4250  8.0    0.008    0.008    1.690    1.690
+ cp_cfm_geeig                      2125  7.0    0.004    0.004    1.490    1.490
+ transform_dmat                    2125  8.0    1.463    1.463    1.463    1.463
+ dbcsr_desymmetrize_deep          17500  7.4    1.068    1.068    1.443    1.443
+ cp_cfm_heevd                      2125  8.0    0.001    0.001    0.996    0.996
+ cp_cfm_heevd_base                 2125  9.0    0.995    0.995    0.995    0.995
+ dbcsr_copy                        5814  8.3    0.006    0.006    0.691    0.691
+ dbcsr_copy_into_existing          4250 10.0    0.675    0.675    0.683    0.683
+ qs_energies_init_hamiltonians        1  3.0    0.000    0.000    0.637    0.637
+ build_tblite_matrices                1  4.0    0.477    0.477    0.627    0.627
+ qs_ks_update_qs_env                 17  5.0    0.000    0.000    0.601    0.601
+ rebuild_ks_matrix                   17  6.0    0.000    0.000    0.571    0.571
+ build_tblite_ks_matrix              17  7.0    0.559    0.559    0.571    0.571
+ dbcsr_finalize                   33676  8.6    0.027    0.027    0.452    0.452
+ cp_fm_start_copy_general         13000  7.3    0.310    0.310    0.391    0.391
+ qs_diis_b_calc_err_kp             2000  7.0    0.023    0.023    0.386    0.386
+ parallel_gemm_cfm                 8000  8.0    0.002    0.002    0.353    0.353
+ parallel_gemm_cfm_gemm            8000  9.0    0.002    0.002    0.351    0.351
+ cp_cfm_gemm                       8000 10.0    0.349    0.349    0.349    0.349
+ cp_cfm_triangular_multiply        6375  8.0    0.348    0.348    0.348    0.348
  -------------------------------------------------------------------------------
 
  The number of warnings for this run is : 1
  
  -------------------------------------------------------------------------------
-  **** **** ******  **  PROGRAM ENDED AT                 2026-05-23 20:16:50.186
+  **** **** ******  **  PROGRAM ENDED AT                 2026-05-23 22:21:44.184
  ***** ** ***  *** **   PROGRAM RAN ON                                spark-c86c
  **    ****   ******    PROGRAM RAN BY                                  kuehne88
- ***** **    ** ** **   PROGRAM PROCESS ID                               2115370
+ ***** **    ** ** **   PROGRAM PROCESS ID                               2194141
   **** **  *******  **  PROGRAM STOPPED IN /home/kuehne88/periodic-gfn2-benchmar
                                            ks/DMC-ICE13/runs_kpoints/k555/GFN2/I
                                            II

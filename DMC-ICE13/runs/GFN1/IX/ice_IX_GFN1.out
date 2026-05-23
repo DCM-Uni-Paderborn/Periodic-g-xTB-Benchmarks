@@ -10,30 +10,30 @@
  DBCSR| Use MPI memory allocation                                              F (U)
  DBCSR| Use RMA algorithm                                                      F (U)
  DBCSR| Use Communication thread                                               T (U)
- DBCSR| Communication thread load                                             75 (D)
+ DBCSR| Communication thread load                                             87 (D)
  DBCSR| MPI: My process id                                                     0
  DBCSR| MPI: Number of processes                                               1
- DBCSR| OMP: Current number of threads                                         4
- DBCSR| OMP: Max number of threads                                             4
+ DBCSR| OMP: Current number of threads                                         1
+ DBCSR| OMP: Max number of threads                                             1
  DBCSR| Split modifier for TAS multiplication algorithm                  1.0E+00 (U)
 
 
-  **** **** ******  **  PROGRAM STARTED AT               2026-05-23 19:13:48.421
+  **** **** ******  **  PROGRAM STARTED AT               2026-05-23 22:19:50.061
  ***** ** ***  *** **   PROGRAM STARTED ON                            spark-c86c
  **    ****   ******    PROGRAM STARTED BY                              kuehne88
- ***** **    ** ** **   PROGRAM PROCESS ID                               2106762
-  **** **  *******  **  PROGRAM STARTED IN /home/kuehne88/dmc-ice13-cp2k-bench/r
-                                           uns/GFN1/IX
+ ***** **    ** ** **   PROGRAM PROCESS ID                               2165788
+  **** **  *******  **  PROGRAM STARTED IN /home/kuehne88/periodic-gfn2-benchmar
+                                           ks/DMC-ICE13/runs/GFN1/IX
 
  CP2K| version string:                 CP2K version 2026.1 (Development Version)
- CP2K| source code revision number:                                   95e0cafc31
- CP2K| cp2kflags: omp libint fftw3 libxc parallel scalapack mpi_f08 xsmm spglib 
- CP2K|            libdftd4 dftd4_v3 mctc-lib tblite
+ CP2K| source code revision number:                                   0622d442e4
+ CP2K| cp2kflags: omp fftw3 libxc parallel scalapack mpi_f08 xsmm spglib libdftd
+ CP2K|            4 dftd4_v3 mctc-lib tblite
  CP2K| is freely available from                            https://www.cp2k.org/
- CP2K| Program compiled at                                   2026-05-10 16:03:07
+ CP2K| Program compiled at                                   2026-05-23 22:05:08
  CP2K| Program compiled on                                            spark-c86c
  CP2K| Program compiled for                                              aarch64
- CP2K| Data directory path                     /home/kuehne88/cp2k-xtb/cp2k/data
+ CP2K| Data directory path    /home/kuehne88/cp2k-master-tblite-20260523/install
  CP2K| Input file name                                           ice_IX_GFN1.inp
 
  GLOBAL| Force Environment number                                              1
@@ -58,14 +58,14 @@
  GLOBAL| MPI I/O enabled                                                       T
  GLOBAL| Total number of message passing processes                             1
  GLOBAL| Number of distributed systems (nodes)                                 1
- GLOBAL| Number of threads for this process                                    4
+ GLOBAL| Number of threads for this process                                    1
  GLOBAL| This output is from process                                           0
  GLOBAL| OpenMP stack size per thread (OMP_STACKSIZE)                    default
  GLOBAL| CPU model name                                                  UNKNOWN
  GLOBAL| CPUID                                                              2200
  GLOBAL| Compiled for CPUID                                                 2000
 
- *** HINT in environment.F:974 :: The compiler target flags (arm_arch64)   ***
+ *** HINT in environment.F:970 :: The compiler target flags (arm_arch64)   ***
  *** used to build this binary cannot exploit all extensions of this CPU   ***
  *** model (arm_sve256). Consider compiler target flags as part of FCFLAGS ***
  *** and CFLAGS (ARCH file).                                               ***
@@ -74,12 +74,12 @@
  MEMORY| system memory details [Kb]
  MEMORY|                        rank 0           min           max       average
  MEMORY| MemTotal            125508532     125508532     125508532     125508532
- MEMORY| MemFree             116658000     116658000     116658000     116658000
- MEMORY| Buffers                361220        361220        361220        361220
- MEMORY| Cached                5063448       5063448       5063448       5063448
- MEMORY| Slab                  1133276       1133276       1133276       1133276
- MEMORY| SReclaimable           475540        475540        475540        475540
- MEMORY| MemLikelyFree       122558208     122558208     122558208     122558208
+ MEMORY| MemFree             107210288     107210288     107210288     107210288
+ MEMORY| Buffers                859868        859868        859868        859868
+ MEMORY| Cached               11581644      11581644      11581644      11581644
+ MEMORY| Slab                  1507484       1507484       1507484       1507484
+ MEMORY| SReclaimable           831724        831724        831724        831724
+ MEMORY| MemLikelyFree       120483524     120483524     120483524     120483524
 
 
  GENERATE|  Preliminary Number of Bonds generated:                             0
@@ -158,14 +158,14 @@
      6 TBLite/Diag 0.40E+00    0.0     0.00031859       -69.4834827754 -6.47E-07
      7 TBLite/Diag 0.40E+00    0.0     0.00006008       -69.4834828116 -3.62E-08
      8 TBLite/Diag 0.40E+00    0.0     0.00001396       -69.4834828135 -1.96E-09
-     9 TBLite/Diag 0.40E+00    0.0     0.00000086       -69.4834828135 -3.85E-12
-    10 TBLite/Diag 0.40E+00    0.0     0.00000022       -69.4834828135 -6.39E-13
-    11 TBLite/Diag 0.40E+00    0.0     4.7149E-10       -69.4834828135 -1.42E-14
+     9 TBLite/Diag 0.40E+00    0.0     0.00000086       -69.4834828135 -3.82E-12
+    10 TBLite/Diag 0.40E+00    0.0     0.00000022       -69.4834828135 -6.25E-13
+    11 TBLite/Diag 0.40E+00    0.0     4.7149E-10       -69.4834828135  0.00E+00
 
   *** SCF run converged in    11 steps ***
 
 
-  Core Hamiltonian energy:                                    -70.32245068281821
+  Core Hamiltonian energy:                                    -70.32245068281819
   Repulsive potential energy:                                   0.32425378931058
   Electrostatic energy:                                         0.55070050256537
   Self-consistent dispersion energy:                            0.00000000000000
@@ -174,10 +174,10 @@
   Electronic entropic energy:                                  -0.00000000000000
   Fermi energy:                                                -0.23226630224732
 
-  Total energy:                                               -69.48348281352119
-  Total energy (extrapolated to T->0):                        -69.48348281352119
+  Total energy:                                               -69.48348281352116
+  Total energy (extrapolated to T->0):                        -69.48348281352116
 
- ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -69.483482813521192
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -69.483482813521164
 
  -------------------------------------------------------------------------------
  -                                                                             -
@@ -194,12 +194,12 @@
  flops max/rank                     10.036224E+06       0.0%    100.0%      0.0%
  matmuls inhomo. stacks                         0       0.0%      0.0%      0.0%
  matmuls total                               7326       0.0%    100.0%      0.0%
- number of processed stacks                   176       0.0%    100.0%      0.0%
- average stack size                                     0.0      41.6       0.0
+ number of processed stacks                    44       0.0%    100.0%      0.0%
+ average stack size                                     0.0     166.5       0.0
  marketing flops                     9.732096E+06
  -------------------------------------------------------------------------------
  # multiplications                             11
- max memory usage/rank              14.038634E+09
+ max memory usage/rank              13.672722E+09
  # max total images/rank                        1
  # max 3D layers                                1
  # MPI messages exchanged                       0
@@ -328,41 +328,37 @@
  -------------------------------------------------------------------------------
  SUBROUTINE                       CALLS  ASD         SELF TIME        TOTAL TIME
                                 MAXIMUM       AVERAGE  MAXIMUM  AVERAGE  MAXIMUM
- CP2K                                 1  1.0    0.011    0.011    0.090    0.090
- qs_energies                          1  2.0    0.000    0.000    0.076    0.076
- scf_env_do_scf                       1  3.0    0.000    0.000    0.033    0.033
- scf_env_do_scf_inner_loop           11  4.0    0.001    0.001    0.033    0.033
- qs_energies_init_hamiltonians        1  3.0    0.000    0.000    0.030    0.030
- build_tblite_matrices                1  4.0    0.028    0.028    0.029    0.029
- qs_scf_new_mos                      11  5.0    0.000    0.000    0.028    0.028
- copy_dbcsr_to_fm                    22  6.4    0.000    0.000    0.018    0.018
- dbcsr_complete_redistribute         44  8.2    0.005    0.005    0.015    0.015
- init_scf_run                         1  3.0    0.000    0.000    0.011    0.011
- dbcsr_finalize                     155  9.8    0.001    0.001    0.010    0.010
- calculate_dm_sparse                 11  6.0    0.000    0.000    0.010    0.010
- cp_dbcsr_plus_fm_fm_t               11  7.0    0.000    0.000    0.009    0.009
- eigensolver                         11  6.0    0.000    0.000    0.009    0.009
- dbcsr_merge_all                     77 11.0    0.006    0.006    0.008    0.008
- cp_fm_syevd                         11  7.0    0.000    0.000    0.007    0.007
- dbcsr_multiply_generic              11  8.0    0.000    0.000    0.006    0.006
+ CP2K                                 1  1.0    0.002    0.002    0.077    0.077
+ qs_energies                          1  2.0    0.000    0.000    0.072    0.072
+ qs_energies_init_hamiltonians        1  3.0    0.000    0.000    0.044    0.044
+ build_tblite_matrices                1  4.0    0.042    0.042    0.043    0.043
+ scf_env_do_scf                       1  3.0    0.000    0.000    0.026    0.026
+ scf_env_do_scf_inner_loop           11  4.0    0.001    0.001    0.026    0.026
+ qs_scf_new_mos                      11  5.0    0.000    0.000    0.022    0.022
+ eigensolver                         11  6.0    0.000    0.000    0.008    0.008
+ calculate_dm_sparse                 11  6.0    0.000    0.000    0.007    0.007
+ cp_dbcsr_plus_fm_fm_t               11  7.0    0.000    0.000    0.007    0.007
+ copy_dbcsr_to_fm                    22  6.4    0.000    0.000    0.006    0.006
+ cp_fm_syevd                         11  7.0    0.000    0.000    0.006    0.006
  cp_fm_syevd_base                    11  8.0    0.006    0.006    0.006    0.006
- qs_diis_b_step                      10  6.0    0.000    0.000    0.005    0.005
- dbcsr_create_new                   304  9.5    0.004    0.004    0.004    0.004
- make_m2s                            22  9.0    0.000    0.000    0.003    0.003
- copy_fm_to_dbcsr                    22  8.0    0.000    0.000    0.003    0.003
- qs_ks_update_qs_env                 11  5.0    0.000    0.000    0.003    0.003
- qs_init_subsys                       1  2.0    0.001    0.001    0.002    0.002
+ dbcsr_complete_redistribute         44  8.2    0.005    0.005    0.006    0.006
+ dbcsr_multiply_generic              11  8.0    0.000    0.000    0.005    0.005
+ qs_diis_b_step                      10  6.0    0.000    0.000    0.004    0.004
+ qs_init_subsys                       1  2.0    0.001    0.001    0.003    0.003
+ qs_ks_update_qs_env                 11  5.0    0.000    0.000    0.002    0.002
+ make_m2s                            22  9.0    0.000    0.000    0.002    0.002
  rebuild_ks_matrix                   11  6.0    0.000    0.000    0.002    0.002
  build_tblite_ks_matrix              11  7.0    0.002    0.002    0.002    0.002
+ copy_fm_to_dbcsr                    22  8.0    0.000    0.000    0.002    0.002
  dbcsr_desymmetrize_deep             22  7.4    0.001    0.001    0.002    0.002
  -------------------------------------------------------------------------------
 
  The number of warnings for this run is : 0
  
  -------------------------------------------------------------------------------
-  **** **** ******  **  PROGRAM ENDED AT                 2026-05-23 19:13:48.915
+  **** **** ******  **  PROGRAM ENDED AT                 2026-05-23 22:19:51.379
  ***** ** ***  *** **   PROGRAM RAN ON                                spark-c86c
  **    ****   ******    PROGRAM RAN BY                                  kuehne88
- ***** **    ** ** **   PROGRAM PROCESS ID                               2106762
-  **** **  *******  **  PROGRAM STOPPED IN /home/kuehne88/dmc-ice13-cp2k-bench/r
-                                           uns/GFN1/IX
+ ***** **    ** ** **   PROGRAM PROCESS ID                               2165788
+  **** **  *******  **  PROGRAM STOPPED IN /home/kuehne88/periodic-gfn2-benchmar
+                                           ks/DMC-ICE13/runs/GFN1/IX
