@@ -9,11 +9,22 @@ J. Chem. Phys. 157, 134701 (2022), DOI: 10.1063/5.0102645.
 ## Data included
 
 - `poscars/`: POSCAR geometries for the 13 DMC-ICE13 polymorphs.
-- `inputs/`: CP2K input files for GFN1-xTB and GFN2-xTB.
-- `runs/`: CP2K inputs and outputs for each method and polymorph.
+- `inputs/`: Gamma-only CP2K input files for GFN1-xTB and GFN2-xTB.
+- `kpoint_inputs/`: explicit Gamma-centered 3x3x3, 4x4x4, and 5x5x5
+  k-point CP2K input files.
+- `runs/`: Gamma-only CP2K inputs and outputs for each method and polymorph.
+- `runs_kpoints/`: CP2K inputs and outputs for the k-point benchmark.
 - `data/results.json`: raw CP2K total energies, per-water energies, relative
-  energies with respect to ice Ih, and error statistics.
-- `data/dmc_ice13_relative_energies.csv`: relative energies and GFN errors.
+  energies with respect to ice Ih, and error statistics for the Gamma-only
+  calculations.
+- `data/kpoint_results.json`: raw and relative energies for the k-point
+  dependent calculations.
+- `data/dmc_ice13_relative_energies.csv`: 3x3x3 relative energies and GFN
+  errors used as the primary manuscript values.
+- `data/dmc_ice13_kpoint_stats.csv`: aggregate DMC-ICE13 error statistics as a
+  function of k-point mesh.
+- `data/dmc_ice13_kpoint_relative_energies.csv`: phase-resolved relative
+  energies and errors as a function of k-point mesh.
 - `data/dmc_ice13_relative_mae_comparison.csv`: comparison with the published
   DFT data from the DMC-ICE13 paper.
 - `data/dmc_ice13_published_dft_absolute_energies.csv`: published DMC and DFT
@@ -38,5 +49,8 @@ tblite:
 - `EPS_SCF`: `1.0E-9`
 - `OMP_NUM_THREADS`: `4`
 
-All energies in the CSV summaries are relative to ice Ih and reported in
-kJ mol-1 per water molecule.
+The primary comparison uses the Gamma-centered 3x3x3 k-point mesh, matching
+the non-hybrid DFT single-point setup in the DMC-ICE13 reference. The 4x4x4
+mesh, matching the hybrid-XC setup, and the 5x5x5 dense check are included to
+document k-point convergence. All energies in the CSV summaries are relative to
+ice Ih and reported in kJ mol-1 per water molecule.

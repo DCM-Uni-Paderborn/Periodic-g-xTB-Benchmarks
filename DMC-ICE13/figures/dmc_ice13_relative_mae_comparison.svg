@@ -246,19 +246,19 @@
 </g>
 <g style="fill:none; color:red; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
 	<g style = 'stroke:none; shape-rendering:crispEdges'>
-		<polygon fill = 'rgb( 76, 114, 176)' fill-opacity = '0.850000' points = '519.7,366.9 519.7,117.2 562.1,117.2 562.1,366.9 '/>
+		<polygon fill = 'rgb( 76, 114, 176)' fill-opacity = '0.850000' points = '519.7,366.9 519.7,107.6 562.1,107.6 562.1,366.9 '/>
 	</g>
 </g>
 <g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
-	<path  d='M519.7,366.9 L519.7,117.3 L562.0,117.3 L562.0,366.9 L519.7,366.9 Z '></path>
+	<path  d='M519.7,366.9 L519.7,107.7 L562.0,107.7 L562.0,366.9 L519.7,366.9 Z '></path>
 </g>
 <g style="fill:none; color:red; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
 	<g style = 'stroke:none; shape-rendering:crispEdges'>
-		<polygon fill = 'rgb( 76, 114, 176)' fill-opacity = '0.850000' points = '578.4,366.9 578.4,48.8 620.7,48.8 620.7,366.9 '/>
+		<polygon fill = 'rgb( 76, 114, 176)' fill-opacity = '0.850000' points = '578.4,366.9 578.4,16.5 620.7,16.5 620.7,366.9 '/>
 	</g>
 </g>
 <g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
-	<path  d='M578.4,366.9 L578.4,48.9 L620.6,48.9 L620.6,366.9 L578.4,366.9 Z '></path>
+	<path  d='M578.4,366.9 L578.4,16.6 L620.6,16.6 L620.6,366.9 L578.4,366.9 Z '></path>
 </g>
 <g style="fill:none; color:red; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
 </g>

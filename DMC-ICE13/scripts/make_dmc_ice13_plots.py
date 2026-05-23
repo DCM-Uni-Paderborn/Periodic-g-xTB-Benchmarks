@@ -120,6 +120,22 @@ def stats(errors: list[float]) -> dict[str, float]:
     }
 
 
+def load_primary_gfn_relative_energies(results: dict[str, object]) -> dict[str, dict[str, float]]:
+    kpoint_path = DATA / "kpoint_results.json"
+    if kpoint_path.exists():
+        kpoint_results = json.loads(kpoint_path.read_text())
+        mesh = "k333"
+        mesh_results = kpoint_results["results"][mesh]
+        return {
+            "GFN1-xTB": mesh_results["GFN1"]["relative_kjmol"],
+            "GFN2-xTB": mesh_results["GFN2"]["relative_kjmol"],
+        }
+    return {
+        "GFN1-xTB": results["GFN1"]["relative_kjmol"],
+        "GFN2-xTB": results["GFN2"]["relative_kjmol"],
+    }
+
+
 def write_csv(path: Path, rows: list[dict[str, object]], fieldnames: list[str]) -> None:
     with path.open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -239,10 +255,7 @@ def main() -> None:
     published_abs = parse_published_abs()
 
     dmc_rel = rel_from_abs(published_abs["DMC"])
-    method_rel = {
-        "GFN1-xTB": results["GFN1"]["relative_kjmol"],
-        "GFN2-xTB": results["GFN2"]["relative_kjmol"],
-    }
+    method_rel = load_primary_gfn_relative_energies(results)
     method_rel.update({name: rel_from_abs(vals) for name, vals in published_abs.items() if name != "DMC"})
 
     published_rows = []
