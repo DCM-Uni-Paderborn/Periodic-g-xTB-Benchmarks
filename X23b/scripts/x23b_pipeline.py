@@ -106,6 +106,84 @@ DMC_X23 = {
     "urea": (108.5, 0.3),
 }
 
+BOESE_DFT_D3_VOLUMES = {
+    "PBE+D3": {
+        "14-cyclohexanedione": 276.1,
+        "acetic_acid": 297.6,
+        "adamantane": 377.8,
+        "ammonia": 122.6,
+        "anthracene": 449.9,
+        "benzene": 457.0,
+        "co2": 186.4,
+        "cyanamide": 413.6,
+        "cytosine": 466.5,
+        "ethylcarbamate": 241.8,
+        "formamide": 222.8,
+        "hexamine": 333.8,
+        "imidazole": 345.9,
+        "naphthalene": 337.8,
+        "oxalic_acid_alpha": 314.5,
+        "oxalic_acid_beta": 158.7,
+        "pyrazine": 196.4,
+        "pyrazole": 704.2,
+        "succinic_acid": 244.9,
+        "triazine": 556.5,
+        "trioxane": 615.7,
+        "uracil": 457.4,
+        "urea": 143.8,
+    },
+    "BLYP+D3": {
+        "14-cyclohexanedione": 267.1,
+        "acetic_acid": 290.4,
+        "adamantane": 365.0,
+        "ammonia": 123.0,
+        "anthracene": 429.4,
+        "benzene": 435.1,
+        "co2": 175.8,
+        "cyanamide": 400.5,
+        "cytosine": 449.3,
+        "ethylcarbamate": 234.3,
+        "formamide": 214.1,
+        "hexamine": 325.1,
+        "imidazole": 330.2,
+        "naphthalene": 322.3,
+        "oxalic_acid_alpha": 309.0,
+        "oxalic_acid_beta": 153.8,
+        "pyrazine": 186.6,
+        "pyrazole": 676.4,
+        "succinic_acid": 236.7,
+        "triazine": 528.8,
+        "trioxane": 594.8,
+        "uracil": 440.9,
+        "urea": 142.8,
+    },
+    "RPBE+D3": {
+        "14-cyclohexanedione": 282.9,
+        "acetic_acid": 311.1,
+        "adamantane": 385.7,
+        "ammonia": 127.1,
+        "anthracene": 441.3,
+        "benzene": 449.0,
+        "co2": 197.3,
+        "cyanamide": 418.5,
+        "cytosine": 470.0,
+        "ethylcarbamate": 248.2,
+        "formamide": 229.7,
+        "hexamine": 335.9,
+        "imidazole": 354.4,
+        "naphthalene": 331.7,
+        "oxalic_acid_alpha": 325.3,
+        "oxalic_acid_beta": 165.3,
+        "pyrazine": 198.0,
+        "pyrazole": 707.8,
+        "succinic_acid": 254.2,
+        "triazine": 567.7,
+        "trioxane": 640.7,
+        "uracil": 464.2,
+        "urea": 146.9,
+    },
+}
+
 
 def clean_element(element: str) -> str:
     element = re.sub(r"[^A-Za-z]", "", element)
@@ -712,7 +790,7 @@ def analyse() -> dict[str, object]:
     results["volume_rows"] = rows_volume
     results["summary"] = summaries
     (DATA / "x23b_results.json").write_text(json.dumps(results, indent=2))
-    make_plots(summaries, rows_energy)
+    make_plots(summaries, rows_energy, rows_volume)
     return results
 
 
@@ -766,7 +844,11 @@ def summarize(rows_energy: list[dict[str, object]], rows_volume: list[dict[str, 
     return summaries
 
 
-def make_plots(summaries: list[dict[str, object]], rows_energy: list[dict[str, object]]) -> None:
+def make_plots(
+    summaries: list[dict[str, object]],
+    rows_energy: list[dict[str, object]],
+    rows_volume: list[dict[str, object]],
+) -> None:
     if not summaries or shutil.which("gnuplot") is None:
         return
     FIGURES.mkdir(exist_ok=True)
@@ -818,6 +900,8 @@ plot '{dat}' using 3:xtic(2) lc rgb '#4c72b0' title 'Lattice energy / kJ mol^{{-
         subprocess.run(["rsvg-convert", str(svg), "-o", str(svg.with_suffix(".png"))], check=True)
         subprocess.run(["rsvg-convert", "-f", "pdf", str(svg), "-o", str(svg.with_suffix(".pdf"))], check=True)
     make_prl_style_plot(rows_energy)
+    make_error_range_plot(rows_energy)
+    make_volume_comparison_plot(rows_volume)
 
 
 def make_prl_style_plot(rows_energy: list[dict[str, object]]) -> None:
@@ -881,6 +965,162 @@ plot '{dat}' using 1:6:5 with yerrorbars pt 7 ps 0.75 lw 1.1 lc rgb '#4C78A8' ti
      '' using 1:7:xtic(2) with linespoints lt 1 lw 1.4 pt 5 ps 0.8 lc rgb '#E45756' title 'GFN1-xTB opt - X23b', \\
      '' using 1:8 with linespoints lt 1 lw 1.4 pt 9 ps 0.8 lc rgb '#54A24B' title 'GFN2-xTB opt - X23b'
 unset multiplot
+"""
+    subprocess.run(["gnuplot"], input=script.encode(), check=True)
+    if shutil.which("rsvg-convert") is not None:
+        subprocess.run(["rsvg-convert", str(svg), "-o", str(svg.with_suffix(".png"))], check=True)
+        subprocess.run(["rsvg-convert", "-f", "pdf", str(svg), "-o", str(svg.with_suffix(".pdf"))], check=True)
+
+
+def percentile(values: list[float], fraction: float) -> float:
+    ordered = sorted(values)
+    position = fraction * (len(ordered) - 1)
+    lower = math.floor(position)
+    upper = math.ceil(position)
+    if lower == upper:
+        return ordered[int(position)]
+    weight = position - lower
+    return ordered[lower] * (1.0 - weight) + ordered[upper] * weight
+
+
+def make_error_range_plot(rows_energy: list[dict[str, object]]) -> None:
+    def errors_for(calculation: str, mesh: str, method: str) -> list[float]:
+        return [
+            float(row["error_kJmol"])
+            for row in rows_energy
+            if row["calculation"] == calculation
+            and row["mesh"] == mesh
+            and row["method"] == method
+            and str(row["complete"]) == "True"
+            and row["error_kJmol"] != ""
+        ]
+
+    methods = [
+        ("GFN1 opt", errors_for("cell_opt", "gamma", "GFN1-xTB")),
+        ("GFN2 opt", errors_for("cell_opt", "gamma", "GFN2-xTB")),
+        ("DMC-X23", [DMC_X23[str(system["id"])][0] - float(system["ref_energy"]) for system in SYSTEMS]),
+    ]
+
+    dat = DATA / "x23b_error_ranges.dat"
+    with dat.open("w") as handle:
+        handle.write("# index label min q1 median q3 max mean mae\n")
+        for index, (label, values) in enumerate(methods, start=1):
+            handle.write(
+                f'{index} "{label}" {min(values):.6f} {percentile(values, 0.25):.6f} '
+                f"{percentile(values, 0.50):.6f} {percentile(values, 0.75):.6f} "
+                f"{max(values):.6f} {sum(values)/len(values):.6f} "
+                f"{sum(abs(value) for value in values)/len(values):.6f}\n"
+            )
+
+    svg = FIGURES / "x23b_error_ranges_prl3_style.svg"
+    script = f"""
+set terminal svg enhanced font 'Helvetica,12' size 900,470
+set object 100 rectangle from screen 0,0 to screen 1,1 fillcolor rgb 'white' behind
+set output '{svg}'
+set border lw 1.2
+set tics out nomirror
+set grid xtics lc rgb '#d8d8d8' lw 0.6
+set xrange [-50:240]
+set yrange [0.4:3.6]
+set xlabel 'Deviation from X23b / kJ mol^{-1}'
+set ytics ('GFN1 opt' 1, 'GFN2 opt' 2, 'DMC-X23' 3)
+set key top right spacing 1.15 samplen 2
+set arrow 1 from 0,0.45 to 0,3.55 nohead lw 1.2 lc rgb '#555555'
+set object 1 rectangle from -4.184,0.45 to 4.184,3.55 fillcolor rgb '#e8e8e8' behind
+plot '{dat}' using 5:1:3:7 with xerrorbars pt 7 ps 0.85 lw 1.8 lc rgb '#4C78A8' title 'min--max range', \\
+     '' using 8:1 with points pt 5 ps 1.0 lc rgb '#E45756' title 'mean signed error', \\
+     '' using 9:1 with points pt 9 ps 1.0 lc rgb '#54A24B' title 'MAE'
+"""
+    subprocess.run(["gnuplot"], input=script.encode(), check=True)
+    if shutil.which("rsvg-convert") is not None:
+        subprocess.run(["rsvg-convert", str(svg), "-o", str(svg.with_suffix(".png"))], check=True)
+        subprocess.run(["rsvg-convert", "-f", "pdf", str(svg), "-o", str(svg.with_suffix(".pdf"))], check=True)
+
+
+def make_volume_comparison_plot(rows_volume: list[dict[str, object]]) -> None:
+    rows: list[dict[str, object]] = []
+    system_lookup = {str(system["id"]): system for system in SYSTEMS}
+
+    for method, volumes in BOESE_DFT_D3_VOLUMES.items():
+        for system_id, volume in volumes.items():
+            system = system_lookup[system_id]
+            ref_volume = float(system["ref_volume"])
+            rows.append(
+                {
+                    "source": "Dolgonos-Hoja-Boese",
+                    "method": method,
+                    "system": system_id,
+                    "label": system["label"],
+                    "volume_A3": f"{volume:.6f}",
+                    "x23b_reported_ref_volume_A3": f"{ref_volume:.6f}",
+                    "volume_error_percent": f"{100.0 * (volume - ref_volume) / ref_volume:.6f}",
+                }
+            )
+
+    for row in rows_volume:
+        if row["volume_error_percent"] == "":
+            continue
+        rows.append(
+            {
+                "source": "this work",
+                "method": f"{row['method']} opt",
+                "system": row["system"],
+                "label": row["label"],
+                "volume_A3": row["volume_A3"],
+                "x23b_reported_ref_volume_A3": row["x23b_reported_ref_volume_A3"],
+                "volume_error_percent": row["volume_error_percent"],
+            }
+        )
+
+    write_csv(
+        DATA / "x23b_volume_errors_with_boese_dft.csv",
+        rows,
+        [
+            "source",
+            "method",
+            "system",
+            "label",
+            "volume_A3",
+            "x23b_reported_ref_volume_A3",
+            "volume_error_percent",
+        ],
+    )
+
+    methods = ["BLYP+D3", "PBE+D3", "RPBE+D3", "GFN2-xTB opt", "GFN1-xTB opt"]
+    dat = DATA / "x23b_volume_error_ranges_boese.dat"
+    with dat.open("w") as handle:
+        handle.write("# index label min q1 median q3 max mean mae\n")
+        for index, method in enumerate(methods, start=1):
+            values = [
+                float(row["volume_error_percent"])
+                for row in rows
+                if row["method"] == method
+            ]
+            handle.write(
+                f'{index} "{method}" {min(values):.6f} {percentile(values, 0.25):.6f} '
+                f"{percentile(values, 0.50):.6f} {percentile(values, 0.75):.6f} "
+                f"{max(values):.6f} {sum(values)/len(values):.6f} "
+                f"{sum(abs(value) for value in values)/len(values):.6f}\n"
+            )
+
+    svg = FIGURES / "x23b_volume_comparison_boese.svg"
+    script = f"""
+set terminal svg enhanced font 'Helvetica,12' size 900,560
+set object 100 rectangle from screen 0,0 to screen 1,1 fillcolor rgb 'white' behind
+set output '{svg}'
+set border lw 1.2
+set tics out nomirror
+set grid xtics lc rgb '#d8d8d8' lw 0.6
+set xrange [-25:30]
+set yrange [0.4:5.6]
+set xlabel 'Relative cell-volume error / %'
+set ytics ('BLYP+D3' 1, 'PBE+D3' 2, 'RPBE+D3' 3, 'GFN2-xTB opt' 4, 'GFN1-xTB opt' 5)
+set key top right spacing 1.15 samplen 2
+set arrow 1 from 0,0.45 to 0,5.55 nohead lw 1.2 lc rgb '#555555'
+set object 1 rectangle from -5,0.45 to 5,5.55 fillcolor rgb '#eeeeee' behind
+plot '{dat}' using 5:1:3:7 with xerrorbars pt 7 ps 0.85 lw 1.8 lc rgb '#4C78A8' title 'min--max range', \\
+     '' using 8:1 with points pt 5 ps 1.0 lc rgb '#E45756' title 'mean signed error', \\
+     '' using 9:1 with points pt 9 ps 1.0 lc rgb '#54A24B' title 'MAE'
 """
     subprocess.run(["gnuplot"], input=script.encode(), check=True)
     if shutil.which("rsvg-convert") is not None:
