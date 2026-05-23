@@ -1,0 +1,10 @@
+# index method MAE
+1 "optB86b-vdW" 0.4825
+2 "B3LYP-D3atm" 0.5117
+3 "SCAN+rVV10" 0.5800
+4 "revPBE-D3" 0.7942
+5 "RSCAN" 1.6333
+6 "PBE-D4" 3.7942
+7 "PBE" 6.4800
+8 "GFN2-xTB" 8.5488
+9 "GFN1-xTB" 10.8934
