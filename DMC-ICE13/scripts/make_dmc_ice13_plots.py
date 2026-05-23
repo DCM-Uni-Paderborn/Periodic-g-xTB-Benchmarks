@@ -346,11 +346,22 @@ def main() -> None:
 
     err_dat = DATA / "relative_errors_for_plot.dat"
     with err_dat.open("w") as handle:
-        handle.write("# index phase GFN1_error GFN2_error\n")
+        handle.write(
+            "# index phase GFN1_error GFN2_error GFN1_Gamma_error GFN2_Gamma_error "
+            "PBE-D4_error PBE0-D4_error SCAN+rVV10_error PBE_error PBE0_error SCAN_error\n"
+        )
         for index, phase in enumerate(PHASES, start=1):
             handle.write(
                 f"{index} {phase} {method_rel['GFN1-xTB'][phase] - dmc_rel[phase]:.6f} "
-                f"{method_rel['GFN2-xTB'][phase] - dmc_rel[phase]:.6f}\n"
+                f"{method_rel['GFN2-xTB'][phase] - dmc_rel[phase]:.6f} "
+                f"{gamma_rel['GFN1-xTB (Gamma)'][phase] - dmc_rel[phase]:.6f} "
+                f"{gamma_rel['GFN2-xTB (Gamma)'][phase] - dmc_rel[phase]:.6f} "
+                f"{method_rel['PBE-D4'][phase] - dmc_rel[phase]:.6f} "
+                f"{method_rel['PBE0-D4'][phase] - dmc_rel[phase]:.6f} "
+                f"{method_rel['SCAN+rVV10'][phase] - dmc_rel[phase]:.6f} "
+                f"{method_rel['PBE'][phase] - dmc_rel[phase]:.6f} "
+                f"{method_rel['PBE0'][phase] - dmc_rel[phase]:.6f} "
+                f"{method_rel['SCAN'][phase] - dmc_rel[phase]:.6f}\n"
             )
 
     mae_dat = DATA / "relative_mae_for_plot.dat"
@@ -450,10 +461,38 @@ set ylabel 'Relative-energy error vs DMC / kJ mol^{-1}'
 set xlabel 'Ice polymorph'
 set xrange [0.5:13.5]
 set xtics rotate by -45
-set yrange [-24:22]
+set yrange [-30:22]
 set yzeroaxis lw 1.2 lc rgb '#333333'
 plot '{err_dat}' using 1:3:xtic(2) w lp ls 2 title 'GFN1-xTB', \\
-     '' using 1:4 w lp ls 3 title 'GFN2-xTB'
+	     '' using 1:4 w lp ls 3 title 'GFN2-xTB', \\
+	     '' using 1:5 w lp ls 7 title 'GFN1-xTB (\u0393-point)', \\
+	     '' using 1:6 w lp ls 8 title 'GFN2-xTB (\u0393-point)', \\
+	     '' using 1:7 w lp ls 4 title 'PBE-D4', \\
+	     '' using 1:8 w lp ls 5 title 'PBE0-D4', \\
+	     '' using 1:9 w lp ls 6 title 'SCAN+rVV10'
+"""
+    )
+
+    run_gnuplot(
+        common
+        + f"""
+set output '{FIGURES / 'dmc_ice13_relative_errors_parent_dft.svg'}'
+set ylabel 'Relative-energy error vs DMC / kJ mol^{-1}'
+set xlabel 'Ice polymorph'
+set xrange [0.5:13.5]
+set xtics rotate by -45
+set yrange [-30:22]
+set yzeroaxis lw 1.2 lc rgb '#333333'
+plot '{err_dat}' using 1:3:xtic(2) w lp ls 2 title 'GFN1-xTB', \\
+	     '' using 1:4 w lp ls 3 title 'GFN2-xTB', \\
+	     '' using 1:5 w lp ls 7 title 'GFN1-xTB (\u0393-point)', \\
+	     '' using 1:6 w lp ls 8 title 'GFN2-xTB (\u0393-point)', \\
+	     '' using 1:7 w lp ls 4 title 'PBE-D4', \\
+	     '' using 1:10 w lp ls 10 title 'PBE', \\
+	     '' using 1:8 w lp ls 5 title 'PBE0-D4', \\
+	     '' using 1:11 w lp ls 11 title 'PBE0', \\
+	     '' using 1:9 w lp ls 6 title 'SCAN+rVV10', \\
+	     '' using 1:12 w lp ls 12 title 'SCAN'
 """
     )
 
