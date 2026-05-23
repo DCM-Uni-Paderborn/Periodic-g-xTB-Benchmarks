@@ -207,8 +207,11 @@ def make_log_mae_plot(summary_rows: list[dict[str, object]]) -> None:
         "GFN1-xTB": "#c44e52",
         "GFN1-xTB (Gamma)": "#e6a0a3",
         "PBE-D4": "#55a868",
+        "PBE": "#9bd49f",
         "PBE0-D4": "#8172b3",
+        "PBE0": "#b8a7db",
         "SCAN+rVV10": "#ccb974",
+        "SCAN": "#dfcf8c",
     }
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
@@ -329,14 +332,16 @@ def main() -> None:
 
     rel_dat = DATA / "relative_energies_for_plot.dat"
     with rel_dat.open("w") as handle:
-        handle.write("# index phase DMC DMC_error GFN1 GFN2 GFN1_Gamma GFN2_Gamma PBE-D4 PBE0-D4 SCAN+rVV10\n")
+        handle.write("# index phase DMC DMC_error GFN1 GFN2 GFN1_Gamma GFN2_Gamma PBE-D4 PBE0-D4 SCAN+rVV10 PBE PBE0 SCAN\n")
         for index, phase in enumerate(PHASES, start=1):
             handle.write(
                 f"{index} {phase} {dmc_rel[phase]:.6f} {DMC_REL_ERROR[phase]:.6f} "
                 f"{method_rel['GFN1-xTB'][phase]:.6f} {method_rel['GFN2-xTB'][phase]:.6f} "
                 f"{gamma_rel['GFN1-xTB (Gamma)'][phase]:.6f} {gamma_rel['GFN2-xTB (Gamma)'][phase]:.6f} "
                 f"{method_rel['PBE-D4'][phase]:.6f} {method_rel['PBE0-D4'][phase]:.6f} "
-                f"{method_rel['SCAN+rVV10'][phase]:.6f}\n"
+                f"{method_rel['SCAN+rVV10'][phase]:.6f} "
+                f"{method_rel['PBE'][phase]:.6f} {method_rel['PBE0'][phase]:.6f} "
+                f"{method_rel['SCAN'][phase]:.6f}\n"
             )
 
     err_dat = DATA / "relative_errors_for_plot.dat"
@@ -354,7 +359,10 @@ def main() -> None:
         "SCAN+rVV10",
         "RSCAN",
         "PBE-D4",
+        "PBE",
         "PBE0-D4",
+        "PBE0",
+        "SCAN",
         "GFN2-xTB",
         "GFN1-xTB",
     }
@@ -383,6 +391,9 @@ set style line 3 lt 1 lc rgb '#4c72b0' lw 2.3 pt 9 ps 0.75
 	set style line 7 lt 2 lc rgb '#e6a0a3' lw 1.6 pt 5 ps 0.55
 	set style line 8 lt 2 lc rgb '#8fb0df' lw 1.6 pt 9 ps 0.55
 	set style line 9 lt 1 lc rgb '#111111' lw 2.2 pt 6 ps 0.20
+	set style line 10 lt 1 lc rgb '#9bd49f' lw 1.25 pt 4 ps 0.52
+	set style line 11 lt 1 lc rgb '#b8a7db' lw 1.25 pt 6 ps 0.52
+	set style line 12 lt 1 lc rgb '#dfcf8c' lw 1.25 pt 8 ps 0.52
 	"""
     run_gnuplot(
         common
@@ -403,6 +414,31 @@ plot '{rel_dat}' using 1:3:xtic(2) w lp ls 1 title 'DMC', \\
 	     '' using 1:9 w lp ls 4 title 'PBE-D4', \\
 	     '' using 1:10 w lp ls 5 title 'PBE0-D4', \\
 	     '' using 1:11 w lp ls 6 title 'SCAN+rVV10'
+"""
+    )
+
+    run_gnuplot(
+        common
+        + f"""
+set output '{FIGURES / 'dmc_ice13_relative_energies_parent_dft.svg'}'
+set ylabel 'Relative energy to ice Ih / kJ mol^{-1}'
+set xlabel 'Ice polymorph'
+set xrange [0.5:13.5]
+set xtics rotate by -45
+set yrange [-25:25]
+set ytics 5
+plot '{rel_dat}' using 1:3:xtic(2) w lp ls 1 title 'DMC', \\
+	     '' using 1:3:4 w yerrorbars ls 9 notitle, \\
+	     '' using 1:5 w lp ls 2 title 'GFN1-xTB', \\
+	     '' using 1:6 w lp ls 3 title 'GFN2-xTB', \\
+	     '' using 1:7 w lp ls 7 title 'GFN1-xTB (\u0393-point)', \\
+	     '' using 1:8 w lp ls 8 title 'GFN2-xTB (\u0393-point)', \\
+	     '' using 1:9 w lp ls 4 title 'PBE-D4', \\
+	     '' using 1:12 w lp ls 10 title 'PBE', \\
+	     '' using 1:10 w lp ls 5 title 'PBE0-D4', \\
+	     '' using 1:13 w lp ls 11 title 'PBE0', \\
+	     '' using 1:11 w lp ls 6 title 'SCAN+rVV10', \\
+	     '' using 1:14 w lp ls 12 title 'SCAN'
 """
     )
 
