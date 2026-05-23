@@ -942,17 +942,18 @@ def make_prl_style_plot(rows_energy: list[dict[str, object]]) -> None:
     systems = sorted(SYSTEMS, key=lambda item: float(item["ref_energy"]))
     dat = DATA / "x23b_prl_style.dat"
     with dat.open("w") as handle:
-        handle.write("# index label x23b_ref dmc dmc_err dmc_minus_x23b gfn1_minus_x23b gfn2_minus_x23b\n")
+        handle.write("# index label x23b_ref dmc dmc_err mlcc dmc_minus_x23b mlcc_minus_x23b gfn1_minus_x23b gfn2_minus_x23b\n")
         for index, system in enumerate(systems, start=1):
             system_id = str(system["id"])
             ref = float(system["ref_energy"])
             dmc, dmc_err = DMC_X23[system_id]
+            mlcc = MULTILEVEL_CC_X23[system_id]
             gfn1 = lookup.get((system_id, "GFN1-xTB"), float("nan"))
             gfn2 = lookup.get((system_id, "GFN2-xTB"), float("nan"))
             label = PLOT_LABELS[system_id]
             handle.write(
-                f'{index} "{label}" {ref:.6f} {dmc:.6f} {dmc_err:.6f} '
-                f"{dmc - ref:.6f} {gfn1:.6f} {gfn2:.6f}\n"
+                f'{index} "{label}" {ref:.6f} {dmc:.6f} {dmc_err:.6f} {mlcc:.6f} '
+                f"{dmc - ref:.6f} {mlcc - ref:.6f} {gfn1:.6f} {gfn2:.6f}\n"
             )
 
     svg = FIGURES / "x23b_lattice_energy_prl_style.svg"
@@ -975,7 +976,8 @@ set ylabel 'Lattice-energy magnitude / kJ mol^{-1}'
 set yrange [20:170]
 set key top left spacing 1.15 samplen 2
 plot '{dat}' using 1:3 with linespoints lt 1 lw 1.4 pt 7 ps 0.7 lc rgb '#222222' title 'X23b reference', \\
-     '' using 1:4:5 with yerrorbars pt 7 ps 0.75 lw 1.2 lc rgb '#4C78A8' title 'DMC X23'
+     '' using 1:4:5 with yerrorbars pt 7 ps 0.75 lw 1.2 lc rgb '#4C78A8' title 'DMC X23', \\
+     '' using 1:6 with linespoints lt 1 lw 1.2 pt 11 ps 0.75 lc rgb '#7E57C2' title 'ML-CCSD(T)/RPA+ph'
 
 unset object 100
 set tmargin 1
@@ -987,9 +989,10 @@ set ytics 50
 set yzeroaxis lt -1 lw 1.0 lc rgb '#555555'
 set object 1 rectangle from graph 0, first -4.184 to graph 1, first 4.184 fillcolor rgb '#e6e6e6' behind
 set key top left spacing 1.1 samplen 1.8
-plot '{dat}' using 1:6:5 with yerrorbars pt 7 ps 0.75 lw 1.1 lc rgb '#4C78A8' title 'DMC X23 - X23b', \\
-     '' using 1:7:xtic(2) with linespoints lt 1 lw 1.4 pt 5 ps 0.8 lc rgb '#E45756' title 'GFN1-xTB opt - X23b', \\
-     '' using 1:8 with linespoints lt 1 lw 1.4 pt 9 ps 0.8 lc rgb '#54A24B' title 'GFN2-xTB opt - X23b'
+plot '{dat}' using 1:7:5 with yerrorbars pt 7 ps 0.75 lw 1.1 lc rgb '#4C78A8' title 'DMC X23 - X23b', \\
+     '' using 1:8 with linespoints lt 1 lw 1.2 pt 11 ps 0.75 lc rgb '#7E57C2' title 'ML-CCSD(T)/RPA+ph - X23b', \\
+     '' using 1:9:xtic(2) with linespoints lt 1 lw 1.4 pt 5 ps 0.8 lc rgb '#E45756' title 'GFN1-xTB opt - X23b', \\
+     '' using 1:10 with linespoints lt 1 lw 1.4 pt 9 ps 0.8 lc rgb '#54A24B' title 'GFN2-xTB opt - X23b'
 unset multiplot
 """
     subprocess.run(["gnuplot"], input=script.encode(), check=True)
