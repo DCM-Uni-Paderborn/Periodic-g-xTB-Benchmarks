@@ -48,7 +48,10 @@ tblite. The current Spark default is available as
 - tblite: `0.5.0`
 - `TBLITE/ACCURACY`: `0.1`
 - `EPS_SCF`: `1.0E-9`
-- `OMP_NUM_THREADS`: `4`
+- Spark run-script defaults: `OMP_NUM_THREADS=1`,
+  `OPENBLAS_NUM_THREADS=1`, `MKL_NUM_THREADS=1`, and
+  `CP2K_PARALLEL_JOBS=20`, i.e. independent single-core CP2K jobs fill the 20
+  Arm cores.
 
 The primary comparison uses the Gamma-centered 3x3x3 k-point mesh, matching
 the non-hybrid DFT single-point setup in the DMC-ICE13 reference. The explicit
