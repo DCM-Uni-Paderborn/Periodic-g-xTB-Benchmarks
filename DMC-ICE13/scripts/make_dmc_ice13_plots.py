@@ -136,6 +136,21 @@ def load_primary_gfn_relative_energies(results: dict[str, object]) -> dict[str, 
     }
 
 
+def load_gamma_gfn_relative_energies(results: dict[str, object]) -> dict[str, dict[str, float]]:
+    kpoint_path = DATA / "kpoint_results.json"
+    if kpoint_path.exists():
+        kpoint_results = json.loads(kpoint_path.read_text())
+        mesh_results = kpoint_results["results"]["gamma"]
+        return {
+            "GFN1-xTB (Gamma)": mesh_results["GFN1"]["relative_kjmol"],
+            "GFN2-xTB (Gamma)": mesh_results["GFN2"]["relative_kjmol"],
+        }
+    return {
+        "GFN1-xTB (Gamma)": results["GFN1"]["relative_kjmol"],
+        "GFN2-xTB (Gamma)": results["GFN2"]["relative_kjmol"],
+    }
+
+
 def write_csv(path: Path, rows: list[dict[str, object]], fieldnames: list[str]) -> None:
     with path.open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -184,7 +199,9 @@ def make_log_mae_plot(summary_rows: list[dict[str, object]]) -> None:
 
     color_by_method = {
         "GFN2-xTB": "#4c72b0",
+        "GFN2-xTB (Gamma)": "#8fb0df",
         "GFN1-xTB": "#c44e52",
+        "GFN1-xTB (Gamma)": "#e6a0a3",
         "optB86b-vdW": "#55a868",
         "B3LYP-D3atm": "#8172b3",
         "SCAN+rVV10": "#ccb974",
@@ -233,17 +250,27 @@ def make_log_mae_plot(summary_rows: list[dict[str, object]]) -> None:
         method = str(row["method"])
         value = float(row["MAE"])
         y = top + row_gap * index
-        is_hi = method in {"GFN1-xTB", "GFN2-xTB"}
+        is_primary_gfn = method in {"GFN1-xTB", "GFN2-xTB"}
+        is_gamma_gfn = method in {"GFN1-xTB (Gamma)", "GFN2-xTB (Gamma)"}
+        is_hi = is_primary_gfn or is_gamma_gfn
         is_selected = method in color_by_method
         color = color_by_method.get(method, "#9aa5b1")
-        opacity = "0.95" if is_hi else "0.78" if is_selected else "0.46"
-        width_line = "7.0" if is_hi else "5.0" if is_selected else "3.2"
-        parts.append(svg_line(left, y, xlog(value), y, stroke=color, stroke_width=width_line, stroke_linecap="round", stroke_opacity=opacity))
-        parts.append(svg_circle(xlog(value), y, 5.7 if is_hi else 4.4 if is_selected else 3.1, fill="#ffffff", stroke=color, stroke_width=2.0 if is_hi else 1.4, stroke_opacity=opacity))
+        opacity = "0.95" if is_primary_gfn else "0.70" if is_gamma_gfn else "0.78" if is_selected else "0.46"
+        width_line = "7.0" if is_primary_gfn else "4.6" if is_gamma_gfn else "5.0" if is_selected else "3.2"
+        line_attrs = {
+            "stroke": color,
+            "stroke_width": width_line,
+            "stroke_linecap": "round",
+            "stroke_opacity": opacity,
+        }
+        if is_gamma_gfn:
+            line_attrs["stroke_dasharray"] = "8 7"
+        parts.append(svg_line(left, y, xlog(value), y, **line_attrs))
+        parts.append(svg_circle(xlog(value), y, 5.7 if is_primary_gfn else 4.8 if is_gamma_gfn else 4.4 if is_selected else 3.1, fill="#ffffff", stroke=color, stroke_width=2.0 if is_hi else 1.4, stroke_opacity=opacity))
         parts.append(svg_text(left - 12, y + 4, method, text_anchor="end", class_="method-hi" if is_hi else "method"))
         parts.append(svg_text(xlog(value) + 9, y + 4, f"{value:.2f}", class_="value-hi" if is_hi else "value"))
 
-    parts.append(svg_text(56, height - 20, "Published DFT data from Della Pia et al., J. Chem. Phys. 157, 134701 (2022); GFN1/GFN2 from CP2K/tblite single points in this work.", class_="subtitle"))
+    parts.append(svg_text(56, height - 20, "Published DFT data from Della Pia et al., J. Chem. Phys. 157, 134701 (2022); GFN entries from CP2K/tblite single points in this work.", class_="subtitle"))
     parts.append("</svg>\n")
     (FIGURES / "dmc_ice13_relative_mae_all_methods_log.svg").write_text("\n".join(parts))
 
@@ -256,6 +283,7 @@ def main() -> None:
 
     dmc_rel = rel_from_abs(published_abs["DMC"])
     method_rel = load_primary_gfn_relative_energies(results)
+    gamma_rel = load_gamma_gfn_relative_energies(results)
     method_rel.update({name: rel_from_abs(vals) for name, vals in published_abs.items() if name != "DMC"})
 
     published_rows = []
@@ -284,7 +312,9 @@ def main() -> None:
     )
 
     summary_rows = []
-    for method, rel in method_rel.items():
+    summary_rel = dict(method_rel)
+    summary_rel.update(gamma_rel)
+    for method, rel in summary_rel.items():
         errors = [rel[phase] - dmc_rel[phase] for phase in PHASES if phase != "Ih"]
         row = {"method": method}
         row.update({key: f"{value:.4f}" for key, value in stats(errors).items()})
@@ -295,11 +325,12 @@ def main() -> None:
 
     rel_dat = DATA / "relative_energies_for_plot.dat"
     with rel_dat.open("w") as handle:
-        handle.write("# index phase DMC GFN1 GFN2 revPBE-D3 optB86b-vdW SCAN+rVV10\n")
+        handle.write("# index phase DMC GFN1 GFN2 GFN1_Gamma GFN2_Gamma revPBE-D3 optB86b-vdW SCAN+rVV10\n")
         for index, phase in enumerate(PHASES, start=1):
             handle.write(
                 f"{index} {phase} {dmc_rel[phase]:.6f} "
                 f"{method_rel['GFN1-xTB'][phase]:.6f} {method_rel['GFN2-xTB'][phase]:.6f} "
+                f"{gamma_rel['GFN1-xTB (Gamma)'][phase]:.6f} {gamma_rel['GFN2-xTB (Gamma)'][phase]:.6f} "
                 f"{method_rel['revPBE-D3'][phase]:.6f} {method_rel['optB86b-vdW'][phase]:.6f} "
                 f"{method_rel['SCAN+rVV10'][phase]:.6f}\n"
             )
@@ -332,7 +363,7 @@ def main() -> None:
             handle.write(f"{index} \"{row['method']}\" {row['MAE']}\n")
 
     common = """
-set terminal svg enhanced font 'Helvetica,14' size 1000,560
+	set terminal svg enhanced font 'Helvetica,14' size 1100,620
 set object 1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb 'white' behind
 set border lw 1.3
 set tics out nomirror
@@ -341,10 +372,12 @@ set key outside right center spacing 1.15 samplen 1.6
 set style line 1 lc rgb '#111111' lw 2.6 pt 7 ps 0.85
 set style line 2 lc rgb '#c44e52' lw 2.3 pt 5 ps 0.75
 set style line 3 lc rgb '#4c72b0' lw 2.3 pt 9 ps 0.75
-set style line 4 lc rgb '#55a868' lw 1.7 pt 13 ps 0.65
-set style line 5 lc rgb '#8172b3' lw 1.7 pt 11 ps 0.65
-set style line 6 lc rgb '#ccb974' lw 1.7 pt 15 ps 0.65
-"""
+	set style line 4 lc rgb '#55a868' lw 1.7 pt 13 ps 0.65
+	set style line 5 lc rgb '#8172b3' lw 1.7 pt 11 ps 0.65
+	set style line 6 lc rgb '#ccb974' lw 1.7 pt 15 ps 0.65
+	set style line 7 lt 2 lc rgb '#e6a0a3' lw 1.6 pt 5 ps 0.55
+	set style line 8 lt 2 lc rgb '#8fb0df' lw 1.6 pt 9 ps 0.55
+	"""
     run_gnuplot(
         common
         + f"""
@@ -353,14 +386,16 @@ set ylabel 'Relative energy to ice Ih / kJ mol^{-1}'
 set xlabel 'Ice polymorph'
 set xrange [0.5:13.5]
 set xtics rotate by -45
-set yrange [-25:7]
+	set yrange [-25:25]
 set ytics 5
 plot '{rel_dat}' using 1:3:xtic(2) w lp ls 1 title 'DMC', \\
-     '' using 1:4 w lp ls 2 title 'GFN1-xTB', \\
-     '' using 1:5 w lp ls 3 title 'GFN2-xTB', \\
-     '' using 1:6 w lp ls 4 title 'revPBE-D3', \\
-     '' using 1:7 w lp ls 5 title 'optB86b-vdW', \\
-     '' using 1:8 w lp ls 6 title 'SCAN+rVV10'
+	     '' using 1:4 w lp ls 2 title 'GFN1-xTB', \\
+	     '' using 1:5 w lp ls 3 title 'GFN2-xTB', \\
+	     '' using 1:6 w lp ls 7 title 'GFN1-xTB (Gamma)', \\
+	     '' using 1:7 w lp ls 8 title 'GFN2-xTB (Gamma)', \\
+	     '' using 1:8 w lp ls 4 title 'revPBE-D3', \\
+	     '' using 1:9 w lp ls 5 title 'optB86b-vdW', \\
+	     '' using 1:10 w lp ls 6 title 'SCAN+rVV10'
 """
     )
 
