@@ -370,11 +370,11 @@ set object 1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb 'white' behin
 set border lw 1.3
 set tics out nomirror
 set grid ytics lc rgb '#d0d0d0' lw 0.6
-set bars 0.35
+set bars 0.80
 set key outside right top spacing 1.15 samplen 1.8
 set rmargin 25
 set lmargin 9
-set style line 1 lt 1 lc rgb '#111111' lw 2.6 pt 7 ps 0.85
+set style line 1 lt 1 lc rgb '#111111' lw 2.6 pt 6 ps 0.70
 set style line 2 lt 1 lc rgb '#c44e52' lw 2.3 pt 5 ps 0.75
 set style line 3 lt 1 lc rgb '#4c72b0' lw 2.3 pt 9 ps 0.75
 	set style line 4 lt 1 lc rgb '#55a868' lw 1.7 pt 13 ps 0.65
@@ -382,6 +382,7 @@ set style line 3 lt 1 lc rgb '#4c72b0' lw 2.3 pt 9 ps 0.75
 	set style line 6 lt 1 lc rgb '#ccb974' lw 1.7 pt 15 ps 0.65
 	set style line 7 lt 2 lc rgb '#e6a0a3' lw 1.6 pt 5 ps 0.55
 	set style line 8 lt 2 lc rgb '#8fb0df' lw 1.6 pt 9 ps 0.55
+	set style line 9 lt 1 lc rgb '#111111' lw 2.2 pt 6 ps 0.20
 	"""
     run_gnuplot(
         common
@@ -393,7 +394,8 @@ set xrange [0.5:13.5]
 set xtics rotate by -45
 set yrange [-25:25]
 set ytics 5
-plot '{rel_dat}' using 1:3:4:xtic(2) w yerrorlines ls 1 title 'DMC', \\
+plot '{rel_dat}' using 1:3:xtic(2) w lp ls 1 title 'DMC', \\
+	     '' using 1:3:4 w yerrorbars ls 9 notitle, \\
 	     '' using 1:5 w lp ls 2 title 'GFN1-xTB', \\
 	     '' using 1:6 w lp ls 3 title 'GFN2-xTB', \\
 	     '' using 1:7 w lp ls 7 title 'GFN1-xTB (\u0393-point)', \\
