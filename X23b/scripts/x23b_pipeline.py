@@ -974,7 +974,7 @@ set object 100 rectangle from screen 0,0 to screen 1,1 fillcolor rgb 'white' beh
 unset xtics
 set ylabel 'Lattice-energy magnitude / kJ mol^{-1}'
 set yrange [20:170]
-set key top left spacing 1.15 samplen 2
+set key top left Left reverse spacing 1.15 samplen 2
 plot '{dat}' using 1:3 with linespoints lt 1 lw 1.4 pt 7 ps 0.7 lc rgb '#222222' title 'X23b reference', \\
      '' using 1:4:5 with yerrorbars pt 7 ps 0.75 lw 1.2 lc rgb '#4C78A8' title 'DMC X23', \\
      '' using 1:6 with linespoints lt 1 lw 1.2 pt 11 ps 0.75 lc rgb '#7E57C2' title 'ML-CCSD(T)/RPA+ph'
@@ -988,7 +988,7 @@ set yrange [-70:235]
 set ytics 50
 set yzeroaxis lt -1 lw 1.0 lc rgb '#555555'
 set object 1 rectangle from graph 0, first -4.184 to graph 1, first 4.184 fillcolor rgb '#e6e6e6' behind
-set key top left spacing 1.1 samplen 1.8
+set key top left Left reverse spacing 1.1 samplen 1.8
 plot '{dat}' using 1:7:5 with yerrorbars pt 7 ps 0.75 lw 1.1 lc rgb '#4C78A8' title 'DMC X23 - X23b', \\
      '' using 1:8 with linespoints lt 1 lw 1.2 pt 11 ps 0.75 lc rgb '#7E57C2' title 'ML-CCSD(T)/RPA+ph - X23b', \\
      '' using 1:9:xtic(2) with linespoints lt 1 lw 1.4 pt 5 ps 0.8 lc rgb '#E45756' title 'GFN1-xTB opt - X23b', \\
