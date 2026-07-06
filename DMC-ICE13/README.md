@@ -10,8 +10,8 @@ J. Chem. Phys. 157, 134701 (2022), DOI: 10.1063/5.0102645.
 
 - `poscars/`: POSCAR geometries for the 13 DMC-ICE13 polymorphs.
 - `inputs/`: Gamma-only CP2K input files for GFN1-xTB and GFN2-xTB.
-- `kpoint_inputs/`: explicit 1x1x1, 2x2x2, 3x3x3, 4x4x4, and 5x5x5
-  MacDonald k-point CP2K input files.
+- `kpoint_inputs/`: explicit native Bloch 1x1x1, 2x2x2, 3x3x3, 4x4x4, and
+  5x5x5 MacDonald k-point CP2K input files.
 - `runs/`: generated Gamma-only CP2K working directories, ignored by Git.
 - `runs_kpoints/`: generated k-point CP2K working directories, ignored by Git.
 - `data/results.json`: raw CP2K total energies, per-water energies, relative
@@ -41,10 +41,11 @@ geometries and DMC reference values are documented through the paper DOI above.
 The calculations were run with a CP2K 2026.1 development build interfaced to
 tblite:
 
-- CP2K source revision: `0622d442e4`
+- CP2K source revision: `518a50992f009b083c127372f294e6485306c05b`
 - CP2K flags: `omp fftw3 libxc parallel scalapack mpi_f08 xsmm spglib
   libdftd4 dftd4_v3 mctc-lib tblite`
-- tblite: `0.5.0`
+- tblite: `5b14b8430bb2ffb3c96808466ad670821f81f745` (`tblite` 0.6.0),
+  including the changes corresponding to tblite PRs 343 and 350
 - `TBLITE/ACCURACY`: `0.1`
 - `EPS_SCF`: `1.0E-9`
 - run-script defaults: `OMP_NUM_THREADS=1`,
@@ -58,3 +59,13 @@ the non-hybrid DFT single-point setup in the DMC-ICE13 reference. The explicit
 documents the approach to convergence, and the 4x4x4 and 5x5x5 checks confirm
 that the 3x3x3 aggregate statistics are converged. All energies in the CSV
 summaries are relative to ice Ih and reported in kJ mol-1 per water molecule.
+
+Current aggregate MAEs:
+
+| Mesh | GFN1-xTB | GFN2-xTB |
+|---|---:|---:|
+| Gamma | 6.696681 | 5.355715 |
+| 2x2x2 | 7.959770 | 3.233027 |
+| 3x3x3 | 8.008187 | 3.185301 |
+| 4x4x4 | 8.009427 | 3.183780 |
+| 5x5x5 | 8.009417 | 3.183706 |
