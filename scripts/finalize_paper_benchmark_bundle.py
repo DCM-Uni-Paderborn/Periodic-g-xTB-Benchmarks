@@ -237,6 +237,11 @@ def validate_x23b(root: Path) -> tuple[list[dict[str, object]], dict[str, object
             raise ValueError("X23b summary has an unexpected or duplicate row")
         seen.add(key)
         csv_row = csv_by_key[key]
+        for field in ("method_label", "calculation", "mesh"):
+            if str(record.get(field, "")) != str(csv_row.get(field, "")):
+                raise ValueError(
+                    f"X23b/{method}/{quantity}/{field} differs between JSON and CSV"
+                )
         for metric in ("ME", "MAE", "RMSE", "MaxAE"):
             close(finite(record.get(metric), f"X23b/{method}/{quantity}/{metric}"), finite(csv_row.get(metric), f"X23b CSV/{method}/{quantity}/{metric}"), f"X23b/{method}/{quantity}/{metric}")
         n = integer(record.get("N"), f"X23b/{method}/{quantity}/N")
@@ -305,6 +310,11 @@ def validate_lc12(root: Path) -> tuple[list[dict[str, object]], dict[str, object
             raise ValueError("LC12 summary has an unexpected or duplicate row")
         seen.add(key)
         csv_row = csv_by_key[key]
+        for field in ("method_label", "systems", "eos_mesh", "result_mesh"):
+            if str(record.get(field, "")) != str(csv_row.get(field, "")):
+                raise ValueError(
+                    f"LC12/{method}/{scope}/{field} differs between JSON and CSV"
+                )
         n = integer(record.get("n_systems"), f"LC12/{method}/{scope}/N")
         if integer(csv_row.get("n_systems"), f"LC12 CSV/{method}/{scope}/N") != n:
             raise ValueError(f"LC12/{method}/{scope} coverage mismatch")

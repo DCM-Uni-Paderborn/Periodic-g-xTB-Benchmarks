@@ -224,12 +224,19 @@ class PaperBenchmarkBundleTests(unittest.TestCase):
             json_path = root / "Goldzak12" / "data" / "lc12_gfn_gxtb_paper_summary.json"
             csv_path = root / "Goldzak12" / "data" / "lc12_gfn_gxtb_paper_summary.csv"
             payload = json.loads(json_path.read_text())
+            with csv_path.open() as handle:
+                csv_rows = list(csv.DictReader(handle))
             for row in payload["summary_rows"]:
                 if row["method_id"] == "GXTB" and row["scope"] == "three_method_common_subset":
                     row["systems"] = "different"
+            for row in csv_rows:
+                if row["method_id"] == "GXTB" and row["scope"] == "three_method_common_subset":
+                    row["systems"] = "different"
+            write_csv(csv_path, csv_rows)
+            payload["paper_summary_csv"]["sha256"] = digest(csv_path)
             json_path.write_text(json.dumps(payload, indent=2) + "\n")
-            # The child CSV remains internally hash-valid; the mismatch is between its
-            # systems and the JSON/common-method contract and must still be rejected.
+            # The child JSON/CSV pair agrees and is hash-valid, but the actual common
+            # systems differ by method and must still be rejected.
             with self.assertRaisesRegex(ValueError, "common-subset systems differ"):
                 bundle.finalize(root, root / "paper")
 
