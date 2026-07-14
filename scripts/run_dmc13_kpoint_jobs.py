@@ -9,7 +9,9 @@ import hashlib
 import json
 import math
 import os
+import queue
 import re
+import signal
 import shutil
 import subprocess
 import sys
@@ -122,11 +124,89 @@ def positive_int(value: str) -> int:
     return parsed
 
 
-def thread_configuration(threads_per_job: int) -> dict[str, object]:
+def resolve_mpi_launcher(mpi_launcher: str | Path) -> Path:
+    candidate = Path(mpi_launcher).expanduser()
+    if candidate.parent != Path("."):
+        resolved = candidate.resolve()
+        if not resolved.is_file() or not os.access(resolved, os.X_OK):
+            raise ValueError(f"MPI launcher is not executable: {resolved}")
+        return resolved
+    discovered = shutil.which(str(mpi_launcher))
+    if discovered is None:
+        raise ValueError(f"MPI launcher is not on PATH: {mpi_launcher}")
+    return Path(discovered).resolve()
+
+
+def parse_cpu_set(value: str) -> set[int]:
+    cpus: set[int] = set()
+    for raw_part in value.split(","):
+        part = raw_part.strip()
+        if not part:
+            raise ValueError(f"invalid empty CPU-set component in {value!r}")
+        if "-" in part:
+            fields = part.split("-")
+            if len(fields) != 2 or not all(field.isdigit() for field in fields):
+                raise ValueError(f"invalid CPU-set range {part!r}")
+            first, last = (int(field) for field in fields)
+            if last < first:
+                raise ValueError(f"descending CPU-set range {part!r}")
+            selected = set(range(first, last + 1))
+        else:
+            if not part.isdigit():
+                raise ValueError(f"invalid CPU-set index {part!r}")
+            selected = {int(part)}
+        if cpus & selected:
+            raise ValueError(f"duplicate CPU index in {value!r}")
+        cpus.update(selected)
+    if not cpus:
+        raise ValueError("CPU set must not be empty")
+    return cpus
+
+
+def validate_cpu_sets(
+    cpu_sets: list[str],
+    jobs: int,
+    mpi_ranks_per_job: int,
+    threads_per_job: int,
+) -> list[set[int]]:
+    if not cpu_sets:
+        return []
+    if len(cpu_sets) != jobs:
+        raise ValueError(
+            f"exactly one --cpu-set is required per concurrent job: "
+            f"got {len(cpu_sets)}, expected {jobs}"
+        )
+    parsed = [parse_cpu_set(value) for value in cpu_sets]
+    required = mpi_ranks_per_job * threads_per_job
+    for value, cpus in zip(cpu_sets, parsed, strict=True):
+        if len(cpus) < required:
+            raise ValueError(
+                f"CPU set {value!r} contains {len(cpus)} CPUs but each job "
+                f"requests {required} MPI-rank/OpenMP slots"
+            )
+    for index, left in enumerate(parsed):
+        for other_index in range(index):
+            overlap = left & parsed[other_index]
+            if overlap:
+                raise ValueError(
+                    f"CPU sets {cpu_sets[other_index]!r} and {cpu_sets[index]!r} "
+                    f"overlap at {sorted(overlap)}"
+                )
+    return parsed
+
+
+def thread_configuration(
+    threads_per_job: int,
+    mpi_ranks_per_job: int = 1,
+    mpi_launcher: str | Path | None = None,
+) -> dict[str, object]:
     if threads_per_job < 1:
         raise ValueError("threads_per_job must be positive")
+    if mpi_ranks_per_job < 1:
+        raise ValueError("mpi_ranks_per_job must be positive")
     return {
-        "mpi_ranks_per_job": 1,
+        "mpi_ranks_per_job": mpi_ranks_per_job,
+        "mpi_launcher": str(mpi_launcher) if mpi_ranks_per_job > 1 else None,
         "threads_per_job": threads_per_job,
         "omp_num_threads": threads_per_job,
         "omp_schedule": OMP_SCHEDULE,
@@ -138,13 +218,34 @@ def thread_configuration(threads_per_job: int) -> dict[str, object]:
     }
 
 
-def execution_parallelism(jobs: int, threads_per_job: int) -> dict[str, object]:
+def execution_parallelism(
+    jobs: int,
+    threads_per_job: int,
+    mpi_ranks_per_job: int = 1,
+    mpi_launcher: str | Path | None = None,
+    cpu_sets: list[str] | None = None,
+    mpi_launcher_args: list[str] | None = None,
+) -> dict[str, object]:
     if jobs < 1:
         raise ValueError("jobs must be positive")
+    parsed_cpu_sets = validate_cpu_sets(
+        cpu_sets or [],
+        jobs,
+        mpi_ranks_per_job,
+        threads_per_job,
+    )
     return {
         "jobs": jobs,
-        "nominal_cores": jobs * threads_per_job,
-        **thread_configuration(threads_per_job),
+        "nominal_cores": jobs * mpi_ranks_per_job * threads_per_job,
+        "cpu_sets": cpu_sets or [],
+        "cpu_set_sizes": [len(cpus) for cpus in parsed_cpu_sets],
+        "cpu_sets_disjoint": bool(parsed_cpu_sets),
+        "mpi_launcher_args": mpi_launcher_args or [],
+        **thread_configuration(
+            threads_per_job,
+            mpi_ranks_per_job,
+            mpi_launcher,
+        ),
     }
 
 
@@ -355,6 +456,11 @@ def write_stamp(
     job: Job,
     identity: ProductionIdentity,
     threads_per_job: int = 1,
+    mpi_ranks_per_job: int = 1,
+    mpi_launcher: str | Path | None = None,
+    cpu_set: str | None = None,
+    taskset: str | Path | None = None,
+    mpi_launcher_args: list[str] | None = None,
 ) -> None:
     output = job.run_dir / job.output_name
     frozen_input = frozen_input_path(job)
@@ -391,7 +497,15 @@ def write_stamp(
         "adopted_existing_output": False,
         "gxtb_protocol_id": GXTB_PROTOCOL_ID if job.method == "GXTB" else None,
         "input_contract_valid": not gxtb_input_contract_errors(job),
-        **thread_configuration(threads_per_job),
+        "cpu_set": cpu_set,
+        "cpu_set_size": len(parse_cpu_set(cpu_set)) if cpu_set is not None else None,
+        "taskset": str(taskset) if cpu_set is not None else None,
+        "mpi_launcher_args": mpi_launcher_args or [],
+        **thread_configuration(
+            threads_per_job,
+            mpi_ranks_per_job,
+            mpi_launcher,
+        ),
     }
     atomic_write_bytes(
         stamp_path(job),
@@ -419,8 +533,21 @@ def run_job(
     force: bool,
     stop_event: threading.Event | None = None,
     threads_per_job: int = 1,
+    mpi_ranks_per_job: int = 1,
+    mpi_launcher: str | Path = "mpiexec",
+    cpu_set: str | None = None,
+    taskset: str | Path = "taskset",
+    mpi_launcher_args: list[str] | None = None,
 ) -> tuple[Job, int]:
-    thread_configuration(threads_per_job)
+    launcher = None
+    if mpi_ranks_per_job > 1:
+        launcher = resolve_mpi_launcher(mpi_launcher)
+    thread_configuration(threads_per_job, mpi_ranks_per_job, launcher)
+    taskset_executable = None
+    if cpu_set is not None:
+        if len(parse_cpu_set(cpu_set)) < mpi_ranks_per_job * threads_per_job:
+            raise ValueError(f"CPU set {cpu_set!r} is too small for this job")
+        taskset_executable = resolve_mpi_launcher(taskset)
     if stop_event is not None and stop_event.is_set():
         return job, 130
     contract_errors = gxtb_input_contract_errors(job)
@@ -445,15 +572,33 @@ def run_job(
     env.pop("OMP_PROC_BIND", None)
     env.pop("OMP_PLACES", None)
     env.update(BLAS_THREAD_ENVIRONMENT)
+    command = [
+        str(identity.cp2k),
+        "-i",
+        local_input.name,
+        "-o",
+        job.output_name,
+    ]
+    if launcher is not None:
+        command = [
+            str(launcher),
+            *(mpi_launcher_args or []),
+            "-np",
+            str(mpi_ranks_per_job),
+            *command,
+        ]
+    if taskset_executable is not None:
+        command = [str(taskset_executable), "-c", cpu_set, *command]
     log_path = job.run_dir / "run.log"
     with log_path.open("w") as log:
         proc = subprocess.Popen(
-            [str(identity.cp2k), "-i", local_input.name, "-o", job.output_name],
+            command,
             cwd=job.run_dir,
             stdout=log,
             stderr=subprocess.STDOUT,
             env=env,
             text=True,
+            start_new_session=True,
         )
         while True:
             try:
@@ -462,19 +607,59 @@ def run_job(
             except subprocess.TimeoutExpired:
                 if stop_event is None or not stop_event.is_set():
                     continue
-                proc.terminate()
+                os.killpg(proc.pid, signal.SIGTERM)
                 try:
                     returncode = proc.wait(timeout=5.0)
                 except subprocess.TimeoutExpired:
-                    proc.kill()
+                    os.killpg(proc.pid, signal.SIGKILL)
                     returncode = proc.wait()
                 break
     completed = has_completed(output)
     if returncode == 0 and completed:
-        write_stamp(job, identity, threads_per_job)
+        write_stamp(
+            job,
+            identity,
+            threads_per_job,
+            mpi_ranks_per_job,
+            launcher,
+            cpu_set,
+            taskset_executable,
+            mpi_launcher_args,
+        )
     elif stamp_path(job).exists():
         stamp_path(job).unlink()
     return job, returncode if returncode != 0 or completed else 1
+
+
+def run_job_with_cpu_pool(
+    identity: ProductionIdentity,
+    job: Job,
+    force: bool,
+    stop_event: threading.Event | None,
+    threads_per_job: int,
+    mpi_ranks_per_job: int,
+    mpi_launcher: str | Path,
+    cpu_pool: queue.Queue[str] | None,
+    taskset: str | Path,
+    mpi_launcher_args: list[str],
+) -> tuple[Job, int]:
+    cpu_set = cpu_pool.get() if cpu_pool is not None else None
+    try:
+        return run_job(
+            identity,
+            job,
+            force,
+            stop_event,
+            threads_per_job,
+            mpi_ranks_per_job,
+            mpi_launcher,
+            cpu_set,
+            taskset,
+            mpi_launcher_args,
+        )
+    finally:
+        if cpu_pool is not None and cpu_set is not None:
+            cpu_pool.put(cpu_set)
 
 
 def sha256(path: Path) -> str:
@@ -2588,7 +2773,16 @@ def write_provenance(
 ) -> None:
     parallel_jobs = int(getattr(args, "jobs", 1))
     threads_per_job = int(getattr(args, "threads_per_job", 1))
-    parallelism = execution_parallelism(parallel_jobs, threads_per_job)
+    mpi_ranks_per_job = int(getattr(args, "mpi_ranks_per_job", 1))
+    mpi_launcher = getattr(args, "resolved_mpi_launcher", None)
+    parallelism = execution_parallelism(
+        parallel_jobs,
+        threads_per_job,
+        mpi_ranks_per_job,
+        mpi_launcher,
+        getattr(args, "cpu_set", None),
+        getattr(args, "mpi_launcher_arg", None),
+    )
     phase_coverage = validated_gxtb_phase_coverage(args, identity)
     validated_gxtb_meshes = [
         mesh
@@ -2911,6 +3105,42 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--mpi-ranks-per-job",
+        type=positive_int,
+        default=1,
+        help=(
+            "MPI ranks assigned to each directly managed CP2K job (default: 1); "
+            "the total nominal core budget is jobs*ranks*threads"
+        ),
+    )
+    parser.add_argument(
+        "--mpi-launcher",
+        default="mpiexec",
+        help="MPI launcher executable used when --mpi-ranks-per-job is greater than one",
+    )
+    parser.add_argument(
+        "--mpi-launcher-arg",
+        action="append",
+        default=[],
+        help=(
+            "argument inserted before -np in the MPI command; repeat as needed "
+            "(use --mpi-launcher-arg=--bind-to for values beginning with a dash)"
+        ),
+    )
+    parser.add_argument(
+        "--cpu-set",
+        action="append",
+        help=(
+            "disjoint Linux CPU list assigned from a pool to one concurrent job; "
+            "repeat exactly --jobs times, for example 64-95 and 96-127"
+        ),
+    )
+    parser.add_argument(
+        "--taskset",
+        default="taskset",
+        help="taskset-compatible affinity launcher used with --cpu-set",
+    )
+    parser.add_argument(
         "--resume",
         action="store_true",
         help="retained for compatibility; completed jobs are always resumed safely",
@@ -2921,6 +3151,24 @@ def main() -> None:
         help="archive prior production files and recompute selected GXTB jobs",
     )
     args = parser.parse_args()
+    args.resolved_mpi_launcher = None
+    if args.mpi_ranks_per_job > 1:
+        try:
+            args.resolved_mpi_launcher = resolve_mpi_launcher(args.mpi_launcher)
+        except ValueError as error:
+            parser.error(str(error))
+    try:
+        validate_cpu_sets(
+            args.cpu_set or [],
+            args.jobs,
+            args.mpi_ranks_per_job,
+            args.threads_per_job,
+        )
+        args.resolved_taskset = (
+            resolve_mpi_launcher(args.taskset) if args.cpu_set else None
+        )
+    except ValueError as error:
+        parser.error(str(error))
     if (args.base_validation_index is None) != (
         args.base_validation_index_expected_sha256 is None
     ):
@@ -3144,14 +3392,24 @@ def main() -> None:
         raise SystemExit(f"Invalid g-xTB production inputs:\n{details}")
     stop_event = threading.Event()
     pool = concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs)
+    cpu_pool: queue.Queue[str] | None = None
+    if args.cpu_set:
+        cpu_pool = queue.Queue()
+        for cpu_set in args.cpu_set:
+            cpu_pool.put(cpu_set)
     futures = [
         pool.submit(
-            run_job,
+            run_job_with_cpu_pool,
             identity,
             job,
             args.force,
             stop_event,
             args.threads_per_job,
+            args.mpi_ranks_per_job,
+            args.resolved_mpi_launcher or args.mpi_launcher,
+            cpu_pool,
+            args.resolved_taskset or args.taskset,
+            args.mpi_launcher_arg,
         )
         for job in all_jobs
     ]

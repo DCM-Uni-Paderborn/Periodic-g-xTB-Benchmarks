@@ -922,6 +922,7 @@ class DMC13RunnerSafetyTests(unittest.TestCase):
             )
             stamp = json.loads(runner.stamp_path(job).read_text())
             self.assertEqual(stamp["mpi_ranks_per_job"], 1)
+            self.assertIsNone(stamp["mpi_launcher"])
             self.assertEqual(stamp["threads_per_job"], 3)
             self.assertEqual(stamp["omp_num_threads"], 3)
             self.assertEqual(stamp["omp_schedule"], "static")
@@ -946,6 +947,123 @@ class DMC13RunnerSafetyTests(unittest.TestCase):
         self.assertEqual(parallelism["nominal_cores"], 15)
         self.assertEqual(parallelism["mpi_ranks_per_job"], 1)
         self.assertEqual(parallelism["blas_threads"], 1)
+        self.assertEqual(parallelism["cpu_sets"], [])
+        self.assertEqual(parallelism["mpi_launcher_args"], [])
+
+    def test_cpu_sets_must_be_sized_and_pairwise_disjoint(self) -> None:
+        parsed = runner.validate_cpu_sets(["64-71", "80-87"], 2, 4, 2)
+        self.assertEqual([len(cpus) for cpus in parsed], [8, 8])
+        parallelism = runner.execution_parallelism(
+            2,
+            2,
+            4,
+            "/opt/mpi/bin/mpirun",
+            ["64-71", "80-87"],
+            ["--bind-to", "none"],
+        )
+        self.assertEqual(parallelism["cpu_set_sizes"], [8, 8])
+        self.assertIs(parallelism["cpu_sets_disjoint"], True)
+        self.assertEqual(parallelism["mpi_launcher_args"], ["--bind-to", "none"])
+        with self.assertRaisesRegex(ValueError, "overlap"):
+            runner.validate_cpu_sets(["0-7", "7-14"], 2, 4, 2)
+        with self.assertRaisesRegex(ValueError, "contains 4 CPUs"):
+            runner.validate_cpu_sets(["0-3", "8-15"], 2, 4, 2)
+        with self.assertRaisesRegex(ValueError, "exactly one"):
+            runner.validate_cpu_sets(["0-7"], 2, 4, 2)
+
+    def test_mpi_job_launches_requested_ranks_and_records_budget(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            input_path = root / "source.inp"
+            input_path.write_text("&GLOBAL\n&END GLOBAL\n")
+            run_dir = root / "run"
+            cp2k = root / "fake-cp2k"
+            cp2k.write_text(
+                "#!/bin/sh\n"
+                "while [ \"$#\" -gt 0 ]; do\n"
+                "  if [ \"$1\" = \"-o\" ]; then shift; out=\"$1\"; fi\n"
+                "  shift\n"
+                "done\n"
+                "printf '%s\\n' 'SCF run converged' "
+                "'ENERGY| Total FORCE_EVAL ( QS ) energy [a.u.] -1.0' "
+                "'PROGRAM ENDED' > \"$out\"\n"
+            )
+            cp2k.chmod(cp2k.stat().st_mode | 0o111)
+            launcher = root / "fake-mpiexec"
+            launcher.write_text(
+                "#!/bin/sh\n"
+                "printf '%s\\n' \"$1\" \"$2\" > mpi-launch.txt\n"
+                "shift 2\n"
+                "exec \"$@\"\n"
+            )
+            launcher.chmod(launcher.stat().st_mode | 0o111)
+            job = runner.Job("gamma", "GFN1", "Ih", input_path, run_dir, "result.out")
+            identity = fake_production_identity(root, cp2k)
+
+            _, returncode = runner.run_job(
+                identity,
+                job,
+                False,
+                threading.Event(),
+                threads_per_job=2,
+                mpi_ranks_per_job=4,
+                mpi_launcher=launcher,
+            )
+
+            self.assertEqual(returncode, 0)
+            self.assertEqual((run_dir / "mpi-launch.txt").read_text().splitlines(), ["-np", "4"])
+            stamp = json.loads(runner.stamp_path(job).read_text())
+            self.assertEqual(stamp["mpi_ranks_per_job"], 4)
+            self.assertEqual(stamp["threads_per_job"], 2)
+            self.assertEqual(stamp["mpi_launcher"], str(launcher.resolve()))
+            parallelism = runner.execution_parallelism(2, 2, 4, launcher.resolve())
+            self.assertEqual(parallelism["nominal_cores"], 16)
+
+    def test_job_affinity_is_applied_and_recorded(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            input_path = root / "source.inp"
+            input_path.write_text("&GLOBAL\n&END GLOBAL\n")
+            run_dir = root / "run"
+            cp2k = root / "fake-cp2k"
+            cp2k.write_text(
+                "#!/bin/sh\n"
+                "while [ \"$#\" -gt 0 ]; do\n"
+                "  if [ \"$1\" = \"-o\" ]; then shift; out=\"$1\"; fi\n"
+                "  shift\n"
+                "done\n"
+                "printf '%s\\n' 'SCF run converged' "
+                "'ENERGY| Total FORCE_EVAL ( QS ) energy [a.u.] -1.0' "
+                "'PROGRAM ENDED' > \"$out\"\n"
+            )
+            cp2k.chmod(cp2k.stat().st_mode | 0o111)
+            taskset = root / "fake-taskset"
+            taskset.write_text(
+                "#!/bin/sh\n"
+                "printf '%s\\n' \"$1\" \"$2\" > affinity.txt\n"
+                "shift 2\n"
+                "exec \"$@\"\n"
+            )
+            taskset.chmod(taskset.stat().st_mode | 0o111)
+            job = runner.Job("gamma", "GFN1", "Ih", input_path, run_dir, "result.out")
+            identity = fake_production_identity(root, cp2k)
+
+            _, returncode = runner.run_job(
+                identity,
+                job,
+                False,
+                threading.Event(),
+                threads_per_job=2,
+                cpu_set="64-65",
+                taskset=taskset,
+            )
+
+            self.assertEqual(returncode, 0)
+            self.assertEqual((run_dir / "affinity.txt").read_text().splitlines(), ["-c", "64-65"])
+            stamp = json.loads(runner.stamp_path(job).read_text())
+            self.assertEqual(stamp["cpu_set"], "64-65")
+            self.assertEqual(stamp["cpu_set_size"], 2)
+            self.assertEqual(stamp["taskset"], str(taskset.resolve()))
 
     def test_write_stamp_refuses_source_frozen_input_mismatch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

@@ -32,9 +32,9 @@
   "method": "GXTB",
   "parents": [
     {
-      "record_count": 111,
+      "record_count": 109,
       "schema_version": 2,
-      "sha256": "09da7d85b7c288dfaa18e39e69270b51c21ab7baa039052a0c5df5008d32fb47"
+      "sha256": "421401efca87a2625b1ad48936ca2e9f72e6f1f82985f62b22d2c24fd224b541"
     }
   ],
   "records": [
@@ -1702,36 +1702,6 @@
       "phase": "VII",
       "stamp": "runs_gxtb_spglib/k101010/VII/ice_VII_GXTB_k101010.run.json",
       "stamp_sha256": "a2f7b65476aebcbf8631c010ac61f7d80c92fe7b1f6027a028ae85049a793992"
-    },
-    {
-      "build_id": "sha256:26e85dd1df4508b93fa7b8e0d1ba6c57f4ef719bf99d0776ac1346b8fa7cb5f3",
-      "campaign_id": "gxtb-pbc-v1-20260714",
-      "frozen_input": "runs_gxtb_spglib/k111111/Ih/ice_Ih_GXTB_k111111.inp",
-      "frozen_input_sha256": "ed940c4fae33a6ae6dc5e6dd9cac406cf00bdd8a391ea026b477ce4da7339ac0",
-      "gxtb_protocol_id": "dmc13-gxtb-spglib-reduced-v1",
-      "input": "gxtb_spglib_inputs/k111111/ice_Ih_GXTB_k111111.inp",
-      "input_sha256": "ed940c4fae33a6ae6dc5e6dd9cac406cf00bdd8a391ea026b477ce4da7339ac0",
-      "mesh": "k111111",
-      "output": "runs_gxtb_spglib/k111111/Ih/ice_Ih_GXTB_k111111.out",
-      "output_sha256": "ca6434e64f10f5815ffc7da5e4cebbab3f28c2bc6b8125fa0a890b0b5f60ea3a",
-      "phase": "Ih",
-      "stamp": "runs_gxtb_spglib/k111111/Ih/ice_Ih_GXTB_k111111.run.json",
-      "stamp_sha256": "866972d0c704e86427e0efca732309d6621cb4ce9315203bb1211bb69b4136e6"
-    },
-    {
-      "build_id": "sha256:26e85dd1df4508b93fa7b8e0d1ba6c57f4ef719bf99d0776ac1346b8fa7cb5f3",
-      "campaign_id": "gxtb-pbc-v1-20260714",
-      "frozen_input": "runs_gxtb_spglib/k111111/VII/ice_VII_GXTB_k111111.inp",
-      "frozen_input_sha256": "f3372a6476dd3bece16488539455ca2d6f06057e313b88982611173f3228bf16",
-      "gxtb_protocol_id": "dmc13-gxtb-spglib-reduced-v1",
-      "input": "gxtb_spglib_inputs/k111111/ice_VII_GXTB_k111111.inp",
-      "input_sha256": "f3372a6476dd3bece16488539455ca2d6f06057e313b88982611173f3228bf16",
-      "mesh": "k111111",
-      "output": "runs_gxtb_spglib/k111111/VII/ice_VII_GXTB_k111111.out",
-      "output_sha256": "5f4c49ac8c115abdea99943dc435596b326791f746ac9f2baee0c1c4279162d5",
-      "phase": "VII",
-      "stamp": "runs_gxtb_spglib/k111111/VII/ice_VII_GXTB_k111111.run.json",
-      "stamp_sha256": "7dcc8378514ca3aa64a1467e23648236e534c8f837694c5d76adc9ef0d972483"
     }
   ],
   "schema_version": 2,
@@ -1783,10 +1753,6 @@
       "XIV",
       "XV",
       "XVII"
-    ],
-    "k111111": [
-      "Ih",
-      "VII"
     ],
     "k222": [
       "Ih",

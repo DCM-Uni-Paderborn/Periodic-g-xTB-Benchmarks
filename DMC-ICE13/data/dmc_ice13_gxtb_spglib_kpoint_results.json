@@ -195,6 +195,22 @@
       "scheme": "MACDONALD 9 9 9 0.0 0.0 0.0",
       "shift": "0.0 0.0 0.0",
       "della_pia_role": "optional dense convergence extension"
+    },
+    {
+      "id": "k101010",
+      "label": "10x10x10",
+      "nk_total": 1000,
+      "scheme": "MACDONALD 10 10 10 0.45 0.45 0.45",
+      "shift": "0.45 0.45 0.45",
+      "della_pia_role": "optional dense convergence extension"
+    },
+    {
+      "id": "k111111",
+      "label": "11x11x11",
+      "nk_total": 1331,
+      "scheme": "MACDONALD 11 11 11 0.0 0.0 0.0",
+      "shift": "0.0 0.0 0.0",
+      "della_pia_role": "optional dense convergence extension"
     }
   ],
   "methods": [
@@ -342,6 +358,14 @@
       "VII",
       "XI",
       "XIV"
+    ],
+    "k101010": [
+      "Ih",
+      "VII"
+    ],
+    "k111111": [
+      "Ih",
+      "VII"
     ]
   },
   "results": {
@@ -1919,6 +1943,134 @@
           "VII": 4.890113120226789,
           "XI": -0.3281639105635429,
           "XIV": -2.8934087531906307
+        }
+      }
+    },
+    "k101010": {
+      "GFN1": {
+        "complete": false,
+        "energies_hartree": {
+          "Ih": null,
+          "II": null,
+          "III": null,
+          "IV": null,
+          "VI": null,
+          "VII": null,
+          "VIII": null,
+          "IX": null,
+          "XI": null,
+          "XIII": null,
+          "XIV": null,
+          "XV": null,
+          "XVII": null
+        }
+      },
+      "GFN2": {
+        "complete": false,
+        "energies_hartree": {
+          "Ih": null,
+          "II": null,
+          "III": null,
+          "IV": null,
+          "VI": null,
+          "VII": null,
+          "VIII": null,
+          "IX": null,
+          "XI": null,
+          "XIII": null,
+          "XIV": null,
+          "XV": null,
+          "XVII": null
+        }
+      },
+      "GXTB": {
+        "complete": false,
+        "energies_hartree": {
+          "Ih": -917.4646458067822,
+          "II": null,
+          "III": null,
+          "IV": null,
+          "VI": null,
+          "VII": -917.4417884737387,
+          "VIII": null,
+          "IX": null,
+          "XI": null,
+          "XIII": null,
+          "XIV": null,
+          "XV": null,
+          "XVII": null
+        },
+        "per_h2o_hartree": {
+          "Ih": -76.45538715056519,
+          "VII": -76.45348237281156
+        },
+        "relative_kjmol": {
+          "Ih": 0.0,
+          "VII": 5.00099330260755
+        }
+      }
+    },
+    "k111111": {
+      "GFN1": {
+        "complete": false,
+        "energies_hartree": {
+          "Ih": null,
+          "II": null,
+          "III": null,
+          "IV": null,
+          "VI": null,
+          "VII": null,
+          "VIII": null,
+          "IX": null,
+          "XI": null,
+          "XIII": null,
+          "XIV": null,
+          "XV": null,
+          "XVII": null
+        }
+      },
+      "GFN2": {
+        "complete": false,
+        "energies_hartree": {
+          "Ih": null,
+          "II": null,
+          "III": null,
+          "IV": null,
+          "VI": null,
+          "VII": null,
+          "VIII": null,
+          "IX": null,
+          "XI": null,
+          "XIII": null,
+          "XIV": null,
+          "XV": null,
+          "XVII": null
+        }
+      },
+      "GXTB": {
+        "complete": false,
+        "energies_hartree": {
+          "Ih": -917.4646458067214,
+          "II": null,
+          "III": null,
+          "IV": null,
+          "VI": null,
+          "VII": -917.4416461643083,
+          "VIII": null,
+          "IX": null,
+          "XI": null,
+          "XIII": null,
+          "XIV": null,
+          "XV": null,
+          "XVII": null
+        },
+        "per_h2o_hartree": {
+          "Ih": -76.45538715056011,
+          "VII": -76.45347051369235
+        },
+        "relative_kjmol": {
+          "Ih": 0.0,
+          "VII": 5.032129402485711
         }
       }
     }

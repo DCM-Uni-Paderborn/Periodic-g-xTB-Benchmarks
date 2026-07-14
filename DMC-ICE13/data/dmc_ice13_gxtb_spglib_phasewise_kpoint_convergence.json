@@ -3066,22 +3066,23 @@
       "unresolved_phases": []
     },
     "GXTB": {
-      "converged_phase_count": 11,
+      "converged_phase_count": 12,
       "exhausted_mesh_sequence_phases": [],
       "expected_phase_count": 12,
       "last_delta_statistics_diagnostic": {
-        "complete": false,
-        "delta_count": 11,
+        "complete": true,
+        "delta_count": 12,
         "diagnostic_only": true,
         "expected_delta_count": 12,
         "max_absolute_delta_kjmol_per_h2o": 0.042265288964932424,
-        "mean_absolute_delta_kjmol_per_h2o": 0.01956751252530302,
-        "rms_delta_kjmol_per_h2o": 0.022408500683093868,
+        "mean_absolute_delta_kjmol_per_h2o": 0.02053156147137451,
+        "rms_delta_kjmol_per_h2o": 0.02326120992684533,
         "values_kjmol_per_h2o": [
           0.00763712785388293,
           0.03454228618996158,
           -0.008734330115140299,
           0.019497769680676846,
+          0.031136099878160906,
           0.02802402928440828,
           0.017952237838334106,
           0.01640009280515292,
@@ -3091,16 +3092,15 @@
           0.014938592703248155
         ]
       },
-      "mae_mesh_difference_bound": null,
-      "method_label": "g-xTB",
-      "next_required_by_mesh": {
-        "k101010": [
-          "VII"
-        ]
+      "mae_mesh_difference_bound": {
+        "bound_satisfied": true,
+        "formula": "|MAE(converged)-MAE(previous mesh)| <= mean_phase(|last delta|)",
+        "observed_absolute_mae_difference_kjmol_per_h2o": 0.013022160515796521,
+        "provable_absolute_mae_difference_upper_bound_kjmol_per_h2o": 0.02053156147137451
       },
-      "next_required_phases": [
-        "VII"
-      ],
+      "method_label": "g-xTB",
+      "next_required_by_mesh": {},
+      "next_required_phases": [],
       "phase_convergence": {
         "II": {
           "absolute_last_delta_kjmol_per_h2o": 0.00763712785388293,
@@ -3201,6 +3201,26 @@
           "relative_energy_kjmol_per_h2o": -4.5649485909955905,
           "revoked_by_later_evidence": false,
           "smallest_required_mesh": "k777"
+        },
+        "VII": {
+          "absolute_last_delta_kjmol_per_h2o": 0.031136099878160906,
+          "chronological_pair_index": 9,
+          "dmc_relative_kjmol_per_h2o": 4.990000000000002,
+          "error_kjmol_per_h2o": 0.042129402485708844,
+          "last_delta_kjmol_per_h2o": 0.031136099878160906,
+          "later_available_contradictions": [],
+          "mesh_label": "11x11x11",
+          "mesh_n": 11,
+          "nk_total": 1331,
+          "parity_direction": "even->odd",
+          "passes_phase_limit": true,
+          "previous_mesh": "k101010",
+          "previous_relative_energy_kjmol_per_h2o": 5.00099330260755,
+          "reference_phase": "Ih",
+          "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
+          "relative_energy_kjmol_per_h2o": 5.032129402485711,
+          "revoked_by_later_evidence": false,
+          "smallest_required_mesh": "k111111"
         },
         "VIII": {
           "absolute_last_delta_kjmol_per_h2o": 0.02802402928440828,
@@ -3950,7 +3970,9 @@
             "k666",
             "k777",
             "k888",
-            "k999"
+            "k999",
+            "k101010",
+            "k111111"
           ],
           "failed_available_pairs": [
             {
@@ -4096,16 +4118,53 @@
               "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
               "relative_energy_kjmol_per_h2o": 4.890113120226789,
               "smallest_required_mesh": "k999"
+            },
+            {
+              "absolute_last_delta_kjmol_per_h2o": 0.11088018238076103,
+              "chronological_pair_index": 8,
+              "dmc_relative_kjmol_per_h2o": 4.990000000000002,
+              "error_kjmol_per_h2o": 0.010993302607547939,
+              "last_delta_kjmol_per_h2o": 0.11088018238076103,
+              "mesh_label": "10x10x10",
+              "mesh_n": 10,
+              "nk_total": 1000,
+              "parity_direction": "odd->even",
+              "passes_phase_limit": false,
+              "previous_mesh": "k999",
+              "previous_relative_energy_kjmol_per_h2o": 4.890113120226789,
+              "reference_phase": "Ih",
+              "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
+              "relative_energy_kjmol_per_h2o": 5.00099330260755,
+              "smallest_required_mesh": "k101010"
             }
           ],
           "missing_meshes": [
-            "k101010",
-            "k111111",
             "k121212",
             "k131313"
           ],
           "revoked_candidates": [],
-          "stable_candidates": []
+          "stable_candidates": [
+            {
+              "absolute_last_delta_kjmol_per_h2o": 0.031136099878160906,
+              "chronological_pair_index": 9,
+              "dmc_relative_kjmol_per_h2o": 4.990000000000002,
+              "error_kjmol_per_h2o": 0.042129402485708844,
+              "last_delta_kjmol_per_h2o": 0.031136099878160906,
+              "later_available_contradictions": [],
+              "mesh_label": "11x11x11",
+              "mesh_n": 11,
+              "nk_total": 1331,
+              "parity_direction": "even->odd",
+              "passes_phase_limit": true,
+              "previous_mesh": "k101010",
+              "previous_relative_energy_kjmol_per_h2o": 5.00099330260755,
+              "reference_phase": "Ih",
+              "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
+              "relative_energy_kjmol_per_h2o": 5.032129402485711,
+              "revoked_by_later_evidence": false,
+              "smallest_required_mesh": "k111111"
+            }
+          ]
         },
         "VIII": {
           "available_meshes": [
@@ -4984,188 +5043,25 @@
           ]
         }
       },
-      "phasewise_kpoint_converged": false,
-      "phasewise_kpoint_converged_stats_nonreference": null,
-      "previous_mesh_comparison_stats_nonreference": null,
-      "required_same_mesh_reference_by_mesh": {
-        "k101010": "Ih"
+      "phasewise_kpoint_converged": true,
+      "phasewise_kpoint_converged_stats_nonreference": {
+        "MAE": 3.906294510467666,
+        "ME": -3.8992729433867144,
+        "MaxAE": 6.477974213481016,
+        "RMSE": 4.4314740007519715
       },
+      "previous_mesh_comparison_stats_nonreference": {
+        "MAE": 3.9193166709834624,
+        "ME": -3.9174844538822047,
+        "MaxAE": 6.492912806184264,
+        "RMSE": 4.445496897527418
+      },
+      "required_same_mesh_reference_by_mesh": {},
       "result_label": "phase-wise k-point-converged MAE",
       "result_label_de": "phasenweise k-Punkt-konvergierter MAE",
-      "status": "unresolved_phases",
-      "unresolved": {
-        "VII": {
-          "available_meshes": [
-            "k111",
-            "k222",
-            "k333",
-            "k444",
-            "k555",
-            "k666",
-            "k777",
-            "k888",
-            "k999"
-          ],
-          "failed_available_pairs": [
-            {
-              "absolute_last_delta_kjmol_per_h2o": 192.53231406940012,
-              "chronological_pair_index": 0,
-              "dmc_relative_kjmol_per_h2o": 4.990000000000002,
-              "error_kjmol_per_h2o": -304.33076783898815,
-              "last_delta_kjmol_per_h2o": 192.53231406940012,
-              "mesh_label": "2x2x2",
-              "mesh_n": 2,
-              "nk_total": 8,
-              "parity_direction": "odd->even",
-              "passes_phase_limit": false,
-              "previous_mesh": "k111",
-              "previous_relative_energy_kjmol_per_h2o": -491.87308190838826,
-              "reference_phase": "Ih",
-              "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
-              "relative_energy_kjmol_per_h2o": -299.34076783898814,
-              "smallest_required_mesh": "k222"
-            },
-            {
-              "absolute_last_delta_kjmol_per_h2o": 149.8120117517202,
-              "chronological_pair_index": 1,
-              "dmc_relative_kjmol_per_h2o": 4.990000000000002,
-              "error_kjmol_per_h2o": -154.51875608726795,
-              "last_delta_kjmol_per_h2o": 149.8120117517202,
-              "mesh_label": "3x3x3",
-              "mesh_n": 3,
-              "nk_total": 27,
-              "parity_direction": "even->odd",
-              "passes_phase_limit": false,
-              "previous_mesh": "k222",
-              "previous_relative_energy_kjmol_per_h2o": -299.34076783898814,
-              "reference_phase": "Ih",
-              "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
-              "relative_energy_kjmol_per_h2o": -149.52875608726794,
-              "smallest_required_mesh": "k333"
-            },
-            {
-              "absolute_last_delta_kjmol_per_h2o": 90.45887350934481,
-              "chronological_pair_index": 2,
-              "dmc_relative_kjmol_per_h2o": 4.990000000000002,
-              "error_kjmol_per_h2o": -64.05988257792312,
-              "last_delta_kjmol_per_h2o": 90.45887350934481,
-              "mesh_label": "4x4x4",
-              "mesh_n": 4,
-              "nk_total": 64,
-              "parity_direction": "odd->even",
-              "passes_phase_limit": false,
-              "previous_mesh": "k333",
-              "previous_relative_energy_kjmol_per_h2o": -149.52875608726794,
-              "reference_phase": "Ih",
-              "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
-              "relative_energy_kjmol_per_h2o": -59.06988257792312,
-              "smallest_required_mesh": "k444"
-            },
-            {
-              "absolute_last_delta_kjmol_per_h2o": 42.14416761511261,
-              "chronological_pair_index": 3,
-              "dmc_relative_kjmol_per_h2o": 4.990000000000002,
-              "error_kjmol_per_h2o": -21.915714962810508,
-              "last_delta_kjmol_per_h2o": 42.14416761511261,
-              "mesh_label": "5x5x5",
-              "mesh_n": 5,
-              "nk_total": 125,
-              "parity_direction": "even->odd",
-              "passes_phase_limit": false,
-              "previous_mesh": "k444",
-              "previous_relative_energy_kjmol_per_h2o": -59.06988257792312,
-              "reference_phase": "Ih",
-              "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
-              "relative_energy_kjmol_per_h2o": -16.925714962810506,
-              "smallest_required_mesh": "k555"
-            },
-            {
-              "absolute_last_delta_kjmol_per_h2o": 15.276639065709684,
-              "chronological_pair_index": 4,
-              "dmc_relative_kjmol_per_h2o": 4.990000000000002,
-              "error_kjmol_per_h2o": -6.639075897100823,
-              "last_delta_kjmol_per_h2o": 15.276639065709684,
-              "mesh_label": "6x6x6",
-              "mesh_n": 6,
-              "nk_total": 216,
-              "parity_direction": "odd->even",
-              "passes_phase_limit": false,
-              "previous_mesh": "k555",
-              "previous_relative_energy_kjmol_per_h2o": -16.925714962810506,
-              "reference_phase": "Ih",
-              "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
-              "relative_energy_kjmol_per_h2o": -1.649075897100821,
-              "smallest_required_mesh": "k666"
-            },
-            {
-              "absolute_last_delta_kjmol_per_h2o": 4.759218384800309,
-              "chronological_pair_index": 5,
-              "dmc_relative_kjmol_per_h2o": 4.990000000000002,
-              "error_kjmol_per_h2o": -1.8798575123005143,
-              "last_delta_kjmol_per_h2o": 4.759218384800309,
-              "mesh_label": "7x7x7",
-              "mesh_n": 7,
-              "nk_total": 343,
-              "parity_direction": "even->odd",
-              "passes_phase_limit": false,
-              "previous_mesh": "k666",
-              "previous_relative_energy_kjmol_per_h2o": -1.649075897100821,
-              "reference_phase": "Ih",
-              "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
-              "relative_energy_kjmol_per_h2o": 3.1101424876994876,
-              "smallest_required_mesh": "k777"
-            },
-            {
-              "absolute_last_delta_kjmol_per_h2o": 1.3862245500300237,
-              "chronological_pair_index": 6,
-              "dmc_relative_kjmol_per_h2o": 4.990000000000002,
-              "error_kjmol_per_h2o": -0.4936329622704907,
-              "last_delta_kjmol_per_h2o": 1.3862245500300237,
-              "mesh_label": "8x8x8",
-              "mesh_n": 8,
-              "nk_total": 512,
-              "parity_direction": "odd->even",
-              "passes_phase_limit": false,
-              "previous_mesh": "k777",
-              "previous_relative_energy_kjmol_per_h2o": 3.1101424876994876,
-              "reference_phase": "Ih",
-              "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
-              "relative_energy_kjmol_per_h2o": 4.496367037729511,
-              "smallest_required_mesh": "k888"
-            },
-            {
-              "absolute_last_delta_kjmol_per_h2o": 0.3937460824972776,
-              "chronological_pair_index": 7,
-              "dmc_relative_kjmol_per_h2o": 4.990000000000002,
-              "error_kjmol_per_h2o": -0.09988687977321309,
-              "last_delta_kjmol_per_h2o": 0.3937460824972776,
-              "mesh_label": "9x9x9",
-              "mesh_n": 9,
-              "nk_total": 729,
-              "parity_direction": "even->odd",
-              "passes_phase_limit": false,
-              "previous_mesh": "k888",
-              "previous_relative_energy_kjmol_per_h2o": 4.496367037729511,
-              "reference_phase": "Ih",
-              "relative_energy_construction": "E(phase, mesh)/N(H2O, phase) - E(Ih, same mesh)/N(H2O, Ih)",
-              "relative_energy_kjmol_per_h2o": 4.890113120226789,
-              "smallest_required_mesh": "k999"
-            }
-          ],
-          "missing_meshes": [
-            "k101010",
-            "k111111",
-            "k121212",
-            "k131313"
-          ],
-          "next_required_mesh": "k101010",
-          "revoked_candidates": [],
-          "stable_candidates": []
-        }
-      },
-      "unresolved_phases": [
-        "VII"
-      ]
+      "status": "phasewise_kpoint_converged",
+      "unresolved": {},
+      "unresolved_phases": []
     }
   },
   "nonreference_phases": [
