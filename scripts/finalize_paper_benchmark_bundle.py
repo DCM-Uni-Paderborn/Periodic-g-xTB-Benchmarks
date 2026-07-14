@@ -157,6 +157,13 @@ def validate_dmc(root: Path) -> tuple[list[dict[str, object]], dict[str, object]
         raise ValueError("DMC-ICE13 publication artifact is not phase-wise converged")
     if payload.get("n_nonreference_phases") != 12:
         raise ValueError("DMC-ICE13 publication artifact does not contain 12 comparisons")
+    fixed_contract = payload.get("fixed_k333_same_mesh_comparison")
+    if (
+        not isinstance(fixed_contract, dict)
+        or fixed_contract.get("mesh") != "k333"
+        or fixed_contract.get("not_a_phasewise_converged_result") is not True
+    ):
+        raise ValueError("DMC-ICE13 publication artifact lacks the fixed-k333 comparator")
     methods = payload.get("methods")
     if not isinstance(methods, dict) or set(methods) != set(METHODS):
         raise ValueError("DMC-ICE13 publication artifact lacks the three methods")
@@ -195,6 +202,45 @@ def validate_dmc(root: Path) -> tuple[list[dict[str, object]], dict[str, object]
                 calculation="same-mesh-Ih relative single points",
                 mesh="phase-wise adaptive; |delta(N,N-1)| <= 0.05",
                 status="publication_ready",
+                json_sha=json_sha,
+                csv_sha=csv_sha,
+            )
+        )
+        fixed = record.get("fixed_k333_same_mesh_comparison")
+        if not isinstance(fixed, dict) or fixed.get("mesh") != "k333":
+            raise ValueError(f"DMC-ICE13/{method} fixed-k333 comparator is missing")
+        fixed_status = str(fixed.get("status", ""))
+        expected_status = (
+            "numerically_unconverged_same_mesh_comparator"
+            if method == "GXTB"
+            else "same_mesh_comparator"
+        )
+        if fixed_status != expected_status or fixed.get("phasewise_kpoint_converged_value") is not False:
+            raise ValueError(f"DMC-ICE13/{method} fixed-k333 status is invalid")
+        fixed_metrics = fixed.get("metrics_kjmol_per_h2o")
+        if not isinstance(fixed_metrics, dict):
+            raise ValueError(f"DMC-ICE13/{method} fixed-k333 metrics are missing")
+        if csv_row.get("fixed_k333_status") != fixed_status:
+            raise ValueError(f"DMC-ICE13/{method} fixed-k333 status differs between JSON and CSV")
+        for metric in ("ME", "MAE", "RMSE", "MaxAE"):
+            close(
+                finite(fixed_metrics.get(metric), f"DMC-ICE13/{method}/fixed-k333/{metric}"),
+                finite(csv_row.get(f"fixed_k333_{metric}_kJmol_per_H2O"), f"DMC CSV/{method}/fixed-k333/{metric}"),
+                f"DMC-ICE13/{method}/fixed-k333/{metric}",
+            )
+        output.append(
+            metric_row(
+                benchmark="DMC-ICE13",
+                quantity="relative_energy",
+                scope="fixed_k333_same_mesh_comparator",
+                method_id=method,
+                method_label=str(record.get("method_label", method)),
+                n=n,
+                metrics=fixed_metrics,
+                unit="kJ mol^-1 per H2O",
+                calculation="same-mesh-Ih relative single points",
+                mesh="k333",
+                status=fixed_status,
                 json_sha=json_sha,
                 csv_sha=csv_sha,
             )

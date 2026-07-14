@@ -52,17 +52,39 @@ class PaperBenchmarkBundleTests(unittest.TestCase):
                 "RMSE": float(index) + 0.1,
                 "MaxAE": float(index) + 0.2,
             }
+            fixed_metrics = {
+                "ME": -10.0 * index,
+                "MAE": 10.0 * index,
+                "RMSE": 10.0 * index + 0.1,
+                "MaxAE": 10.0 * index + 0.2,
+            }
+            fixed_status = (
+                "numerically_unconverged_same_mesh_comparator"
+                if method == "GXTB"
+                else "same_mesh_comparator"
+            )
             methods[method] = {
                 "method_label": method,
                 "status": "phasewise_kpoint_converged",
                 "n_nonreference_phases": 12,
                 "metrics_kjmol_per_h2o": metrics,
+                "fixed_k333_same_mesh_comparison": {
+                    "mesh": "k333",
+                    "status": fixed_status,
+                    "phasewise_kpoint_converged_value": False,
+                    "metrics_kjmol_per_h2o": fixed_metrics,
+                },
             }
             csv_rows.append(
                 {
                     "method_id": method,
                     "N_nonreference_phases": 12,
                     **{f"{name}_kJmol_per_H2O": value for name, value in metrics.items()},
+                    "fixed_k333_status": fixed_status,
+                    **{
+                        f"fixed_k333_{name}_kJmol_per_H2O": value
+                        for name, value in fixed_metrics.items()
+                    },
                 }
             )
         (data / "dmc_ice13_gfn_gxtb_phasewise_summary.json").write_text(
@@ -71,6 +93,10 @@ class PaperBenchmarkBundleTests(unittest.TestCase):
                     "benchmark": "DMC-ICE13",
                     "status": "phasewise_kpoint_converged",
                     "n_nonreference_phases": 12,
+                    "fixed_k333_same_mesh_comparison": {
+                        "mesh": "k333",
+                        "not_a_phasewise_converged_result": True,
+                    },
                     "methods": methods,
                 },
                 indent=2,
@@ -180,9 +206,9 @@ class PaperBenchmarkBundleTests(unittest.TestCase):
             payload = json.loads(json_path.read_text())
             self.assertEqual(payload["status"], "publication_ready")
             self.assertEqual(payload["benchmarks"], ["DMC-ICE13", "X23b", "LC12"])
-            self.assertEqual(len(payload["rows"]), 21)
+            self.assertEqual(len(payload["rows"]), 24)
             with csv_path.open() as handle:
-                self.assertEqual(len(list(csv.DictReader(handle))), 21)
+                self.assertEqual(len(list(csv.DictReader(handle))), 24)
             self.assertIn("\\GXTB", tex_path.read_text())
             self.assertEqual(
                 payload["generated_outputs"]["csv_sha256"], digest(csv_path)
