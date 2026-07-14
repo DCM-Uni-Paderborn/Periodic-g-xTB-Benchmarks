@@ -113,6 +113,13 @@ request; this keeps the V1 energy benchmark independent of the later
 force/stress implementation. The frozen GFN1/GFN2 inputs retain their existing
 `STRESS_TENSOR ANALYTICAL` setting.
 
+The diagnostic-only wavefunction-continuation results are summarized in
+`data/gxtb_wfn_hysteresis.csv` and documented in
+`data/gxtb_wfn_hysteresis.md`. They identify multiple self-consistent LiH
+roots with strong path hysteresis and confirm that MgO at scale 0.85 enters a
+symmetry-breaking/collapsed branch. These diagnostics are not included in the
+production lattice-constant or cohesive-energy MAE.
+
 ```bash
 python3 Goldzak12/scripts/run_goldzak12_eos_benchmark.py \
   --method GXTB \
