@@ -20,7 +20,10 @@ from typing import Callable, Mapping
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_GXTB_CAMPAIGN_MANIFEST = (
-    ROOT.parent / "campaigns" / "gxtb-pbc-v1-20260714" / "build_manifest.json"
+    ROOT.parent
+    / "campaigns"
+    / "gxtb-pbc-v1-post5582-20260714"
+    / "build_manifest.json"
 )
 DEFAULT_CP2K = Path(os.environ.get("CP2K", "cp2k.ssmp"))
 DEFAULT_TBLITE = Path(os.environ.get("TBLITE", "tblite"))
@@ -31,6 +34,7 @@ DEFAULT_SAVE_TBLITE_SOURCE = Path(os.environ.get("SAVE_TBLITE_SOURCE", "../save_
 HARTREE_TO_EV = 27.211386245988
 FLOAT = r"[-+]?(?:\d+\.\d*|\.\d+|\d+)(?:[Ee][-+]?\d+)?"
 CAMPAIGN_SCHEMA = 1
+REQUIRED_CP2K_POST5582_ANCESTOR = "c92cc08b45378b85150447011b5a4bb552f5b797"
 CAMPAIGN_IDENTITY_FIELDS = (
     "schema",
     "campaign_id",
@@ -45,6 +49,29 @@ CAMPAIGN_IDENTITY_FIELDS = (
     "save_tblite_cmake_cache_sha256",
     "dependency_lock_sha256",
 )
+
+
+def require_git_ancestor(source: Path, revision: str) -> None:
+    """Fail when *source* is not descended from the required full commit."""
+    if not re.fullmatch(r"[0-9a-f]{40}", revision):
+        raise ValueError(f"required source ancestor is not a full commit hash: {revision}")
+    resolved = source.resolve(strict=True)
+    present = subprocess.run(
+        ["git", "-C", str(resolved), "cat-file", "-e", f"{revision}^{{commit}}"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if present.returncode != 0:
+        raise ValueError(f"source does not contain required commit {revision}")
+    ancestor = subprocess.run(
+        ["git", "-C", str(resolved), "merge-base", "--is-ancestor", revision, "HEAD"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if ancestor.returncode != 0:
+        raise ValueError(f"source HEAD is not descended from required commit {revision}")
 
 
 @dataclass(frozen=True)

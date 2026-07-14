@@ -19,12 +19,14 @@ import math
 import os
 import re
 import shutil
-import subprocess
+import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Mapping
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+import benchmark_execution as execution  # noqa: E402
 import diagnose_gxtb_wfn_hysteresis as wfn
 import run_goldzak12_benchmark as base
 
@@ -145,27 +147,7 @@ def load_plan(path: Path) -> tuple[dict[str, object], str]:
 
 def require_cp2k_ancestor(cp2k_source: Path, revision: str) -> None:
     """Reject the pre-#5582 build even if somebody writes a fresh manifest for it."""
-    source = cp2k_source.resolve(strict=True)
-    present = subprocess.run(
-        ["git", "-C", str(source), "cat-file", "-e", f"{revision}^{{commit}}"],
-        check=False,
-        capture_output=True,
-        text=True,
-    )
-    if present.returncode != 0:
-        raise ValueError(
-            f"CP2K source does not contain required upstream #5582 commit {revision}"
-        )
-    ancestor = subprocess.run(
-        ["git", "-C", str(source), "merge-base", "--is-ancestor", revision, "HEAD"],
-        check=False,
-        capture_output=True,
-        text=True,
-    )
-    if ancestor.returncode != 0:
-        raise ValueError(
-            f"CP2K source HEAD is not descended from required upstream #5582 commit {revision}"
-        )
+    base.require_git_ancestor(cp2k_source, revision)
 
 
 def scale_tag(scale: float) -> str:
@@ -326,6 +308,7 @@ def existing_candidate_issue(
     restart_out: Path,
     parent_manifest: Path | None,
     parent_restart: Path | None,
+    execution_contract: Mapping[str, object] | None = None,
 ) -> str | None:
     if recorded.get("job_signature") != signature:
         return "existing candidate job signature differs from the requested calculation"
@@ -369,6 +352,20 @@ def existing_candidate_issue(
     issue = next((value for value in issues if value), None)
     if issue:
         return issue
+    execution_record = recorded.get("execution_provenance")
+    if execution_contract is None:
+        if execution_record is not None:
+            return "direct candidate unexpectedly records MPI/affinity provenance"
+    else:
+        execution_path, execution_issue = classify_execution_artifact(
+            execution_record,
+            out,
+            execution_contract,
+        )
+        if execution_issue:
+            return execution_issue
+        if execution_path is None:
+            return "missing execution provenance"
     if completed:
         if not base.job_stamp_matches(out, dict(signature)):
             return f"completed candidate does not have a reusable job stamp: {out}"
@@ -380,6 +377,27 @@ def existing_candidate_issue(
         if not all(value is True for value in gates.values()):
             return f"completed candidate no longer passes its numerical gates: {out}"
     return None
+
+
+def classify_execution_artifact(
+    record: object,
+    output: Path,
+    expected_contract: Mapping[str, object],
+) -> tuple[Path | None, str | None]:
+    if not isinstance(record, Mapping):
+        return None, f"missing execution-provenance artifact record for {output}"
+    path = Path(str(record.get("path", "")))
+    if path.resolve() != execution.execution_record_path(output).resolve():
+        return None, f"execution-provenance path collision for {output}"
+    if not path.is_file() or record.get("sha256") != base.sha256(path):
+        return None, f"execution-provenance artifact hash mismatch for {output}"
+    issue = execution.recorded_execution_issue(
+        path,
+        expected_contract,
+        output,
+        base.job_stamp_path(output),
+    )
+    return path, issue
 
 
 def archive_failed_attempt(
@@ -461,6 +479,7 @@ def run_candidate(
     plan_sha256: str,
     threads: int,
     retry_failed: bool,
+    execution_pool: execution.ExecutionPool | None = None,
 ) -> dict[str, object]:
     inp, out, restart_out, manifest_path = candidate_paths(root, ref.solid, mode, scale)
     continuation = restart is not None or parent_manifest is not None
@@ -555,6 +574,9 @@ def run_candidate(
             restart_out=restart_out,
             parent_manifest=parent_manifest,
             parent_restart=restart,
+            execution_contract=(
+                execution_pool.contract if execution_pool is not None else None
+            ),
         )
         if issue:
             raise RuntimeError(f"refusing stale candidate {manifest_path}: {issue}")
@@ -565,7 +587,11 @@ def run_candidate(
 
     if restart_out.exists():
         restart_out.unlink()
-    return_code = base.run_cp2k(cp2k, inp, out, threads)
+    observation: dict[str, object] | None = None
+    if execution_pool is None:
+        return_code = base.run_cp2k(cp2k, inp, out, threads)
+    else:
+        return_code, observation = execution_pool.run_cp2k(cp2k, inp, out)
     gates, diagnostics = numerical_gates(
         out,
         restart_out,
@@ -578,6 +604,14 @@ def run_candidate(
         completed=completed,
         return_code=return_code,
     )
+    execution_provenance = None
+    if execution_pool is not None:
+        assert observation is not None
+        execution_provenance = execution_pool.write_record(
+            out,
+            observation,
+            base.job_stamp_path(out),
+        )
     payload: dict[str, object] = {
         "schema_version": SCHEMA_VERSION,
         "diagnostic": "lc12_gxtb_multistart",
@@ -599,6 +633,7 @@ def run_candidate(
         "input": artifact(inp),
         "output": artifact(out),
         "wfn_restart": artifact(restart_out),
+        "execution_provenance": execution_provenance,
         "numerical_gates": gates,
         "diagnostics": diagnostics,
         "selection_status": "unclassified; never an EOS point",
@@ -623,6 +658,7 @@ def run_solid(
     threads: int,
     workers: int,
     retry_failed: bool,
+    execution_pool: execution.ExecutionPool | None = None,
 ) -> dict[str, object]:
     common = {
         "root": root,
@@ -634,6 +670,7 @@ def run_solid(
         "plan_sha256": plan_sha256,
         "threads": threads,
         "retry_failed": retry_failed,
+        "execution_pool": execution_pool,
     }
     cold: dict[float, dict[str, object]] = {}
     with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
@@ -693,16 +730,25 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--plan", type=Path, default=DEFAULT_PLAN)
     parser.add_argument("--campaign-manifest", type=Path, required=True)
+    parser.add_argument(
+        "--campaign-manifest-sha256",
+        help="required external hash pin for MPI/affinity execution",
+    )
     parser.add_argument("--cp2k-source", type=Path, required=True)
     parser.add_argument("--save-tblite-source", type=Path, required=True)
     parser.add_argument("--campaign-state", choices=CAMPAIGN_STATES, default="production_ready")
     parser.add_argument("--solid", action="append", choices=("LiH", "MgO"))
     parser.add_argument("--threads", type=int, default=1)
     parser.add_argument("--cold-workers", type=int, default=1)
+    parser.add_argument("--mpi-ranks-per-job", type=int, default=1)
+    parser.add_argument("--mpi-launcher", type=Path)
+    parser.add_argument("--mpi-launcher-arg", action="append", default=[])
+    parser.add_argument("--cpu-set", action="append", default=[])
+    parser.add_argument("--taskset", default="taskset")
     parser.add_argument("--retry-failed", action="store_true")
     args = parser.parse_args()
-    if args.threads < 1 or args.cold_workers < 1:
-        parser.error("--threads and --cold-workers must be positive")
+    if args.threads < 1 or args.cold_workers < 1 or args.mpi_ranks_per_job < 1:
+        parser.error("--threads, --cold-workers, and --mpi-ranks-per-job must be positive")
     if args.solid and len(args.solid) != len(set(args.solid)):
         parser.error("duplicate --solid selections are not allowed")
     try:
@@ -721,6 +767,38 @@ def main() -> int:
             args.save_tblite_source,
             allowed_campaign_states=(args.campaign_state,),
         )
+        execution_requested = bool(
+            args.mpi_launcher
+            or args.mpi_launcher_arg
+            or args.cpu_set
+            or args.mpi_ranks_per_job != 1
+        )
+        execution_pool = None
+        if execution_requested:
+            if args.mpi_launcher is None:
+                raise ValueError("--mpi-launcher is required with MPI/affinity execution")
+            if not args.campaign_manifest_sha256 or not re.fullmatch(
+                r"[0-9a-f]{64}", args.campaign_manifest_sha256
+            ):
+                raise ValueError(
+                    "MPI/affinity execution requires --campaign-manifest-sha256 "
+                    "as 64 lowercase hex digits"
+                )
+            observed_manifest_sha = base.sha256(args.campaign_manifest.resolve(strict=True))
+            if observed_manifest_sha != args.campaign_manifest_sha256:
+                raise ValueError(
+                    "campaign manifest hash pin mismatch: expected "
+                    f"{args.campaign_manifest_sha256}, observed {observed_manifest_sha}"
+                )
+            execution_pool = execution.ExecutionPool(
+                concurrent_jobs=args.cold_workers,
+                mpi_ranks_per_job=args.mpi_ranks_per_job,
+                threads_per_rank=args.threads,
+                mpi_launcher=args.mpi_launcher,
+                mpi_launcher_args=args.mpi_launcher_arg,
+                cpu_sets=args.cpu_set,
+                taskset=args.taskset,
+            )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         parser.error(str(exc))
     root = (
@@ -765,6 +843,7 @@ def main() -> int:
                     "campaign_identity": previous.get("campaign_identity"),
                     "plan_sha256": previous.get("plan_sha256"),
                     "required_cp2k_ancestor": previous.get("required_cp2k_ancestor"),
+                    "execution_contract": previous.get("execution_contract"),
                 }
                 expected = {
                     "schema_version": SCHEMA_VERSION,
@@ -774,6 +853,9 @@ def main() -> int:
                     "campaign_identity": campaign_identity,
                     "plan_sha256": plan_sha256,
                     "required_cp2k_ancestor": plan["required_cp2k_ancestor"],
+                    "execution_contract": (
+                        execution_pool.contract if execution_pool is not None else None
+                    ),
                 }
                 if declarations != expected:
                     raise RuntimeError(f"existing campaign manifest collision: {manifest}")
@@ -820,6 +902,7 @@ def main() -> int:
                     threads=args.threads,
                     workers=args.cold_workers,
                     retry_failed=args.retry_failed,
+                    execution_pool=execution_pool,
                 )
             summaries = [
                 existing_systems[solid]
@@ -845,6 +928,14 @@ def main() -> int:
                 "build_manifest": artifact(snapshots["build_manifest"][1]),
                 "build_manifest_source": artifact(snapshots["build_manifest"][0]),
                 "required_cp2k_ancestor": plan["required_cp2k_ancestor"],
+                "execution_contract": (
+                    execution_pool.contract if execution_pool is not None else None
+                ),
+                "execution_contract_sha256": (
+                    execution_pool.contract_sha256
+                    if execution_pool is not None
+                    else None
+                ),
                 "systems": summaries,
             }
             atomic_write_text(

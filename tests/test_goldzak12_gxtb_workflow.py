@@ -140,6 +140,14 @@ class Goldzak12GXTBInputTests(unittest.TestCase):
                 specs = eos.eos_job_specs("k444", eos.DEFAULT_SCALES, ("GXTB",))
                 self.assertEqual(len(specs), 12 * len(eos.DEFAULT_SCALES))
                 self.assertTrue(all("/GXTB/" in str(spec[1]) for spec in specs))
+                common_ten = (
+                    "C", "Si", "SiC", "BN", "BP", "AlN", "AlP", "MgS", "LiF", "LiCl"
+                )
+                selected = eos.eos_job_specs(
+                    "k444", eos.DEFAULT_SCALES, ("GXTB",), common_ten
+                )
+                self.assertEqual(len(selected), 10 * len(eos.DEFAULT_SCALES))
+                self.assertFalse(any(" LiH " in spec[0] or " MgO " in spec[0] for spec in selected))
                 fits = [
                     {
                         "solid": ref.solid,
@@ -343,6 +351,97 @@ class Goldzak12GXTBAtomTests(unittest.TestCase):
 
 
 class Goldzak12GXTBMixerAndPruneTests(unittest.TestCase):
+    def test_execution_record_is_additive_and_pool_only_runs_pending_jobs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            executable = root / "cp2k"
+            executable.write_bytes(b"cp2k")
+            inp = root / "job.inp"
+            out = root / "job.out"
+            inp.write_text(
+                base.solid_input(
+                    base.REFERENCES[0], "GXTB", "ENERGY", "k444", 3.553, "job"
+                )
+            )
+            campaign = fake_campaign(
+                cp2k_executable_sha=base.sha256(executable)
+            )
+            signature = base.job_signature(
+                executable,
+                inp,
+                command_contract={"driver": "cp2k", "omp_threads": 1},
+                campaign_fingerprint=campaign,
+            )
+
+            class FakePool:
+                mpi_ranks_per_job = 2
+
+                def __init__(self) -> None:
+                    self.complete = False
+                    self.run_calls = 0
+                    self.write_calls = 0
+
+                def record_issue(self, _output: Path, _stamp: Path) -> str | None:
+                    return None if self.complete else "missing execution record"
+
+                def run_cp2k(
+                    self, _cp2k: Path, _input: Path, output: Path
+                ) -> tuple[int, dict[str, object]]:
+                    self.run_calls += 1
+                    output.write_text("PROGRAM ENDED\n")
+                    return 0, {"separate": True}
+
+                def write_record(
+                    self,
+                    _output: Path,
+                    _observation: dict[str, object],
+                    _stamp: Path,
+                ) -> dict[str, str]:
+                    self.write_calls += 1
+                    self.complete = True
+                    return {"path": "execution.json", "sha256": "fixture"}
+
+            pool = FakePool()
+            spec = [("eos GXTB C k444 s1p000", inp, out, False)]
+            eos.run_jobs(
+                spec,
+                executable,
+                1,
+                1,
+                False,
+                campaign_fingerprint=campaign,
+                execution_pool=pool,  # type: ignore[arg-type]
+            )
+            self.assertEqual((pool.run_calls, pool.write_calls), (1, 1))
+            stamp = json.loads(base.job_stamp_path(out).read_text())
+            self.assertEqual(stamp, {**signature, "completed": True, "return_code": 0})
+            self.assertNotIn("execution_provenance", stamp)
+            frozen_output = out.read_bytes()
+            pool.complete = False
+            with self.assertRaisesRegex(RuntimeError, "refusing an implicit destructive rerun"):
+                eos.run_jobs(
+                    spec,
+                    executable,
+                    1,
+                    1,
+                    False,
+                    campaign_fingerprint=campaign,
+                    execution_pool=pool,  # type: ignore[arg-type]
+                )
+            self.assertEqual(out.read_bytes(), frozen_output)
+            self.assertEqual((pool.run_calls, pool.write_calls), (1, 1))
+            pool.complete = True
+            eos.run_jobs(
+                spec,
+                executable,
+                1,
+                1,
+                False,
+                campaign_fingerprint=campaign,
+                execution_pool=pool,  # type: ignore[arg-type]
+            )
+            self.assertEqual((pool.run_calls, pool.write_calls), (1, 1))
+
     def test_failed_gxtb_job_is_not_retried_with_an_alternative_mixer(self) -> None:
         calls: list[Path] = []
         with tempfile.TemporaryDirectory() as tmp:
