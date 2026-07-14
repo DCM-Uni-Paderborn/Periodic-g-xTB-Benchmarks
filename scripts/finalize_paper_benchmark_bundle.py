@@ -25,6 +25,21 @@ METHODS = ("GFN1", "GFN2", "GXTB")
 BASELINE_METHODS = ("GFN1", "GFN2")
 COMPARISON_METRICS = ("MAE", "RMSE", "MaxAE")
 OUTPUT_STEM = "gxtb_periodic_benchmark_summary"
+LC10_SYSTEMS = (
+    "C",
+    "Si",
+    "SiC",
+    "BN",
+    "BP",
+    "AlN",
+    "AlP",
+    "MgS",
+    "LiF",
+    "LiCl",
+)
+LC10_EXCLUDED_SYSTEMS = ("LiH", "MgO")
+LC10_CHILD_SCOPE = "three_method_common_subset"
+LC10_OUTPUT_SCOPE = "exact_common10"
 CSV_FIELDS = (
     "benchmark",
     "quantity",
@@ -32,6 +47,7 @@ CSV_FIELDS = (
     "method_id",
     "method_label",
     "N",
+    "systems",
     "ME",
     "MAE",
     "RMSE",
@@ -93,6 +109,17 @@ def integer(value: object, label: str) -> int:
     return result
 
 
+def system_list(value: object, label: str) -> tuple[str, ...]:
+    if not isinstance(value, str) or not value:
+        raise ValueError(f"{label} is missing")
+    systems = tuple(value.split(";"))
+    if any(not system or system.strip() != system for system in systems):
+        raise ValueError(f"{label} is malformed")
+    if len(set(systems)) != len(systems):
+        raise ValueError(f"{label} contains duplicates")
+    return systems
+
+
 def read_csv(path: Path) -> list[dict[str, str]]:
     if not path.is_file():
         raise ValueError(f"required publication artifact is missing: {path}")
@@ -131,6 +158,7 @@ def metric_row(
     status: str,
     json_sha: str,
     csv_sha: str,
+    systems: str = "",
 ) -> dict[str, object]:
     return {
         "benchmark": benchmark,
@@ -139,6 +167,7 @@ def metric_row(
         "method_id": method_id,
         "method_label": method_label,
         "N": n,
+        "systems": systems,
         **{name: finite(metrics.get(name), f"{benchmark}/{method_id}/{quantity}/{name}") for name in ("ME", "MAE", "RMSE", "MaxAE")},
         "unit": unit,
         "calculation": calculation,
@@ -334,6 +363,14 @@ def validate_lc12(root: Path) -> tuple[list[dict[str, object]], dict[str, object
     if not isinstance(protocol, dict):
         raise ValueError("LC12 protocol is missing")
     common_n = integer(protocol.get("common_subset_count"), "LC12 common-subset N")
+    if common_n != len(LC10_SYSTEMS):
+        raise ValueError("LC12 publication scope is not the exact LC10 set")
+    protocol_common_systems = protocol.get("common_subset_systems")
+    if (
+        not isinstance(protocol_common_systems, list)
+        or tuple(protocol_common_systems) != LC10_SYSTEMS
+    ):
+        raise ValueError("LC12 protocol does not pin the exact LC10 systems")
     summary = payload.get("summary_rows")
     if not isinstance(summary, list) or len(summary) != 6:
         raise ValueError("LC12 publication summary must contain six scope rows")
@@ -343,12 +380,12 @@ def validate_lc12(root: Path) -> tuple[list[dict[str, object]], dict[str, object
         raise ValueError("LC12 publication CSV hash differs from its JSON lineage")
     expected_keys = {(method, scope) for method in METHODS for scope in ("method_available_coverage", "three_method_common_subset")}
     csv_by_key = {(row.get("method_id", ""), row.get("scope", "")): row for row in csv_rows}
-    if set(csv_by_key) != expected_keys:
+    if len(csv_rows) != len(expected_keys) or set(csv_by_key) != expected_keys:
         raise ValueError("LC12 publication CSV has incomplete or duplicate method/scope rows")
     json_sha = sha256(json_path)
     output: list[dict[str, object]] = []
     seen: set[tuple[str, str]] = set()
-    common_systems: str | None = None
+    common_systems: tuple[str, ...] | None = None
     for record in summary:
         if not isinstance(record, dict):
             raise ValueError("LC12 summary contains a non-object row")
@@ -366,10 +403,16 @@ def validate_lc12(root: Path) -> tuple[list[dict[str, object]], dict[str, object
         n = integer(record.get("n_systems"), f"LC12/{method}/{scope}/N")
         if integer(csv_row.get("n_systems"), f"LC12 CSV/{method}/{scope}/N") != n:
             raise ValueError(f"LC12/{method}/{scope} coverage mismatch")
-        if scope == "three_method_common_subset":
+        systems = system_list(
+            record.get("systems"), f"LC12/{method}/{scope}/systems"
+        )
+        if len(systems) != n:
+            raise ValueError(f"LC12/{method}/{scope} system count mismatch")
+        if scope == LC10_CHILD_SCOPE:
             if n != common_n:
                 raise ValueError("LC12 common-subset coverage differs among methods")
-            systems = str(record.get("systems", ""))
+            if systems != LC10_SYSTEMS:
+                raise ValueError("LC12 common subset is not the exact LC10 set")
             if common_systems is None:
                 common_systems = systems
             elif systems != common_systems:
@@ -385,25 +428,34 @@ def validate_lc12(root: Path) -> tuple[list[dict[str, object]], dict[str, object
                     finite(csv_row.get(f"{prefix}_{metric}_{'A' if prefix == 'lattice' else 'eV_per_atom'}"), f"LC12 CSV/{method}/{scope}/{quantity}/{metric}"),
                     f"LC12/{method}/{scope}/{quantity}/{metric}",
                 )
-            output.append(
-                metric_row(
-                    benchmark="LC12",
-                    quantity=quantity,
-                    scope=scope,
-                    method_id=method,
-                    method_label=str(record.get("method_label", method)),
-                    n=n,
-                    metrics=metrics,
-                    unit=unit,
-                    calculation="equation of state and cohesive-energy single point",
-                    mesh=f"EOS {record.get('eos_mesh', '')}; result {record.get('result_mesh', '')}",
-                    status=status,
-                    json_sha=json_sha,
-                    csv_sha=csv_sha,
+            if scope == LC10_CHILD_SCOPE:
+                output.append(
+                    metric_row(
+                        benchmark="LC12",
+                        quantity=quantity,
+                        scope=LC10_OUTPUT_SCOPE,
+                        method_id=method,
+                        method_label=str(record.get("method_label", method)),
+                        n=n,
+                        metrics=metrics,
+                        unit=unit,
+                        calculation=(
+                            "equation of state and cohesive-energy single point"
+                        ),
+                        mesh=(
+                            f"EOS {record.get('eos_mesh', '')}; "
+                            f"result {record.get('result_mesh', '')}"
+                        ),
+                        status="publication_ready_exact_common10",
+                        json_sha=json_sha,
+                        csv_sha=csv_sha,
+                        systems=";".join(LC10_SYSTEMS),
+                    )
                 )
-            )
     if seen != expected_keys:
         raise ValueError("LC12 summary lacks required rows")
+    if common_systems != LC10_SYSTEMS or len(output) != 2 * len(METHODS):
+        raise ValueError("LC12 exact LC10 export is incomplete")
     return output, {"json": source_record(json_path, root), "csv": source_record(csv_path, root)}
 
 
@@ -427,8 +479,8 @@ def build_gxtb_baseline_comparisons(
     """Build only like-for-like g-XTB/GFN1 and g-XTB/GFN2 comparisons.
 
     LC12 method-available coverage can contain different solids and is
-    intentionally excluded. Its three-method common subset is the only LC12
-    scope for which a ratio or percentage change has an unambiguous meaning.
+    intentionally excluded. The exact, pinned LC10 set is the only LC12 scope
+    for which a ratio or percentage change has an unambiguous meaning.
     """
 
     grouped: dict[tuple[str, str, str], dict[str, Mapping[str, object]]] = {}
@@ -441,7 +493,7 @@ def build_gxtb_baseline_comparisons(
 
     comparisons: list[dict[str, object]] = []
     for (benchmark, quantity, scope), methods in sorted(grouped.items()):
-        if benchmark == "LC12" and scope != "three_method_common_subset":
+        if benchmark == "LC12" and scope != LC10_OUTPUT_SCOPE:
             continue
         if set(methods) != set(METHODS):
             raise ValueError(
@@ -507,7 +559,15 @@ def tex_macros(
         "% AUTO-GENERATED by scripts/finalize_paper_benchmark_bundle.py",
         "% Do not edit numerical values by hand.",
     ]
-    names: set[str] = set()
+    names: set[str] = {"GXTBLC10N", "GXTBLC10Systems"}
+    lines.extend(
+        (
+            f"\\newcommand{{\\GXTBLC10N}}{{{len(LC10_SYSTEMS)}}}",
+            "\\newcommand{\\GXTBLC10Systems}{"
+            + ", ".join(LC10_SYSTEMS)
+            + "}",
+        )
+    )
     for row in rows:
         prefix = "GXTB" + tex_token(str(row["benchmark"])) + tex_token(str(row["quantity"])) + tex_token(str(row["scope"])) + tex_token(str(row["method_id"]))
         for metric in ("N", "ME", "MAE", "RMSE", "MaxAE"):
@@ -558,11 +618,23 @@ def build_bundle(root: Path) -> tuple[dict[str, object], list[dict[str, object]]
     comparisons = build_gxtb_baseline_comparisons(rows)
     return (
         {
-            "schema_version": 2,
+            "schema_version": 3,
             "status": "publication_ready",
             "title": "Periodic g-xTB benchmark comparison with frozen GFN1/GFN2 baselines",
             "benchmarks": ["DMC-ICE13", "X23b", "LC12"],
             "methods": list(METHODS),
+            "lc10_scope": {
+                "scope_id": LC10_OUTPUT_SCOPE,
+                "systems": list(LC10_SYSTEMS),
+                "n_systems": len(LC10_SYSTEMS),
+                "three_method_comparison_only": True,
+                "method_available_coverage_exported": False,
+                "excluded_systems": list(LC10_EXCLUDED_SYSTEMS),
+                "excluded_systems_note": (
+                    "LC10 is the fixed three-method comparison set; LiH and "
+                    "MgO are outside its scope."
+                ),
+            },
             "sources": {"DMC-ICE13": dmc_sources, "X23b": x23b_sources, "LC12": lc12_sources},
             "rows": rows,
             "gxtb_vs_gfn_baseline_comparisons": comparisons,

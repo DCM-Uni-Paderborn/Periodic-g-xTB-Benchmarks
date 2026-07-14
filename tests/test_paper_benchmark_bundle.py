@@ -149,29 +149,38 @@ class PaperBenchmarkBundleTests(unittest.TestCase):
         data = root / "Goldzak12" / "data"
         data.mkdir(parents=True)
         rows: list[dict[str, object]] = []
-        systems = ";".join(f"S{index}" for index in range(10))
+        common_systems = ";".join(bundle.LC10_SYSTEMS)
+        all_systems = ";".join(
+            (*bundle.LC10_SYSTEMS, *bundle.LC10_EXCLUDED_SYSTEMS)
+        )
         for index, method in enumerate(bundle.METHODS, start=1):
             for scope, n in (
                 ("method_available_coverage", 12 if method == "GFN1" else 10),
                 ("three_method_common_subset", 10),
             ):
+                is_common = scope == bundle.LC10_CHILD_SCOPE
+                metric_value = float(index if is_common else index + 100)
                 row: dict[str, object] = {
                     "method_id": method,
                     "method_label": method,
                     "scope": scope,
                     "n_systems": n,
                     "coverage_denominator": 12,
-                    "systems": systems if scope == "three_method_common_subset" else systems,
+                    "systems": (
+                        common_systems
+                        if is_common or n == len(bundle.LC10_SYSTEMS)
+                        else all_systems
+                    ),
                     "eos_mesh": "k444",
                     "result_mesh": "k555",
                 }
                 for prefix, suffix in (("lattice", "A"), ("cohesive", "eV_per_atom")):
                     row.update(
                         {
-                            f"{prefix}_ME_{suffix}": -float(index),
-                            f"{prefix}_MAE_{suffix}": float(index),
-                            f"{prefix}_RMSE_{suffix}": float(index) + 0.1,
-                            f"{prefix}_MaxAE_{suffix}": float(index) + 0.2,
+                            f"{prefix}_ME_{suffix}": -metric_value,
+                            f"{prefix}_MAE_{suffix}": metric_value,
+                            f"{prefix}_RMSE_{suffix}": metric_value + 0.1,
+                            f"{prefix}_MaxAE_{suffix}": metric_value + 0.2,
                         }
                     )
                 rows.append(row)
@@ -183,7 +192,10 @@ class PaperBenchmarkBundleTests(unittest.TestCase):
                     "benchmark": "LC12 (Goldzak12)",
                     "status": "publication_ready_reduced_coverage",
                     "methods": {method: {} for method in bundle.METHODS},
-                    "protocol": {"common_subset_count": 10},
+                    "protocol": {
+                        "common_subset_count": len(bundle.LC10_SYSTEMS),
+                        "common_subset_systems": list(bundle.LC10_SYSTEMS),
+                    },
                     "summary_rows": rows,
                     "paper_summary_csv": {"sha256": digest(csv_path)},
                 },
@@ -205,10 +217,48 @@ class PaperBenchmarkBundleTests(unittest.TestCase):
             csv_path, json_path, tex_path = bundle.finalize(root, output)
             payload = json.loads(json_path.read_text())
             self.assertEqual(payload["status"], "publication_ready")
-            self.assertEqual(payload["schema_version"], 2)
+            self.assertEqual(payload["schema_version"], 3)
             self.assertEqual(payload["benchmarks"], ["DMC-ICE13", "X23b", "LC12"])
-            self.assertEqual(len(payload["rows"]), 24)
+            self.assertEqual(
+                payload["lc10_scope"],
+                {
+                    "scope_id": bundle.LC10_OUTPUT_SCOPE,
+                    "systems": list(bundle.LC10_SYSTEMS),
+                    "n_systems": len(bundle.LC10_SYSTEMS),
+                    "three_method_comparison_only": True,
+                    "method_available_coverage_exported": False,
+                    "excluded_systems": list(bundle.LC10_EXCLUDED_SYSTEMS),
+                    "excluded_systems_note": (
+                        "LC10 is the fixed three-method comparison set; LiH and "
+                        "MgO are outside its scope."
+                    ),
+                },
+            )
+            self.assertEqual(len(payload["rows"]), 18)
             self.assertEqual(len(payload["gxtb_vs_gfn_baseline_comparisons"]), 12)
+            lc_rows = [
+                row for row in payload["rows"] if row["benchmark"] == "LC12"
+            ]
+            self.assertEqual(len(lc_rows), 6)
+            self.assertEqual(
+                {(row["scope"], row["N"]) for row in lc_rows},
+                {(bundle.LC10_OUTPUT_SCOPE, len(bundle.LC10_SYSTEMS))},
+            )
+            self.assertEqual(
+                {row["systems"] for row in lc_rows},
+                {";".join(bundle.LC10_SYSTEMS)},
+            )
+            self.assertEqual(
+                {(row["method_id"], row["quantity"]) for row in lc_rows},
+                {
+                    (method, quantity)
+                    for method in bundle.METHODS
+                    for quantity in ("lattice_constant", "cohesive_energy")
+                },
+            )
+            # The method-available fixtures deliberately carry 100+ errors.
+            # Their absence proves that only exact common-10 statistics escape.
+            self.assertTrue(all(float(row["MAE"]) < 10.0 for row in lc_rows))
             dmc = next(
                 comparison
                 for comparison in payload["gxtb_vs_gfn_baseline_comparisons"]
@@ -220,10 +270,28 @@ class PaperBenchmarkBundleTests(unittest.TestCase):
             self.assertAlmostEqual(dmc["MAE_ratio_GXTB_over_baseline"], 1.5)
             self.assertAlmostEqual(dmc["MAE_percent_change_GXTB_vs_baseline"], 50.0)
             with csv_path.open() as handle:
-                self.assertEqual(len(list(csv.DictReader(handle))), 24)
-            self.assertIn("\\GXTB", tex_path.read_text())
-            self.assertIn("GXTBvsGFN2MAEPercentChange", tex_path.read_text())
-            self.assertIn("GXTBvsGFN1MAEPercentChange", tex_path.read_text())
+                csv_rows = list(csv.DictReader(handle))
+            self.assertEqual(len(csv_rows), 18)
+            self.assertFalse(
+                any(row["scope"] == "method_available_coverage" for row in csv_rows)
+            )
+            self.assertEqual(
+                {
+                    row["systems"]
+                    for row in csv_rows
+                    if row["benchmark"] == "LC12"
+                },
+                {";".join(bundle.LC10_SYSTEMS)},
+            )
+            tex = tex_path.read_text()
+            self.assertIn("\\newcommand{\\GXTBLC10N}{10}", tex)
+            self.assertIn(
+                "\\newcommand{\\GXTBLC10Systems}{C, Si, SiC, BN, BP, AlN, AlP, MgS, LiF, LiCl}",
+                tex,
+            )
+            self.assertIn("GXTBvsGFN2MAEPercentChange", tex)
+            self.assertIn("GXTBvsGFN1MAEPercentChange", tex)
+            self.assertNotIn("MethodAvailableCoverage", tex)
             self.assertEqual(
                 payload["generated_outputs"]["csv_sha256"], digest(csv_path)
             )
@@ -257,7 +325,7 @@ class PaperBenchmarkBundleTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "lacks the three methods"):
                 bundle.finalize(root, root / "paper")
 
-    def test_lc12_common_subset_must_be_identical_for_all_methods(self) -> None:
+    def test_lc10_rejects_an_alternative_ten_system_subset(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "repository"
             self.write_complete(root)
@@ -266,19 +334,117 @@ class PaperBenchmarkBundleTests(unittest.TestCase):
             payload = json.loads(json_path.read_text())
             with csv_path.open() as handle:
                 csv_rows = list(csv.DictReader(handle))
+            alternative = ";".join((*bundle.LC10_SYSTEMS[:-1], "MgO"))
             for row in payload["summary_rows"]:
                 if row["method_id"] == "GXTB" and row["scope"] == "three_method_common_subset":
-                    row["systems"] = "different"
+                    row["systems"] = alternative
             for row in csv_rows:
                 if row["method_id"] == "GXTB" and row["scope"] == "three_method_common_subset":
-                    row["systems"] = "different"
+                    row["systems"] = alternative
             write_csv(csv_path, csv_rows)
             payload["paper_summary_csv"]["sha256"] = digest(csv_path)
             json_path.write_text(json.dumps(payload, indent=2) + "\n")
-            # The child JSON/CSV pair agrees and is hash-valid, but the actual common
-            # systems differ by method and must still be rejected.
-            with self.assertRaisesRegex(ValueError, "common-subset systems differ"):
+            # The child JSON/CSV pair agrees and is hash-valid, and still must not
+            # redefine LC10 as another arbitrary ten-system subset.
+            with self.assertRaisesRegex(ValueError, "exact LC10 set"):
                 bundle.finalize(root, root / "paper")
+
+    def test_lc10_protocol_order_is_pinned_and_failure_removes_outputs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repository"
+            self.write_complete(root)
+            output = root / "paper"
+            output.mkdir()
+            for suffix in ("csv", "json", "tex"):
+                (output / f"{bundle.OUTPUT_STEM}.{suffix}").write_text("stale\n")
+            json_path = root / "Goldzak12" / "data" / "lc12_gfn_gxtb_paper_summary.json"
+            payload = json.loads(json_path.read_text())
+            payload["protocol"]["common_subset_systems"] = list(
+                reversed(bundle.LC10_SYSTEMS)
+            )
+            json_path.write_text(json.dumps(payload, indent=2) + "\n")
+            with self.assertRaisesRegex(ValueError, "pin the exact LC10 systems"):
+                bundle.finalize(root, output)
+            for suffix in ("csv", "json", "tex"):
+                self.assertFalse((output / f"{bundle.OUTPUT_STEM}.{suffix}").exists())
+
+    def test_lc10_rejects_duplicate_child_csv_scope_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repository"
+            self.write_complete(root)
+            json_path = root / "Goldzak12" / "data" / "lc12_gfn_gxtb_paper_summary.json"
+            csv_path = root / "Goldzak12" / "data" / "lc12_gfn_gxtb_paper_summary.csv"
+            with csv_path.open() as handle:
+                csv_rows = list(csv.DictReader(handle))
+            csv_rows.append(dict(csv_rows[-1]))
+            write_csv(csv_path, csv_rows)
+            payload = json.loads(json_path.read_text())
+            payload["paper_summary_csv"]["sha256"] = digest(csv_path)
+            json_path.write_text(json.dumps(payload, indent=2) + "\n")
+            with self.assertRaisesRegex(ValueError, "incomplete or duplicate"):
+                bundle.finalize(root, root / "paper")
+
+
+class LC10FrozenBaselineTests(unittest.TestCase):
+    def test_paper_snapshot_is_reconstructed_on_the_exact_lc10_set(self) -> None:
+        with (REPOSITORY / "Goldzak12" / "data" / "eos_fits.csv").open() as handle:
+            fits = list(csv.DictReader(handle))
+        with (REPOSITORY / "Goldzak12" / "data" / "eos_results.csv").open() as handle:
+            results = list(csv.DictReader(handle))
+        with (REPOSITORY / "paper_revision_numbers.csv").open() as handle:
+            paper_rows = list(csv.DictReader(handle))
+
+        reported = {
+            (row["quantity"], row["method"]): float(row["value"])
+            for row in paper_rows
+            if row["section"] == "LC10"
+        }
+        self.assertEqual(
+            set(reported),
+            {
+                (quantity, method)
+                for quantity in ("lattice-constant MAE", "cohesive-energy MAE")
+                for method in ("GFN1-xTB", "GFN2-xTB")
+            },
+        )
+        self.assertFalse(any(row["section"] == "LC12" for row in paper_rows))
+
+        for method in ("GFN1", "GFN2"):
+            fit_by_solid = {
+                row["solid"]: row
+                for row in fits
+                if row["method"] == method
+                and row["solid"] in bundle.LC10_SYSTEMS
+                and row["fit_status"] == "quadratic"
+            }
+            result_by_solid = {
+                row["solid"]: row
+                for row in results
+                if row["method"] == method
+                and row["solid"] in bundle.LC10_SYSTEMS
+                and row["energy_mesh"] == "k555"
+                and row["sp_completed"] == "True"
+            }
+            self.assertEqual(tuple(fit_by_solid), bundle.LC10_SYSTEMS)
+            self.assertEqual(tuple(result_by_solid), bundle.LC10_SYSTEMS)
+            lattice_mae = sum(
+                abs(
+                    float(fit_by_solid[solid]["a_eos_A"])
+                    - float(fit_by_solid[solid]["a_exp_A"])
+                )
+                for solid in bundle.LC10_SYSTEMS
+            ) / len(bundle.LC10_SYSTEMS)
+            cohesive_mae = sum(
+                abs(float(result_by_solid[solid]["ecoh_error_eV_per_atom"]))
+                for solid in bundle.LC10_SYSTEMS
+            ) / len(bundle.LC10_SYSTEMS)
+            label = f"{method}-xTB"
+            self.assertAlmostEqual(
+                reported[("lattice-constant MAE", label)], lattice_mae, places=9
+            )
+            self.assertAlmostEqual(
+                reported[("cohesive-energy MAE", label)], cohesive_mae, places=9
+            )
 
 
 if __name__ == "__main__":
