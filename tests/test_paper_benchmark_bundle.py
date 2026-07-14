@@ -208,20 +208,22 @@ class PaperBenchmarkBundleTests(unittest.TestCase):
             self.assertEqual(payload["schema_version"], 2)
             self.assertEqual(payload["benchmarks"], ["DMC-ICE13", "X23b", "LC12"])
             self.assertEqual(len(payload["rows"]), 24)
-            self.assertEqual(len(payload["gxtb_vs_gfn2_comparisons"]), 6)
+            self.assertEqual(len(payload["gxtb_vs_gfn_baseline_comparisons"]), 12)
             dmc = next(
                 comparison
-                for comparison in payload["gxtb_vs_gfn2_comparisons"]
+                for comparison in payload["gxtb_vs_gfn_baseline_comparisons"]
                 if comparison["benchmark"] == "DMC-ICE13"
                 and comparison["scope"] == "phasewise_kpoint_converged"
+                and comparison["baseline_method"] == "GFN2"
             )
-            self.assertAlmostEqual(dmc["MAE_delta_GXTB_minus_GFN2"], 1.0)
-            self.assertAlmostEqual(dmc["MAE_ratio_GXTB_over_GFN2"], 1.5)
-            self.assertAlmostEqual(dmc["MAE_percent_change_GXTB_vs_GFN2"], 50.0)
+            self.assertAlmostEqual(dmc["MAE_delta_GXTB_minus_baseline"], 1.0)
+            self.assertAlmostEqual(dmc["MAE_ratio_GXTB_over_baseline"], 1.5)
+            self.assertAlmostEqual(dmc["MAE_percent_change_GXTB_vs_baseline"], 50.0)
             with csv_path.open() as handle:
                 self.assertEqual(len(list(csv.DictReader(handle))), 24)
             self.assertIn("\\GXTB", tex_path.read_text())
-            self.assertIn("GXTBvsGFNtwoMAEPercentChange", tex_path.read_text())
+            self.assertIn("GXTBvsGFN2MAEPercentChange", tex_path.read_text())
+            self.assertIn("GXTBvsGFN1MAEPercentChange", tex_path.read_text())
             self.assertEqual(
                 payload["generated_outputs"]["csv_sha256"], digest(csv_path)
             )

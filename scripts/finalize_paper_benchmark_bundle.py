@@ -22,6 +22,7 @@ from typing import Any, Iterable, Mapping
 
 
 METHODS = ("GFN1", "GFN2", "GXTB")
+BASELINE_METHODS = ("GFN1", "GFN2")
 COMPARISON_METRICS = ("MAE", "RMSE", "MaxAE")
 OUTPUT_STEM = "gxtb_periodic_benchmark_summary"
 CSV_FIELDS = (
@@ -420,10 +421,10 @@ def tex_token(value: str) -> str:
     return "".join(piece[0].upper() + piece[1:] for piece in pieces)
 
 
-def build_gxtb_gfn2_comparisons(
+def build_gxtb_baseline_comparisons(
     rows: Iterable[Mapping[str, object]],
 ) -> list[dict[str, object]]:
-    """Build only like-for-like g-XTB/GFN2 paper comparisons.
+    """Build only like-for-like g-XTB/GFN1 and g-XTB/GFN2 comparisons.
 
     LC12 method-available coverage can contain different solids and is
     intentionally excluded. Its three-method common subset is the only LC12
@@ -444,42 +445,57 @@ def build_gxtb_gfn2_comparisons(
             continue
         if set(methods) != set(METHODS):
             raise ValueError(
-                f"cannot build g-XTB/GFN2 comparison for {benchmark}/{quantity}/{scope}"
+                f"cannot build g-XTB/GFN baseline comparison for "
+                f"{benchmark}/{quantity}/{scope}"
             )
-        gxtb, gfn2 = methods["GXTB"], methods["GFN2"]
-        n_gxtb = integer(gxtb["N"], "g-XTB comparison N")
-        n_gfn2 = integer(gfn2["N"], "GFN2 comparison N")
-        if n_gxtb != n_gfn2:
-            raise ValueError(
-                f"g-XTB/GFN2 coverage differs for {benchmark}/{quantity}/{scope}"
+        gxtb = methods["GXTB"]
+        for baseline_method in BASELINE_METHODS:
+            baseline = methods[baseline_method]
+            n_gxtb = integer(gxtb["N"], "g-XTB comparison N")
+            n_baseline = integer(
+                baseline["N"], f"{baseline_method} comparison N"
             )
-        if str(gxtb["unit"]) != str(gfn2["unit"]):
-            raise ValueError(
-                f"g-XTB/GFN2 units differ for {benchmark}/{quantity}/{scope}"
-            )
-        record: dict[str, object] = {
-            "benchmark": benchmark,
-            "quantity": quantity,
-            "scope": scope,
-            "methods": ["GXTB", "GFN2"],
-            "N": n_gxtb,
-            "unit": str(gxtb["unit"]),
-            "ME_delta_GXTB_minus_GFN2": finite(gxtb["ME"], "g-XTB ME")
-            - finite(gfn2["ME"], "GFN2 ME"),
-        }
-        for metric in COMPARISON_METRICS:
-            gxtb_value = finite(gxtb[metric], f"g-XTB {metric}")
-            gfn2_value = finite(gfn2[metric], f"GFN2 {metric}")
-            if gfn2_value <= 0.0:
+            if n_gxtb != n_baseline:
                 raise ValueError(
-                    f"GFN2 {metric} must be positive for {benchmark}/{quantity}/{scope}"
+                    f"g-XTB/{baseline_method} coverage differs for "
+                    f"{benchmark}/{quantity}/{scope}"
                 )
-            record[f"{metric}_delta_GXTB_minus_GFN2"] = gxtb_value - gfn2_value
-            record[f"{metric}_ratio_GXTB_over_GFN2"] = gxtb_value / gfn2_value
-            record[f"{metric}_percent_change_GXTB_vs_GFN2"] = (
-                100.0 * (gxtb_value - gfn2_value) / gfn2_value
-            )
-        comparisons.append(record)
+            if str(gxtb["unit"]) != str(baseline["unit"]):
+                raise ValueError(
+                    f"g-XTB/{baseline_method} units differ for "
+                    f"{benchmark}/{quantity}/{scope}"
+                )
+            record: dict[str, object] = {
+                "benchmark": benchmark,
+                "quantity": quantity,
+                "scope": scope,
+                "baseline_method": baseline_method,
+                "methods": ["GXTB", baseline_method],
+                "N": n_gxtb,
+                "unit": str(gxtb["unit"]),
+                "ME_delta_GXTB_minus_baseline": finite(gxtb["ME"], "g-XTB ME")
+                - finite(baseline["ME"], f"{baseline_method} ME"),
+            }
+            for metric in COMPARISON_METRICS:
+                gxtb_value = finite(gxtb[metric], f"g-XTB {metric}")
+                baseline_value = finite(
+                    baseline[metric], f"{baseline_method} {metric}"
+                )
+                if baseline_value <= 0.0:
+                    raise ValueError(
+                        f"{baseline_method} {metric} must be positive for "
+                        f"{benchmark}/{quantity}/{scope}"
+                    )
+                record[f"{metric}_delta_GXTB_minus_baseline"] = (
+                    gxtb_value - baseline_value
+                )
+                record[f"{metric}_ratio_GXTB_over_baseline"] = (
+                    gxtb_value / baseline_value
+                )
+                record[f"{metric}_percent_change_GXTB_vs_baseline"] = (
+                    100.0 * (gxtb_value - baseline_value) / baseline_value
+                )
+            comparisons.append(record)
     return comparisons
 
 
@@ -507,21 +523,22 @@ def tex_macros(
             + tex_token(str(comparison["benchmark"]))
             + tex_token(str(comparison["quantity"]))
             + tex_token(str(comparison["scope"]))
-            + "GXTBvsGFNtwo"
+            + "GXTBvs"
+            + tex_token(str(comparison["baseline_method"]))
         )
         values = {
             "N": comparison["N"],
-            "MEDelta": comparison["ME_delta_GXTB_minus_GFN2"],
+            "MEDelta": comparison["ME_delta_GXTB_minus_baseline"],
         }
         for metric in COMPARISON_METRICS:
             values[f"{metric}Delta"] = comparison[
-                f"{metric}_delta_GXTB_minus_GFN2"
+                f"{metric}_delta_GXTB_minus_baseline"
             ]
             values[f"{metric}Ratio"] = comparison[
-                f"{metric}_ratio_GXTB_over_GFN2"
+                f"{metric}_ratio_GXTB_over_baseline"
             ]
             values[f"{metric}PercentChange"] = comparison[
-                f"{metric}_percent_change_GXTB_vs_GFN2"
+                f"{metric}_percent_change_GXTB_vs_baseline"
             ]
         for suffix, raw_value in values.items():
             name = prefix + suffix
@@ -538,7 +555,7 @@ def build_bundle(root: Path) -> tuple[dict[str, object], list[dict[str, object]]
     x23b_rows, x23b_sources = validate_x23b(root)
     lc12_rows, lc12_sources = validate_lc12(root)
     rows = dmc_rows + x23b_rows + lc12_rows
-    comparisons = build_gxtb_gfn2_comparisons(rows)
+    comparisons = build_gxtb_baseline_comparisons(rows)
     return (
         {
             "schema_version": 2,
@@ -548,7 +565,7 @@ def build_bundle(root: Path) -> tuple[dict[str, object], list[dict[str, object]]
             "methods": list(METHODS),
             "sources": {"DMC-ICE13": dmc_sources, "X23b": x23b_sources, "LC12": lc12_sources},
             "rows": rows,
-            "gxtb_vs_gfn2_comparisons": comparisons,
+            "gxtb_vs_gfn_baseline_comparisons": comparisons,
         },
         rows,
     )
@@ -570,7 +587,7 @@ def finalize(root: Path, output_dir: Path | None = None) -> tuple[Path, Path, Pa
     try:
         bundle, rows = build_bundle(root)
         csv_body = csv_text(rows)
-        tex_body = tex_macros(rows, bundle["gxtb_vs_gfn2_comparisons"])
+        tex_body = tex_macros(rows, bundle["gxtb_vs_gfn_baseline_comparisons"])
         bundle["generated_outputs"] = {
             "csv_sha256": hashlib.sha256(csv_body.encode()).hexdigest(),
             "tex_sha256": hashlib.sha256(tex_body.encode()).hexdigest(),
