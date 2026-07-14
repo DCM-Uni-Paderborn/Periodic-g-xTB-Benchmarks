@@ -7,24 +7,32 @@ fixed identical ten-system subset `C, Si, SiC, BN, BP, AlN, AlP, MgS, LiF,
 LiCl` for GFN1-xTB, GFN2-xTB, and g-xTB.  LiH and MgO remain diagnostic data
 only and never enter a reported statistic for any of the three methods.
 
-Current production run
-----------------------
+Publication protocol
+--------------------
 
-The 2026-07-12 rerun used:
+GFN1-xTB, GFN2-xTB, and g-xTB are rerun with the same post-#5582 CP2K binary
+and the same `save_tblite` provider.  The externally reviewed
+`production_ready` manifest and its independently supplied SHA256 pin are
+mandatory.  Conventional cubic eight-atom cells use native Bloch sampling
+with `SCHEME MACDONALD`, `SYMMETRY T`, `FULL_GRID F`, and full SPGLIB symmetry
+reduction; no Born-von-Karman supercells are used.
 
-- CP2K trunk revision `faf9aae91266170dfee8a9f7171a5135bc5eb368` with the
-  local CP2K/tblite interface patch recorded by hash in
-  `data/build_provenance.json`;
-- tblite revision `8a9d09474b93d25c044d6f46ce920750c7fe4cf7`, which combines current
-  `main` with PR #350 and includes the previously merged PR #343;
-- conventional cubic eight-atom cells and CP2K native Bloch sampling through
-  `&KPOINTS` with `SCHEME MACDONALD`, `SYMMETRY T`, and `FULL_GRID F`, using
-  full SPGLIB symmetry reduction; no Born-von-Karman supercells;
-- a `k444` cubic equation of state, `k333/k444/k555` final single points, and
-  `k555` as the reported cohesive-energy mesh;
-- CP2K energies extrapolated to electronic temperature `T -> 0`;
-- matching tblite CLI isolated-atom references with explicit atomic spins and
-  `ACCURACY 0.05`.
+K-point convergence is assessed independently for every method/system pair.
+Separate EOS fits and equilibrium single points are first evaluated at
+`k333`, `k444`, and `k555`.  The earliest single adjacent step
+`n^3 -> (n+1)^3` is accepted when both
+`|Delta a0| <= 0.001 A` and
+`|Delta Ecoh| <= 0.05 kJ mol-1 atom-1`
+(`0.000518213... eV atom-1`).  Exactly one passing interval suffices: there is
+no RMS gate and no two-step requirement.  The denser `(n+1)^3` values are
+reported.  An unresolved pair alone proceeds to `k666`, then `k777` and at
+most `k888`; failure at `k888` is fatal.
+
+The historical `k333/k444/k555` energy series on a common `k444` EOS geometry
+is still generated, but is explicitly a fixed-geometry diagnostic.  It never
+selects `a0` or `Ecoh` and cannot establish lattice-constant convergence.
+CP2K energies are extrapolated to electronic temperature `T -> 0`; isolated
+atoms use the same save_tblite CLI with explicit spins and `ACCURACY 0.05`.
 
 Only completed SCF points enter an EOS fit. A quadratic fit is rejected when
 its local RMSE exceeds 0.02 hartree or when its fitted minimum lies more than
@@ -36,8 +44,9 @@ note in the manuscript.
 Current versus previous results
 -------------------------------
 
-The values in this section are the frozen GFN1/GFN2 production results. Adding
-GXTB is method-selective and does not replace these rows or their raw outputs.
+The values below are the earlier fixed-`k444` GFN1/GFN2 baseline.  They are
+retained for traceability but are not the new adaptive, same-binary LC10 paper
+comparison.  That table is emitted only after the complete campaign passes.
 
 | method | fixed coverage | lattice MAE (A) | cohesive-energy MAE (eV/atom) |
 |---|---:|---:|---:|
@@ -51,28 +60,23 @@ preserved under `data/`, but are not direct paper comparisons.
 Reproduction
 ------------
 
-Run from the repository root:
+Run the publication campaign from the repository root.  Do not compute and
+accept the manifest hash inside the launch command; it must be supplied from
+the completed external build review.
 
 ```bash
-python3 Goldzak12/scripts/run_goldzak12_eos_benchmark.py \
-  --cp2k /path/to/cp2k.ssmp \
-  --tblite /path/to/tblite \
-  --cp2k-source /path/to/cp2k \
-  --tblite-source /path/to/tblite \
-  --jobs 10 --threads 1 --eos-mesh k444 \
-  --energy-mesh k333 --energy-mesh k444 --energy-mesh k555 \
-  --result-mesh k555
+python3 Goldzak12/scripts/run_goldzak12_k_convergence.py \
+  --campaign-manifest /path/to/build_manifest.json \
+  --campaign-manifest-sha256 REVIEWED_64_HEX_SHA256 \
+  --cp2k-source /path/to/clean/cp2k-g-xTB-pbc \
+  --save-tblite-source /path/to/clean/save_tblite-pbc \
+  --jobs 10 --threads 1 --stop-after-convergence
 
-python3 Goldzak12/scripts/compare_goldzak12_results.py --mesh k555
-python3 Goldzak12/scripts/plot_literature_comparison.py
-python3 Goldzak12/scripts/validate_goldzak12_results.py \
-  --eos-mesh k444 --energy-mesh k333 --energy-mesh k444 \
-  --energy-mesh k555 --result-mesh k555
+# Review eos_fits.csv, lc10_adaptive_k_steps.csv, every branch classification,
+# and the printed fit fingerprint, then run the same command with:
+#   --approve-fits
 
-python3 Goldzak12/scripts/continue_goldzak12_eos.py \
-  --solid LiH --method GFN2 --mesh k444 --start-scale 0.94 \
-  --scale 0.93 --scale 0.92 --variant lih_scc_continuation \
-  --mixer tblite --memory 250 --damping 0.4 --promote
+python3 Goldzak12/scripts/finalize_goldzak12_paper_summary.py
 ```
 
 On Terok, use the shared fail-closed MPI/affinity path.  The manifest hash must
@@ -87,8 +91,7 @@ MANIFEST=campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json
 MANIFEST_SHA256=REPLACE_WITH_EXTERNALLY_REVIEWED_SHA256
 MPI=/path/to/qualified/environment/bin/mpirun
 
-python3 Goldzak12/scripts/run_goldzak12_eos_benchmark.py \
-  --method GXTB \
+python3 Goldzak12/scripts/run_goldzak12_k_convergence.py \
   --campaign-manifest "$MANIFEST" \
   --campaign-manifest-sha256 "$MANIFEST_SHA256" \
   --cp2k-source /path/to/clean/cp2k-g-xTB-pbc \
@@ -97,15 +100,14 @@ python3 Goldzak12/scripts/run_goldzak12_eos_benchmark.py \
   --mpi-launcher "$MPI" \
   --mpi-launcher-arg=--bind-to --mpi-launcher-arg=none \
   --taskset /usr/bin/taskset --cpu-set 96-103 --cpu-set 104-111 \
-  --eos-mesh k444 --energy-mesh k333 --energy-mesh k444 \
-  --energy-mesh k555 --result-mesh k555 --stop-after-eos
+  --stop-after-convergence
 ```
 
-GXTB production extension
--------------------------
+Single-mesh diagnostics and g-XTB input contract
+------------------------------------------------
 
-GXTB is run selectively with the save_tblite-enabled CP2K executable and the
-matching save_tblite CLI. The generated CP2K inputs pin `METHOD GXTB`,
+`run_goldzak12_eos_benchmark.py` remains available for single-mesh diagnostics;
+it is not the publication runner.  The g-XTB CP2K inputs pin `METHOD GXTB`,
 `SCC_MIXER TBLITE` (the native g-XTB FDIIS potential/Fock mixer), and CP2K
 `DIRECT_P_MIXING`; no CP2K-Fock, CP2K-density, or modified-Broyden retry is
 used as an alternative GXTB production mixer. The 11 LC10 elements use
@@ -160,15 +162,10 @@ python3 Goldzak12/scripts/validate_goldzak12_results.py \
   --result-mesh k555
 ```
 
-After all three methods have been collected, validate the combined archive and
-freeze the publication table and its complete raw-output lineage:
+After the adaptive runner has completed and its exact fit fingerprint has been
+approved, freeze the publication table and its complete raw-output lineage:
 
 ```bash
-python3 Goldzak12/scripts/validate_goldzak12_results.py \
-  --method GFN1 --method GFN2 --method GXTB --eos-mesh k444 \
-  --energy-mesh k333 --energy-mesh k444 --energy-mesh k555 \
-  --result-mesh k555
-
 python3 Goldzak12/scripts/finalize_goldzak12_paper_summary.py
 ```
 
@@ -176,13 +173,14 @@ The finalizer atomically writes `data/lc10_gfn_gxtb_paper_summary.csv`,
 `data/lc10_gfn_gxtb_paper_summary.json`, and
 `data/lc10_gfn_gxtb_paper_summary.tex`. The CSV has exactly one ten-system row
 per method with ME, MAE, RMSE, and MaxAE for lattice constants and cohesive
-energies. The JSON adds raw EOS/final-energy lineage, hashes, direct g-xTB/GFN
+energies. Each solid may have a different selected dense mesh between `k444`
+and `k888`; the JSON records the raw adjacent criteria and selected mesh. It
+also adds complete EOS/equilibrium-output lineage, hashes, direct g-xTB/GFN
 comparisons, and build provenance; the TeX file exports paper macros. Missing
-or substituted systems, reduced coverage, stale stamps, or tampered raw data
-remove all three outputs and make finalization fail.
+or substituted systems, reduced coverage, stale stamps, a second/RMS gate, or
+tampered raw data remove all three outputs and make finalization fail.
 
-`k555` is the runner and validator default result mesh, matching the frozen
-GFN1/GFN2 report. The runner fixes `OPENBLAS_NUM_THREADS`, `MKL_NUM_THREADS`,
+The runner fixes `OPENBLAS_NUM_THREADS`, `MKL_NUM_THREADS`,
 and `VECLIB_MAXIMUM_THREADS` to 1 and sets `OMP_WAIT_POLICY=PASSIVE`; CP2K's
 outer `OMP_NUM_THREADS` remains controlled by `--threads`.
 
@@ -195,11 +193,12 @@ compared as sets.  A completed scientific output with missing or invalid
 execution evidence is never deleted or rerun implicitly; the driver stops and
 requires explicit review before `--force` can replace it.
 
-GXTB final single points are never launched implicitly. `--stop-after-eos`
-runs the atom/EOS stage and stops after writing the fits; `--fit-only`
-recollects already stamped EOS outputs without launching an executable; and
-only `--approve-fits` records the exact current fit-table fingerprint and
-permits the `k333/k444/k555` stage. For the 38-GB development Mac,
+The separate fixed-geometry diagnostic single points are never launched
+implicitly. `--stop-after-convergence` completes the adaptive independent-EOS
+stage and stops; `--fit-only` recollects already stamped outputs without
+launching an executable; and only `--approve-fits` records the exact current
+multi-mesh fit-table fingerprint and permits the diagnostic series. For the
+38-GB development Mac,
 `--jobs 3 --threads 1` is the conservative unmeasured default because the final queue
 contains `k555` jobs; increase concurrency only after measuring their resident
 set size. The 11 isolated-atom checks are small and can separately use more
@@ -248,10 +247,14 @@ python3 Goldzak12/scripts/run_goldzak12_benchmark.py atom-check \
 This writes `data/atom_reference_cp2k_vs_save_tblite_gxtb.csv` and fails if an
 atom is missing or exceeds the selected tolerance.
 
-The default GXTB production plan is 11 save_tblite atom jobs, 110 CP2K k444
-EOS jobs (ten solids times 11 standard scales), and 30 final single points.
-Thus exact LC10 production has 151 jobs before the independent CP2K atom gate.
-Every `--adaptive-scale SOLID=SCALE` adds one CP2K EOS job.
+The initial same-binary three-method publication plan contains 33 save_tblite
+atom jobs, 990 EOS jobs (3 methods x 10 solids x 3 meshes x 11 scales), and 90
+own-minimum equilibrium single points.  After approval, the separate
+fixed-geometry diagnostic adds 90 single points.  The independent g-XTB CP2K
+atom gate adds 11 jobs, for 1214 calculations before any adaptive `k666+`
+extension.  Each unresolved method/solid/mesh adds 11 EOS points plus one
+own-minimum single point.  A targeted extra EOS scale adds one job at each mesh
+where it is requested.
 
 ```bash
 python3 Goldzak12/scripts/run_goldzak12_eos_benchmark.py \
@@ -303,26 +306,23 @@ relative-energy continuous branch and then applies the existing single-well
 and quadratic-fit gates.  The selection remains diagnostic: it never copies an
 output into `runs/eos`, never approves an LC10 fit, and never starts `k555`.
 
-The independent CP2K-versus-CLI atom check adds 11 CP2K atom jobs. Counting
-that mandatory acceptance gate, exact LC10 publication therefore contains 162
-calculations before adaptive additions.
-
-Final-single-point inputs are runnable only after a valid quadratic EOS fit.
-Each generated input has an adjacent `*.inp.eos.json` lineage record containing
-the fitted lattice constant, EOS mesh, energy mesh, input hash, and SPGLIB
-contract. A pre-generated input at the experimental lattice constant, an input
-without this valid lineage, or a lineage attached to an invalid fit is treated
-as stale. Once the fit is accepted, the runner regenerates the input at the
-actual EOS minimum before CP2K can run it.
+Equilibrium and fixed-diagnostic inputs are runnable only after a valid
+quadratic EOS fit. Each generated input has an adjacent `*.inp.eos.json`
+lineage record containing the fitted lattice constant, EOS mesh, energy mesh,
+input hash, and SPGLIB contract. A pre-generated input at the experimental
+lattice constant, an input without this valid lineage, or a lineage attached
+to an invalid fit is stale. Every adaptive Ecoh value is evaluated at its own
+mesh's EOS minimum; the fixed-geometry series is stored in a different run
+tree and marked ineligible for paper selection.
 
 The runner never forces a fit. A missing or discontinuous EOS minimum for any
 of the ten paper systems stops before final single points and is recorded in
 `data/gxtb_adaptive_followup.csv`/`.md`; the paper artifact still requires
 10/10. LiH/MgO diagnostic behavior has no effect on this gate.
 
-The exact per-system grid is persisted in
-`data/gxtb_eos_scale_manifest.json`, restored on resume, and used by the
-validator. A large local energy discontinuity is reported as a numerical SCC
+The exact method/system/mesh grid is persisted in
+`data/lc10_k_convergence_scale_manifest.json` and used by the finalizer. A
+large local energy discontinuity is reported as a numerical SCC
 branch *candidate*, never immediately as a physical failure. Each candidate
 must be reviewed in `data/gxtb_eos_classifications.json` with a per-point
 `action` (`exclude` or `retain`), `classification`, and nonempty `rationale`;

@@ -11,6 +11,7 @@ import os
 import re
 import subprocess
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -432,7 +433,12 @@ def run_jobs(
     retry_scf: bool = True,
     campaign_fingerprint: dict[str, object] | None = None,
     execution_pool: execution.ExecutionPool | None = None,
+    campaign_bind_all_methods: bool = False,
 ) -> None:
+    if campaign_bind_all_methods and campaign_fingerprint is None:
+        raise ValueError(
+            "campaign_bind_all_methods requires a validated campaign fingerprint"
+        )
     cp2k_identity = base.executable_fingerprint(cp2k)
 
     def signature(spec: tuple[str, Path, Path, bool]) -> dict[str, object]:
@@ -453,7 +459,8 @@ def run_jobs(
             raise ValueError("GXTB EOS jobs require a validated campaign fingerprint")
         base.validate_method_input(spec[1].read_text(), method)
         usable = usable_output_ok(spec[2], method, require_opt=spec[3])
-        stamped = method != "GXTB" or base.job_stamp_matches(spec[2], signature(spec))
+        campaign_bound = method == "GXTB" or campaign_bind_all_methods
+        stamped = not campaign_bound or base.job_stamp_matches(spec[2], signature(spec))
         if not force and usable and stamped:
             if execution_pool is None:
                 continue
@@ -471,7 +478,7 @@ def run_jobs(
             f"{label}: {issue}" for label, issue in execution_evidence_failures
         )
         raise RuntimeError(
-            "scientifically completed GXTB outputs have missing/invalid separate execution "
+            "scientifically completed outputs have missing/invalid separate execution "
             "evidence; refusing an implicit destructive rerun (use --force only after review): "
             + details
         )
@@ -495,7 +502,7 @@ def run_jobs(
         ok = usable_output_ok(out, method, require_opt=require_opt)
         strategy = "native_gxtb_fdiis" if method == "GXTB" else "default_tblite_mixer"
         write_strategy(out, strategy, ok)
-        if method == "GXTB":
+        if method == "GXTB" or campaign_bind_all_methods:
             base.write_job_stamp(out, signature(spec), completed=ok, return_code=code)
             if execution_pool is not None:
                 assert observation is not None
@@ -750,6 +757,34 @@ def fit_gxtb_eos(points: list[tuple[float, float, float, bool]]) -> dict[str, ob
     }
 
 
+def merge_keyed_rows(
+    path: Path,
+    rows: list[dict[str, object]],
+    key_fields: tuple[str, ...],
+    *,
+    sort_key: Callable[[dict[str, object]], object] | None = None,
+) -> list[dict[str, object]]:
+    """Replace records by scientific identity without dropping other k meshes.
+
+    The original single-EOS workflow replaced every row of a selected method.
+    A genuine k-convergence campaign evaluates several independent EOS meshes,
+    so method-only replacement would silently discard the preceding mesh.
+    """
+    new_keys = {
+        tuple(str(row.get(field, "")) for field in key_fields) for row in rows
+    }
+    preserved = [
+        dict(row)
+        for row in base.read_csv(path)
+        if tuple(str(row.get(field, "")) for field in key_fields) not in new_keys
+    ]
+    merged: list[dict[str, object]] = preserved + rows
+    if sort_key is not None:
+        merged.sort(key=sort_key)
+    base.write_csv(path, merged)
+    return merged
+
+
 def make_eos_table(
     mesh: str,
     scales: tuple[float, ...],
@@ -762,7 +797,6 @@ def make_eos_table(
     rows: list[dict[str, object]] = []
     point_rows: list[dict[str, object]] = []
     branch_rows: list[dict[str, object]] = []
-    unresolved_templates: list[dict[str, object]] = []
     for ref in base.REFERENCES:
         if ref.solid not in solids:
             continue
@@ -880,39 +914,50 @@ def make_eos_table(
                             ),
                         }
                     )
-                    if entry is None:
-                        unresolved_templates.append(
-                            {
-                                "solid": ref.solid,
-                                "method": "GXTB",
-                                "mesh": mesh,
-                                "scale": scale,
-                                "classification": "",
-                                "action": "",
-                                "rationale": "",
-                            }
-                        )
-    base.merge_method_rows(
+    merge_keyed_rows(
         ROOT / "data" / "eos_points.csv",
         point_rows,
-        methods,
+        ("solid", "method", "mesh", "scale"),
         sort_key=lambda row: (
             [ref.solid for ref in base.REFERENCES].index(str(row["solid"])),
             base.METHODS.index(str(row["method"])),
+            int(str(row["mesh"])[1:]),
             float(row["scale"]),
         ),
     )
-    base.merge_method_rows(
+    merge_keyed_rows(
         ROOT / "data" / "eos_fits.csv",
         rows,
-        methods,
+        ("solid", "method", "eos_mesh"),
         sort_key=lambda row: (
             [ref.solid for ref in base.REFERENCES].index(str(row["solid"])),
             base.METHODS.index(str(row["method"])),
+            int(str(row["eos_mesh"])[1:]),
         ),
     )
     if "GXTB" in methods:
-        base.write_csv(ROOT / "data" / "gxtb_eos_branch_diagnostics.csv", branch_rows)
+        branch_path = ROOT / "data" / "gxtb_eos_branch_diagnostics.csv"
+        selected_solid_set = set(solids)
+        preserved_branch_rows = [
+            dict(row)
+            for row in base.read_csv(branch_path)
+            if not (
+                row.get("method") == "GXTB"
+                and row.get("solid") in selected_solid_set
+                and row.get("mesh") == mesh
+            )
+        ]
+        combined_branch_rows: list[dict[str, object]] = (
+            preserved_branch_rows + branch_rows
+        )
+        combined_branch_rows.sort(
+            key=lambda row: (
+                [ref.solid for ref in base.REFERENCES].index(str(row["solid"])),
+                int(str(row["mesh"])[1:]),
+                float(row["scale"]),
+            )
+        )
+        base.write_csv(branch_path, combined_branch_rows)
         candidate_path = ROOT / "data" / "gxtb_eos_classification_candidates.json"
         candidate_path.parent.mkdir(parents=True, exist_ok=True)
         candidate_path.write_text(
@@ -923,7 +968,19 @@ def make_eos_table(
                         "Copy reviewed entries to gxtb_eos_classifications.json and set action "
                         "to exclude or retain plus a nonempty classification and rationale."
                     ),
-                    "entries": unresolved_templates,
+                    "entries": [
+                        {
+                            "solid": row["solid"],
+                            "method": "GXTB",
+                            "mesh": row["mesh"],
+                            "scale": float(row["scale"]),
+                            "classification": "",
+                            "action": "",
+                            "rationale": "",
+                        }
+                        for row in combined_branch_rows
+                        if row.get("resolution") == "unresolved_candidate"
+                    ],
                 },
                 indent=2,
                 sort_keys=True,
@@ -1130,10 +1187,14 @@ def collect_results(
     result_mesh: str,
     methods: tuple[str, ...] = base.METHODS,
     campaign_fingerprint: dict[str, object] | None = None,
+    campaign_bind_all_methods: bool = False,
 ) -> tuple[list[dict[str, object]], list[dict[str, object]], list[dict[str, object]]]:
     refs = {ref.solid: ref for ref in base.REFERENCES}
     atom_e = base.atom_energies(
-        methods, campaign_fingerprint, base.LC10_PAPER_ELEMENTS
+        methods,
+        campaign_fingerprint,
+        base.LC10_PAPER_ELEMENTS,
+        campaign_bind_all_methods=campaign_bind_all_methods,
     )
     rows: list[dict[str, object]] = []
     for fit in fits:
@@ -1184,7 +1245,11 @@ def collect_results(
                     "ecoh_error_eV_per_atom": f"{(ecoh - ref.ecoh_exp):.8f}" if ecoh is not None else "",
                     "ecoh_abs_error_eV_per_atom": f"{abs(ecoh - ref.ecoh_exp):.8f}" if ecoh is not None else "",
                     "solid_energy_hartree": f"{e_solid:.12f}" if e_solid is not None else "",
-                    "atom_reference_source": "save_tblite_cli" if method == "GXTB" else "tblite_cli",
+                    "atom_reference_source": (
+                        "save_tblite_cli"
+                        if method == "GXTB" or campaign_bind_all_methods
+                        else "tblite_cli"
+                    ),
                     "a_HF_A": ref.a_hf,
                     "a_MP2_A": ref.a_mp2,
                     "a_SCS_MP2_A": ref.a_scs_mp2,

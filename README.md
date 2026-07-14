@@ -70,12 +70,18 @@ Primary aggregate results:
 | X23b lattice energies | k333 SP on native Bloch k222 cell opt | GFN2-xTB | 14.092104 kJ mol-1 |
 | X23b cell volumes | native Bloch k222 cell opt | GFN1-xTB | 7.514116 percent |
 | X23b cell volumes | native Bloch k222 cell opt | GFN2-xTB | 5.842296 percent |
-| LC10 lattice constants | fixed identical 10, k444 EOS | GFN1-xTB | 0.145118 A |
-| LC10 lattice constants | fixed identical 10, k444 EOS | GFN2-xTB | 0.062410 A |
-| LC10 cohesive energies | fixed identical 10, k555 on k444 minima | GFN1-xTB | 1.543851 eV atom-1 |
-| LC10 cohesive energies | fixed identical 10, k555 on k444 minima | GFN2-xTB | 1.299325 eV atom-1 |
+| LC10 historical baseline | fixed identical 10, k444 EOS | GFN1-xTB | 0.145118 A |
+| LC10 historical baseline | fixed identical 10, k444 EOS | GFN2-xTB | 0.062410 A |
+| LC10 historical baseline | k555 SP on k444 minima | GFN1-xTB | 1.543851 eV atom-1 |
+| LC10 historical baseline | k555 SP on k444 minima | GFN2-xTB | 1.299325 eV atom-1 |
 
 All production k-point calculations use native Bloch sampling with full
 SPGLIB symmetry reduction. The completed production counts are 156/156 for
 DMC-ICE13, 46/46 for X23b k222 cell optimization, and 46/46 each for the
 X23b k333 and k444 final-geometry single points.
+
+The new LC10 paper table is not populated from those historical rows.  All
+three methods share one post-#5582 CP2K/save_tblite build and independently
+converge both a0 and Ecoh per solid from k333 through at most k888. One passing
+adjacent step is sufficient, both thresholds must pass, and the denser value
+is retained; no RMS or two-step gate is applied.

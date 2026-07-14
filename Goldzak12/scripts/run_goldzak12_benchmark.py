@@ -1519,7 +1519,12 @@ def run_tblite_atom_jobs(
     save_tblite: Path | None = None,
     campaign_fingerprint: dict[str, object] | None = None,
     elements: tuple[str, ...] | list[str] | None = None,
+    campaign_bind_all_methods: bool = False,
 ) -> None:
+    if campaign_bind_all_methods and campaign_fingerprint is None:
+        raise ValueError(
+            "campaign_bind_all_methods requires a validated campaign fingerprint"
+        )
     if "GXTB" in methods and campaign_fingerprint is None:
         raise ValueError("GXTB save_tblite jobs require a validated campaign fingerprint")
     selected_elements = tuple(
@@ -1549,10 +1554,17 @@ def run_tblite_atom_jobs(
                     "restart": False,
                 },
                 executable_identity=identities["gxtb" if method == "GXTB" else "legacy"],
-                campaign_fingerprint=campaign_fingerprint if method == "GXTB" else None,
+                campaign_fingerprint=(
+                    campaign_fingerprint
+                    if method == "GXTB" or campaign_bind_all_methods
+                    else None
+                ),
             )
             if not force and json_path.exists() and parse_tblite_json_energy(json_path) is not None:
-                if method != "GXTB" or job_stamp_matches(json_path, signature):
+                if (
+                    method != "GXTB"
+                    and not campaign_bind_all_methods
+                ) or job_stamp_matches(json_path, signature):
                     continue
             specs.append((method, element, run_dir, executable, signature))
     if not specs:
@@ -1590,7 +1602,7 @@ def run_tblite_atom_jobs(
                 env=controlled_subprocess_env(1),
             )
         ok = proc.returncode == 0 and parse_tblite_json_energy(json_path) is not None
-        if method == "GXTB":
+        if method == "GXTB" or campaign_bind_all_methods:
             write_job_stamp(
                 json_path,
                 signature,
@@ -1690,7 +1702,12 @@ def atom_energies(
     methods: tuple[str, ...] = METHODS,
     campaign_fingerprint: dict[str, object] | None = None,
     elements: tuple[str, ...] | list[str] | None = None,
+    campaign_bind_all_methods: bool = False,
 ) -> dict[tuple[str, str], float]:
+    if campaign_bind_all_methods and campaign_fingerprint is None:
+        raise ValueError(
+            "campaign_bind_all_methods requires a validated campaign fingerprint"
+        )
     energies: dict[tuple[str, str], float] = {}
     selected_elements = set(elements) if elements is not None else None
     for method in methods:
@@ -1701,9 +1718,9 @@ def atom_energies(
             if selected_elements is not None and element_dir.name not in selected_elements:
                 continue
             out = element_dir / f"atom_{element_dir.name}_{method}.json"
-            if method == "GXTB":
+            if method == "GXTB" or campaign_bind_all_methods:
                 if campaign_fingerprint is None:
-                    raise ValueError("GXTB atom collection requires a campaign fingerprint")
+                    raise ValueError("campaign-bound atom collection requires a fingerprint")
                 issue = completed_stamp_campaign_issue(
                     out, campaign_fingerprint, executable_role="save_tblite"
                 )
@@ -1717,7 +1734,11 @@ def atom_energies(
                 "method": method,
                 "element": element,
                 "energy_hartree": f"{energy:.12f}",
-                "source": "save_tblite_cli" if method == "GXTB" else "tblite_cli",
+                "source": (
+                    "save_tblite_cli"
+                    if method == "GXTB" or campaign_bind_all_methods
+                    else "tblite_cli"
+                ),
                 "multiplicity": ELEMENT_MULTIPLICITY[element],
                 "spin_2S": ELEMENT_MULTIPLICITY[element] - 1,
             }
