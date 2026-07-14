@@ -46,7 +46,7 @@ class DMC13PhasewiseSummaryTests(unittest.TestCase):
         )
 
         results: dict[str, object] = {"results": {}}
-        for mesh, delta in (("k111", -0.04), ("k222", 0.0)):
+        for mesh, delta in (("k111", -0.04), ("k222", 0.0), ("k333", 0.0)):
             mesh_results: dict[str, object] = {}
             for method_index, method in enumerate(summary.METHODS, start=1):
                 ih = -10.0 - method_index
@@ -147,6 +147,16 @@ class DMC13PhasewiseSummaryTests(unittest.TestCase):
             self.assertTrue(csv_path.is_file())
             payload = json.loads(json_path.read_text())
             self.assertEqual(payload["status"], "phasewise_kpoint_converged")
+            self.assertEqual(
+                payload["publication_qualification"]["status"],
+                "gxtb_cross_build_requalification_pending",
+            )
+            self.assertFalse(
+                payload["publication_qualification"]["paper_freeze_authorized"]
+            )
+            self.assertFalse(
+                payload["publication_qualification"]["gxtb_old_results_reusable"]
+            )
             self.assertEqual(list(payload["methods"]), list(summary.METHODS))
             self.assertAlmostEqual(
                 payload["methods"]["GXTB"]["metrics_kjmol_per_h2o"]["MAE"],
@@ -155,6 +165,30 @@ class DMC13PhasewiseSummaryTests(unittest.TestCase):
             self.assertEqual(
                 payload["methods"]["GXTB"]["selected_mesh_distribution"],
                 {"k222": 12},
+            )
+            fixed = payload["methods"]["GXTB"][
+                "fixed_k333_same_mesh_comparison"
+            ]
+            self.assertEqual(
+                fixed["status"],
+                "numerically_unconverged_same_mesh_comparator",
+            )
+            self.assertEqual(
+                payload["methods"]["GXTB"]["publication_qualification"][
+                    "status"
+                ],
+                "diagnostic_pre_post_5582_requalification",
+            )
+            self.assertFalse(
+                payload["methods"]["GXTB"]["publication_qualification"][
+                    "old_results_reusable"
+                ]
+            )
+            self.assertAlmostEqual(fixed["metrics_kjmol_per_h2o"]["MAE"], 3.0)
+            self.assertTrue(
+                payload["fixed_k333_same_mesh_comparison"][
+                    "not_a_phasewise_converged_result"
+                ]
             )
             phase = payload["methods"]["GXTB"]["phases"]["VII"]
             self.assertEqual(phase["selected_mesh"], "k222")

@@ -211,7 +211,15 @@ This refuses an incomplete GFN1/GFN2/g-XTB result and removes stale summaries.
 On success it writes exactly one row per method to
 `data/dmc_ice13_gfn_gxtb_phasewise_summary.csv` and the phase-resolved energies,
 same-mesh Ih references, mesh choices, source hashes, build identities, and DMC
-reference sensitivity to the companion JSON file.
+reference sensitivity to the companion JSON file.  The same three rows also
+carry a strictly identical `k333` fixed-mesh comparison for GFN1-xTB,
+GFN2-xTB, and g-xTB.  This fixed-mesh block is a cross-method diagnostic, not
+the primary converged result; the g-xTB `k333` value is explicitly labelled
+`numerically_unconverged_same_mesh_comparator` and must not be substituted for
+the phase-wise k-point-converged value.  Until the post-#5582 cross-build gate
+below has passed, the numerically converged pre-#5582 g-xTB result is also
+explicitly labelled `diagnostic_pre_post_5582_requalification`, with
+`paper_freeze_authorized: false` and `old_results_reusable: false`.
 
 ### Same-source builds on another architecture
 
@@ -373,3 +381,32 @@ central campaign manifest, and writes stamped CLI jobs to
 `runs_cli_gxtb_spglib/`.  Its CSV/JSON products use the
 `dmc_ice13_gxtb_spglib_*` prefix.  Earlier `runs_cli/GXTB/` files and the
 unprefixed CLI tables are not adopted or modified.
+
+### Post-upstream cross-build requalification
+
+After a CP2K integration commit is merged upstream, the frozen benchmark
+energies are reusable only after a new common production build reproduces a
+hash-pinned cross-build matrix.  The dedicated
+`scripts/requalify_dmc13_cross_build.py` runner consumes both the immutable
+reference validation snapshot and the common candidate-build manifest by exact
+SHA256.  It verifies clean source trees, requires the candidate CP2K revision
+to contain upstream `c92cc08b45378b85150447011b5a4bb552f5b797`, executes the
+exact frozen input bytes, and compares total energies within `1e-10` Eh and
+same-mesh-Ih relative energies within `0.001` kJ mol-1 per H2O.
+
+There are two deliberately separate scopes.  A `--scope sentinel` run takes
+explicit same-mesh Ih/phase selections and can establish only
+`sentinel_passed`; it always writes `old_results_reusable: false`.  This is the
+fast gate for implicit Gamma, representative even/odd meshes, or the final
+adjacent Ih/VII pair.
+
+The publication gate uses `--scope full-publication-matrix` and does not accept
+free-form `--selection` arguments.  It derives its exact matrix from a final
+summary supplied with `--final-summary` and `--final-summary-sha256`.  The
+matrix contains the selected and immediately previous mesh for all twelve
+non-reference phases, each corresponding same-mesh Ih energy, and all thirteen
+raw `k333` energies used by the fixed-mesh comparator.  Only a hash-bound
+`full_publication_matrix_passed` report from this automatically derived matrix
+sets `old_results_reusable: true` and `paper_freeze_authorized: true`.  The
+report path is removed before every attempt and remains absent after any
+failure, preventing a stale passing report from surviving a failed rerun.

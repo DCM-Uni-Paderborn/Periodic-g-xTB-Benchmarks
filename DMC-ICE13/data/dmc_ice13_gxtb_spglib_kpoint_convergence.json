@@ -235,6 +235,48 @@
       "pilot_inconclusive": false,
       "rms_delta_kjmol_per_h2o": 0.22883130262070048,
       "to_mesh": "k999"
+    },
+    {
+      "coverage": "pilot",
+      "eligible_for_stopping": false,
+      "expected_nonreference_phases": 12,
+      "from_mesh": "k999",
+      "full_set_rms_lower_bound_kjmol_per_h2o": 0.03200835157266359,
+      "max_absolute_delta_kjmol_per_h2o": 0.11088018238076103,
+      "max_absolute_delta_phase": "VII",
+      "mean_absolute_delta_kjmol_per_h2o": 0.11088018238076103,
+      "n_common_nonreference_phases": 1,
+      "observed_subset_rms_delta_kjmol_per_h2o": 0.11088018238076103,
+      "passed_formal_stopping_pair": false,
+      "passed_numeric_thresholds": null,
+      "phases": [
+        "VII"
+      ],
+      "pilot_definitively_rejects_candidate": true,
+      "pilot_inconclusive": false,
+      "rms_delta_kjmol_per_h2o": 0.11088018238076103,
+      "to_mesh": "k101010"
+    },
+    {
+      "coverage": "pilot",
+      "eligible_for_stopping": false,
+      "expected_nonreference_phases": 12,
+      "from_mesh": "k101010",
+      "full_set_rms_lower_bound_kjmol_per_h2o": 0.008988217823085638,
+      "max_absolute_delta_kjmol_per_h2o": 0.031136099878160906,
+      "max_absolute_delta_phase": "VII",
+      "mean_absolute_delta_kjmol_per_h2o": 0.031136099878160906,
+      "n_common_nonreference_phases": 1,
+      "observed_subset_rms_delta_kjmol_per_h2o": 0.031136099878160906,
+      "passed_formal_stopping_pair": false,
+      "passed_numeric_thresholds": null,
+      "phases": [
+        "VII"
+      ],
+      "pilot_definitively_rejects_candidate": false,
+      "pilot_inconclusive": true,
+      "rms_delta_kjmol_per_h2o": 0.031136099878160906,
+      "to_mesh": "k111111"
     }
   ],
   "core_meshes": [
@@ -291,6 +333,10 @@
       "XV",
       "XVII"
     ],
+    "k101010": [
+      "Ih",
+      "VII"
+    ],
     "k111": [
       "Ih",
       "II",
@@ -305,6 +351,10 @@
       "XIV",
       "XV",
       "XVII"
+    ],
+    "k111111": [
+      "Ih",
+      "VII"
     ],
     "k222": [
       "Ih",
@@ -426,8 +476,8 @@
       }
     },
     "campaign_id": "gxtb-pbc-v1-20260714",
-    "path": "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/production/Periodic-GFN2-Benchmarks-k888-20260714T123556Z/DMC-ICE13/data/validation_snapshots/dmc_ice13_gxtb_spglib_validation_index.421401efca87a2625b1ad48936ca2e9f72e6f1f82985f62b22d2c24fd224b541.json",
+    "path": "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/production/Periodic-GFN2-Benchmarks-k888-20260714T123556Z/DMC-ICE13/data/validation_snapshots/dmc_ice13_gxtb_spglib_validation_index.8125fa09f3552ac00ea5b21d63c9e8b3fde104e4c5d23d78cb7fde4c01a05803.json",
     "schema_version": 2,
-    "sha256": "421401efca87a2625b1ad48936ca2e9f72e6f1f82985f62b22d2c24fd224b541"
+    "sha256": "8125fa09f3552ac00ea5b21d63c9e8b3fde104e4c5d23d78cb7fde4c01a05803"
   }
 }
