@@ -88,6 +88,32 @@ python3 Goldzak12/scripts/continue_goldzak12_eos.py \
   --mixer tblite --memory 250 --damping 0.4 --promote
 ```
 
+On Terok, use the shared fail-closed MPI/affinity path.  The manifest hash must
+come from the completed build qualification; do not compute and accept a new
+value inside the launch command.  Repeat `--solid` and `--cpu-set` as needed;
+the number of CPU sets must equal `--jobs`, the sets must be disjoint, and each
+must contain at least `MPI ranks times OpenMP threads` CPUs.  This compact
+two-worker example demonstrates the exact CLI spelling:
+
+```bash
+MANIFEST=campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json
+MANIFEST_SHA256=REPLACE_WITH_EXTERNALLY_REVIEWED_SHA256
+MPI=/path/to/qualified/environment/bin/mpirun
+
+python3 Goldzak12/scripts/run_goldzak12_eos_benchmark.py \
+  --method GXTB --solid C --solid Si \
+  --campaign-manifest "$MANIFEST" \
+  --campaign-manifest-sha256 "$MANIFEST_SHA256" \
+  --cp2k-source /path/to/clean/cp2k-g-xTB-pbc \
+  --save-tblite-source /path/to/clean/save_tblite-pbc \
+  --jobs 2 --mpi-ranks-per-job 8 --threads 1 \
+  --mpi-launcher "$MPI" \
+  --mpi-launcher-arg=--bind-to --mpi-launcher-arg=none \
+  --taskset /usr/bin/taskset --cpu-set 96-103 --cpu-set 104-111 \
+  --eos-mesh k444 --energy-mesh k333 --energy-mesh k444 \
+  --energy-mesh k555 --result-mesh k555 --stop-after-eos
+```
+
 GXTB production extension
 -------------------------
 
@@ -123,7 +149,7 @@ production lattice-constant or cohesive-energy MAE.
 ```bash
 python3 Goldzak12/scripts/run_goldzak12_eos_benchmark.py \
   --method GXTB \
-  --campaign-manifest campaigns/gxtb-pbc-v1-20260714/build_manifest.json \
+  --campaign-manifest campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json \
   --cp2k-source /path/to/cp2k-g-xTB-pbc \
   --save-tblite-source /path/to/save_tblite-pbc \
   --jobs 3 --threads 1 --eos-mesh k444 \
@@ -134,7 +160,7 @@ python3 Goldzak12/scripts/run_goldzak12_eos_benchmark.py \
 # classification/adaptive follow-up, approve this exact fit fingerprint:
 python3 Goldzak12/scripts/run_goldzak12_eos_benchmark.py \
   --method GXTB \
-  --campaign-manifest campaigns/gxtb-pbc-v1-20260714/build_manifest.json \
+  --campaign-manifest campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json \
   --cp2k-source /path/to/cp2k-g-xTB-pbc \
   --save-tblite-source /path/to/save_tblite-pbc \
   --jobs 3 --threads 1 --eos-mesh k444 \
@@ -183,6 +209,15 @@ GFN1/GFN2 report. The runner fixes `OPENBLAS_NUM_THREADS`, `MKL_NUM_THREADS`,
 and `VECLIB_MAXIMUM_THREADS` to 1 and sets `OMP_WAIT_POLICY=PASSIVE`; CP2K's
 outer `OMP_NUM_THREADS` remains controlled by `--threads`.
 
+`scripts/benchmark_execution.py` leaves the scientific job-stamp schema and
+matcher unchanged.  It writes an additive atomic `*.execution.json` record
+that binds the exact taskset mask, launcher hash and command, `--bind-to none`,
+observed CP2K child/rank PIDs and kernel CPU masks, input hash, output hash, and
+scientific-stamp hash.  Kernel-normalized equivalent CPU-set spellings are
+compared as sets.  A completed scientific output with missing or invalid
+execution evidence is never deleted or rerun implicitly; the driver stops and
+requires explicit review before `--force` can replace it.
+
 GXTB final single points are never launched implicitly. `--stop-after-eos`
 runs the atom/EOS stage and stops after writing the fits; `--fit-only`
 recollects already stamped EOS outputs without launching an executable; and
@@ -193,7 +228,7 @@ contains `k555` jobs; increase concurrency only after measuring their resident
 set size. The 13 isolated-atom checks are small and can separately use more
 workers.
 
-The versioned `campaigns/gxtb-pbc-v1-20260714/build_manifest.json` is the
+The versioned `campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json` is the
 single source of truth for the CP2K launcher, its actually loaded `libcp2k`,
 the save_tblite CLI, `libtblite.a`, their hashes, and the frozen source
 revisions. The runner refuses every production invocation until this manifest
@@ -206,6 +241,10 @@ the clean save_tblite source HEAD, and then embeds the complete campaign
 identity in every GXTB job stamp and collector. This path-independent identity
 also freezes both CMake-cache hashes and the fetched-dependency lock; the
 manifest path and complete file hash remain separate provenance records.
+MPI/affinity launches additionally require the externally reviewed manifest
+file hash through `--campaign-manifest-sha256`, and every GXTB EOS path requires
+the CP2K source to descend from merged PR #5582 commit
+`c92cc08b45378b85150447011b5a4bb552f5b797`.
 
 An unsuccessful save_tblite atom job or CP2K job makes the command return
 nonzero only after the concurrent batch has finished, so successful jobs are
@@ -223,7 +262,7 @@ CP2K-versus-save_tblite check (13 atoms, no solid production jobs):
 ```bash
 python3 Goldzak12/scripts/run_goldzak12_benchmark.py atom-check \
   --method GXTB \
-  --campaign-manifest campaigns/gxtb-pbc-v1-20260714/build_manifest.json \
+  --campaign-manifest campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json \
   --cp2k-source /path/to/cp2k-g-xTB-pbc \
   --save-tblite-source /path/to/save_tblite-pbc \
   --jobs 10 --threads 1 --tolerance-hartree 1e-6
@@ -242,7 +281,7 @@ be added through the stamped main runner:
 ```bash
 python3 Goldzak12/scripts/run_goldzak12_eos_benchmark.py \
   --method GXTB --adaptive-scale MgO=0.92000 --adaptive-scale MgO=0.90000 \
-  --campaign-manifest campaigns/gxtb-pbc-v1-20260714/build_manifest.json \
+  --campaign-manifest campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json \
   --cp2k-source /path/to/cp2k-g-xTB-pbc \
   --save-tblite-source /path/to/save_tblite-pbc --stop-after-eos
 ```
@@ -270,11 +309,14 @@ argument; the production default remains `production_ready`:
 
 ```bash
 python3 Goldzak12/scripts/run_gxtb_multistart_branches.py \
-  --campaign-manifest /path/to/post-c92cc08/build_manifest.json \
+  --campaign-manifest campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json \
+  --campaign-manifest-sha256 REPLACE_WITH_EXTERNALLY_REVIEWED_SHA256 \
   --cp2k-source /path/to/clean/cp2k-g-xTB-pbc \
   --save-tblite-source /path/to/clean/save_tblite-pbc \
-  --campaign-state qualification_pending \
-  --cold-workers 8 --threads 1
+  --cold-workers 2 --mpi-ranks-per-job 8 --threads 1 \
+  --mpi-launcher /path/to/qualified/environment/bin/mpirun \
+  --mpi-launcher-arg=--bind-to --mpi-launcher-arg=none \
+  --taskset /usr/bin/taskset --cpu-set 112-119 --cpu-set 120-127
 
 python3 Goldzak12/scripts/classify_gxtb_multistart_branches.py \
   --campaign-root Goldzak12/runs/gxtb_multistart_branches/FINGERPRINT
@@ -312,7 +354,7 @@ final single points. Add the suggested points, then rerun, for example:
 ```bash
 python3 Goldzak12/scripts/run_goldzak12_eos_benchmark.py \
   --method GXTB \
-  --campaign-manifest campaigns/gxtb-pbc-v1-20260714/build_manifest.json \
+  --campaign-manifest campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json \
   --cp2k-source /path/to/cp2k-g-xTB-pbc \
   --save-tblite-source /path/to/save_tblite-pbc \
   --adaptive-scale MgO=0.91000 --adaptive-scale MgO=0.93000 \

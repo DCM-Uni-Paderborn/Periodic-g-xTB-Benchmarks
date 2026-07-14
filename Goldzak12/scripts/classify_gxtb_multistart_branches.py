@@ -145,6 +145,7 @@ def candidate_record(
     expected_restart: Path,
     expected_parent_manifest: Path | None,
     expected_parent_restart: Path | None,
+    expected_execution_contract: Mapping[str, object] | None = None,
 ) -> dict[str, object]:
     record: dict[str, object] = {
         "solid": solid,
@@ -294,6 +295,18 @@ def candidate_record(
             out, expected_signature
         ):
             issues.append("output stamp differs from the complete candidate job signature")
+        execution_record = manifest.get("execution_provenance")
+        if expected_execution_contract is None:
+            if execution_record is not None:
+                issues.append("direct candidate unexpectedly records MPI/affinity provenance")
+        else:
+            _, execution_issue = runner.classify_execution_artifact(
+                execution_record,
+                out,
+                expected_execution_contract,
+            )
+            if execution_issue:
+                issues.append(execution_issue)
     if issues or out is None or restart is None:
         record["issues"] = issues
         return record
@@ -467,6 +480,7 @@ def classify_solid(
     plan_sha256: str,
     campaign_identity: Mapping[str, object],
     campaign_state: str,
+    execution_contract: Mapping[str, object] | None = None,
 ) -> dict[str, object]:
     solids = plan["solids"]
     policy = plan["classification_policy"]
@@ -510,6 +524,7 @@ def classify_solid(
                 expected_restart=restart,
                 expected_parent_manifest=expected_parent_manifest,
                 expected_parent_restart=expected_parent_restart,
+                expected_execution_contract=execution_contract,
             )
         )
     clusters = {
@@ -592,6 +607,7 @@ def main() -> int:
                 "production_eligible": campaign.get("production_eligible"),
                 "plan_sha256": campaign.get("plan_sha256"),
                 "required_cp2k_ancestor": campaign.get("required_cp2k_ancestor"),
+                "execution_contract": campaign.get("execution_contract"),
             }
             expected_declarations = {
                 "schema_version": SCHEMA_VERSION,
@@ -599,6 +615,7 @@ def main() -> int:
                 "production_eligible": False,
                 "plan_sha256": plan_sha256,
                 "required_cp2k_ancestor": plan["required_cp2k_ancestor"],
+                "execution_contract": campaign.get("execution_contract"),
             }
             if declarations != expected_declarations:
                 raise ValueError("campaign declarations differ from the classification plan")
@@ -610,6 +627,19 @@ def main() -> int:
             campaign_state = str(campaign.get("campaign_state_at_execution", ""))
             if campaign_state not in runner.CAMPAIGN_STATES:
                 raise ValueError("campaign has an invalid execution state")
+            execution_contract_raw = campaign.get("execution_contract")
+            if execution_contract_raw is not None and not isinstance(
+                execution_contract_raw, Mapping
+            ):
+                raise ValueError("campaign has an invalid execution contract")
+            execution_contract = execution_contract_raw
+            expected_execution_sha = (
+                runner.execution.canonical_sha256(dict(execution_contract))
+                if execution_contract is not None
+                else None
+            )
+            if campaign.get("execution_contract_sha256") != expected_execution_sha:
+                raise ValueError("campaign execution-contract hash is missing or invalid")
 
             campaign_plan, campaign_plan_issue = verify_artifact(
                 campaign.get("plan"), "campaign plan snapshot"
@@ -654,6 +684,7 @@ def main() -> int:
                     plan_sha256,
                     campaign_identity,
                     campaign_state,
+                    execution_contract,
                 )
                 for solid in ("LiH", "MgO")
             ]
@@ -669,6 +700,7 @@ def main() -> int:
                 "campaign_execution_completed": campaign_completed,
                 "campaign_identity": campaign_identity,
                 "campaign_state_at_execution": campaign_state,
+                "execution_contract": execution_contract,
                 "campaign_manifest": {
                     "path": str(campaign_path.resolve()),
                     "sha256": base.sha256(campaign_path),
