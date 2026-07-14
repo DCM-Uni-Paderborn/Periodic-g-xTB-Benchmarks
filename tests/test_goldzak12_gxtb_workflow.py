@@ -468,6 +468,18 @@ class Goldzak12GXTBCampaignFingerprintTests(unittest.TestCase):
         relocated["campaign_state"] = "validation_in_progress"
         with self.assertRaisesRegex(ValueError, "not production_ready"):
             base.campaign_identity_from_manifest(relocated, Path("second.json"))
+        diagnostic = base.campaign_identity_from_manifest(
+            relocated,
+            Path("second.json"),
+            allowed_campaign_states=("validation_in_progress",),
+        )
+        self.assertEqual(diagnostic, first)
+        with self.assertRaisesRegex(ValueError, r"allowed state\(s\): qualification_pending"):
+            base.campaign_identity_from_manifest(
+                relocated,
+                Path("second.json"),
+                allowed_campaign_states=("qualification_pending",),
+            )
 
     def test_manifest_rejects_replaced_libtblite_archive(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

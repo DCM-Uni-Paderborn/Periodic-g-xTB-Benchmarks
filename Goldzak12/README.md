@@ -244,6 +244,46 @@ The separate continuation script may still be used for diagnostics, but GXTB
 `--promote` is rejected: an independently copied continuation output cannot
 satisfy the canonical input plus complete campaign-stamp contract.
 
+LiH/MgO multi-start branch qualification
+-----------------------------------------
+
+LiH and MgO are not eligible for an EOS fit until the versioned multi-start
+map in `data/gxtb_multistart_plan.json` has been completed and classified.  It
+contains 18 LiH and 20 MgO scales.  At every scale the protocol requests an
+independent cold start plus ascending and descending WFN-continuation chains
+(52 and 58 calculations, respectively).  A failed chain is archived and
+stopped; it is never retried implicitly.  Every input pins the reduced shifted
+`k444` SPGLIB contract, native save_tblite FDIIS, and explicit restart logging.
+
+The runner rejects a CP2K source that is not descended from upstream commit
+`c92cc08b45378b85150447011b5a4bb552f5b797` (merged PR #5582).  In particular,
+the earlier `18d37c` build remains frozen diagnostic provenance and must not be
+used for this map.  Pre-production execution also needs an explicit state
+argument; the production default remains `production_ready`:
+
+```bash
+python3 Goldzak12/scripts/run_gxtb_multistart_branches.py \
+  --campaign-manifest /path/to/post-c92cc08/build_manifest.json \
+  --cp2k-source /path/to/clean/cp2k-g-xTB-pbc \
+  --save-tblite-source /path/to/clean/save_tblite-pbc \
+  --campaign-state qualification_pending \
+  --cold-workers 8 --threads 1
+
+python3 Goldzak12/scripts/classify_gxtb_multistart_branches.py \
+  --campaign-root Goldzak12/runs/gxtb_multistart_branches/FINGERPRINT
+```
+
+Classification re-hashes every input, output, WFN restart, job stamp, parent
+restart, and parent candidate manifest.  It rejects missing scales, failed SCC
+or symmetry gates, negative Mulliken populations, inverted LiH/MgO polarity,
+inequivalent atoms, charge/electron-count failures, and discontinuous adjacent
+charge/Fermi descriptors.  Among full physical paths it selects the lowest
+relative-energy continuous branch and then applies the existing single-well
+and quadratic-fit gates.  The selection remains diagnostic: it never copies an
+output into `runs/eos`, never approves a fit, and never starts `k555`.  Manual
+promotion requires an identity-identical `production_ready` manifest and a
+second hash review.
+
 The independent CP2K-versus-CLI atom check adds 13 CP2K atom jobs. Counting
 that mandatory acceptance gate, a full 12/12 publication campaign therefore
 contains 194 calculations before adaptive additions (`158 + 3n` for `n`
