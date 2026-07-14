@@ -1357,6 +1357,45 @@ class GXTBProvenanceTests(unittest.TestCase):
                     campaign_manifest=manifest,
                 )
 
+    def test_frozen_campaign_manifest_relocates_only_by_matching_content(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            repository = base / "relocated-repository"
+            root = repository / "X23b"
+            (root / "data").mkdir(parents=True)
+            artifacts = base / "original-artifacts"
+            artifacts.mkdir()
+            cp2k, cp2k_source, tblite, save_source, manifest = fake_campaign_artifacts(
+                artifacts
+            )
+            common.update_gxtb_provenance(
+                root,
+                cp2k=cp2k,
+                cp2k_source=cp2k_source,
+                save_tblite=tblite,
+                save_tblite_source=save_source,
+                campaign_manifest=manifest,
+            )
+
+            relocated = (
+                repository
+                / "campaigns"
+                / "test-campaign"
+                / "build_manifest.json"
+            )
+            relocated.parent.mkdir(parents=True)
+            shutil.copy2(manifest, relocated)
+            manifest.unlink()
+
+            identity = common.load_campaign_identity(root)
+            self.assertEqual(identity["campaign_id"], "test-campaign")
+
+            changed = json.loads(relocated.read_text())
+            changed["relocation_tamper"] = True
+            relocated.write_text(json.dumps(changed, indent=2) + "\n")
+            with self.assertRaisesRegex(ValueError, "manifest fingerprint differs"):
+                common.load_campaign_identity(root)
+
     def test_recorded_stamp_cannot_be_relocated_to_another_run_root(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
