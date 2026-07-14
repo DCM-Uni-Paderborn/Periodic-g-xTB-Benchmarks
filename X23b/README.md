@@ -78,6 +78,72 @@ python3 X23b/scripts/x23b_pipeline.py analyse \
   --final-kpoint-csv X23b/data/x23b_final_geometry_kpoint_rows.csv
 ```
 
+## Adaptive all-method k-point convergence
+
+`scripts/x23b_adaptive_kpoint_convergence.py` defines a separate, exact
+23-crystal convergence campaign for `GFN1`, `GFN2`, and `GXTB`.  All three
+methods are executed by the same frozen CP2K executable and build manifest.
+For every method/crystal pair it evaluates two independent native-Bloch
+series, always with SPGLIB symmetry reduction and `FULL_GRID F`:
+
+- fixed experimental-cell single points, starting with k111 and k222; and
+- full `CELL_OPT` calculations independently restarted from the experimental
+  crystal at each mesh, starting with k111, k222, and k333.
+
+One consecutive passing step is sufficient and the denser result is retained.
+The single-point threshold is an absolute cohesive-energy change of at most
+0.05 kJ/mol.  A cell step passes only when the maximum relative change of the
+three lengths is at most 0.05%, the relative volume change is at most 0.10%,
+and the maximum absolute angle change is at most 0.05 degrees.  Failed tracks
+advance one mesh at a time through k888.  The workflow stores every raw delta
+and every individual pass flag.
+
+Production is deliberately held until a new manifest is both
+`production_ready` and identifies the final post-5582 build.  The currently
+archived pre-post-5582 manifest is rejected even though it is marked
+`production_ready`.  Once the final build exists, use one empty output root:
+
+```bash
+SCRIPT=X23b/scripts/x23b_adaptive_kpoint_convergence.py
+KCONV_ROOT=/path/to/x23b-adaptive-post5582
+CP2K=/path/to/final-post5582/bin/cp2k.psmp
+CP2K_SOURCE=/path/to/final-post5582/cp2k
+SAVE_TBLITE=/path/to/final-post5582/bin/tblite
+SAVE_TBLITE_SOURCE=/path/to/final-post5582/save_tblite
+CAMPAIGN_MANIFEST=campaigns/gxtb-pbc-v1-post5582-YYYYMMDD/build_manifest.json
+
+python3 "$SCRIPT" prepare --output-root "$KCONV_ROOT" \
+  --cp2k "$CP2K" --cp2k-source "$CP2K_SOURCE" \
+  --save-tblite "$SAVE_TBLITE" --save-tblite-source "$SAVE_TBLITE_SOURCE" \
+  --campaign-manifest "$CAMPAIGN_MANIFEST"
+
+# Copy the second line printed by prepare; do not recompute it after editing files.
+WORKFLOW_SHA256=<exact-sha256-printed-by-prepare>
+python3 "$SCRIPT" run \
+  --workflow-manifest "$KCONV_ROOT/workflow_manifest.json" \
+  --workflow-manifest-sha256 "$WORKFLOW_SHA256" \
+  --cp2k "$CP2K" --cp2k-source "$CP2K_SOURCE" \
+  --save-tblite "$SAVE_TBLITE" --save-tblite-source "$SAVE_TBLITE_SOURCE" \
+  --campaign-manifest "$CAMPAIGN_MANIFEST" \
+  --jobs 23 --threads-per-job 1
+
+python3 "$SCRIPT" finalize \
+  --workflow-manifest "$KCONV_ROOT/workflow_manifest.json" \
+  --workflow-manifest-sha256 "$WORKFLOW_SHA256" \
+  --output-dir X23b/data/kpoint_convergence \
+  --cp2k "$CP2K" --cp2k-source "$CP2K_SOURCE" \
+  --save-tblite "$SAVE_TBLITE" --save-tblite-source "$SAVE_TBLITE_SOURCE" \
+  --campaign-manifest "$CAMPAIGN_MANIFEST"
+```
+
+Preparation freezes all 1104 possible inputs and their exact order, but `run`
+submits only the current adaptive frontier.  Every completed result is bound
+to the input, output, direct CP2K command, thread count, build/campaign,
+experimental CIF, generator, and workflow-manifest hashes.  Partial, stale,
+duplicated, reordered, post-convergence, or foreign results abort collection.
+The final CSV, JSON, and TeX artifacts are replaced atomically only after all
+138 method/crystal/series tracks have converged.
+
 ## Additive g-xTB production workflow
 
 `GXTB` is an additive third method.  Its gas molecule, Gamma preoptimization,
