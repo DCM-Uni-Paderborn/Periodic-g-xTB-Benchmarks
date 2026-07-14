@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Freeze the validated LC12 GFN1/GFN2/g-XTB comparison for publication.
+"""Freeze the exact identical-set LC10 GFN1/GFN2/g-XTB paper comparison.
 
-The normal collectors deliberately keep method-selective working tables.  This
-finalizer is the stricter publication boundary: it recomputes every reported
-quantity from the archived raw outputs, requires the approved g-XTB EOS
-fingerprint and all k333/k444/k555 final single points, and writes one compact
-CSV plus a complete JSON lineage manifest.
+The raw Goldzak12 workspace retains LiH/MgO diagnostics.  This stricter
+publication boundary never includes those two systems in a metric: it requires
+the same ten named systems for all three methods, recomputes every reported
+quantity from archived outputs, and writes a compact CSV plus JSON lineage.
 """
 
 from __future__ import annotations
@@ -32,8 +31,29 @@ METHOD_LABELS = {
 EOS_MESH = "k444"
 ENERGY_MESHES = ("k333", "k444", "k555")
 RESULT_MESH = "k555"
-SUMMARY_STEM = "lc12_gfn_gxtb_paper_summary"
-SCHEMA_VERSION = 1
+PAPER_SYSTEMS = base.LC10_PAPER_SOLIDS
+DIAGNOSTIC_ONLY_SYSTEMS = base.LC10_DIAGNOSTIC_ONLY_SOLIDS
+PAPER_ELEMENTS = base.LC10_PAPER_ELEMENTS
+SUMMARY_STEM = "lc10_gfn_gxtb_paper_summary"
+SCHEMA_VERSION = 2
+SUMMARY_FIELDS = (
+    "method_id",
+    "method_label",
+    "scope",
+    "n_systems",
+    "coverage_denominator",
+    "systems",
+    "eos_mesh",
+    "result_mesh",
+    "lattice_ME_A",
+    "lattice_MAE_A",
+    "lattice_RMSE_A",
+    "lattice_MaxAE_A",
+    "cohesive_ME_eV_per_atom",
+    "cohesive_MAE_eV_per_atom",
+    "cohesive_RMSE_eV_per_atom",
+    "cohesive_MaxAE_eV_per_atom",
+)
 
 
 def sha256(path: Path) -> str:
@@ -134,7 +154,7 @@ def unique_by(
 
 def stats(errors: list[float]) -> dict[str, float]:
     if not errors:
-        raise ValueError("cannot summarize an empty LC12 error set")
+        raise ValueError("cannot summarize an empty LC10 error set")
     return {
         "ME": sum(errors) / len(errors),
         "MAE": sum(abs(value) for value in errors) / len(errors),
@@ -146,7 +166,7 @@ def stats(errors: list[float]) -> dict[str, float]:
 def fit_is_valid(row: Mapping[str, object], method: str) -> bool:
     if not str(row.get("a_eos_A", "")).strip():
         return False
-    return method != "GXTB" or row.get("fit_status") == "quadratic"
+    return method in METHODS and row.get("fit_status") == "quadratic"
 
 
 def portable_gxtb_stamp(
@@ -228,7 +248,7 @@ def validate_build_provenance(
     legacy_protocol = legacy.get("protocol")
     protocol = gxtb.get("protocol")
     if not isinstance(legacy_protocol, dict) or not isinstance(protocol, dict):
-        raise ValueError("LC12 build provenance lacks its protocol")
+        raise ValueError("LC10 build provenance lacks its protocol")
     if legacy_protocol.get("result_mesh") != RESULT_MESH:
         raise ValueError("GFN1/GFN2 provenance has the wrong result mesh")
     if protocol.get("eos_mesh") != EOS_MESH or protocol.get("result_mesh") != RESULT_MESH:
@@ -237,7 +257,23 @@ def validate_build_provenance(
         raise ValueError("g-XTB provenance does not contain k333/k444/k555")
     if protocol.get("fit_approval_required") is not True or protocol.get("fit_approved") is not True:
         raise ValueError("g-XTB EOS fits are not explicitly approved")
-    gxtb_fits = [row for row in fits if row.get("method") == "GXTB"]
+    selected_solids = tuple(str(value) for value in protocol.get("selected_solids", []))
+    if (
+        protocol.get("exact_lc10_scope") is not True
+        or len(selected_solids) != len(PAPER_SYSTEMS)
+        or set(selected_solids) != set(PAPER_SYSTEMS)
+        or tuple(protocol.get("paper_systems", ())) != PAPER_SYSTEMS
+        or tuple(protocol.get("diagnostic_only_systems", ()))
+        != DIAGNOSTIC_ONLY_SYSTEMS
+    ):
+        raise ValueError("g-XTB provenance does not certify the exact fixed LC10 scope")
+    gxtb_fits = [
+        row
+        for row in fits
+        if row.get("method") == "GXTB" and row.get("solid") in PAPER_SYSTEMS
+    ]
+    if {row.get("solid") for row in gxtb_fits} != set(PAPER_SYSTEMS):
+        raise ValueError("g-XTB fit fingerprint does not cover the exact LC10 set")
     current_fit_hash = eos.gxtb_fit_approval_sha256(gxtb_fits)
     if protocol.get("approved_gxtb_fit_sha256") != current_fit_hash:
         raise ValueError("approved g-XTB EOS fingerprint differs from eos_fits.csv")
@@ -295,20 +331,41 @@ def validate_scale_manifest(
     manifest = read_json(root / "data" / "gxtb_eos_scale_manifest.json")
     if manifest.get("eos_mesh") != EOS_MESH:
         raise ValueError("g-XTB scale manifest has the wrong EOS mesh")
+    if (
+        manifest.get("benchmark") != "LC10 (fixed Goldzak12 subset)"
+        or tuple(manifest.get("paper_systems", ())) != PAPER_SYSTEMS
+        or tuple(manifest.get("diagnostic_only_systems", ()))
+        != DIAGNOSTIC_ONLY_SYSTEMS
+    ):
+        raise ValueError("g-XTB scale manifest does not declare the fixed LC10 scope")
     expected: set[tuple[str, str]] = set()
     systems = manifest.get("systems")
     if not isinstance(systems, list):
         raise ValueError("g-XTB scale manifest has no system list")
+    manifest_solids = [
+        str(item.get("solid", "")) for item in systems if isinstance(item, dict)
+    ]
+    if (
+        len(manifest_solids) != len(PAPER_SYSTEMS)
+        or set(manifest_solids) != set(PAPER_SYSTEMS)
+    ):
+        raise ValueError("g-XTB scale manifest is not exactly the ten-system paper set")
     for item in systems:
         if not isinstance(item, dict) or item.get("method") != "GXTB":
             raise ValueError("invalid g-XTB scale-manifest record")
         solid = str(item.get("solid", ""))
+        if solid not in PAPER_SYSTEMS:
+            raise ValueError(f"non-LC10 solid in g-XTB scale manifest: {solid}")
         for scale in item.get("requested_scales", []):
             expected.add((solid, f"{float(scale):.5f}"))
+    if {solid for solid, _ in expected} != set(PAPER_SYSTEMS):
+        raise ValueError("g-XTB scale manifest does not cover exactly ten paper solids")
     actual = {
         (row.get("solid", ""), f"{float(row.get('scale', 'nan')):.5f}")
         for row in point_rows
-        if row.get("method") == "GXTB" and row.get("mesh") == EOS_MESH
+        if row.get("method") == "GXTB"
+        and row.get("mesh") == EOS_MESH
+        and row.get("solid") in PAPER_SYSTEMS
     }
     if expected != actual:
         raise ValueError(
@@ -327,12 +384,12 @@ def validate_atom_references(
     check_path = data / "atom_reference_cp2k_vs_save_tblite_gxtb.csv"
     rows = read_csv(legacy_path) + read_csv(gxtb_path)
     by_key = unique_by(rows, ("method", "element"), "atom reference")
-    elements = tuple(sorted(base.ELEMENT_MULTIPLICITY))
+    elements = PAPER_ELEMENTS
     expected = {(method, element) for method in METHODS for element in elements}
-    if set(by_key) != expected:
+    if not expected <= set(by_key):
         raise ValueError(
-            "atom-reference coverage differs: "
-            f"missing {sorted(expected - set(by_key))}, unexpected {sorted(set(by_key) - expected)}"
+            "LC10 atom-reference coverage is incomplete: "
+            f"missing {sorted(expected - set(by_key))}"
         )
     energies: dict[tuple[str, str], float] = {}
     lineage: dict[str, object] = {method: {} for method in METHODS}
@@ -366,8 +423,8 @@ def validate_atom_references(
 
     checks = read_csv(check_path)
     check_by_element = unique_by(checks, ("element",), "g-XTB atom check")
-    if set(key[0] for key in check_by_element) != set(elements):
-        raise ValueError("g-XTB CP2K/save_tblite atom check is incomplete")
+    if not set(elements) <= set(key[0] for key in check_by_element):
+        raise ValueError("g-XTB CP2K/save_tblite LC10 atom check is incomplete")
     check_lineage: dict[str, object] = {}
     for element in elements:
         row = check_by_element[(element,)]
@@ -424,42 +481,52 @@ def validate_eos_and_collect_lineage(
     dict[tuple[str, str], dict[str, str]],
     dict[str, dict[str, object]],
 ]:
-    refs = {ref.solid: ref for ref in base.REFERENCES}
-    fit_by_key = unique_by(fits, ("solid", "method"), "EOS fit")
-    expected_fit_keys = {(solid, method) for solid in refs for method in METHODS}
+    known_fit_keys = {
+        (ref.solid, method) for ref in base.REFERENCES for method in METHODS
+    }
+    all_fit_by_key = unique_by(fits, ("solid", "method"), "EOS fit")
+    foreign_fit_keys = set(all_fit_by_key) - known_fit_keys
+    if foreign_fit_keys:
+        raise ValueError(f"foreign EOS-fit records: {sorted(foreign_fit_keys)}")
+    expected_fit_keys = {(solid, method) for solid in PAPER_SYSTEMS for method in METHODS}
+    fit_by_key = {
+        key: row for key, row in all_fit_by_key.items() if key in expected_fit_keys
+    }
     if set(fit_by_key) != expected_fit_keys:
         raise ValueError(
-            "EOS-fit coverage differs: "
+            "exact LC10 EOS-fit coverage differs: "
             f"missing {sorted(expected_fit_keys - set(fit_by_key))}, "
             f"unexpected {sorted(set(fit_by_key) - expected_fit_keys)}"
         )
-    for row in fits:
+    for row in fit_by_key.values():
         if row.get("eos_mesh") != EOS_MESH:
             raise ValueError(f"{row.get('method')}/{row.get('solid')} has the wrong EOS mesh")
-    point_by_key = unique_by(points, ("solid", "method", "mesh", "scale"), "EOS point")
+    paper_points = [row for row in points if row.get("solid") in PAPER_SYSTEMS]
+    point_by_key = unique_by(
+        paper_points, ("solid", "method", "mesh", "scale"), "LC10 EOS point"
+    )
     del point_by_key  # duplicate detection is the purpose of this index
     validate_scale_manifest(root, points)
     branch_rows = read_optional_csv(root / "data" / "gxtb_eos_branch_diagnostics.csv")
     unresolved_branches = [
-        row for row in branch_rows if row.get("resolution") == "unresolved_candidate"
+        row
+        for row in branch_rows
+        if row.get("solid") in PAPER_SYSTEMS
+        and row.get("resolution") == "unresolved_candidate"
     ]
     if unresolved_branches:
-        raise ValueError("g-XTB branch diagnostics still contain unresolved candidates")
+        raise ValueError("LC10 g-XTB branch diagnostics still contain unresolved candidates")
 
     points_by_fit: dict[tuple[str, str], list[dict[str, str]]] = {}
-    for row in points:
+    for row in paper_points:
         key = (row.get("solid", ""), row.get("method", ""))
         if key not in expected_fit_keys or row.get("mesh") != EOS_MESH:
             raise ValueError(f"unexpected EOS point identity: {key}/{row.get('mesh')}")
         points_by_fit.setdefault(key, []).append(row)
 
     valid_gxtb = 0
-    invalid_gxtb: list[str] = []
+    invalid_fits: list[str] = []
     failed_gxtb_points: list[str] = []
-    followup_by_solid = {
-        row.get("solid", ""): row
-        for row in read_optional_csv(root / "data" / "gxtb_adaptive_followup.csv")
-    }
     lineage: dict[str, dict[str, object]] = {method: {} for method in METHODS}
     for key in sorted(expected_fit_keys, key=lambda item: (METHODS.index(item[1]), item[0])):
         solid, method = key
@@ -586,82 +653,28 @@ def validate_eos_and_collect_lineage(
         if fit_is_valid(fit, method):
             if method == "GXTB":
                 valid_gxtb += 1
-        elif method == "GXTB":
-            invalid_gxtb.append(solid)
+        else:
+            invalid_fits.append(f"{method}/{solid}")
         lineage[method][solid] = {
             "fit": dict(fit),
             "eos_points": point_lineage,
         }
 
-    allow_reduced = bool(protocol.get("allow_reduced_coverage"))
-    minimum = int(protocol.get("minimum_valid_gxtb_fits", -1))
-    if failed_gxtb_points and not allow_reduced:
+    if failed_gxtb_points:
         raise ValueError(
-            "g-XTB has explicitly classified failed EOS points without reduced-coverage approval: "
+            "exact LC10 g-XTB coverage has failed EOS points: "
             + ", ".join(failed_gxtb_points)
         )
-    if invalid_gxtb and not allow_reduced:
+    if invalid_fits:
         raise ValueError(
-            "g-XTB EOS coverage is reduced without explicit approval: "
-            + ", ".join(invalid_gxtb)
+            "exact LC10 EOS coverage is incomplete: " + ", ".join(invalid_fits)
         )
-    if allow_reduced and valid_gxtb < minimum:
+    if valid_gxtb != len(PAPER_SYSTEMS):
         raise ValueError(
-            f"g-XTB has {valid_gxtb} valid fits, below the approved minimum {minimum}"
+            f"exact LC10 g-XTB EOS coverage has {valid_gxtb} valid fits, "
+            f"expected {len(PAPER_SYSTEMS)}"
         )
-    for solid in invalid_gxtb:
-        row = followup_by_solid.get(solid)
-        if (
-            row is None
-            or not truth(row.get("adaptive_investigated"))
-            or not row.get("classification")
-            or not row.get("interpretation")
-        ):
-            raise ValueError(f"g-XTB invalid EOS fit lacks adaptive investigation: {solid}")
-        system = lineage["GXTB"][solid]
-        system["reporting_status"] = "excluded_no_valid_eos_minimum"
-        system["adaptive_followup"] = dict(row)
-        discarded: dict[str, object] = {}
-        fit = fit_by_key[(solid, "GXTB")]
-        for mesh in ENERGY_MESHES:
-            input_path = (
-                root
-                / "runs"
-                / "eos_final_sp"
-                / "GXTB"
-                / solid
-                / mesh
-                / f"{eos.final_project(solid, 'GXTB', mesh)}.inp"
-            )
-            if not input_path.is_file():
-                continue
-            lineage_path = eos.final_input_lineage_path(input_path)
-            invalid_lineage = read_json(lineage_path)
-            if (
-                invalid_lineage.get("schema_version") != eos.FINAL_INPUT_LINEAGE_SCHEMA
-                or invalid_lineage.get("valid") is not False
-                or invalid_lineage.get("solid") != solid
-                or invalid_lineage.get("method") != "GXTB"
-                or invalid_lineage.get("energy_mesh") != mesh
-                or invalid_lineage.get("fit_status") != fit.get("fit_status")
-                or invalid_lineage.get("input_sha256") != sha256(input_path)
-            ):
-                raise ValueError(
-                    f"invalid-fit g-XTB final input is not explicitly invalidated: {solid}/{mesh}"
-                )
-            output_path = input_path.with_suffix(".out")
-            discarded[mesh] = {
-                "status": "not_reported_invalid_eos_fit",
-                "input": artifact(input_path, root),
-                "invalidation_lineage": artifact(lineage_path, root),
-                "preexisting_output": optional_artifact(output_path, root),
-                "preexisting_campaign_stamp": optional_artifact(
-                    base.job_stamp_path(output_path), root
-                ),
-            }
-        if discarded:
-            system["discarded_final_artifacts"] = discarded
-    for solid in lineage["GXTB"]:
+    for solid in PAPER_SYSTEMS:
         lineage["GXTB"][solid].setdefault(
             "reporting_status", "reported_at_approved_eos_minimum"
         )
@@ -677,7 +690,12 @@ def validate_final_results(
     campaign: dict[str, object],
 ) -> tuple[dict[str, list[dict[str, object]]], dict[str, dict[str, object]]]:
     refs = {ref.solid: ref for ref in base.REFERENCES}
-    result_by_key = unique_by(results, ("solid", "method", "energy_mesh"), "final result")
+    paper_results = [row for row in results if row.get("solid") in PAPER_SYSTEMS]
+    result_by_key = unique_by(
+        paper_results,
+        ("solid", "method", "energy_mesh"),
+        "LC10 final result",
+    )
     valid_fit_keys = {
         key for key, fit in fit_by_key.items() if fit_is_valid(fit, key[1])
     }
@@ -688,7 +706,7 @@ def validate_final_results(
     }
     if set(result_by_key) != expected_results:
         raise ValueError(
-            "final single-point coverage differs: "
+            "exact LC10 final single-point coverage differs: "
             f"missing {sorted(expected_results - set(result_by_key))}, "
             f"unexpected {sorted(set(result_by_key) - expected_results)}"
         )
@@ -827,6 +845,11 @@ def scope_record(
     ordered_systems: tuple[str, ...],
 ) -> dict[str, object]:
     by_solid = {str(row["solid"]): row for row in rows}
+    if len(rows) != len(by_solid) or set(by_solid) != set(ordered_systems):
+        raise ValueError(
+            f"{method} rows do not match the exact LC10 paper set: "
+            f"found {sorted(by_solid)}"
+        )
     chosen = [by_solid[solid] for solid in ordered_systems]
     a_stats = stats([float(row["a_error_A"]) for row in chosen])
     e_stats = stats([float(row["ecoh_error_eV_per_atom"]) for row in chosen])
@@ -835,7 +858,7 @@ def scope_record(
         "method_label": METHOD_LABELS[method],
         "scope": scope,
         "n_systems": len(chosen),
-        "coverage_denominator": len(base.REFERENCES),
+        "coverage_denominator": len(PAPER_SYSTEMS),
         "systems": ";".join(ordered_systems),
         "eos_mesh": EOS_MESH,
         "result_mesh": RESULT_MESH,
@@ -850,18 +873,92 @@ def scope_record(
     }
 
 
-def write_csv(path: Path, rows: list[dict[str, object]]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
-        writer.writeheader()
-        for row in rows:
-            writer.writerow(
-                {
-                    key: f"{value:.9f}" if isinstance(value, float) else value
-                    for key, value in row.items()
+def csv_text(rows: list[dict[str, object]]) -> str:
+    import io
+
+    stream = io.StringIO(newline="")
+    writer = csv.DictWriter(stream, fieldnames=SUMMARY_FIELDS, lineterminator="\n")
+    writer.writeheader()
+    for row in rows:
+        writer.writerow(
+            {
+                key: f"{row[key]:.12f}" if isinstance(row[key], float) else row[key]
+                for key in SUMMARY_FIELDS
+            }
+        )
+    return stream.getvalue()
+
+
+def comparison_records(
+    rows: list[dict[str, object]],
+) -> dict[str, dict[str, dict[str, float]]]:
+    by_method = {str(row["method_id"]): row for row in rows}
+    if set(by_method) != set(METHODS):
+        raise ValueError("LC10 comparisons require exactly GFN1, GFN2, and GXTB")
+    result: dict[str, dict[str, dict[str, float]]] = {}
+    for baseline in ("GFN1", "GFN2"):
+        metrics: dict[str, dict[str, float]] = {}
+        for quantity in ("lattice", "cohesive"):
+            for statistic in ("ME", "MAE", "RMSE", "MaxAE"):
+                unit_suffix = "A" if quantity == "lattice" else "eV_per_atom"
+                field = f"{quantity}_{statistic}_{unit_suffix}"
+                current = float(by_method["GXTB"][field])
+                reference = float(by_method[baseline][field])
+                record = {
+                    "gxtb": current,
+                    "baseline": reference,
+                    "delta_gxtb_minus_baseline": current - reference,
                 }
+                if reference != 0.0:
+                    record["ratio_gxtb_over_baseline"] = current / reference
+                    record["percent_change"] = 100.0 * (current / reference - 1.0)
+                metrics[f"{quantity}_{statistic}"] = record
+        result[f"GXTB_vs_{baseline}"] = metrics
+    return result
+
+
+def tex_text(
+    rows: list[dict[str, object]],
+    comparisons: Mapping[str, Mapping[str, Mapping[str, float]]],
+) -> str:
+    method_tokens = {"GFN1": "GfnOne", "GFN2": "GfnTwo", "GXTB": "GxTB"}
+    statistic_tokens = {"ME": "ME", "MAE": "MAE", "RMSE": "RMSE", "MaxAE": "MaxAE"}
+    lines = [
+        "% Generated by finalize_goldzak12_paper_summary.py; do not edit.",
+        "% LiH and MgO are diagnostics outside this fixed identical-set LC10 statistic.",
+        f"\\providecommand{{\\LCtenN}}{{{len(PAPER_SYSTEMS)}}}",
+        "\\providecommand{\\LCtenSystems}{" + ", ".join(PAPER_SYSTEMS) + "}",
+    ]
+    for row in rows:
+        token = method_tokens[str(row["method_id"])]
+        for quantity, quantity_token, suffix in (
+            ("lattice", "Lattice", "A"),
+            ("cohesive", "Cohesive", "eV_per_atom"),
+        ):
+            for statistic, statistic_token in statistic_tokens.items():
+                value = float(row[f"{quantity}_{statistic}_{suffix}"])
+                lines.append(
+                    f"\\providecommand{{\\LCten{token}{quantity_token}{statistic_token}}}"
+                    f"{{{value:.9f}}}"
+                )
+    for baseline, baseline_token in (("GFN1", "GfnOne"), ("GFN2", "GfnTwo")):
+        record = comparisons[f"GXTB_vs_{baseline}"]
+        for quantity, quantity_token in (("lattice", "Lattice"), ("cohesive", "Cohesive")):
+            metric = record[f"{quantity}_MAE"]
+            prefix = f"\\LCtenGxTBvs{baseline_token}{quantity_token}MAE"
+            lines.append(
+                f"\\providecommand{{{prefix}Delta}}"
+                f"{{{metric['delta_gxtb_minus_baseline']:.9f}}}"
             )
+            lines.append(
+                f"\\providecommand{{{prefix}Ratio}}"
+                f"{{{metric['ratio_gxtb_over_baseline']:.9f}}}"
+            )
+            lines.append(
+                f"\\providecommand{{{prefix}PercentChange}}"
+                f"{{{metric['percent_change']:.6f}}}"
+            )
+    return "\n".join(lines) + "\n"
 
 
 def build_summary(root: Path) -> tuple[dict[str, object], list[dict[str, object]]]:
@@ -888,38 +985,23 @@ def build_summary(root: Path) -> tuple[dict[str, object], list[dict[str, object]
         campaign,
     )
 
-    reference_order = tuple(ref.solid for ref in base.REFERENCES)
-    available_systems = {
-        method: tuple(solid for solid in reference_order if any(row["solid"] == solid for row in selected[method]))
-        for method in METHODS
-    }
-    common_systems = tuple(
-        solid
-        for solid in reference_order
-        if all(solid in available_systems[method] for method in METHODS)
-    )
-    if not common_systems:
-        raise ValueError("the three-method LC12 common subset is empty")
-    reduced_gxtb_coverage = (
-        len(available_systems["GXTB"]) < len(base.REFERENCES)
-    )
     summary_rows: list[dict[str, object]] = []
     method_payload: dict[str, object] = {}
     for method in METHODS:
-        available = scope_record(
-            method, "method_available_coverage", selected[method], available_systems[method]
+        paper_record = scope_record(
+            method,
+            "fixed_identical_lc10",
+            selected[method],
+            PAPER_SYSTEMS,
         )
-        common = scope_record(
-            method, "three_method_common_subset", selected[method], common_systems
-        )
-        summary_rows.extend((available, common))
+        summary_rows.append(paper_record)
         method_payload[method] = {
             "method_label": METHOD_LABELS[method],
-            "available_coverage": available,
-            "three_method_common_subset": common,
+            "paper_benchmark": paper_record,
             "atom_references": atom_lineage[method],
             "systems": system_lineage[method],
         }
+    comparisons = comparison_records(summary_rows)
 
     source_paths = {
         "reference": data / "reference_goldzak2022.csv",
@@ -944,12 +1026,15 @@ def build_summary(root: Path) -> tuple[dict[str, object], list[dict[str, object]
             sources[name] = item
     payload: dict[str, object] = {
         "schema_version": SCHEMA_VERSION,
-        "benchmark": "LC12 (Goldzak12)",
-        "status": (
-            "publication_ready_reduced_coverage"
-            if reduced_gxtb_coverage
-            else "publication_ready"
-        ),
+        "benchmark": "LC10 (fixed Goldzak12 subset)",
+        "status": "publication_ready",
+        "coverage": {
+            "required": len(PAPER_SYSTEMS),
+            "common": len(PAPER_SYSTEMS),
+            "systems": list(PAPER_SYSTEMS),
+            "exact_identical_three_method_coverage": True,
+            "coverage_denominator": len(PAPER_SYSTEMS),
+        },
         "methods": method_payload,
         "protocol": {
             "eos_mesh": EOS_MESH,
@@ -957,14 +1042,17 @@ def build_summary(root: Path) -> tuple[dict[str, object], list[dict[str, object]
             "result_mesh": RESULT_MESH,
             "lattice_unit": "angstrom",
             "cohesive_energy_unit": "eV/atom",
-            "common_subset_systems": list(common_systems),
-            "common_subset_count": len(common_systems),
+            "paper_systems": list(PAPER_SYSTEMS),
+            "paper_system_count": len(PAPER_SYSTEMS),
+            "diagnostic_only_systems": list(DIAGNOSTIC_ONLY_SYSTEMS),
+            "diagnostic_note": (
+                "LiH and MgO are outside the fixed LC10 statistic; their branch "
+                "diagnostics and multistart calculations are not publication prerequisites."
+            ),
             "gxtb_fit_approval_sha256": protocol["approved_gxtb_fit_sha256"],
-            "gxtb_allow_reduced_coverage": bool(protocol.get("allow_reduced_coverage")),
-            "gxtb_reduced_coverage_reported": reduced_gxtb_coverage,
-            "gxtb_minimum_valid_fits": int(protocol.get("minimum_valid_gxtb_fits", -1)),
         },
         "summary_rows": summary_rows,
+        "gxtb_vs_gfn_baseline_comparisons": comparisons,
         "atom_reference_acceptance": atom_check,
         "build_provenance": build_provenance,
         "sources": sources,
@@ -972,36 +1060,45 @@ def build_summary(root: Path) -> tuple[dict[str, object], list[dict[str, object]
     return payload, summary_rows
 
 
-def finalize(root: Path) -> tuple[Path, Path]:
+def finalize(root: Path) -> tuple[Path, Path, Path]:
     data = root / "data"
     csv_path = data / f"{SUMMARY_STEM}.csv"
     json_path = data / f"{SUMMARY_STEM}.json"
+    tex_path = data / f"{SUMMARY_STEM}.tex"
     csv_temp = data / f".{SUMMARY_STEM}.csv.tmp.{os.getpid()}"
     json_temp = data / f".{SUMMARY_STEM}.json.tmp.{os.getpid()}"
-    csv_path.unlink(missing_ok=True)
-    json_path.unlink(missing_ok=True)
-    csv_temp.unlink(missing_ok=True)
-    json_temp.unlink(missing_ok=True)
+    tex_temp = data / f".{SUMMARY_STEM}.tex.tmp.{os.getpid()}"
+    for path in (csv_path, json_path, tex_path, csv_temp, json_temp, tex_temp):
+        path.unlink(missing_ok=True)
     try:
         payload, rows = build_summary(root)
-        write_csv(csv_temp, rows)
+        csv_temp.write_text(csv_text(rows))
+        comparisons = payload["gxtb_vs_gfn_baseline_comparisons"]
+        assert isinstance(comparisons, Mapping)
+        tex_temp.write_text(tex_text(rows, comparisons))
         payload["paper_summary_csv"] = {
             "path": relative_path(csv_path, root),
             "sha256": sha256(csv_temp),
             "size_bytes": csv_temp.stat().st_size,
         }
+        payload["paper_summary_tex"] = {
+            "path": relative_path(tex_path, root),
+            "sha256": sha256(tex_temp),
+            "size_bytes": tex_temp.stat().st_size,
+        }
         json_temp.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
         os.replace(csv_temp, csv_path)
+        os.replace(tex_temp, tex_path)
         os.replace(json_temp, json_path)
     except BaseException:
-        # A two-file publication bundle has no useful partially committed state.
-        csv_path.unlink(missing_ok=True)
-        json_path.unlink(missing_ok=True)
+        # A three-file publication bundle has no useful partially committed state.
+        for path in (csv_path, json_path, tex_path):
+            path.unlink(missing_ok=True)
         raise
     finally:
-        csv_temp.unlink(missing_ok=True)
-        json_temp.unlink(missing_ok=True)
-    return csv_path, json_path
+        for path in (csv_temp, json_temp, tex_temp):
+            path.unlink(missing_ok=True)
+    return csv_path, json_path, tex_path
 
 
 def main() -> int:
@@ -1014,11 +1111,12 @@ def main() -> int:
     )
     args = parser.parse_args()
     try:
-        csv_path, json_path = finalize(args.root.resolve())
+        csv_path, json_path, tex_path = finalize(args.root.resolve())
     except (OSError, ValueError) as error:
         parser.error(str(error))
-    print(f"LC12 publication summary: {csv_path}")
-    print(f"LC12 publication lineage: {json_path}")
+    print(f"LC10 publication summary: {csv_path}")
+    print(f"LC10 publication lineage: {json_path}")
+    print(f"LC10 publication TeX macros: {tex_path}")
     return 0
 
 

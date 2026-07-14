@@ -18,9 +18,8 @@ in this repository.
 - `X23b/`: correctness-gated g-xTB molecular-crystal workflow covering
   molecular optimization, shifted-k preflights, force/stress finite
   differences, native-Bloch cell optimization, and final k-point energies.
-- `Goldzak12/`: LC12 equations of state, cohesive energies, literature
-  comparisons, SCC-root/hysteresis diagnostics, and lattice-constant fits for
-  cubic covalent and ionic solids.
+- `Goldzak12/`: the fixed identical-set LC10 paper benchmark, plus separately
+  retained LiH/MgO SCC-root and hysteresis diagnostics from the LC12 source set.
 - `campaigns/`: immutable g-xTB build, protocol, and qualification manifests.
 - `validation/`: molecular, primitive-cell/supercell, symmetry, force, and
   stress regression inputs for the CP2K/save_tblite bridge.
@@ -46,7 +45,7 @@ Current production calculations use CP2K source revision
 ACP k-space successor build is still in qualification. See
 `campaigns/gxtb-pbc-v1-20260714/` for the complete machine-readable identity.
 
-The current g-xTB DMC-ICE13 and LC12 values are therefore explicitly
+The current g-xTB DMC-ICE13 and LC10 values are therefore explicitly
 provisional, and X23b has no g-xTB accuracy result yet. The publication
 finalizers refuse incomplete or unhashed data.
 
@@ -71,10 +70,10 @@ Primary aggregate results:
 | X23b lattice energies | k333 SP on native Bloch k222 cell opt | GFN2-xTB | 14.092104 kJ mol-1 |
 | X23b cell volumes | native Bloch k222 cell opt | GFN1-xTB | 7.514116 percent |
 | X23b cell volumes | native Bloch k222 cell opt | GFN2-xTB | 5.842296 percent |
-| LC12 lattice constants | k444 EOS, 12/12 | GFN1-xTB | 0.136650 A |
-| LC12 lattice constants | k444 EOS, 10/12 | GFN2-xTB | 0.062410 A |
-| LC12 cohesive energies | k555 on k444 EOS minima, 12/12 | GFN1-xTB | 1.457694 eV atom-1 |
-| LC12 cohesive energies | k555 on k444 EOS minima, 10/12 | GFN2-xTB | 1.299325 eV atom-1 |
+| LC10 lattice constants | fixed identical 10, k444 EOS | GFN1-xTB | 0.145118 A |
+| LC10 lattice constants | fixed identical 10, k444 EOS | GFN2-xTB | 0.062410 A |
+| LC10 cohesive energies | fixed identical 10, k555 on k444 minima | GFN1-xTB | 1.543851 eV atom-1 |
+| LC10 cohesive energies | fixed identical 10, k555 on k444 minima | GFN2-xTB | 1.299325 eV atom-1 |
 
 All production k-point calculations use native Bloch sampling with full
 SPGLIB symmetry reduction. The completed production counts are 156/156 for

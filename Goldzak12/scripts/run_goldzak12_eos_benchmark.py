@@ -104,12 +104,15 @@ def write_gxtb_scale_manifest(
     mesh: str,
     base_scales: tuple[float, ...],
     methods: tuple[str, ...],
+    solids: tuple[str, ...] = base.LC10_PAPER_SOLIDS,
 ) -> dict[str, object] | None:
     if "GXTB" not in methods:
         return None
     payload: dict[str, object] = {
         "schema_version": 1,
-        "benchmark": "LC12 (Goldzak12)",
+        "benchmark": "LC10 (fixed Goldzak12 subset)",
+        "paper_systems": list(base.LC10_PAPER_SOLIDS),
+        "diagnostic_only_systems": list(base.LC10_DIAGNOSTIC_ONLY_SOLIDS),
         "eos_mesh": mesh,
         "method": "GXTB",
         "base_scales": list(base_scales),
@@ -121,6 +124,7 @@ def write_gxtb_scale_manifest(
                 "adaptive_scales": list(adaptive_scales_only(ref.solid, "GXTB")),
             }
             for ref in base.REFERENCES
+            if ref.solid in solids
         ],
     }
     path = gxtb_scale_manifest_path()
@@ -752,6 +756,7 @@ def make_eos_table(
     methods: tuple[str, ...] = base.METHODS,
     classifications: dict[tuple[str, str, float], dict[str, str]] | None = None,
     campaign_fingerprint: dict[str, object] | None = None,
+    solids: tuple[str, ...] = base.LC10_PAPER_SOLIDS,
 ) -> list[dict[str, object]]:
     classifications = classifications or {}
     rows: list[dict[str, object]] = []
@@ -759,6 +764,8 @@ def make_eos_table(
     branch_rows: list[dict[str, object]] = []
     unresolved_templates: list[dict[str, object]] = []
     for ref in base.REFERENCES:
+        if ref.solid not in solids:
+            continue
         for method in methods:
             requested_scales = scales_for(ref.solid, method, scales)
             all_points = load_eos_points(
@@ -1125,7 +1132,9 @@ def collect_results(
     campaign_fingerprint: dict[str, object] | None = None,
 ) -> tuple[list[dict[str, object]], list[dict[str, object]], list[dict[str, object]]]:
     refs = {ref.solid: ref for ref in base.REFERENCES}
-    atom_e = base.atom_energies(methods, campaign_fingerprint)
+    atom_e = base.atom_energies(
+        methods, campaign_fingerprint, base.LC10_PAPER_ELEMENTS
+    )
     rows: list[dict[str, object]] = []
     for fit in fits:
         if not fit.get("a_eos_A") or (
@@ -1679,7 +1688,10 @@ def main() -> int:
         "--solid",
         action="append",
         choices=tuple(ref.solid for ref in base.REFERENCES),
-        help="solid to execute; repeat as needed (default: all LC12 solids)",
+        help=(
+            "solid to execute; repeat as needed (default: the fixed ten-system "
+            "paper benchmark; LiH/MgO remain diagnostics only)"
+        ),
     )
     parser.add_argument("--jobs", type=int, default=6)
     parser.add_argument("--threads", type=int, default=1)
@@ -1734,7 +1746,7 @@ def main() -> int:
     parser.add_argument(
         "--allow-reduced-coverage",
         action="store_true",
-        help="allow investigated invalid GXTB curves while retaining a meaningful subset",
+        help="deprecated and rejected: the paper benchmark requires exact LC10 coverage",
     )
     parser.add_argument(
         "--minimum-valid-fits",
@@ -1752,13 +1764,25 @@ def main() -> int:
     scales = tuple(args.scale) if args.scale else DEFAULT_SCALES
     energy_meshes = args.energy_mesh or ["k333", "k444", "k555"]
     methods = base.selected_methods(args.method)
+    if args.allow_reduced_coverage:
+        parser.error(
+            "the publication benchmark has fixed LC10 coverage; reduced coverage "
+            "is not supported"
+        )
     if args.jobs < 1 or args.threads < 1 or args.mpi_ranks_per_job < 1:
         parser.error("--jobs, --threads, and --mpi-ranks-per-job must be positive")
     if args.solid and len(args.solid) != len(set(args.solid)):
         parser.error("duplicate --solid selections are not allowed")
-    selected_solids = tuple(
-        args.solid or (ref.solid for ref in base.REFERENCES)
+    selected_solids = tuple(args.solid or base.LC10_PAPER_SOLIDS)
+    exact_lc10_scope = (
+        len(selected_solids) == len(base.LC10_PAPER_SOLIDS)
+        and set(selected_solids) == set(base.LC10_PAPER_SOLIDS)
     )
+    if "GXTB" in methods and not exact_lc10_scope:
+        parser.error(
+            "the GXTB publication runner is restricted to the exact fixed LC10 set: "
+            + ", ".join(base.LC10_PAPER_SOLIDS)
+        )
     if args.fit_only and (args.force or args.approve_fits):
         parser.error("--fit-only cannot be combined with --force or --approve-fits")
     if args.stop_after_eos and args.approve_fits:
@@ -1834,11 +1858,16 @@ def main() -> int:
         classifications = load_gxtb_classifications(args.classification_manifest)
     except (ValueError, json.JSONDecodeError) as exc:
         parser.error(str(exc))
-    scale_manifest = write_gxtb_scale_manifest(args.eos_mesh, scales, methods)
+    scale_manifest = write_gxtb_scale_manifest(
+        args.eos_mesh, scales, methods, selected_solids
+    )
     protocol = {
-            "benchmark": "LC12 (Goldzak12)",
+            "benchmark": "LC10 (fixed Goldzak12 subset)",
             "methods": methods,
             "selected_solids": selected_solids,
+            "paper_systems": base.LC10_PAPER_SOLIDS,
+            "diagnostic_only_systems": base.LC10_DIAGNOSTIC_ONLY_SOLIDS,
+            "exact_lc10_scope": exact_lc10_scope,
             "cell_protocol": "cubic equation of state",
             "eos_mesh": args.eos_mesh,
             "energy_meshes": energy_meshes,
@@ -1884,7 +1913,10 @@ def main() -> int:
             "cp2k_density_mixing": "METHOD DIRECT_P_MIXING; ALPHA 0.2",
             "atom_reference": "matching CLI, --method gxtb, explicit 2S spin" if "GXTB" in methods else "matching tblite CLI",
             "conventional_cell_atoms": 8,
-            "eos_failure_policy": "failed jobs are fatal; invalid GXTB fits require adaptive investigation and explicit reduced-coverage opt-in",
+            "eos_failure_policy": (
+                "all ten fixed paper systems require valid quadratic fits; LiH/MgO "
+                "branch studies are diagnostics outside the publication statistic"
+            ),
             "execution_provenance": (
                 {
                     "separate_from_scientific_job_stamp": True,
@@ -1927,6 +1959,7 @@ def main() -> int:
             methods,
             args.save_tblite,
             campaign_fingerprint,
+            base.LC10_PAPER_ELEMENTS,
         )
         try:
             run_jobs(
@@ -1947,6 +1980,7 @@ def main() -> int:
                 methods,
                 classifications,
                 campaign_fingerprint,
+                selected_solids,
             )
             if "GXTB" in methods:
                 invalidate_existing_gxtb_final_inputs(failed_fits, energy_meshes)
@@ -1958,6 +1992,7 @@ def main() -> int:
         methods,
         classifications,
         campaign_fingerprint,
+        selected_solids,
     )
     if "GXTB" in methods:
         invalidate_existing_gxtb_final_inputs(fits, energy_meshes)

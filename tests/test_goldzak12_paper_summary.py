@@ -18,18 +18,18 @@ import run_goldzak12_benchmark as base  # noqa: E402
 import run_goldzak12_eos_benchmark as eos  # noqa: E402
 
 
-class SyntheticLC12:
+class SyntheticLC10:
     def __init__(self, root: Path) -> None:
         self.root = root
         self.data = root / "data"
         self.data.mkdir(parents=True)
         self.scales = (0.94, 0.98, 1.00, 1.02, 1.06)
         self.manifest_path = (
-            root.parent / "campaigns" / "test-lc12" / "build_manifest.json"
+            root.parent / "campaigns" / "test-lc10" / "build_manifest.json"
         )
         self.manifest_path.parent.mkdir(parents=True)
         self.manifest = {
-            "campaign_id": "test-lc12",
+            "campaign_id": "test-lc10",
             "campaign_state": "production_ready",
             "cp2k": {
                 "binary_sha256": "1" * 64,
@@ -103,7 +103,7 @@ class SyntheticLC12:
     def write_atoms(self) -> dict[tuple[str, str], float]:
         energies: dict[tuple[str, str], float] = {}
         rows: list[dict[str, object]] = []
-        elements = tuple(sorted(base.ELEMENT_MULTIPLICITY))
+        elements = base.LC10_PAPER_ELEMENTS
         for method_index, method in enumerate(summary.METHODS, start=1):
             for element_index, element in enumerate(elements, start=1):
                 energy = -10.0 * method_index - 0.1 * element_index
@@ -175,21 +175,18 @@ class SyntheticLC12:
     def write_eos(self) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
         fits: list[dict[str, object]] = []
         points: list[dict[str, object]] = []
-        for solid_index, ref in enumerate(base.REFERENCES):
+        for solid_index, ref in enumerate(base.LC10_PAPER_REFERENCES):
             for method_index, method in enumerate(summary.METHODS, start=1):
                 target = ref.a_exp + 0.01 * method_index
                 numeric: list[tuple[float, float, float, bool]] = []
                 for scale in self.scales:
                     a_value = ref.a_exp * scale
-                    if method == "GFN2" and solid_index == 0:
-                        energy = -50.0 - a_value
-                    else:
-                        energy = (
-                            -50.0
-                            - solid_index
-                            - method_index
-                            + 0.25 * (a_value - target) ** 2
-                        )
+                    energy = (
+                        -50.0
+                        - solid_index
+                        - method_index
+                        + 0.25 * (a_value - target) ** 2
+                    )
                     numeric.append((a_value, scale, energy, True))
                     project = eos.eos_project(ref.solid, method, summary.EOS_MESH, scale)
                     run_dir = (
@@ -291,7 +288,7 @@ class SyntheticLC12:
                 if method == "GXTB":
                     lineage = {
                         "schema_version": eos.FINAL_INPUT_LINEAGE_SCHEMA,
-                        "benchmark": "LC12 (Goldzak12)",
+                        "benchmark": "LC10 (fixed Goldzak12 subset)",
                         "valid": True,
                         "reason": "synthetic test",
                         "solid": solid,
@@ -346,8 +343,11 @@ class SyntheticLC12:
                     "method": "GXTB",
                     "requested_scales": list(self.scales),
                 }
-                for ref in base.REFERENCES
+                for ref in base.LC10_PAPER_REFERENCES
             ],
+            "benchmark": "LC10 (fixed Goldzak12 subset)",
+            "paper_systems": list(base.LC10_PAPER_SOLIDS),
+            "diagnostic_only_systems": list(base.LC10_DIAGNOSTIC_ONLY_SOLIDS),
         }
         scale_path = self.data / "gxtb_eos_scale_manifest.json"
         scale_path.write_text(
@@ -374,7 +374,7 @@ class SyntheticLC12:
             "campaign_manifest": {
                 "path": "/remote/host/build_manifest.json",
                 "file_sha256": summary.sha256(self.manifest_path),
-                "campaign_id": "test-lc12",
+                "campaign_id": "test-lc10",
                 "campaign_state": "production_ready",
             },
             "cp2k": {"sha256": self.campaign["cp2k_executable_sha256"]},
@@ -385,6 +385,10 @@ class SyntheticLC12:
                 "eos_mesh": summary.EOS_MESH,
                 "energy_meshes": list(summary.ENERGY_MESHES),
                 "result_mesh": summary.RESULT_MESH,
+                "selected_solids": list(base.LC10_PAPER_SOLIDS),
+                "paper_systems": list(base.LC10_PAPER_SOLIDS),
+                "diagnostic_only_systems": list(base.LC10_DIAGNOSTIC_ONLY_SOLIDS),
+                "exact_lc10_scope": True,
                 "fit_approval_required": True,
                 "fit_approved": True,
                 "approved_gxtb_fit_sha256": approved_hash,
@@ -404,143 +408,38 @@ class SyntheticLC12:
         self.write_results(fits, atom_energies)
         self.write_provenance(fits)
 
-    def authorize_reduced_gxtb(self, solid: str = "MgO") -> None:
-        point_path = self.data / "eos_points.csv"
-        points = [dict(row) for row in base.read_csv(point_path)]
-        numeric: list[tuple[float, float, float, bool]] = []
-        for row in points:
-            if row["method"] != "GXTB" or row["solid"] != solid:
-                continue
-            scale = float(row["scale"])
-            a_value = float(row["a_A"])
-            energy = -500.0 - a_value
-            row["energy_hartree"] = f"{energy:.12f}"
-            numeric.append((a_value, scale, energy, True))
-            project = eos.eos_project(solid, "GXTB", summary.EOS_MESH, scale)
-            output = (
-                self.root
-                / "runs"
-                / "eos"
-                / "GXTB"
-                / solid
-                / summary.EOS_MESH
-                / eos.scale_tag(scale, "GXTB")
-                / f"{project}.out"
-            )
-            output.write_text(self.cp2k_text(energy))
-        base.write_csv(point_path, points)
-
-        fit_path = self.data / "eos_fits.csv"
-        fits = [dict(row) for row in base.read_csv(fit_path)]
-        invalid_fit = eos.fit_gxtb_eos(numeric)
-        target = next(
-            row for row in fits if row["method"] == "GXTB" and row["solid"] == solid
-        )
-        for field in (
-            "a_eos_A",
-            "energy_fit_hartree",
-            "fit_status",
-            "fit_rmse_hartree",
-            "n_points",
-            "grid_min_a_A",
-            "grid_min_scale",
-            "grid_min_energy_hartree",
-            "topology_reversal_count",
-            "topology_max_reversal_hartree",
-        ):
-            target[field] = ""
-        target.update({key: str(value) for key, value in invalid_fit.items()})
-        base.write_csv(fit_path, fits)
-
-        result_path = self.data / "eos_results.csv"
-        results = [
-            dict(row)
-            for row in base.read_csv(result_path)
-            if not (row["method"] == "GXTB" and row["solid"] == solid)
-        ]
-        base.write_csv(result_path, results)
-        for mesh in summary.ENERGY_MESHES:
-            project = eos.final_project(solid, "GXTB", mesh)
-            input_path = (
-                self.root
-                / "runs"
-                / "eos_final_sp"
-                / "GXTB"
-                / solid
-                / mesh
-                / f"{project}.inp"
-            )
-            lineage_path = eos.final_input_lineage_path(input_path)
-            lineage = json.loads(lineage_path.read_text())
-            lineage.update(
-                {
-                    "valid": False,
-                    "reason": "no valid EOS minimum after adaptive investigation",
-                    "fit_status": target["fit_status"],
-                    "a_eos_A": "",
-                    "input_sha256": summary.sha256(input_path),
-                }
-            )
-            lineage_path.write_text(
-                json.dumps(lineage, indent=2, sort_keys=True) + "\n"
-            )
-        base.write_csv(
-            self.data / "gxtb_adaptive_followup.csv",
-            [
-                {
-                    "solid": solid,
-                    "method": "GXTB",
-                    "fit_status": target["fit_status"],
-                    "classification": "validated_nonmonotonic_or_unbracketed_eos",
-                    "interpretation": "adaptive points and WFN continuation did not yield a reportable EOS minimum",
-                    "adaptive_investigated": True,
-                    "suggested_scales": "",
-                }
-            ],
-        )
-        provenance_path = self.data / "build_provenance_gxtb.json"
-        provenance = json.loads(provenance_path.read_text())
-        approved_hash = eos.gxtb_fit_approval_sha256(
-            [row for row in fits if row["method"] == "GXTB"]
-        )
-        provenance["protocol"].update(
-            {
-                "fit_approved": True,
-                "approved_gxtb_fit_sha256": approved_hash,
-                "current_gxtb_fit_sha256": approved_hash,
-                "allow_reduced_coverage": True,
-                "minimum_valid_gxtb_fits": 10,
-            }
-        )
-        provenance_path.write_text(
-            json.dumps(provenance, indent=2, sort_keys=True) + "\n"
-        )
-
-
 class Goldzak12PaperSummaryTests(unittest.TestCase):
-    def test_finalizes_six_scope_rows_with_raw_lineage_and_maxae(self) -> None:
+    def test_finalizes_exact_three_by_ten_bundle_with_tex_and_raw_lineage(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "Goldzak12"
-            case = SyntheticLC12(root)
+            case = SyntheticLC10(root)
             case.complete()
-            csv_path, json_path = summary.finalize(root)
+            csv_path, json_path, tex_path = summary.finalize(root)
 
             with csv_path.open(newline="") as handle:
                 csv_rows = list(csv.DictReader(handle))
-            self.assertEqual(len(csv_rows), 6)
+            self.assertEqual(len(csv_rows), 3)
+            self.assertEqual({row["n_systems"] for row in csv_rows}, {"10"})
+            self.assertEqual(
+                {row["systems"] for row in csv_rows},
+                {";".join(base.LC10_PAPER_SOLIDS)},
+            )
             self.assertIn("lattice_MaxAE_A", csv_rows[0])
             self.assertIn("cohesive_MaxAE_eV_per_atom", csv_rows[0])
             payload = json.loads(json_path.read_text())
             self.assertEqual(payload["status"], "publication_ready")
-            self.assertEqual(payload["protocol"]["common_subset_count"], 11)
-            self.assertEqual(
-                payload["methods"]["GXTB"]["available_coverage"]["n_systems"],
-                12,
-            )
-            self.assertEqual(
-                payload["methods"]["GFN2"]["available_coverage"]["n_systems"],
-                11,
-            )
+            self.assertEqual(payload["coverage"]["systems"], list(base.LC10_PAPER_SOLIDS))
+            self.assertEqual(payload["coverage"]["common"], 10)
+            self.assertEqual(payload["protocol"]["diagnostic_only_systems"], ["LiH", "MgO"])
+            self.assertNotIn("LiH", payload["methods"]["GXTB"]["systems"])
+            self.assertNotIn("MgO", payload["methods"]["GXTB"]["systems"])
+            self.assertIn("GXTB_vs_GFN1", payload["gxtb_vs_gfn_baseline_comparisons"])
+            self.assertIn("GXTB_vs_GFN2", payload["gxtb_vs_gfn_baseline_comparisons"])
+            self.assertEqual(payload["paper_summary_csv"]["sha256"], summary.sha256(csv_path))
+            self.assertEqual(payload["paper_summary_tex"]["sha256"], summary.sha256(tex_path))
+            tex = tex_path.read_text()
+            self.assertIn("\\providecommand{\\LCtenN}{10}", tex)
+            self.assertIn("\\LCtenGxTBvsGfnTwoLatticeMAEPercentChange", tex)
             c_lineage = payload["methods"]["GXTB"]["systems"]["C"]
             raw_output = (
                 root
@@ -558,7 +457,7 @@ class Goldzak12PaperSummaryTests(unittest.TestCase):
     def test_unapproved_gxtb_removes_stale_publication_artifacts(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "Goldzak12"
-            case = SyntheticLC12(root)
+            case = SyntheticLC10(root)
             case.complete()
             provenance_path = root / "data" / "build_provenance_gxtb.json"
             provenance = json.loads(provenance_path.read_text())
@@ -566,19 +465,22 @@ class Goldzak12PaperSummaryTests(unittest.TestCase):
             provenance_path.write_text(json.dumps(provenance, indent=2) + "\n")
             csv_path = root / "data" / f"{summary.SUMMARY_STEM}.csv"
             json_path = root / "data" / f"{summary.SUMMARY_STEM}.json"
+            tex_path = root / "data" / f"{summary.SUMMARY_STEM}.tex"
             csv_path.write_text("stale\n")
             json_path.write_text("{}\n")
+            tex_path.write_text("stale\n")
 
             with self.assertRaisesRegex(ValueError, "not explicitly approved"):
                 summary.finalize(root)
             self.assertFalse(csv_path.exists())
             self.assertFalse(json_path.exists())
+            self.assertFalse(tex_path.exists())
             self.assertEqual(list((root / "data").glob("*.tmp.*")), [])
 
     def test_raw_output_tamper_is_detected(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "Goldzak12"
-            case = SyntheticLC12(root)
+            case = SyntheticLC10(root)
             case.complete()
             output = (
                 root
@@ -593,13 +495,14 @@ class Goldzak12PaperSummaryTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "solid energy mismatch"):
                 summary.finalize(root)
 
-    def test_atomic_pair_cleanup_if_second_replace_fails(self) -> None:
+    def test_atomic_triple_cleanup_if_second_replace_fails(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "Goldzak12"
-            case = SyntheticLC12(root)
+            case = SyntheticLC10(root)
             case.complete()
             csv_path = root / "data" / f"{summary.SUMMARY_STEM}.csv"
             json_path = root / "data" / f"{summary.SUMMARY_STEM}.json"
+            tex_path = root / "data" / f"{summary.SUMMARY_STEM}.tex"
             real_replace = summary.os.replace
             calls = 0
 
@@ -615,35 +518,42 @@ class Goldzak12PaperSummaryTests(unittest.TestCase):
                     summary.finalize(root)
             self.assertFalse(csv_path.exists())
             self.assertFalse(json_path.exists())
+            self.assertFalse(tex_path.exists())
             self.assertEqual(list((root / "data").glob("*.tmp.*")), [])
 
-    def test_explicitly_authorized_reduced_gxtb_keeps_invalid_raw_lineage(self) -> None:
+    def test_missing_one_of_the_fixed_ten_is_fatal_and_removes_stale_bundle(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "Goldzak12"
-            case = SyntheticLC12(root)
+            case = SyntheticLC10(root)
             case.complete()
-            case.authorize_reduced_gxtb("MgO")
-            _, json_path = summary.finalize(root)
-            payload = json.loads(json_path.read_text())
+            fit_path = root / "data" / "eos_fits.csv"
+            fits = [
+                row
+                for row in base.read_csv(fit_path)
+                if not (row["method"] == "GXTB" and row["solid"] == "LiCl")
+            ]
+            base.write_csv(fit_path, fits)
+            outputs = [
+                root / "data" / f"{summary.SUMMARY_STEM}.{suffix}"
+                for suffix in ("csv", "json", "tex")
+            ]
+            for output in outputs:
+                output.write_text("stale\n")
+            with self.assertRaisesRegex(ValueError, "exact LC10 set"):
+                summary.finalize(root)
+            self.assertTrue(all(not output.exists() for output in outputs))
 
-            self.assertEqual(
-                payload["status"], "publication_ready_reduced_coverage"
-            )
-            self.assertTrue(
-                payload["protocol"]["gxtb_reduced_coverage_reported"]
-            )
-            self.assertEqual(payload["protocol"]["common_subset_count"], 10)
-            self.assertEqual(
-                payload["methods"]["GXTB"]["available_coverage"]["n_systems"],
-                11,
-            )
-            invalid = payload["methods"]["GXTB"]["systems"]["MgO"]
-            self.assertEqual(
-                invalid["reporting_status"], "excluded_no_valid_eos_minimum"
-            )
-            self.assertNotIn("reported_result", invalid)
-            self.assertEqual(len(invalid["discarded_final_artifacts"]), 3)
-            self.assertTrue(invalid["adaptive_followup"]["adaptive_investigated"])
+    def test_diagnostic_multistart_artifacts_are_not_required(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "Goldzak12"
+            case = SyntheticLC10(root)
+            case.complete()
+            self.assertFalse((root / "runs" / "eos" / "GXTB" / "LiH").exists())
+            self.assertFalse((root / "runs" / "eos" / "GXTB" / "MgO").exists())
+            _, json_path, _ = summary.finalize(root)
+            payload = json.loads(json_path.read_text())
+            self.assertEqual(payload["coverage"]["common"], 10)
+            self.assertIn("not publication prerequisites", payload["protocol"]["diagnostic_note"])
 
 
 if __name__ == "__main__":

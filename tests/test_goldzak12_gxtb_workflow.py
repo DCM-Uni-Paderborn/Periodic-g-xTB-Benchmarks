@@ -794,6 +794,14 @@ class Goldzak12GXTBProtocolTests(unittest.TestCase):
                 eos.ADAPTIVE_SCALES[("C", "GXTB")] = (0.99, 1.01)
                 payload = eos.write_gxtb_scale_manifest("k444", eos.DEFAULT_SCALES, ("GXTB",))
                 self.assertIsNotNone(payload)
+                self.assertEqual(
+                    [item["solid"] for item in payload["systems"]],
+                    list(base.LC10_PAPER_SOLIDS),
+                )
+                self.assertEqual(
+                    payload["diagnostic_only_systems"],
+                    list(base.LC10_DIAGNOSTIC_ONLY_SOLIDS),
+                )
                 record = next(item for item in payload["systems"] if item["solid"] == "C")
                 self.assertEqual(record["adaptive_scales"], [0.99, 1.01])
                 self.assertIn(0.99, record["requested_scales"])

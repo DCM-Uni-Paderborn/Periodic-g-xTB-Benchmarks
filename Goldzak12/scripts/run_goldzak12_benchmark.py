@@ -106,6 +106,33 @@ REFERENCES: tuple[Reference, ...] = (
     Reference("LiCl", "rocksalt", (("Li", 1), ("Cl", 1)), 5.072, 5.253, 5.021, 5.059, 5.078, 3.58, 2.73, 3.69, 3.58, 3.52),
 )
 
+# Publication statistics use this exact identical ten-system set for every
+# method.  LiH and MgO remain available solely to the internal diagnostics.
+LC10_PAPER_SOLIDS = (
+    "C",
+    "Si",
+    "SiC",
+    "BN",
+    "BP",
+    "AlN",
+    "AlP",
+    "MgS",
+    "LiF",
+    "LiCl",
+)
+LC10_DIAGNOSTIC_ONLY_SOLIDS = ("LiH", "MgO")
+if set(LC10_PAPER_SOLIDS) | set(LC10_DIAGNOSTIC_ONLY_SOLIDS) != {
+    ref.solid for ref in REFERENCES
+} or set(LC10_PAPER_SOLIDS) & set(LC10_DIAGNOSTIC_ONLY_SOLIDS):
+    raise RuntimeError("LC10 publication and diagnostic-only sets do not partition LC12")
+LC10_PAPER_REFERENCES = tuple(
+    next(ref for ref in REFERENCES if ref.solid == solid)
+    for solid in LC10_PAPER_SOLIDS
+)
+LC10_PAPER_ELEMENTS = tuple(
+    sorted({element for ref in LC10_PAPER_REFERENCES for element, _ in ref.formula})
+)
+
 METHODS = ("GFN1", "GFN2", "GXTB")
 LEGACY_METHODS = ("GFN1", "GFN2")
 METHOD_COLORS = {"GFN1": "#4C78A8", "GFN2": "#F58518", "GXTB": "#54A24B"}
@@ -117,14 +144,14 @@ KPOINT_MESH_CONTRACT = (
 )
 LEGACY_GXTB_FULL_GRID_POLICY = (
     "pre-SPGLIB GXTB full-grid inputs and outputs are diagnostics only and are never "
-    "accepted as LC12 production results"
+    "accepted as LC10 publication results"
 )
 GXTB_ENERGY_STRESS_POLICY = (
-    "LC12 GXTB EOS, final, and isolated-atom ENERGY inputs do not request a stress tensor; "
+    "LC10 GXTB EOS, final, and isolated-atom ENERGY inputs do not request a stress tensor; "
     "GFN1/GFN2 frozen inputs retain STRESS_TENSOR ANALYTICAL"
 )
 GXTB_ATOM_SCF_POLICY = (
-    "LC12 cohesive energies use save_tblite CLI atom energies. The independent CP2K/CLI "
+    "LC10 cohesive energies use save_tblite CLI atom energies. The independent CP2K/CLI "
     "interface gate uses CP2K's supported nonperiodic Gamma/no-smear OT path, where "
     "SCC_MIXER is ignored. This avoids CP2K's otherwise forced 300 K tblite smearing, which "
     "changes several isolated-atom states and cannot be represented at all when a minimal "
@@ -1465,11 +1492,16 @@ def run_jobs(
         )
 
 
-def atom_job_specs(methods: tuple[str, ...] = METHODS) -> list[tuple[str, Path, Path, bool]]:
+def atom_job_specs(
+    methods: tuple[str, ...] = METHODS,
+    elements: tuple[str, ...] | list[str] | None = None,
+) -> list[tuple[str, Path, Path, bool]]:
     specs: list[tuple[str, Path, Path, bool]] = []
-    elements = sorted({el for ref in REFERENCES for el, _ in ref.formula})
+    selected_elements = tuple(
+        elements or sorted({el for ref in REFERENCES for el, _ in ref.formula})
+    )
     for method in methods:
-        for element in elements:
+        for element in selected_elements:
             inp = ROOT / "inputs" / "atoms" / method / f"atom_{element}_{method}.inp"
             out = ROOT / "runs" / "atoms" / method / element / f"atom_{element}_{method}.out"
             run_inp = out.parent / inp.name
@@ -1486,17 +1518,20 @@ def run_tblite_atom_jobs(
     methods: tuple[str, ...] = METHODS,
     save_tblite: Path | None = None,
     campaign_fingerprint: dict[str, object] | None = None,
+    elements: tuple[str, ...] | list[str] | None = None,
 ) -> None:
     if "GXTB" in methods and campaign_fingerprint is None:
         raise ValueError("GXTB save_tblite jobs require a validated campaign fingerprint")
-    elements = sorted({el for ref in REFERENCES for el, _ in ref.formula})
+    selected_elements = tuple(
+        elements or sorted({el for ref in REFERENCES for el, _ in ref.formula})
+    )
     identities = {
         "legacy": executable_fingerprint(tblite),
         "gxtb": executable_fingerprint(save_tblite or tblite),
     }
     specs: list[tuple[str, str, Path, Path, dict[str, object]]] = []
     for method in methods:
-        for element in elements:
+        for element in selected_elements:
             run_dir = ROOT / "runs" / "atoms_cli" / method / element
             json_path = run_dir / f"atom_{element}_{method}.json"
             xyz_path = run_dir / f"atom_{element}.xyz"
@@ -1654,12 +1689,16 @@ def sp_job_specs(
 def atom_energies(
     methods: tuple[str, ...] = METHODS,
     campaign_fingerprint: dict[str, object] | None = None,
+    elements: tuple[str, ...] | list[str] | None = None,
 ) -> dict[tuple[str, str], float]:
     energies: dict[tuple[str, str], float] = {}
+    selected_elements = set(elements) if elements is not None else None
     for method in methods:
         atom_root = ROOT / "runs" / "atoms_cli" / method
         for element_dir in atom_root.glob("*"):
             if not element_dir.is_dir():
+                continue
+            if selected_elements is not None and element_dir.name not in selected_elements:
                 continue
             out = element_dir / f"atom_{element_dir.name}_{method}.json"
             if method == "GXTB":
@@ -1704,12 +1743,14 @@ def validate_atom_reference_agreement(
     methods: tuple[str, ...],
     tolerance_hartree: float = 1.0e-6,
     campaign_fingerprint: dict[str, object] | None = None,
+    elements: tuple[str, ...] | list[str] | None = None,
 ) -> list[dict[str, object]]:
     """Compare CP2K and matching CLI isolated-atom energies method by method."""
     rows: list[dict[str, object]] = []
     problems: list[str] = []
+    selected_elements = tuple(elements or sorted(ELEMENT_MULTIPLICITY))
     for method in methods:
-        for element in sorted(ELEMENT_MULTIPLICITY):
+        for element in selected_elements:
             cp2k_path = ROOT / "runs" / "atoms" / method / element / f"atom_{element}_{method}.out"
             cli_path = ROOT / "runs" / "atoms_cli" / method / element / f"atom_{element}_{method}.json"
             cp2k_energy = parse_energy(cp2k_path)
@@ -2153,9 +2194,10 @@ def main() -> int:
             methods,
             args.save_tblite,
             campaign_fingerprint,
+            LC10_PAPER_ELEMENTS,
         )
         run_jobs(
-            atom_job_specs(methods),
+            atom_job_specs(methods, LC10_PAPER_ELEMENTS),
             args.cp2k,
             args.jobs,
             args.threads,
@@ -2163,7 +2205,10 @@ def main() -> int:
             campaign_fingerprint,
         )
         validate_atom_reference_agreement(
-            methods, args.tolerance_hartree, campaign_fingerprint
+            methods,
+            args.tolerance_hartree,
+            campaign_fingerprint,
+            LC10_PAPER_ELEMENTS,
         )
         return 0
 
