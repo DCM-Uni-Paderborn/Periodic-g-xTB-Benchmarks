@@ -149,11 +149,7 @@ def load_campaign_identity(benchmark_root: Path) -> dict[str, object]:
         )
     ):
         raise ValueError(f"GXTB campaign manifest record is missing from {path}")
-    manifest_path = Path(str(manifest_record["path"])).resolve(strict=True)
-    if sha256_file(manifest_path) != str(manifest_record["file_sha256"]).lower():
-        raise ValueError(
-            "current campaign manifest fingerprint differs from the frozen X23b provenance"
-        )
+    manifest_path = _resolve_frozen_campaign_manifest(benchmark_root, manifest_record)
     manifest = json.loads(manifest_path.read_text())
     declared = _identity_from_manifest_declarations(manifest, manifest_path)
     observed = {
@@ -163,6 +159,47 @@ def load_campaign_identity(benchmark_root: Path) -> dict[str, object]:
     if declared != observed:
         raise ValueError("current campaign manifest build identity differs from X23b provenance")
     return observed
+
+
+def _resolve_frozen_campaign_manifest(
+    benchmark_root: Path, manifest_record: Mapping[str, object]
+) -> Path:
+    """Resolve a frozen manifest by content after a benchmark checkout is relocated."""
+
+    expected_sha256 = str(manifest_record["file_sha256"]).lower()
+    recorded_path = Path(str(manifest_record["path"])).expanduser()
+    campaign_id = str(manifest_record.get("campaign_id", "")).strip()
+    candidates = [recorded_path]
+    if campaign_id:
+        candidates.append(
+            benchmark_root.resolve().parent
+            / "campaigns"
+            / campaign_id
+            / "build_manifest.json"
+        )
+
+    existing: list[Path] = []
+    seen: set[Path] = set()
+    for candidate in candidates:
+        try:
+            resolved = candidate.resolve(strict=True)
+        except FileNotFoundError:
+            continue
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        existing.append(resolved)
+        if sha256_file(resolved) == expected_sha256:
+            return resolved
+
+    if existing:
+        raise ValueError(
+            "current campaign manifest fingerprint differs from the frozen X23b provenance"
+        )
+    raise ValueError(
+        "frozen GXTB campaign manifest is missing at both its recorded and "
+        "repository-relative locations"
+    )
 
 
 def require_gxtb_build_artifacts(
