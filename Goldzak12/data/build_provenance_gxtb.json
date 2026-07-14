@@ -1,0 +1,382 @@
+{
+  "campaign_identity": {
+    "campaign_id": "gxtb-pbc-v1-20260714",
+    "cp2k_cmake_cache_sha256": "ec13707340edd43be9bddf70edf1fd8e1848d1cee50e11e1c4f1274959ea2346",
+    "cp2k_embedded_source_revision": "18d37c9464",
+    "cp2k_executable_sha256": "c3c19763eef2fcd51b0266db811be20d0a3d13a586c1bbd4eb0e83c59cca2c8a",
+    "cp2k_loaded_library_sha256": "a1ab82829a43d872b32d2a4f9b929c394f96e5dd0d293db163716c946ad3b8b3",
+    "cp2k_source_revision": "18d37c946413dba1b848f57563c46d16b866ce20",
+    "dependency_lock_sha256": "f80b045dd5bae175d16d035433b0507ab72c755973f081f9a1df891c4f36e191",
+    "fingerprint_sha256": "31a22ed28d2cdec9e9b071236a0fa4c1d30cb0d7cfb6a93f652f08758c83223e",
+    "save_tblite_cmake_cache_sha256": "416eb47811121fb515932564e062f0f12ff4c3136d147e292069f7d2b07c0679",
+    "save_tblite_executable_sha256": "8b0a1d5acd36df23efeb9078dceced61adb95a3cc8523f25ff76114da602cfa5",
+    "save_tblite_library_sha256": "8ce501b698e1b7ea5db03bc4db979302dc08253e843ee44cb5ef2aecb5a4668c",
+    "save_tblite_source_revision": "1449febde312874cd0fac4227919f5ba4e4b69b8",
+    "schema": 1
+  },
+  "campaign_manifest": {
+    "authority": "single source of truth for the frozen build artifacts",
+    "campaign_id": "gxtb-pbc-v1-20260714",
+    "campaign_state": "production_ready",
+    "file_sha256": "13bf208d7dca238241297936ef12be7a0ab77ac8fc99e8646bda447d687d669c",
+    "path": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/campaigns/gxtb-pbc-v1-20260714/build_manifest.json"
+  },
+  "cp2k": {
+    "executable": "/private/tmp/cp2k_gxtb_18d37c_bench_build/bin/cp2k.psmp",
+    "sha256": "c3c19763eef2fcd51b0266db811be20d0a3d13a586c1bbd4eb0e83c59cca2c8a",
+    "shared_library_sha256": {},
+    "source": {
+      "available": true,
+      "branch": "g-xTB-pbc",
+      "dirty": false,
+      "path": "/private/tmp/cp2k_gxtb",
+      "revision": "18d37c946413dba1b848f57563c46d16b866ce20",
+      "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "version": "CP2K version 2026.1 (Development Version)\n Source code revision 18d37c9464\n cp2kflags: omp parallel scalapack no_statm_access spglib s_dftd3 mctc-lib tblite tblite_gxtb\n compiler: GCC version 16.1.0",
+    "version_and_build_flags": "CP2K version 2026.1 (Development Version)\n Source code revision 18d37c9464\n cp2kflags: omp parallel scalapack no_statm_access spglib s_dftd3 mctc-lib tblite tblite_gxtb\n compiler: GCC version 16.1.0\n compiler options:\n   -I /tmp/cp2k_gxtb_18d37c_bench_build/src/start -I /tmp/cp2k_gxtb/src\n    -I /tmp/cp2k_gxtb_18d37c_bench_build/src -I /tmp/cp2k_gxtb/src/base\n    -I /tmp/cp2k_gxtb/src/common -I /tmp/cp2k_gxtb/src/motion -I /tmp/c\n   p2k_gxtb/src/dbm -I /tmp/cp2k_gxtb_18d37c_bench_build/src/mod_files \n   -I /tmp/save_tblite_1449feb_bench_install/include -I /tmp/save_tblit\n   e_1449feb_bench_install/include/tblite/GNU-16.1.0 -I /Applications/X\n   code.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs\n   /MacOSX.sdk/System/Library/Frameworks/vecLib.framework/Headers -I /t\n   mp/save_tblite_1449feb_bench_install/include/toml-f/modules -I /tmp/\n   save_tblite_1449feb_bench_install/include/mctc-lib/modules -I /tmp/s\n   ave_tblite_1449feb_bench_install/include/dftd4/GNU-16.1.0 -I /tmp/sa\n   ve_tblite_1449feb_bench_install/include/multicharge/GNU-16.1.0 -I /t\n   mp/save_tblite_1449feb_bench_install/include/s-dftd3/GNU-16.1.0 -I /\n   opt/homebrew/opt/spglib/include -I /opt/homebrew/opt/dbcsr/include -\n   I /opt/homebrew/Cellar/open-mpi/5.0.9/include -I /opt/homebrew/Cella\n   r/open-mpi/5.0.9/lib -I /opt/homebrew/opt/open-mpi/include -mmacosx-\n   version-min=15.0.0 -mlittle-endian -mabi=lp64 -mcpu=apple-m1 -g -O3 \n   -O3 -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wuninitia\n   lized -Wuse-without-only -std=f2008 -fPIE -ffree-form -fimplicit-non\n   e -fno-omit-frame-pointer -fbacktrace -fallow-argument-mismatch -fun\n   roll-loops -fopenmp -fpreprocessed -J src"
+  },
+  "protocol": {
+    "adaptive_scales": {
+      "LiH/GFN2": [
+        0.71,
+        0.72,
+        0.73,
+        0.74,
+        0.75,
+        0.76,
+        0.77,
+        0.78,
+        0.79,
+        0.8,
+        0.81,
+        0.83,
+        0.84,
+        0.85,
+        0.86,
+        0.87,
+        0.89,
+        0.9,
+        0.91,
+        0.92,
+        0.93
+      ],
+      "MgO/GFN2": [
+        0.9,
+        0.92,
+        0.926,
+        0.927,
+        0.928,
+        0.93
+      ]
+    },
+    "allow_reduced_coverage": false,
+    "approved_gxtb_fit_sha256": null,
+    "atom_reference": "matching CLI, --method gxtb, explicit 2S spin",
+    "benchmark": "LC12 (Goldzak12)",
+    "catastrophic_charge_collapse_energy_hartree": -50.0,
+    "cell_protocol": "cubic equation of state",
+    "conventional_cell_atoms": 8,
+    "cp2k_density_mixing": "METHOD DIRECT_P_MIXING; ALPHA 0.2",
+    "current_gxtb_fit_sha256": "79d3d6bbff5ec2ac1a70209ac6240a9d672c1a1f5582c13ac3e47593aa10a499",
+    "default_scf_strategy": "native g-XTB FDIIS",
+    "energy_meshes": [
+      "k333",
+      "k444",
+      "k555"
+    ],
+    "eos_failure_policy": "failed jobs are fatal; invalid GXTB fits require adaptive investigation and explicit reduced-coverage opt-in",
+    "eos_mesh": "k444",
+    "final_input_lineage_schema": 1,
+    "fit_approval_required": true,
+    "fit_approved": false,
+    "gxtb_atom_scf_policy": "LC12 cohesive energies use save_tblite CLI atom energies. The independent CP2K/CLI interface gate uses CP2K's supported nonperiodic Gamma/no-smear OT path, where SCC_MIXER is ignored. This avoids CP2K's otherwise forced 300 K tblite smearing, which changes several isolated-atom states and cannot be represented at all when a minimal atomic basis has no virtual MO. Li is the sole documented exception: OT converges to an atomic state 0.077782 Eh above the save_tblite CLI state, while native g-XTB FDIIS with diagonalization reproduces the CLI energy.",
+    "gxtb_branch_candidate_interpolation_residual_hartree": 1.0,
+    "gxtb_branch_policy": "automatic candidates require explicit per-point exclusion or retain waiver with rationale",
+    "gxtb_classification_manifest": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/Goldzak12/data/gxtb_eos_classifications.json",
+    "gxtb_classification_manifest_sha256": null,
+    "gxtb_energy_stress_policy": "LC12 GXTB EOS, final, and isolated-atom ENERGY inputs do not request a stress tensor; GFN1/GFN2 frozen inputs retain STRESS_TENSOR ANALYTICAL",
+    "gxtb_scale_manifest": {
+      "base_scales": [
+        0.82,
+        0.88,
+        0.94,
+        0.98,
+        1.0,
+        1.02,
+        1.06,
+        1.12,
+        1.2,
+        1.3,
+        1.45
+      ],
+      "benchmark": "LC12 (Goldzak12)",
+      "eos_mesh": "k444",
+      "method": "GXTB",
+      "schema_version": 1,
+      "systems": [
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "C"
+        },
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "Si"
+        },
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "SiC"
+        },
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "BN"
+        },
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "BP"
+        },
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "AlN"
+        },
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "AlP"
+        },
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "MgO"
+        },
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "MgS"
+        },
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "LiH"
+        },
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "LiF"
+        },
+        {
+          "adaptive_scales": [],
+          "method": "GXTB",
+          "requested_scales": [
+            0.82,
+            0.88,
+            0.94,
+            0.98,
+            1.0,
+            1.02,
+            1.06,
+            1.12,
+            1.2,
+            1.3,
+            1.45
+          ],
+          "solid": "LiCl"
+        }
+      ]
+    },
+    "gxtb_scale_manifest_sha256": "b0fa314142424216449702eaf31db4d8ed559c85b21bdeaf3ee5e769c76cb701",
+    "gxtb_scc_mixer": "SCC_MIXER TBLITE (save_tblite native FDIIS)",
+    "gxtb_topology_policy": "sampled energy must decrease to the global minimum and increase away from it",
+    "gxtb_topology_tolerance_hartree_per_eight_atom_cell": 0.0001,
+    "kpoint_mesh_contract": "CP2K native Bloch MACDONALD meshes with SPGLIB reduction for GFN1, GFN2, and GXTB (SYMMETRY T, FULL_GRID F, SYMMETRY_BACKEND SPGLIB, SYMMETRY_REDUCTION_METHOD SPGLIB); the GXTB interface expands the irreducible data to the complete mesh before save_tblite and folds the response back afterwards",
+    "kpoint_scheme": "CP2K native Bloch MACDONALD with full SPGLIB symmetry reduction",
+    "legacy_gfn2_charge_collapse_filter_hartree_below_curve_median": 25.0,
+    "legacy_gxtb_full_grid_policy": "pre-SPGLIB GXTB full-grid inputs and outputs are diagnostics only and are never accepted as LC12 production results",
+    "methods": [
+      "GXTB"
+    ],
+    "minimum_valid_gxtb_fits": 8,
+    "reported_energy": "Total energy extrapolated to T->0",
+    "result_mesh": "k555",
+    "scales": [
+      0.82,
+      0.88,
+      0.94,
+      0.98,
+      1.0,
+      1.02,
+      1.06,
+      1.12,
+      1.2,
+      1.3,
+      1.45
+    ],
+    "scf_retry_strategies": [],
+    "smearing_temperature_K": 300.0,
+    "tblite_accuracy": 0.05
+  },
+  "save_tblite": {
+    "executable": "/private/tmp/save_tblite_1449feb_bench_install/bin/tblite",
+    "sha256": "8b0a1d5acd36df23efeb9078dceced61adb95a3cc8523f25ff76114da602cfa5",
+    "shared_library_sha256": {},
+    "source": {
+      "available": true,
+      "branch": "cp2k-integration",
+      "dirty": false,
+      "path": "/private/tmp/save_tblite_cp2k",
+      "revision": "1449febde312874cd0fac4227919f5ba4e4b69b8",
+      "working_tree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "version": "tblite version 0.6.0\nddX support: disabled\nHDF5 support: disabled\nTREXIO support: disabled",
+    "version_and_build_flags": "tblite version 0.6.0\nddX support: disabled\nHDF5 support: disabled\nTREXIO support: disabled"
+  }
+}

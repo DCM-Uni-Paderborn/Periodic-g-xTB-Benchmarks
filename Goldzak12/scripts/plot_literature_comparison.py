@@ -58,7 +58,10 @@ def add_record(
 
 
 def provenance_result_mesh() -> str:
-    provenance = json.loads((DATA / "build_provenance.json").read_text())
+    provenance_path = DATA / "build_provenance.json"
+    if not provenance_path.exists():
+        provenance_path = DATA / "build_provenance_gxtb.json"
+    provenance = json.loads(provenance_path.read_text())
     return str(provenance["protocol"]["result_mesh"])
 
 
@@ -76,9 +79,10 @@ def collect_records(result_mesh: str) -> tuple[list[dict[str, object]], dict[str
     for row in read_csv(DATA / "eos_results.csv"):
         if row["energy_mesh"] != result_mesh or row["sp_completed"] != "True":
             continue
+        provider = "save_tblite" if row["method"] == "GXTB" else "tblite"
         add_record(
             records,
-            f"This work: CP2K/tblite {result_mesh} EOS",
+            f"This work: CP2K/{provider} {result_mesh} EOS",
             "GFN-xTB",
             row["method"],
             row["solid"],
@@ -265,7 +269,12 @@ def write_markdown(
             f"{fmt(row['ecoh_ME_eV_per_atom'])} | {fmt(row['ecoh_MAE_eV_per_atom'])} |"
         )
 
-    selected_methods = ("GFN1", "GFN2", "MP2", "SCS-MP2", "SCAN", "r2SCAN")
+    available_methods = {str(row["method"]) for row in records}
+    selected_methods = tuple(
+        method
+        for method in ("GFN1", "GFN2", "GXTB", "MP2", "SCS-MP2", "SCAN", "r2SCAN")
+        if method in available_methods
+    )
     by_key = {(str(row["method"]), str(row["solid"])): row for row in records}
     solids = ("C", "Si", "SiC", "BN", "BP", "AlN", "AlP", "MgO", "LiH", "LiF", "LiCl", "MgS")
     lines += [
@@ -353,9 +362,10 @@ def plot_available_mae(summary: list[dict[str, object]]) -> None:
 
 
 def plot_common5_heatmap(records: list[dict[str, object]]) -> None:
-    methods = (
+    candidate_methods = (
         "GFN1",
         "GFN2",
+        "GXTB",
         "HF",
         "MP2",
         "SCS-MP2",
@@ -369,6 +379,16 @@ def plot_common5_heatmap(records: list[dict[str, object]]) -> None:
         "r2SCAN-L",
     )
     by_key = {(str(row["method"]), str(row["solid"])): row for row in records}
+    methods = tuple(
+        method
+        for method in candidate_methods
+        if all(
+            (method, solid) in by_key
+            and by_key[(method, solid)]["a_error_A"] is not None
+            and by_key[(method, solid)]["ecoh_error_eV_per_atom"] is not None
+            for solid in COMMON5
+        )
+    )
     specs = (
         ("a_error_A", "Lattice-constant error (A)", 3),
         ("ecoh_error_eV_per_atom", "Cohesive-energy error (eV/atom)", 2),

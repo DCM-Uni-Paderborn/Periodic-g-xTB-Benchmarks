@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "campaign_id": "gxtb-pbc-v1-20260714",
+  "campaign_manifest_sha256": "13bf208d7dca238241297936ef12be7a0ab77ac8fc99e8646bda447d687d669c",
+  "gxtb_protocol_id": "dmc13-gxtb-spglib-reduced-v1",
+  "build_id": "sha256:26e85dd1df4508b93fa7b8e0d1ba6c57f4ef719bf99d0776ac1346b8fa7cb5f3",
+  "build_identity": {
+    "cp2k_sha256": "c6b51be7e356170dcb39a597d0e389bd701586e6131365ba317da3968c36eea7",
+    "cp2k_library_sha256": "7813f8b2afddf5c355cbf41a06109d59f2872d5dd0be6645093c2f04489c1975",
+    "tblite_static_library_sha256": "19dc000c604529048a99d7590193e68e026b58d2326e995369be7ebb0e65b577",
+    "cp2k_source_revision": "18d37c946413dba1b848f57563c46d16b866ce20",
+    "tblite_source_revision": "1449febde312874cd0fac4227919f5ba4e4b69b8",
+    "tblite_cli_sha256": "e590bce468964fb3d6ab8a4ffe9d5313f0b6a4ce87be9cf1456c6b6a8be1c690"
+  },
+  "qualification": {
+    "status": "passed",
+    "evidence_schema_version": 3,
+    "remote_execution_environment": {
+      "program_started_on": "terok",
+      "program_compiled_on": "terok",
+      "program_compiled_for": "x86_64"
+    },
+    "total_energy_tolerance_hartree": 1e-10,
+    "relative_energy_tolerance_kjmol_per_h2o": 0.001,
+    "observed_max_abs_total_energy_delta_hartree": 1.1368683772161603e-13,
+    "observed_max_abs_relative_energy_delta_kjmol_per_h2o": 3.731059905476286e-11,
+    "same_mesh_dense_relative_sentinel_count": 1,
+    "same_mesh_dense_relative_sentinels": [
+      {
+        "kind": "same_mesh_dense_relative_energy",
+        "mesh": "k666",
+        "phase": "VII",
+        "remote_build_id": "sha256:26e85dd1df4508b93fa7b8e0d1ba6c57f4ef719bf99d0776ac1346b8fa7cb5f3",
+        "reference_build_id": "sha256:497ff5f7ce87be4e5259fb2db9b7c5a27f44efe68e636f8c36a37e0f9075a533",
+        "phase_input": "data/execution_builds/terok-c6b51be7/requalification/k666/VII/ice_VII_GXTB_k666.inp",
+        "phase_input_sha256": "25f89520f3384f2e28f0cc34b4963b32ae9650cef44d46850c95f22baa066893",
+        "ih_input": "data/execution_builds/terok-c6b51be7/requalification/k666/Ih/ice_Ih_GXTB_k666.inp",
+        "ih_input_sha256": "d508d1051a3e0d688b3b97d4f8196215693133f532023c77e1183265bd9e95fd",
+        "remote_phase_output": "data/execution_builds/terok-c6b51be7/requalification/k666/VII/ice_VII_GXTB_k666.out",
+        "remote_phase_output_sha256": "7bed052c15794dddd011138223488dadc5e6ebe7497814f22c4708638fb0c25f",
+        "remote_ih_output": "data/execution_builds/terok-c6b51be7/requalification/k666/Ih/ice_Ih_GXTB_k666.out",
+        "remote_ih_output_sha256": "cac025cf66a579c64b9f4ea34f1abaf9e4676f71aefd64d3fc2230cfb859ec1a",
+        "reference_phase_output": "runs_gxtb_spglib/k666/VII/ice_VII_GXTB_k666.out",
+        "reference_phase_output_sha256": "985f94d3bacfd5043a1bb7e992eb9fbe388c8c944e53c32f39bea1951a483b9c",
+        "reference_ih_output": "runs_gxtb_spglib/k666/Ih/ice_Ih_GXTB_k666.out",
+        "reference_ih_output_sha256": "0f4e4dab216f3279f8cc35c85352080750c9617e67c044eeee9cd036afc66f5d",
+        "remote_phase_stamp": "data/execution_builds/terok-c6b51be7/requalification/k666/VII/ice_VII_GXTB_k666.run.json",
+        "remote_phase_stamp_sha256": "38a959026bd817edccaae52d69755aac33357af6f6ee185dff598513a7715a22",
+        "remote_ih_stamp": "data/execution_builds/terok-c6b51be7/requalification/k666/Ih/ice_Ih_GXTB_k666.run.json",
+        "remote_ih_stamp_sha256": "1c31bd4b3615a5168c72fe68f12208caf338b97b54e1c4ec7d5dbeedced63b13",
+        "reference_phase_stamp": "runs_gxtb_spglib/k666/VII/ice_VII_GXTB_k666.run.json",
+        "reference_phase_stamp_sha256": "453f7b916aac7fe2881abcc22ecb4726735064753b94e3bc428fd775142de82f",
+        "reference_ih_stamp": "runs_gxtb_spglib/k666/Ih/ice_Ih_GXTB_k666.run.json",
+        "reference_ih_stamp_sha256": "0d7429897c97d00bb3087b8d417bb07be887a668472669c00429b36bb86cb025",
+        "phase_water_count": 12,
+        "ih_water_count": 12,
+        "hartree_to_kjmol": 2625.499638,
+        "phase_total_energy_delta_hartree": 1.1368683772161603e-13,
+        "ih_total_energy_delta_hartree": 0.0,
+        "remote_relative_energy_kjmol_per_h2o": -1.6490758970635104,
+        "reference_relative_energy_kjmol_per_h2o": -1.649075897100821,
+        "relative_energy_delta_kjmol_per_h2o": 3.731059905476286e-11
+      }
+    ]
+  },
+  "provenance": {
+    "host": "terok.casus.science",
+    "architecture": "x86_64",
+    "source": "data/execution_builds/terok-c6b51be7/provenance/TEROK_BUILD_AND_QUALIFICATION.md"
+  }
+}

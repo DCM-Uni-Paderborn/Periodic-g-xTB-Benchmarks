@@ -1,0 +1,66 @@
+{
+  "schema": "dmc13-cross-host-qualification-v1",
+  "created_at": "2026-07-14T13:33:00+02:00",
+  "remote_host": "terok",
+  "remote_workspace": "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb",
+  "production_job": false,
+  "execution": {
+    "mpi_processes_per_run": 1,
+    "omp_threads_per_process": 1,
+    "openblas_threads_per_process": 1,
+    "runs_executed_concurrently": true
+  },
+  "identity": {
+    "cp2k_source_revision": "18d37c946413dba1b848f57563c46d16b866ce20",
+    "cp2k_binary_sha256": "c6b51be7e356170dcb39a597d0e389bd701586e6131365ba317da3968c36eea7",
+    "cp2k_library_sha256": "7813f8b2afddf5c355cbf41a06109d59f2872d5dd0be6645093c2f04489c1975",
+    "tblite_provider": "SAVE",
+    "tblite_source_revision": "1449febde312874cd0fac4227919f5ba4e4b69b8",
+    "tblite_static_library_sha256": "19dc000c604529048a99d7590193e68e026b58d2326e995369be7ebb0e65b577"
+  },
+  "mesh": [6, 6, 6],
+  "hartree_to_kj_per_mol": "2625.4996394798254",
+  "water_molecules_per_cell": {
+    "Ih": 12,
+    "VII": 12
+  },
+  "runs": {
+    "Ih": {
+      "input_sha256": "d508d1051a3e0d688b3b97d4f8196215693133f532023c77e1183265bd9e95fd",
+      "mac_reference_output_sha256": "0f4e4dab216f3279f8cc35c85352080750c9617e67c044eeee9cd036afc66f5d",
+      "terok_output_sha256": "d024f868cdd8073be6509b045c931e468bf72e7b311ff4bd7b9ac1bf42ad716e",
+      "mac_energy_hartree": "-917.464649947946100",
+      "terok_energy_hartree": "-917.464649947946100",
+      "terok_minus_mac_energy_hartree": "0.000000000000000",
+      "absolute_energy_delta_hartree": "0.000000000000000",
+      "scf_steps_mac": 13,
+      "scf_steps_terok": 13,
+      "cp2k_time_seconds_mac": "418.897",
+      "cp2k_time_seconds_terok": "846.730",
+      "relative_to_Ih_kj_per_mol_per_h2o_mac": "0",
+      "relative_to_Ih_kj_per_mol_per_h2o_terok": "0"
+    },
+    "VII": {
+      "input_sha256": "25f89520f3384f2e28f0cc34b4963b32ae9650cef44d46850c95f22baa066893",
+      "mac_reference_output_sha256": "985f94d3bacfd5043a1bb7e992eb9fbe388c8c944e53c32f39bea1951a483b9c",
+      "terok_output_sha256": "ce02dfb50ed949ad8f109846133c30208352c498fac9fd07ad6c0c563e28b7ca",
+      "mac_energy_hartree": "-917.472187146001261",
+      "terok_energy_hartree": "-917.472187146001147",
+      "terok_minus_mac_energy_hartree": "0.000000000000114",
+      "absolute_energy_delta_hartree": "0.000000000000114",
+      "scf_steps_mac": 12,
+      "scf_steps_terok": 12,
+      "cp2k_time_seconds_mac": "625.807",
+      "cp2k_time_seconds_terok": "1525.941",
+      "relative_to_Ih_kj_per_mol_per_h2o_mac": "-1.6490758980427705548813207407833333333",
+      "relative_to_Ih_kj_per_mol_per_h2o_terok": "-1.6490758980178283083062623994833333333"
+    }
+  },
+  "same_mesh_relative_energy_check": {
+    "definition": "((E_VII / 12) - (E_Ih / 12)) * hartree_to_kj_per_mol",
+    "terok_minus_mac_kj_per_mol_per_h2o": "0.0000000000249422465750583413",
+    "absolute_delta_kj_per_mol_per_h2o": "0.0000000000249422465750583413",
+    "tolerance_kj_per_mol_per_h2o": "0.001",
+    "pass": true
+  }
+}

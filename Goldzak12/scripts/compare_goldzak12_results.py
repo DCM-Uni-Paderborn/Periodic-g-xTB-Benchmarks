@@ -48,9 +48,14 @@ def comparison_records(
 ) -> list[dict[str, object]]:
     old = selected(old_rows, mesh)
     new = selected(new_rows, mesh)
+    methods = tuple(
+        method
+        for method in base.METHODS
+        if any(key[1] == method for key in old) and any(key[1] == method for key in new)
+    )
     records: list[dict[str, object]] = []
     for ref in base.REFERENCES:
-        for method in base.METHODS:
+        for method in methods:
             old_row = old.get((ref.solid, method))
             new_row = new.get((ref.solid, method))
             old_a = number(old_row, "a_calc_A")
@@ -135,7 +140,8 @@ def metric_summary(
 
 
 def make_summary(records: list[dict[str, object]]) -> list[dict[str, object]]:
-    return [metric_summary(records, method, metric) for method in base.METHODS for metric in ("a", "ecoh")]
+    methods = tuple(method for method in base.METHODS if any(row["method"] == method for row in records))
+    return [metric_summary(records, method, metric) for method in methods for metric in ("a", "ecoh")]
 
 
 def write_markdown(records: list[dict[str, object]], summary: list[dict[str, object]], mesh: str) -> None:
@@ -175,20 +181,21 @@ def write_markdown(records: list[dict[str, object]], summary: list[dict[str, obj
 def plot(records: list[dict[str, object]], mesh: str) -> None:
     solids = [ref.solid for ref in base.REFERENCES]
     x = np.arange(len(solids))
-    width = 0.36
-    colors = {"GFN1": "#3B6FB6", "GFN2": "#D97706"}
+    methods = tuple(method for method in base.METHODS if any(row["method"] == method for row in records))
+    width = min(0.8 / max(len(methods), 1), 0.36)
+    colors = base.METHOD_COLORS
     fig, axes = plt.subplots(2, 1, figsize=(10.6, 7.2), sharex=True)
     panels = (
         ("a_delta_new_minus_old_A", "new - old lattice constant (A)"),
         ("ecoh_delta_new_minus_old_eV_per_atom", "new - old cohesive energy (eV/atom)"),
     )
     for ax, (key, ylabel) in zip(axes, panels):
-        for index, method in enumerate(base.METHODS):
+        for index, method in enumerate(methods):
             values = []
             for solid in solids:
                 row = next(item for item in records if item["solid"] == solid and item["method"] == method)
                 values.append(float(row[key]) if row[key] != "" else np.nan)
-            positions = x + (index - 0.5) * width
+            positions = x + (index - (len(methods) - 1) / 2.0) * width
             ax.bar(positions, values, width, label=method, color=colors[method])
             for position, value in zip(positions, values):
                 if np.isnan(value):
@@ -205,7 +212,7 @@ def plot(records: list[dict[str, object]], mesh: str) -> None:
         ax.axhline(0.0, color="#222222", linewidth=0.8)
         ax.set_ylabel(ylabel)
         ax.grid(axis="y", color="#d0d0d0", linewidth=0.6, alpha=0.7)
-    axes[0].legend(frameon=False, ncol=2)
+    axes[0].legend(frameon=False, ncol=len(methods))
     axes[-1].set_xticks(x)
     axes[-1].set_xticklabels(solids, rotation=45, ha="right")
     fig.suptitle(f"LC12 current stack versus previous results ({mesh} native Bloch)")

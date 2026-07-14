@@ -9,10 +9,12 @@ import json
 import math
 from pathlib import Path
 
+import x23b_common as common
+
 
 ROOT = Path(__file__).resolve().parents[1]
 METADATA = ROOT / "data" / "metadata.json"
-METHODS = ("GFN1", "GFN2")
+METHODS = common.METHODS
 REQUIRED_NUMERIC_FIELDS = (
     "energy_hartree",
     "gas_energy_hartree",
@@ -48,10 +50,12 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, action="append", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--method", action="append", choices=METHODS)
     args = parser.parse_args()
 
     systems = {str(row["id"]) for row in json.loads(METADATA.read_text())["systems"]}
-    expected = {(method, system) for method in METHODS for system in systems}
+    selected_methods = tuple(args.method) if args.method else common.PUBLISHED_METHODS
+    expected = {(method, system) for method in selected_methods for system in systems}
     selected: dict[tuple[str, str], tuple[Path, dict[str, str]]] = {}
     fieldnames: list[str] | None = None
 
@@ -91,9 +95,11 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(rows)
 
-    for method in METHODS:
+    for method in selected_methods:
         count = sum(row["method"] == method for row in rows)
         print(f"{method}: {count}/{len(systems)} converged")
+    if "GXTB" in selected_methods:
+        common.update_gxtb_provenance(ROOT)
 
 
 if __name__ == "__main__":

@@ -71,6 +71,7 @@ def main() -> None:
     parser.add_argument("--k444-csv", type=Path, required=True)
     parser.add_argument("--rows-csv", type=Path, required=True)
     parser.add_argument("--summary-csv", type=Path, required=True)
+    parser.add_argument("--method", action="append", choices=cellopt.METHODS)
     parser.add_argument("--allow-incomplete", action="store_true")
     args = parser.parse_args()
 
@@ -81,15 +82,24 @@ def main() -> None:
         missing_444 = sorted(set(k333) - set(k444))
         raise ValueError(f"mismatched result sets: missing k333={missing_333}, missing k444={missing_444}")
 
+    present_methods = {method for method, _ in k333}
+    selected_methods = tuple(args.method) if args.method else tuple(
+        method for method in cellopt.METHODS if method in present_methods
+    )
+    if not selected_methods:
+        raise ValueError("no recognized X23b methods found in the input tables")
+    unexpected_methods = present_methods - set(selected_methods)
+    if unexpected_methods:
+        raise ValueError(f"unexpected methods in input tables: {sorted(unexpected_methods)}")
     expected = {
         (method, str(system["id"]))
-        for method in cellopt.METHODS
+        for method in selected_methods
         for system in cellopt.systems()
     }
     if not args.allow_incomplete and set(k333) != expected:
         missing = sorted(expected - set(k333))
         extra = sorted(set(k333) - expected)
-        raise ValueError(f"complete 46-case result required: missing={missing}, extra={extra}")
+        raise ValueError(f"complete {len(expected)}-case result required: missing={missing}, extra={extra}")
 
     rows: list[dict[str, str]] = []
     values: dict[tuple[str, str], list[float]] = {}
@@ -130,7 +140,7 @@ def main() -> None:
         changes.setdefault((key[0], "k444"), []).append(delta4_from3)
 
     summary: list[dict[str, str]] = []
-    for method in cellopt.METHODS:
+    for method in selected_methods:
         for mesh in ("k222", "k333", "k444"):
             errors = values.get((method, mesh), [])
             if not errors:
@@ -161,6 +171,8 @@ def main() -> None:
             f"{row['method']} {row['mesh']} N={row['N']} "
             f"MAE={float(row['MAE']):.6f} MaxAE={float(row['MaxAE']):.6f}"
         )
+    if "GXTB" in selected_methods:
+        cellopt.common.update_gxtb_provenance(cellopt.ROOT)
 
 
 if __name__ == "__main__":

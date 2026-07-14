@@ -169,6 +169,18 @@ def run_case(case: tuple[str, str, str, Path], args: argparse.Namespace) -> dict
     program = prepare_reference_cli_program(run_dir, args.tblite)
     inp.write_text(inject_reference_cli(source.read_text(), program, prefix, args.keep_files))
     out_file = run_dir / "cp2k.out"
+    if args.resume and out_file.is_file() and "PROGRAM ENDED" in out_file.read_text(errors="ignore"):
+        row = {
+            "source_kind": source_kind,
+            "method": method,
+            "system": system,
+            "source": portable_source(source, args.benchmark_root),
+            "run_dir": run_dir.relative_to(args.out).as_posix(),
+            "returncode": "0",
+            "diagnostic": "Gamma CP2K-native versus CLI energy/gradient/virial; element-limited q-vSZP basis",
+        }
+        row.update(parse_reference_cli(out_file))
+        return row
     env = os.environ.copy()
     env.setdefault("OMP_NUM_THREADS", "1")
     env.setdefault("OPENBLAS_NUM_THREADS", "1")
@@ -189,6 +201,7 @@ def run_case(case: tuple[str, str, str, Path], args: argparse.Namespace) -> dict
         "source": portable_source(source, args.benchmark_root),
         "run_dir": run_dir.relative_to(args.out).as_posix(),
         "returncode": str(proc.returncode),
+        "diagnostic": "Gamma CP2K-native versus CLI energy/gradient/virial; element-limited q-vSZP basis",
     }
     row.update(parse_reference_cli(out_file))
     return row
@@ -230,7 +243,7 @@ def main() -> None:
     parser.add_argument("--benchmark-root", type=Path, default=REPOSITORY)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--jobs", type=int, default=6)
-    parser.add_argument("--method", choices=["GFN1", "GFN2"], default="GFN2")
+    parser.add_argument("--method", choices=["GFN1", "GFN2", "GXTB"], default="GFN2")
     parser.add_argument("--only-initial", action="store_true")
     parser.add_argument("--only-restarts", action="store_true")
     parser.add_argument("--keep-files", action="store_true")
@@ -238,11 +251,26 @@ def main() -> None:
     parser.add_argument("--source-csv", type=Path)
     parser.add_argument("--variant", default="cg_2pnt")
     parser.add_argument("--source-kind", default="variant_final")
+    parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
 
     if args.out.exists():
-        shutil.rmtree(args.out)
-    args.out.mkdir(parents=True)
+        if args.force:
+            if args.method != "GXTB":
+                raise ValueError("--force is restricted to the additive GXTB diagnostic tree")
+            for source_dir in args.out.iterdir():
+                target = source_dir / args.method
+                if target.is_dir():
+                    shutil.rmtree(target)
+        elif not args.resume:
+            raise ValueError("output directory exists; use --resume or a new method-specific --out directory")
+    args.out.mkdir(parents=True, exist_ok=True)
+    existing_rows: list[dict[str, str]] = []
+    existing_csv = args.out / "reference_cli_rows.csv"
+    if existing_csv.is_file():
+        with existing_csv.open(newline="") as handle:
+            existing_rows = list(csv.DictReader(handle))
 
     cases: list[tuple[str, str, str, Path]] = []
     if args.source_csv:
@@ -256,6 +284,14 @@ def main() -> None:
     if args.system:
         wanted = set(args.system)
         cases = [case for case in cases if case[2] in wanted]
+    if not cases:
+        raise ValueError("no X23b reference-CLI cases selected")
+    if not args.system:
+        source_kinds = {case[0] for case in cases}
+        for source_kind in source_kinds:
+            count = sum(case[0] == source_kind and case[1] == args.method for case in cases)
+            if count != 23:
+                raise ValueError(f"{source_kind}/{args.method}: complete 23-system diagnostic coverage required, found {count}")
 
     rows: list[dict[str, str]] = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
@@ -278,11 +314,18 @@ def main() -> None:
                 flush=True,
             )
 
+    updated_keys = {(row["source_kind"], row["method"], row["system"]) for row in rows}
+    rows = [
+        row
+        for row in existing_rows
+        if (row.get("source_kind", ""), row.get("method", ""), row.get("system", "")) not in updated_keys
+    ] + rows
     rows.sort(key=lambda row: (row["source_kind"], row["method"], row["system"]))
     columns = [
         "source_kind",
         "method",
         "system",
+        "diagnostic",
         "returncode",
         "energy_cp2k_hartree",
         "energy_cli_hartree",
@@ -300,7 +343,8 @@ def main() -> None:
     summary = summarize(rows)
     write_csv(args.out / "reference_cli_summary.csv", summary, list(summary[0].keys()) if summary else ["source_kind", "method", "n"])
     print(args.out)
-    if rows and all(row["skipped"] == "True" for row in rows):
+    selected_rows = [row for row in rows if row["method"] == args.method]
+    if selected_rows and all(row["skipped"] == "True" for row in selected_rows):
         raise SystemExit("all selected REFERENCE_CLI checks were skipped")
 
 

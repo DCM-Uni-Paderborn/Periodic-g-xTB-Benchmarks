@@ -1,23 +1,29 @@
-# Periodic GFN2 Benchmarks
+# Periodic g-xTB Benchmarks
 
-This repository collects the paper-relevant benchmark inputs, curated output
-data, analysis scripts, and the figures used in the revised manuscript and
-Supporting Information for periodic GFN calculations in CP2K.
+This private repository collects the paper-relevant inputs, validation gates,
+curated output data, analysis scripts, and figures for the periodic g-xTB
+implementation in CP2K with save_tblite.
+
+Frozen GFN1-xTB/GFN2-xTB values are retained only as comparison baselines.
+Their canonical public home remains
+[`DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks`](https://github.com/DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks).
+New g-xTB workflows, inputs, results, and paper artifacts belong exclusively
+in this repository.
 
 ## Contents
 
-- `DMC-ICE13/`: CP2K/tblite single-point benchmark for the DMC-ICE13 ice
-  polymorph data set, comparing periodic GFN1-xTB and GFN2-xTB relative
-  energies with the diffusion Monte Carlo reference energies. The current
-  manuscript data use native Bloch k-point calculations through CP2K
-  `&KPOINTS`.
-- `X23b/`: CP2K/tblite molecular-crystal benchmark with gas-phase molecular
-  optimizations, crystal single-point k-point tests, native Bloch 2x2x2
-  crystal cell optimizations, converged 3x3x3/4x4x4 final-geometry energies,
-  volume errors, and summary plots.
+- `DMC-ICE13/`: phase-wise adaptive native-Bloch k-point convergence for
+  periodic g-xTB relative ice-polymorph energies, with frozen GFN1/GFN2 and
+  diffusion Monte Carlo comparison data.
+- `X23b/`: correctness-gated g-xTB molecular-crystal workflow covering
+  molecular optimization, shifted-k preflights, force/stress finite
+  differences, native-Bloch cell optimization, and final k-point energies.
 - `Goldzak12/`: LC12 equations of state, cohesive energies, literature
-  comparisons, and charge-collapse diagnostics for cubic covalent and ionic
-  solids.
+  comparisons, SCC-root/hysteresis diagnostics, and lattice-constant fits for
+  cubic covalent and ionic solids.
+- `campaigns/`: immutable g-xTB build, protocol, and qualification manifests.
+- `validation/`: molecular, primitive-cell/supercell, symmetry, force, and
+  stress regression inputs for the CP2K/save_tblite bridge.
 - `patches/`: local CP2K and tblite patches used for the final benchmark
   revision.
 - `scripts/`: helper scripts used for the final k-point, cell-optimization,
@@ -30,9 +36,23 @@ diagnostic plots are not tracked. They can be recreated from the versioned
 inputs and scripts; the curated CSV, JSON, plotting data, and manuscript figure
 files are the benchmark data used in the paper.
 
-## Current revision snapshot
+## Current g-xTB campaign
 
-The final calculations use DCM-Uni-Paderborn CP2K development trunk revision
+The active campaign is deliberately fail-closed: provisional numbers are not
+promoted to paper summaries until the stored build identity, raw artifacts,
+k-point convergence, symmetry, force/stress, and cross-build gates pass.
+Current production calculations use CP2K source revision
+`18d37c946413...` with save_tblite revision `1449febde312...`; the direct
+ACP k-space successor build is still in qualification. See
+`campaigns/gxtb-pbc-v1-20260714/` for the complete machine-readable identity.
+
+The current g-xTB DMC-ICE13 and LC12 values are therefore explicitly
+provisional, and X23b has no g-xTB accuracy result yet. The publication
+finalizers refuse incomplete or unhashed data.
+
+## Frozen GFN1/GFN2 comparison snapshot
+
+The imported comparison calculations use DCM-Uni-Paderborn CP2K development trunk revision
 `faf9aae91266170dfee8a9f7171a5135bc5eb368` with tblite support. The tblite
 build combines `main` revision `eb50bbfbe1c0869e2e18c9b7cc13144e5130b6df`
 with PR 350 head `8c5e56255dc0f7001615489f24162ed770888d8b` in local merge

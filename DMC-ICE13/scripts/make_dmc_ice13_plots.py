@@ -18,6 +18,25 @@ FIGURES = ROOT / "figures"
 
 PHASES = ["Ih", "II", "III", "IV", "VI", "VII", "VIII", "IX", "XI", "XIII", "XIV", "XV", "XVII"]
 
+GFN_METHOD_ORDER = ("GFN1", "GFN2", "GXTB")
+GFN_METHOD_LABELS = {
+    "GFN1": "GFN1-xTB",
+    "GFN2": "GFN2-xTB",
+    "GXTB": "g-xTB",
+}
+GFN_PRIMARY_STYLES = {"GFN1": 2, "GFN2": 3, "GXTB": 13}
+GFN_GAMMA_STYLES = {"GFN1": 7, "GFN2": 8, "GXTB": 14}
+PARENT_DFT_METHODS = ("PBE", "PBE-D4", "PBE0", "PBE0-D4", "SCAN", "SCAN+rVV10")
+CORE_DFT_METHODS = ("PBE-D4", "PBE0-D4", "SCAN+rVV10")
+DFT_STYLES = {
+    "PBE": 10,
+    "PBE-D4": 4,
+    "PBE0": 11,
+    "PBE0-D4": 5,
+    "SCAN": 12,
+    "SCAN+rVV10": 6,
+}
+
 DMC_ABS = {
     "Ih": -59.45,
     "II": -59.14,
@@ -124,35 +143,160 @@ def stats(errors: list[float]) -> dict[str, float]:
     }
 
 
+def complete_relative_energies(method_result: object) -> dict[str, float] | None:
+    """Return a complete, finite ICE13 profile or ``None`` for partial results."""
+    if not isinstance(method_result, dict) or method_result.get("complete") is not True:
+        return None
+    relative = method_result.get("relative_kjmol")
+    if not isinstance(relative, dict):
+        return None
+    try:
+        values = {phase: float(relative[phase]) for phase in PHASES}
+    except (KeyError, TypeError, ValueError):
+        return None
+    if not all(math.isfinite(value) for value in values.values()):
+        return None
+    return values
+
+
+def load_complete_gfn_profiles(method_results: object, *, gamma: bool = False) -> dict[str, dict[str, float]]:
+    """Load complete GFN profiles in stable paper-plot order."""
+    if not isinstance(method_results, dict):
+        return {}
+    profiles: dict[str, dict[str, float]] = {}
+    for method_id in GFN_METHOD_ORDER:
+        relative = complete_relative_energies(method_results.get(method_id))
+        if relative is None:
+            continue
+        label = GFN_METHOD_LABELS[method_id]
+        if gamma:
+            label += " (Gamma)"
+        profiles[label] = relative
+    return profiles
+
+
 def load_primary_gfn_relative_energies(results: dict[str, object]) -> dict[str, dict[str, float]]:
     kpoint_path = DATA / "kpoint_results.json"
     if kpoint_path.exists():
         kpoint_results = json.loads(kpoint_path.read_text())
-        mesh = "k333"
-        mesh_results = kpoint_results["results"][mesh]
-        return {
-            "GFN1-xTB": mesh_results["GFN1"]["relative_kjmol"],
-            "GFN2-xTB": mesh_results["GFN2"]["relative_kjmol"],
-        }
-    return {
-        "GFN1-xTB": results["GFN1"]["relative_kjmol"],
-        "GFN2-xTB": results["GFN2"]["relative_kjmol"],
-    }
+        mesh_results = kpoint_results.get("results", {}).get("k333", {})
+        return load_complete_gfn_profiles(mesh_results)
+    return load_complete_gfn_profiles(results)
 
 
 def load_gamma_gfn_relative_energies(results: dict[str, object]) -> dict[str, dict[str, float]]:
     kpoint_path = DATA / "kpoint_results.json"
     if kpoint_path.exists():
         kpoint_results = json.loads(kpoint_path.read_text())
-        mesh_results = kpoint_results["results"]["gamma"]
-        return {
-            "GFN1-xTB (Gamma)": mesh_results["GFN1"]["relative_kjmol"],
-            "GFN2-xTB (Gamma)": mesh_results["GFN2"]["relative_kjmol"],
-        }
-    return {
-        "GFN1-xTB (Gamma)": results["GFN1"]["relative_kjmol"],
-        "GFN2-xTB (Gamma)": results["GFN2"]["relative_kjmol"],
-    }
+        mesh_results = kpoint_results.get("results", {}).get("gamma", {})
+        return load_complete_gfn_profiles(mesh_results, gamma=True)
+    return load_complete_gfn_profiles(results, gamma=True)
+
+
+def build_summary_rows(
+    profiles: dict[str, dict[str, float]], dmc_relative: dict[str, float]
+) -> list[dict[str, object]]:
+    """Build sorted non-reference statistics with an explicit sample count."""
+    rows: list[dict[str, object]] = []
+    for method, relative in profiles.items():
+        errors = [relative[phase] - dmc_relative[phase] for phase in PHASES if phase != "Ih"]
+        row: dict[str, object] = {"method": method, "N": len(errors)}
+        row.update({key: f"{value:.4f}" for key, value in stats(errors).items()})
+        rows.append(row)
+    rows.sort(key=lambda row: float(row["MAE"]))
+    return rows
+
+
+def gfn_method_id(label: str) -> str:
+    base_label = label.removesuffix(" (Gamma)")
+    for method_id, candidate in GFN_METHOD_LABELS.items():
+        if base_label == candidate:
+            return method_id
+    raise KeyError(f"Unknown GFN method label: {label}")
+
+
+def plot_style(method: str) -> int:
+    if method in DFT_STYLES:
+        return DFT_STYLES[method]
+    method_id = gfn_method_id(method)
+    if method.endswith(" (Gamma)"):
+        return GFN_GAMMA_STYLES[method_id]
+    return GFN_PRIMARY_STYLES[method_id]
+
+
+def paper_plot_label(method: str) -> str:
+    return method.replace("(Gamma)", "(Γ-point)")
+
+
+def plot_header_token(method: str) -> str:
+    return re.sub(r"[^A-Za-z0-9]+", "_", method).strip("_")
+
+
+def write_profile_plot_data(
+    relative_path: Path,
+    error_path: Path,
+    dmc_relative: dict[str, float],
+    primary_gfn: dict[str, dict[str, float]],
+    gamma_gfn: dict[str, dict[str, float]],
+    all_methods: dict[str, dict[str, float]],
+) -> tuple[dict[str, int], dict[str, int]]:
+    """Write profile/error plot inputs and return their dynamic column maps."""
+    plot_methods = [*primary_gfn, *gamma_gfn, *PARENT_DFT_METHODS]
+    profiles = {**primary_gfn, **gamma_gfn}
+    profiles.update({method: all_methods[method] for method in PARENT_DFT_METHODS})
+
+    relative_columns = {method: index for index, method in enumerate(plot_methods, start=5)}
+    with relative_path.open("w") as handle:
+        header = ["index", "phase", "DMC", "DMC_error", *(plot_header_token(method) for method in plot_methods)]
+        handle.write("# " + " ".join(header) + "\n")
+        for index, phase in enumerate(PHASES, start=1):
+            values = [
+                str(index),
+                phase,
+                f"{dmc_relative[phase]:.6f}",
+                f"{DMC_REL_ERROR[phase]:.6f}",
+                *(f"{profiles[method][phase]:.6f}" for method in plot_methods),
+            ]
+            handle.write(" ".join(values) + "\n")
+
+    error_columns = {method: index for index, method in enumerate(plot_methods, start=3)}
+    with error_path.open("w") as handle:
+        header = ["index", "phase", *(f"{plot_header_token(method)}_error" for method in plot_methods)]
+        handle.write("# " + " ".join(header) + "\n")
+        for index, phase in enumerate(PHASES, start=1):
+            values = [
+                str(index),
+                phase,
+                *(f"{profiles[method][phase] - dmc_relative[phase]:.6f}" for method in plot_methods),
+            ]
+            handle.write(" ".join(values) + "\n")
+    return relative_columns, error_columns
+
+
+def gnuplot_profile_clause(
+    data_path: Path,
+    columns: dict[str, int],
+    methods: list[str],
+    *,
+    include_dmc: bool,
+) -> str:
+    """Create a gnuplot plot clause for a dynamic method list."""
+    series: list[str] = []
+    if include_dmc:
+        series.extend(
+            [
+                f"'{data_path}' using 1:3:xtic(2) w lp ls 1 title 'DMC'",
+                "'' using 1:3:4 w yerrorbars ls 9 notitle",
+            ]
+        )
+    for method in methods:
+        source = "''" if series else f"'{data_path}'"
+        xtic = "" if series else ":xtic(2)"
+        series.append(
+            f"{source} using 1:{columns[method]}{xtic} w lp ls {plot_style(method)} "
+            f"title '{paper_plot_label(method)}'"
+        )
+    return "plot " + ", \\\n     ".join(series)
 
 
 def write_csv(path: Path, rows: list[dict[str, object]], fieldnames: list[str]) -> None:
@@ -200,7 +344,8 @@ def make_log_mae_plot(summary_rows: list[dict[str, object]]) -> None:
     left, right, top, bottom = 285, 70, 112, 120
     plot_w = width - left - right
     row_gap = (height - top - bottom) / (len(rows) + 1)
-    xmin, xmax = math.log10(0.3), math.log10(15.0)
+    xmax_value = max(15.0, max(float(row["MAE"]) for row in rows) * 1.12)
+    xmin, xmax = math.log10(0.3), math.log10(xmax_value)
 
     def xlog(value: float) -> float:
         return left + (math.log10(value) - xmin) * plot_w / (xmax - xmin)
@@ -210,6 +355,8 @@ def make_log_mae_plot(summary_rows: list[dict[str, object]]) -> None:
         "GFN2-xTB (Gamma)": "#8fb0df",
         "GFN1-xTB": "#c44e52",
         "GFN1-xTB (Gamma)": "#e6a0a3",
+        "g-xTB": "#00897b",
+        "g-xTB (Gamma)": "#80cbc4",
         "PBE": "#9bd49f",
         "PBE-D4": "#55a868",
         "PBE0": "#b8a7db",
@@ -260,8 +407,8 @@ def make_log_mae_plot(summary_rows: list[dict[str, object]]) -> None:
         method = str(row["method"])
         value = float(row["MAE"])
         y = top + row_gap * index
-        is_primary_gfn = method in {"GFN1-xTB", "GFN2-xTB"}
-        is_gamma_gfn = method in {"GFN1-xTB (Gamma)", "GFN2-xTB (Gamma)"}
+        is_primary_gfn = method in set(GFN_METHOD_LABELS.values())
+        is_gamma_gfn = method in {f"{label} (Gamma)" for label in GFN_METHOD_LABELS.values()}
         is_hi = is_primary_gfn or is_gamma_gfn
         is_selected = method in color_by_method
         method_label = method.replace("(Gamma)", "(\u0393-point)")
@@ -292,8 +439,9 @@ def main() -> None:
     published_abs = parse_published_abs()
 
     dmc_rel = rel_from_abs(published_abs["DMC"])
-    method_rel = load_primary_gfn_relative_energies(results)
+    primary_gfn_rel = load_primary_gfn_relative_energies(results)
     gamma_rel = load_gamma_gfn_relative_energies(results)
+    method_rel = dict(primary_gfn_rel)
     method_rel.update({name: rel_from_abs(vals) for name, vals in published_abs.items() if name != "DMC"})
 
     published_rows = []
@@ -304,67 +452,54 @@ def main() -> None:
     write_csv(DATA / "dmc_ice13_published_dft_absolute_energies.csv", published_rows, ["method", *PHASES])
 
     rows = []
+    primary_method_ids = [(gfn_method_id(method), method) for method in primary_gfn_rel]
     for index, phase in enumerate(PHASES, start=1):
-        row = {
+        row: dict[str, object] = {
             "index": index,
             "phase": phase,
             "DMC_relative_kJmol": f"{dmc_rel[phase]:.4f}",
-            "GFN1_relative_kJmol": f"{method_rel['GFN1-xTB'][phase]:.4f}",
-            "GFN2_relative_kJmol": f"{method_rel['GFN2-xTB'][phase]:.4f}",
-            "GFN1_error_kJmol": f"{method_rel['GFN1-xTB'][phase] - dmc_rel[phase]:.4f}",
-            "GFN2_error_kJmol": f"{method_rel['GFN2-xTB'][phase] - dmc_rel[phase]:.4f}",
         }
+        row.update(
+            {
+                f"{method_id}_relative_kJmol": f"{primary_gfn_rel[method][phase]:.4f}"
+                for method_id, method in primary_method_ids
+            }
+        )
+        row.update(
+            {
+                f"{method_id}_error_kJmol": f"{primary_gfn_rel[method][phase] - dmc_rel[phase]:.4f}"
+                for method_id, method in primary_method_ids
+            }
+        )
         rows.append(row)
+    relative_fields = [f"{method_id}_relative_kJmol" for method_id, _method in primary_method_ids]
+    error_fields = [f"{method_id}_error_kJmol" for method_id, _method in primary_method_ids]
     write_csv(
         DATA / "dmc_ice13_relative_energies.csv",
         rows,
-        ["index", "phase", "DMC_relative_kJmol", "GFN1_relative_kJmol", "GFN2_relative_kJmol", "GFN1_error_kJmol", "GFN2_error_kJmol"],
+        ["index", "phase", "DMC_relative_kJmol", *relative_fields, *error_fields],
     )
 
-    summary_rows = []
     summary_rel = dict(method_rel)
     summary_rel.update(gamma_rel)
-    for method, rel in summary_rel.items():
-        errors = [rel[phase] - dmc_rel[phase] for phase in PHASES if phase != "Ih"]
-        row = {"method": method}
-        row.update({key: f"{value:.4f}" for key, value in stats(errors).items()})
-        summary_rows.append(row)
-    summary_rows.sort(key=lambda row: float(row["MAE"]))
-    write_csv(DATA / "dmc_ice13_relative_mae_comparison.csv", summary_rows, ["method", "ME", "MAE", "RMSE", "MaxAE"])
+    summary_rows = build_summary_rows(summary_rel, dmc_rel)
+    write_csv(
+        DATA / "dmc_ice13_relative_mae_comparison.csv",
+        summary_rows,
+        ["method", "N", "ME", "MAE", "RMSE", "MaxAE"],
+    )
     make_log_mae_plot(summary_rows)
 
     rel_dat = DATA / "relative_energies_for_plot.dat"
-    with rel_dat.open("w") as handle:
-        handle.write("# index phase DMC DMC_error GFN1 GFN2 GFN1_Gamma GFN2_Gamma PBE PBE-D4 PBE0 PBE0-D4 SCAN SCAN+rVV10\n")
-        for index, phase in enumerate(PHASES, start=1):
-            handle.write(
-                f"{index} {phase} {dmc_rel[phase]:.6f} {DMC_REL_ERROR[phase]:.6f} "
-                f"{method_rel['GFN1-xTB'][phase]:.6f} {method_rel['GFN2-xTB'][phase]:.6f} "
-                f"{gamma_rel['GFN1-xTB (Gamma)'][phase]:.6f} {gamma_rel['GFN2-xTB (Gamma)'][phase]:.6f} "
-                f"{method_rel['PBE'][phase]:.6f} {method_rel['PBE-D4'][phase]:.6f} "
-                f"{method_rel['PBE0'][phase]:.6f} {method_rel['PBE0-D4'][phase]:.6f} "
-                f"{method_rel['SCAN'][phase]:.6f} {method_rel['SCAN+rVV10'][phase]:.6f}\n"
-            )
-
     err_dat = DATA / "relative_errors_for_plot.dat"
-    with err_dat.open("w") as handle:
-        handle.write(
-            "# index phase GFN1_error GFN2_error GFN1_Gamma_error GFN2_Gamma_error "
-            "PBE_error PBE-D4_error PBE0_error PBE0-D4_error SCAN_error SCAN+rVV10_error\n"
-        )
-        for index, phase in enumerate(PHASES, start=1):
-            handle.write(
-                f"{index} {phase} {method_rel['GFN1-xTB'][phase] - dmc_rel[phase]:.6f} "
-                f"{method_rel['GFN2-xTB'][phase] - dmc_rel[phase]:.6f} "
-                f"{gamma_rel['GFN1-xTB (Gamma)'][phase] - dmc_rel[phase]:.6f} "
-                f"{gamma_rel['GFN2-xTB (Gamma)'][phase] - dmc_rel[phase]:.6f} "
-                f"{method_rel['PBE'][phase] - dmc_rel[phase]:.6f} "
-                f"{method_rel['PBE-D4'][phase] - dmc_rel[phase]:.6f} "
-                f"{method_rel['PBE0'][phase] - dmc_rel[phase]:.6f} "
-                f"{method_rel['PBE0-D4'][phase] - dmc_rel[phase]:.6f} "
-                f"{method_rel['SCAN'][phase] - dmc_rel[phase]:.6f} "
-                f"{method_rel['SCAN+rVV10'][phase] - dmc_rel[phase]:.6f}\n"
-            )
+    relative_columns, error_columns = write_profile_plot_data(
+        rel_dat,
+        err_dat,
+        dmc_rel,
+        primary_gfn_rel,
+        gamma_rel,
+        method_rel,
+    )
 
     mae_dat = DATA / "relative_mae_for_plot.dat"
     compact_methods = {
@@ -378,12 +513,17 @@ def main() -> None:
         "SCAN",
         "GFN2-xTB",
         "GFN1-xTB",
+        "g-xTB",
     }
     compact_rows = [row for row in summary_rows if row["method"] in compact_methods]
     with mae_dat.open("w") as handle:
-        handle.write("# index method MAE\n")
+        handle.write("# index method N MAE\n")
         for index, row in enumerate(compact_rows, start=1):
-            handle.write(f"{index} \"{row['method']}\" {row['MAE']}\n")
+            handle.write(f"{index} \"{row['method']}\" {row['N']} {row['MAE']}\n")
+
+    gfn_plot_methods = [*primary_gfn_rel, *gamma_rel]
+    core_plot_methods = [*gfn_plot_methods, *CORE_DFT_METHODS]
+    parent_plot_methods = [*gfn_plot_methods, *PARENT_DFT_METHODS]
 
     common = """
 	set terminal svg enhanced dashed font 'Helvetica,14' size 1180,640
@@ -407,6 +547,8 @@ set style line 3 lt 1 lc rgb '#4c72b0' lw 2.3 pt 9 ps 0.75
 	set style line 10 lt 1 lc rgb '#9bd49f' lw 1.25 pt 4 ps 0.52
 	set style line 11 lt 1 lc rgb '#b8a7db' lw 1.25 pt 6 ps 0.52
 	set style line 12 lt 1 lc rgb '#dfcf8c' lw 1.25 pt 8 ps 0.52
+	set style line 13 lt 1 lc rgb '#00897b' lw 2.3 pt 13 ps 0.75
+	set style line 14 lt 2 lc rgb '#80cbc4' lw 1.6 pt 13 ps 0.55
 	"""
     run_gnuplot(
         common
@@ -418,15 +560,7 @@ set xrange [0.5:13.5]
 set xtics rotate by -45
 set autoscale y
 set ytics 5
-plot '{rel_dat}' using 1:3:xtic(2) w lp ls 1 title 'DMC', \\
-	     '' using 1:3:4 w yerrorbars ls 9 notitle, \\
-	     '' using 1:5 w lp ls 2 title 'GFN1-xTB', \\
-	     '' using 1:6 w lp ls 3 title 'GFN2-xTB', \\
-	     '' using 1:7 w lp ls 7 title 'GFN1-xTB (\u0393-point)', \\
-	     '' using 1:8 w lp ls 8 title 'GFN2-xTB (\u0393-point)', \\
-	     '' using 1:10 w lp ls 4 title 'PBE-D4', \\
-	     '' using 1:12 w lp ls 5 title 'PBE0-D4', \\
-	     '' using 1:14 w lp ls 6 title 'SCAN+rVV10'
+{gnuplot_profile_clause(rel_dat, relative_columns, core_plot_methods, include_dmc=True)}
 """
     )
 
@@ -440,18 +574,7 @@ set xrange [0.5:13.5]
 set xtics rotate by -45
 set autoscale y
 set ytics 5
-plot '{rel_dat}' using 1:3:xtic(2) w lp ls 1 title 'DMC', \\
-	     '' using 1:3:4 w yerrorbars ls 9 notitle, \\
-	     '' using 1:5 w lp ls 2 title 'GFN1-xTB', \\
-	     '' using 1:6 w lp ls 3 title 'GFN2-xTB', \\
-	     '' using 1:7 w lp ls 7 title 'GFN1-xTB (\u0393-point)', \\
-	     '' using 1:8 w lp ls 8 title 'GFN2-xTB (\u0393-point)', \\
-	     '' using 1:9 w lp ls 10 title 'PBE', \\
-	     '' using 1:10 w lp ls 4 title 'PBE-D4', \\
-	     '' using 1:11 w lp ls 11 title 'PBE0', \\
-	     '' using 1:12 w lp ls 5 title 'PBE0-D4', \\
-	     '' using 1:13 w lp ls 12 title 'SCAN', \\
-	     '' using 1:14 w lp ls 6 title 'SCAN+rVV10'
+{gnuplot_profile_clause(rel_dat, relative_columns, parent_plot_methods, include_dmc=True)}
 """
     )
 
@@ -465,13 +588,7 @@ set xrange [0.5:13.5]
 set xtics rotate by -45
 set autoscale y
 set yzeroaxis lw 1.2 lc rgb '#333333'
-plot '{err_dat}' using 1:3:xtic(2) w lp ls 2 title 'GFN1-xTB', \\
-	     '' using 1:4 w lp ls 3 title 'GFN2-xTB', \\
-	     '' using 1:5 w lp ls 7 title 'GFN1-xTB (\u0393-point)', \\
-	     '' using 1:6 w lp ls 8 title 'GFN2-xTB (\u0393-point)', \\
-	     '' using 1:8 w lp ls 4 title 'PBE-D4', \\
-	     '' using 1:10 w lp ls 5 title 'PBE0-D4', \\
-	     '' using 1:12 w lp ls 6 title 'SCAN+rVV10'
+{gnuplot_profile_clause(err_dat, error_columns, core_plot_methods, include_dmc=False)}
 """
     )
 
@@ -485,40 +602,27 @@ set xrange [0.5:13.5]
 set xtics rotate by -45
 set autoscale y
 set yzeroaxis lw 1.2 lc rgb '#333333'
-plot '{err_dat}' using 1:3:xtic(2) w lp ls 2 title 'GFN1-xTB', \\
-	     '' using 1:4 w lp ls 3 title 'GFN2-xTB', \\
-	     '' using 1:5 w lp ls 7 title 'GFN1-xTB (\u0393-point)', \\
-	     '' using 1:6 w lp ls 8 title 'GFN2-xTB (\u0393-point)', \\
-	     '' using 1:7 w lp ls 10 title 'PBE', \\
-	     '' using 1:8 w lp ls 4 title 'PBE-D4', \\
-	     '' using 1:9 w lp ls 11 title 'PBE0', \\
-	     '' using 1:10 w lp ls 5 title 'PBE0-D4', \\
-	     '' using 1:11 w lp ls 12 title 'SCAN', \\
-	     '' using 1:12 w lp ls 6 title 'SCAN+rVV10'
+{gnuplot_profile_clause(err_dat, error_columns, parent_plot_methods, include_dmc=False)}
 """
     )
 
     run_gnuplot(
-        """
+        f"""
 set terminal svg enhanced font 'Helvetica,12' size 720,480
 set object 1 rectangle from screen 0,0 to screen 1,1 fillcolor rgb 'white' behind
-set output '"""
-        + str(FIGURES / "dmc_ice13_relative_mae_comparison.svg")
-        + """'
+set output '{FIGURES / "dmc_ice13_relative_mae_comparison.svg"}'
 set border lw 1.2
 set tics out nomirror
 set grid ytics lc rgb '#d0d0d0' lw 0.6
 set style fill solid 0.85 border -1
 set boxwidth 0.72
-set ylabel 'MAE of relative energies / kJ mol^{-1}'
+set ylabel 'MAE of relative energies / kJ mol^{{-1}}'
 set xlabel 'Method'
-set xrange [0.3:10.7]
-set yrange [0:12]
+set xrange [0.3:{len(compact_rows) + 0.7}]
+set yrange [0:*]
 set xtics rotate by -45
 unset key
-plot '"""
-        + str(mae_dat)
-        + """' using 1:3:xtic(2) with boxes lc rgb '#4c72b0'
+plot '{mae_dat}' using 1:4:xtic(2) with boxes lc rgb '#4c72b0'
 """
     )
 

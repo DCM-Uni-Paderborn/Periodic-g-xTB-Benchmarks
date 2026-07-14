@@ -1,0 +1,140 @@
+{
+  "benchmark": "X23b",
+  "campaign_identity": {
+    "campaign_id": "gxtb-pbc-v1-20260714",
+    "cp2k_cmake_cache_sha256": "ec13707340edd43be9bddf70edf1fd8e1848d1cee50e11e1c4f1274959ea2346",
+    "cp2k_embedded_source_revision": "18d37c9464",
+    "cp2k_executable_sha256": "c3c19763eef2fcd51b0266db811be20d0a3d13a586c1bbd4eb0e83c59cca2c8a",
+    "cp2k_loaded_library_sha256": "a1ab82829a43d872b32d2a4f9b929c394f96e5dd0d293db163716c946ad3b8b3",
+    "cp2k_source_revision": "18d37c946413dba1b848f57563c46d16b866ce20",
+    "dependency_lock_sha256": "f80b045dd5bae175d16d035433b0507ab72c755973f081f9a1df891c4f36e191",
+    "fingerprint_sha256": "31a22ed28d2cdec9e9b071236a0fa4c1d30cb0d7cfb6a93f652f08758c83223e",
+    "save_tblite_cmake_cache_sha256": "416eb47811121fb515932564e062f0f12ff4c3136d147e292069f7d2b07c0679",
+    "save_tblite_executable_sha256": "8b0a1d5acd36df23efeb9078dceced61adb95a3cc8523f25ff76114da602cfa5",
+    "save_tblite_library_sha256": "8ce501b698e1b7ea5db03bc4db979302dc08253e843ee44cb5ef2aecb5a4668c",
+    "save_tblite_source_revision": "1449febde312874cd0fac4227919f5ba4e4b69b8",
+    "schema": 1
+  },
+  "campaign_manifest": {
+    "authority": "single source of truth for the frozen build artifacts",
+    "campaign_id": "gxtb-pbc-v1-20260714",
+    "campaign_state": "production_ready",
+    "file_sha256": "13bf208d7dca238241297936ef12be7a0ab77ac8fc99e8646bda447d687d669c",
+    "path": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/campaigns/gxtb-pbc-v1-20260714/build_manifest.json"
+  },
+  "cp2k": {
+    "cmake_cache_sha256": "ec13707340edd43be9bddf70edf1fd8e1848d1cee50e11e1c4f1274959ea2346",
+    "embedded_source_revision": "18d37c9464",
+    "executable_sha256": "c3c19763eef2fcd51b0266db811be20d0a3d13a586c1bbd4eb0e83c59cca2c8a",
+    "loaded_library_path": "/private/tmp/cp2k_gxtb_18d37c_bench_build/src/libcp2k.2026.1.dylib",
+    "loaded_library_sha256": "a1ab82829a43d872b32d2a4f9b929c394f96e5dd0d293db163716c946ad3b8b3",
+    "path": "/private/tmp/cp2k_gxtb_18d37c_bench_build/bin/cp2k.psmp",
+    "source": {
+      "branch": "g-xTB-pbc",
+      "path": "/private/tmp/cp2k_gxtb",
+      "remotes": "origin\thttps://github.com/DCM-Uni-Paderborn/cp2k.git (fetch)\norigin\thttps://github.com/DCM-Uni-Paderborn/cp2k.git (push)\nupstream\thttps://github.com/cp2k/cp2k.git (fetch)\nupstream\thttps://github.com/cp2k/cp2k.git (push)",
+      "revision": "18d37c946413dba1b848f57563c46d16b866ce20",
+      "status": ""
+    },
+    "source_revision": "18d37c946413dba1b848f57563c46d16b866ce20",
+    "source_revision_match": true,
+    "version_output": "CP2K version 2026.1 (Development Version)\n Source code revision 18d37c9464\n cp2kflags: omp parallel scalapack no_statm_access spglib s_dftd3 mctc-lib tblite tblite_gxtb\n compiler: GCC version 16.1.0\n compiler options:\n   -I /tmp/cp2k_gxtb_18d37c_bench_build/src/start -I /tmp/cp2k_gxtb/src\n    -I /tmp/cp2k_gxtb_18d37c_bench_build/src -I /tmp/cp2k_gxtb/src/base\n    -I /tmp/cp2k_gxtb/src/common -I /tmp/cp2k_gxtb/src/motion -I /tmp/c\n   p2k_gxtb/src/dbm -I /tmp/cp2k_gxtb_18d37c_bench_build/src/mod_files \n   -I /tmp/save_tblite_1449feb_bench_install/include -I /tmp/save_tblit\n   e_1449feb_bench_install/include/tblite/GNU-16.1.0 -I /Applications/X\n   code.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs\n   /MacOSX.sdk/System/Library/Frameworks/vecLib.framework/Headers -I /t\n   mp/save_tblite_1449feb_bench_install/include/toml-f/modules -I /tmp/\n   save_tblite_1449feb_bench_install/include/mctc-lib/modules -I /tmp/s\n   ave_tblite_1449feb_bench_install/include/dftd4/GNU-16.1.0 -I /tmp/sa\n   ve_tblite_1449feb_bench_install/include/multicharge/GNU-16.1.0 -I /t\n   mp/save_tblite_1449feb_bench_install/include/s-dftd3/GNU-16.1.0 -I /\n   opt/homebrew/opt/spglib/include -I /opt/homebrew/opt/dbcsr/include -\n   I /opt/homebrew/Cellar/open-mpi/5.0.9/include -I /opt/homebrew/Cella\n   r/open-mpi/5.0.9/lib -I /opt/homebrew/opt/open-mpi/include -mmacosx-\n   version-min=15.0.0 -mlittle-endian -mabi=lp64 -mcpu=apple-m1 -g -O3 \n   -O3 -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wuninitia\n   lized -Wuse-without-only -std=f2008 -fPIE -ffree-form -fimplicit-non\n   e -fno-omit-frame-pointer -fbacktrace -fallow-argument-mismatch -fun\n   roll-loops -fopenmp -fpreprocessed -J src"
+  },
+  "diagnostics": {
+    "legacy_unstamped_ammonia_gamma_probe": {
+      "classification": "diagnostic_only",
+      "cp2k_source_revision": "08fc90b855821f68154b3ca807528e97f910ca45",
+      "gamma_input_sha256": "af44b30c8f86f3b0db19b72fd073eff1eaac6f5c8b01c406762b48cf8f4bea61",
+      "gamma_output_sha256": "dba4b845f44ce5324e7a5f5b518f1999498fa6e18c31eb6eab157ddf7b7809ca",
+      "gas_input_sha256": "6f904cef3a4c6cfa1f11dfeb7d09f2a96b140a2350e132d7b62765fc13d114d5",
+      "gas_output_sha256": "82e55e5369f16b5265952a921de168aa75dd5e21d736df8f54325a8a8712d92b",
+      "production_eligible": false,
+      "reason": "pre-SPGLIB-production-path probe without job_provenance.json stamps; never counted or collected",
+      "save_tblite_source_revision": "1b5d50163edb14bd4f381c67492f3f486461547f"
+    }
+  },
+  "method": "GXTB",
+  "prepared_date": "2026-07-13",
+  "protocol": {
+    "alternative_mixers": false,
+    "cell_optimization": "native Bloch SPGLIB-reduced k222 KEEP_ANGLES, seeded only by the matching GXTB Gamma restart",
+    "energy_convergence_check": "native Bloch SPGLIB-reduced k444 single point on the matching final GXTB k222 geometry",
+    "fixed_reference_diagnostic": "optional frozen-crystal Gamma/k111/k222/k333 single points; excluded from production defaults",
+    "gamma_preoptimization": "independent GXTB Gamma CELL_OPT from the X23b reference crystal",
+    "k222_shift": [
+      0.25,
+      0.25,
+      0.25
+    ],
+    "k222_source_policy": "gamma_cellopt_restart",
+    "k333_shift": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "k444_shift": [
+      0.375,
+      0.375,
+      0.375
+    ],
+    "kpoint_mesh_contract": "GXTB uses the same SPGLIB-reduced CP2K MACDONALD meshes as GFN1/GFN2 (SYMMETRY T, FULL_GRID F, SYMMETRY_BACKEND SPGLIB, SYMMETRY_REDUCTION_METHOD SPGLIB); CP2K expands to and folds from the complete mesh",
+    "legacy_full_grid_policy": "pre-SPGLIB GXTB full-grid outputs are diagnostics only and are never accepted as production results",
+    "model": "METHOD GXTB",
+    "monomer_reference": "independent GXTB gas-phase BFGS GEO_OPT in a 30 angstrom non-periodic cell",
+    "reported_lattice_energy": "native Bloch SPGLIB-reduced k333 single point on the matching final GXTB k222 geometry",
+    "resume_policy": "GXTB skips and collectors require matching input/output hashes and the complete frozen CP2K/save_tblite campaign fingerprint; BUSY and STALE_OUTPUT are failures",
+    "scc_mixer": "SCC_MIXER TBLITE (native save_tblite complete-Fock potential DIIS)"
+  },
+  "save_tblite": {
+    "cli_sha256": "8b0a1d5acd36df23efeb9078dceced61adb95a3cc8523f25ff76114da602cfa5",
+    "cmake_cache_sha256": "416eb47811121fb515932564e062f0f12ff4c3136d147e292069f7d2b07c0679",
+    "executable_sha256": "8b0a1d5acd36df23efeb9078dceced61adb95a3cc8523f25ff76114da602cfa5",
+    "path": "/private/tmp/save_tblite_1449feb_bench_install/bin/tblite",
+    "source": {
+      "branch": "cp2k-integration",
+      "path": "/private/tmp/save_tblite_cp2k",
+      "remotes": "origin\thttps://github.com/DCM-Uni-Paderborn/save_tblite.git (fetch)\norigin\thttps://github.com/DCM-Uni-Paderborn/save_tblite.git (push)",
+      "revision": "1449febde312874cd0fac4227919f5ba4e4b69b8",
+      "status": ""
+    },
+    "source_revision": "1449febde312874cd0fac4227919f5ba4e4b69b8",
+    "static_library_path": "/private/tmp/save_tblite_1449feb_bench_install/lib/libtblite.a",
+    "static_library_role": "explicit build-time archive fingerprint; no runtime-link inference is made",
+    "static_library_sha256": "8ce501b698e1b7ea5db03bc4db979302dc08253e843ee44cb5ef2aecb5a4668c",
+    "version_output": "tblite version 0.6.0\nddX support: disabled\nHDF5 support: disabled\nTREXIO support: disabled"
+  },
+  "separation": {
+    "gxtb_analysis_default": "X23b/data/gxtb_staging",
+    "overwrites_published_gfn1_or_gfn2_data": false,
+    "reuses_gfn1_or_gfn2_geometries": false,
+    "reuses_gfn1_or_gfn2_monomer_energies": false
+  },
+  "status": "production_in_progress",
+  "updated_at_utc": "2026-07-14T07:47:51.243397+00:00",
+  "validation": {
+    "experimental_k222_preflight_completed": 0,
+    "experimental_k222_preflight_expected": 23,
+    "fixed_reference_gamma_single_points_completed": 0,
+    "fixed_reference_gamma_single_points_expected": 23,
+    "fixed_reference_k111_single_points_completed": 0,
+    "fixed_reference_k111_single_points_expected": 23,
+    "fixed_reference_k222_single_points_completed": 0,
+    "fixed_reference_k222_single_points_expected": 23,
+    "fixed_reference_k333_single_points_completed": 0,
+    "fixed_reference_k333_single_points_expected": 23,
+    "gamma_cell_optimizations_completed": 0,
+    "gamma_cell_optimizations_expected": 23,
+    "gas_optimizations_completed": 23,
+    "gas_optimizations_expected": 23,
+    "k222_cell_optimizations_completed": 0,
+    "k222_cell_optimizations_expected": 23,
+    "k333_single_points_completed": 0,
+    "k333_single_points_expected": 23,
+    "k444_single_points_completed": 0,
+    "k444_single_points_expected": 23,
+    "publication_tables_updated": false
+  },
+  "workflow_paths": {
+    "experimental_k222_preflight_root": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/X23b/runs/gxtb_native/experimental_k222_preflight"
+  }
+}

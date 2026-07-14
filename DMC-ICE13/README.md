@@ -86,3 +86,290 @@ Current aggregate MAEs:
 | 3x3x3 | 8.005255 | 3.462919 |
 | 4x4x4 | 8.006494 | 3.461424 |
 | 5x5x5 | 8.006485 | 3.461353 |
+
+## Additive g-xTB production workflow
+
+The follow-on g-xTB benchmark is kept separate from the frozen GFN1-xTB and
+GFN2-xTB paper data above.  Running the g-xTB workflow does not replace the
+versioned GFN result JSON/CSV files, their figures, or their raw run
+directories.
+
+The production contract is:
+
+- the same 13 fixed DMC-ICE13 reference geometries and six sampling members as
+  for GFN1/GFN2, for 78 g-xTB single points in total;
+- implicit Gamma without a `&KPOINTS` section, followed by an independent
+  explicit `MACDONALD 1 1 1 0.0 0.0 0.0` calculation;
+- for every larger mesh, `SYMMETRY T`, `FULL_GRID F`,
+  `SYMMETRY_BACKEND SPGLIB`, and `SYMMETRY_REDUCTION_METHOD SPGLIB`;
+- CP2K expands the irreducible density and overlap to the complete coupled
+  mesh internally for the single save_tblite g-xTB evaluation, and folds the
+  response back to the irreducible representation;
+- `TBLITE/ACCURACY 0.1`, `EPS_SCF 1.0E-9`, and the native save_tblite Fock-DIIS
+  path selected by `SCC_MIXER TBLITE` with an explicit 300-iteration limit.
+
+The isolated production locations are:
+
+- `gxtb_spglib_inputs/`: generated inputs;
+- `runs_gxtb_spglib/`: raw outputs and per-job hash stamps (ignored by Git);
+- `data/dmc_ice13_gxtb_spglib_*`: additive JSON/CSV analysis products;
+- `data/build_provenance_gxtb_spglib.json`: executable, source, input, output,
+  invocation, and protocol provenance;
+- `figures/dmc_ice13_gxtb_spglib_*`: additive plots once all meshes are
+  complete.
+
+Earlier g-xTB files below `kpoint_inputs/`, `runs/GXTB/`, and
+`runs_kpoints/*/GXTB/` used the pre-symmetry full-grid development route.
+They remain available only as diagnostics.  The production runner never reads
+them as benchmark results and records their hashes separately under
+`legacy_diagnostics` in the new provenance file.
+
+After building the intended clean CP2K and save_tblite revisions, the complete
+matrix can be run with, for example:
+
+```bash
+python3 scripts/run_dmc13_kpoint_jobs.py \
+  --root DMC-ICE13 \
+  --cp2k /path/to/cp2k.psmp \
+  --tblite /path/to/tblite \
+  --tblite-static-library /path/to/lib/libtblite.a \
+  --cp2k-source /path/to/cp2k-source \
+  --tblite-source /path/to/save_tblite-source \
+  --method GXTB \
+  --jobs 4
+```
+
+This production runner is intentionally g-xTB-only: `--method GXTB` must be
+given exactly once, so it cannot regenerate or overwrite the frozen GFN1/GFN2
+inputs and results.  It additionally requires the exact additive analysis
+prefix `gxtb_spglib` and keeps both generated-input and run roots below this
+DMC-ICE13 directory.  Unprefixed analysis remains restricted to GFN1/GFN2.
+
+A result is admitted to analysis only if the output completed with a converged
+SCF, the input satisfies the explicit SPGLIB/implicit-Gamma contract, and the
+input, output, CP2K launcher, the `libcp2k` selected through `otool`/RPATH on
+macOS or `ldd` on Linux, and
+the statically linked `libtblite.a` hashes match its stamp.  The default
+`campaigns/gxtb-pbc-v1-20260714/build_manifest.json` additionally freezes all
+four build artifacts; the CP2K-reported revision must resolve exactly to the
+CP2K source HEAD, and the save_tblite source HEAD must equal the manifest
+revision.  `--force` archives prior production files instead of deleting a run
+directory.  Unstamped output is never retroactively adopted as production,
+because its producing executable cannot be established from the output alone.
+
+### Optional dense convergence extensions
+
+The frozen production core remains exactly the six meshes from implicit Gamma
+through `k555` (78 jobs).  `k666` through `k131313` are opt-in
+convergence extensions; they are never added by the runner default and do not
+change the meaning of a completed core campaign or any existing stamp.  Their
+MacDonald definitions are `6 6 6 5/12 5/12 5/12`, `7 7 7 0 0 0`,
+`8 8 8 7/16 7/16 7/16`, `9 9 9 0 0 0`, `10 10 10 9/20 9/20 9/20`,
+`11 11 11 0 0 0`, `12 12 12 11/24 11/24 11/24`, and
+`13 13 13 0 0 0`, respectively, with the same SPGLIB-reduced/full-coupled-mesh
+contract as the core.
+
+An eight-phase `k666` triage pilot can be selected by repeating `--phase`:
+
+```bash
+python3 scripts/run_dmc13_kpoint_jobs.py \
+  --root DMC-ICE13 \
+  --cp2k /path/to/cp2k.psmp \
+  --cp2k-library /path/to/libcp2k.dylib \
+  --tblite /path/to/tblite \
+  --tblite-static-library /path/to/lib/libtblite.a \
+  --cp2k-source /path/to/cp2k-source \
+  --tblite-source /path/to/save_tblite-source \
+  --method GXTB --mesh k666 \
+  --phase Ih --phase VII --phase XIV --phase XI --phase VIII \
+  --phase VI --phase XV --phase XVII \
+  --jobs 1
+```
+
+Every invocation holds a nonblocking campaign lock, verifies both the generated
+input and the frozen copy that CP2K actually executed, and writes a deterministic
+content-addressed validation snapshot from currently valid stamps.  The named
+validation index is only an atomic current-copy; analysis receives the immutable
+snapshot path.  The run then emits the validation index, the DMC-independent
+fixed-mesh convergence report, and the DMC-referenced phase-wise result:
+
+- `data/dmc_ice13_gxtb_spglib_validation_index.json`;
+- `data/dmc_ice13_gxtb_spglib_kpoint_convergence.json` and the companion
+  phase-level CSV;
+- `data/dmc_ice13_gxtb_spglib_phasewise_kpoint_convergence.json` and its CSV.
+
+Once all twelve non-reference phases are marked `phasewise_kpoint_converged`,
+freeze the three-method paper table and its complete raw-energy/provenance
+lineage with:
+
+```bash
+python3 DMC-ICE13/scripts/finalize_dmc13_phasewise_summary.py \
+  --root DMC-ICE13
+```
+
+This refuses an incomplete GFN1/GFN2/g-XTB result and removes stale summaries.
+On success it writes exactly one row per method to
+`data/dmc_ice13_gfn_gxtb_phasewise_summary.csv` and the phase-resolved energies,
+same-mesh Ih references, mesh choices, source hashes, build identities, and DMC
+reference sensitivity to the companion JSON file.
+
+### Same-source builds on another architecture
+
+Schema-v1 validation snapshots remain immutable and readable.  New snapshots
+use schema v2: every `(mesh, phase)` record names its own content-addressed
+execution-build identity, so records made by the frozen macOS/ARM64 build and a
+qualified Linux/x86_64 build can coexist without weakening any per-file or
+per-stamp check.  All build identities in one index must use the exact frozen
+CP2K and save_tblite source revisions.
+
+A build whose executable/library hashes differ from `build_manifest.json` is
+accepted only with an explicit `--execution-build-manifest`.  This additive
+JSON file must contain schema version 1, the campaign and protocol IDs, the
+SHA256 of the unchanged campaign manifest, the deterministic `build_id`, a
+`build_identity` block with the five stamp-bound fields plus
+`tblite_cli_sha256`.  `qualification` must use evidence schema 3, declare
+finite total- and relative-energy tolerances no looser than `1e-10` Eh and
+`0.001` kJ mol-1 per H2O, report matching observed maxima within those
+tolerances, and contain at least one counted same-mesh dense relative-energy
+sentinel.  Each sentinel binds the non-Ih phase and Ih inputs, four completed
+outputs (remote phase, remote Ih, reference phase, and reference Ih), and all
+four corresponding run stamps by safe relative paths and 64-hex SHA256 hashes,
+and binds the remote and reference sides to the execution-manifest and
+frozen-campaign `build_id`,
+respectively.  The inputs must have the exact
+`ice_<phase>_GXTB_<mesh>.inp` names, projects, and complete frozen g-xTB/SPGLIB
+contract.  Their declared positive water counts are checked against the
+explicit O atoms in the hashed `&COORD` blocks.  Phase and Ih inputs must be
+distinct; all four output paths and all four stamp paths must be distinct.
+Phase/Ih hashes within one build and remote/reference hashes for one system
+must differ.  The readers hash and parse the same bytes.  Each output must
+report exactly one matching input, project, CP2K revision, tblite revision,
+and energy header.  Alternate outputs require the full 40-hex save_tblite
+revision; frozen legacy outputs may report `unknown` because their exact bytes
+and stamps are bound by the pinned reference record.  Fresh remote stamps must
+be schema v2, bind the five-field build identity and source/frozen-input/output
+hashes, and state `adopted_existing_output: false`.  Frozen reference outputs
+and stamps must exactly match the SHA256-pinned base index.
+The sentinel also records the fixed conversion
+`hartree_to_kjmol = 2625.499638`.  The readers parse all four hashed outputs,
+recompute and verify the separate phase and Ih cross-build total-energy
+deltas, recompute both remote and reference Ih-referenced relative energies
+from the raw totals and water counts, and then verify the declared relative
+delta.  `observed_max_abs_total_energy_delta_hartree` must equal the maximum
+over both the phase and Ih total-energy deltas of every sentinel.  The manifest
+and every evidence path must be relative to this benchmark root; absolute,
+`..`, and escaping symlink paths are rejected.  The schema-v2 index itself
+content-addresses the qualification manifest.  Both source worktrees must be
+clean, and a qualified alternate library must embed the full save_tblite
+revision rather than `unknown`.
+
+The qualification declares the expected remote `PROGRAM STARTED ON`,
+`Program compiled on`, and `Program compiled for` values.  Both remote outputs
+must match them; this ARM64/macOS-to-x86_64/Terok campaign additionally expects
+the reference and remote host/platform fingerprints to differ.  This is an
+accidental-copy defense, not cryptographic execution attestation.  The record
+establishes hash-bound internal consistency and still relies on the manually
+trusted SSH transfer.  Cryptographic proof would require a signature or
+trusted scheduler receipt whose trust root is outside this artifact tree.
+
+The compact qualification block is:
+
+```json
+{
+  "status": "passed",
+  "evidence_schema_version": 3,
+  "remote_execution_environment": {
+    "program_started_on": "terok",
+    "program_compiled_on": "terok",
+    "program_compiled_for": "x86_64"
+  },
+  "total_energy_tolerance_hartree": 1e-10,
+  "relative_energy_tolerance_kjmol_per_h2o": 0.001,
+  "observed_max_abs_total_energy_delta_hartree": 0.0,
+  "observed_max_abs_relative_energy_delta_kjmol_per_h2o": 0.0,
+  "same_mesh_dense_relative_sentinel_count": 1,
+  "same_mesh_dense_relative_sentinels": [{
+    "kind": "same_mesh_dense_relative_energy",
+    "mesh": "k666",
+    "phase": "VII",
+    "remote_build_id": "sha256:<64 lowercase hex>",
+    "reference_build_id": "sha256:<64 lowercase hex>",
+    "phase_input": "data/execution_builds/<build>/requalification/k666/VII/ice_VII_GXTB_k666.inp",
+    "phase_input_sha256": "<64 lowercase hex>",
+    "ih_input": "data/execution_builds/<build>/requalification/k666/Ih/ice_Ih_GXTB_k666.inp",
+    "ih_input_sha256": "<64 lowercase hex>",
+    "remote_phase_output": "data/execution_builds/<build>/requalification/k666/VII/ice_VII_GXTB_k666.out",
+    "remote_phase_output_sha256": "<64 lowercase hex>",
+    "remote_ih_output": "data/execution_builds/<build>/requalification/k666/Ih/ice_Ih_GXTB_k666.out",
+    "remote_ih_output_sha256": "<64 lowercase hex>",
+    "reference_phase_output": "runs_gxtb_spglib/k666/VII/ice_VII_GXTB_k666.out",
+    "reference_phase_output_sha256": "<64 lowercase hex>",
+    "reference_ih_output": "runs_gxtb_spglib/k666/Ih/ice_Ih_GXTB_k666.out",
+    "reference_ih_output_sha256": "<64 lowercase hex>",
+    "remote_phase_stamp": "data/execution_builds/<build>/requalification/k666/VII/ice_VII_GXTB_k666.run.json",
+    "remote_phase_stamp_sha256": "<64 lowercase hex>",
+    "remote_ih_stamp": "data/execution_builds/<build>/requalification/k666/Ih/ice_Ih_GXTB_k666.run.json",
+    "remote_ih_stamp_sha256": "<64 lowercase hex>",
+    "reference_phase_stamp": "runs_gxtb_spglib/k666/VII/ice_VII_GXTB_k666.run.json",
+    "reference_phase_stamp_sha256": "<64 lowercase hex>",
+    "reference_ih_stamp": "runs_gxtb_spglib/k666/Ih/ice_Ih_GXTB_k666.run.json",
+    "reference_ih_stamp_sha256": "<64 lowercase hex>",
+    "phase_water_count": 12,
+    "ih_water_count": 12,
+    "hartree_to_kjmol": 2625.499638,
+    "phase_total_energy_delta_hartree": 0.0,
+    "ih_total_energy_delta_hartree": 0.0,
+    "remote_relative_energy_kjmol_per_h2o": 0.0,
+    "reference_relative_energy_kjmol_per_h2o": 0.0,
+    "relative_energy_delta_kjmol_per_h2o": 0.0
+  }]
+}
+```
+
+Pass the immutable local snapshot with `--base-validation-index` and its exact
+`--base-validation-index-sha256` on the remote run.  It is fully reverified,
+its valid logical jobs are not rerun or archived, and only missing jobs are
+appended.  A different record for an already indexed
+`(mesh, phase)` is a hard collision, including under `--force`.  The resulting
+schema-v2 snapshot records the base snapshot as its parent.  Transfer only the
+new generated source inputs, frozen executed inputs, outputs, stamps, the
+content-addressed qualification manifest, and all evidence artifacts into a
+local staging directory.  Verify their hashes before placing them at their
+relative paths, and never use an unqualified `rsync --delete` or overwrite an
+existing production record.  The base snapshot is checked before input
+generation and checked again immediately before the merged snapshot is
+written; only missing selected phases are prepared.  Analysis similarly takes
+the immutable snapshot with `--validation-index-sha256`; a named current-copy
+or whitespace-modified copy cannot silently replace it.
+
+For each pair of meshes the report evaluates changes of the Ih-referenced
+relative energies, not changes of the DMC error.  The frozen stopping rule is a
+maximum phase change of at most 0.10 and an RMS change of at most 0.05
+kJ mol-1 per H2O over two consecutive, fully covered mesh refinements.  A
+partial pilot is reported as `coverage: pilot`.  It rejects a candidate only if
+an observed maximum exceeds 0.10 or the full-set RMS lower bound
+`sqrt(sum(observed_delta^2)/12)` exceeds 0.05.  Otherwise it is explicitly
+inconclusive, even when the observed-subset RMS exceeds 0.05.  A pilot is always
+`eligible_for_stopping: false`; only 13/13 hash-valid meshes can establish
+formal convergence, and only the trailing contiguous sequence of full adjacent
+mesh pairs determines the stopping state.
+
+The separate phase-wise result uses one direct rule: a phase is k-point
+converged at `N x N x N` when its same-mesh-Ih-referenced relative energy
+changes by at most 0.05 kJ mol-1 per H2O from `(N-1) x (N-1) x (N-1)`.  The
+smallest such mesh not contradicted by already available denser evidence is
+reported for every phase.  Once all 12 non-reference phases are selected, the
+report emits the **phase-wise k-point-converged MAE** together with each
+relative energy, DMC reference, error, last delta, mesh label, `N`, and total
+k-point count.  RMS, mean absolute value, and maximum of the 12 last deltas are
+diagnostics only; they do not add a second acceptance condition.
+
+The independent Gamma CLI comparison is likewise additive.  Run
+`scripts/dmc_gxtb_gamma_cli_check.py` with both `--cp2k` and `--tblite` only
+after the Gamma production jobs exist.  By default it reads CP2K references
+from `runs_gxtb_spglib/`, requires their V1 protocol stamps to match the
+current launcher, loaded `libcp2k`, static `libtblite.a`, source revisions, and
+central campaign manifest, and writes stamped CLI jobs to
+`runs_cli_gxtb_spglib/`.  Its CSV/JSON products use the
+`dmc_ice13_gxtb_spglib_*` prefix.  Earlier `runs_cli/GXTB/` files and the
+unprefixed CLI tables are not adopted or modified.

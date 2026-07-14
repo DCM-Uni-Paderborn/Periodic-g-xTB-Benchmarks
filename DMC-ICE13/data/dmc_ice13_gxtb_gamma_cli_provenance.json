@@ -1,0 +1,29 @@
+{
+  "accuracy": 0.1,
+  "atomic_energy_csv": {
+    "path": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/DMC-ICE13/data/dmc_ice13_gxtb_atomic_energies.csv",
+    "sha256": "14985136f17284d7835613e9572a1c39ed6706cb9492de5709026cd4740c8e00"
+  },
+  "benchmark": "DMC-ICE13 Gamma CP2K/save_tblite validation",
+  "coverage": {
+    "completed": 13,
+    "expected": 13
+  },
+  "method": "GXTB",
+  "result_csv": {
+    "path": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/DMC-ICE13/data/dmc_ice13_gxtb_gamma_cli_check.csv",
+    "sha256": "ff729bd3f515736b8fde155165459cf020e1a3a52b74dc9c7b39415791ba6f4e"
+  },
+  "save_tblite": {
+    "executable": "/private/tmp/save_tblite_cp2k_install/bin/tblite",
+    "sha256": "5655a1be67ba652ee78823cd13139cfc606de29abd72ed7c81d35d1859424b7f",
+    "source": {
+      "branch": "cp2k-integration",
+      "path": "/private/tmp/save_tblite_cp2k",
+      "revision": "1b5d50163edb14bd4f381c67492f3f486461547f",
+      "status": ""
+    },
+    "version": "tblite version 0.6.0\nddX support: disabled\nHDF5 support: disabled\nTREXIO support: disabled"
+  },
+  "tolerance_hartree": 1e-06
+}

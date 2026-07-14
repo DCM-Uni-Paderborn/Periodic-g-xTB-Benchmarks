@@ -82,19 +82,21 @@ def continuation_input(
     weight_factor: float,
 ) -> str:
     text = base.solid_input(ref, method, "ENERGY", mesh, ref.a_exp * scale, project)
-    text = text.replace("        &RESTART OFF", "        &RESTART ON", 1)
+    if method != "GXTB":
+        text = text.replace("        &RESTART OFF", "        &RESTART ON", 1)
     text = text.replace("      MAX_SCF 300", f"      MAX_SCF {max_scf}", 1)
     text = text.replace("        ALPHA 0.2", f"        ALPHA {alpha:.8f}", 1)
-    scc_lines = f"          SCC_RESTART_WRITE_FILE_NAME {scc_restart_out.name}\n"
-    if scc_restart is not None:
-        restart_name = os.path.relpath(scc_restart, start=scc_restart_out.parent)
-        scc_lines = f"          SCC_RESTART_FILE_NAME {restart_name}\n" + scc_lines
-    text = text.replace(
-        "          ACCURACY 0.05\n        &END TBLITE",
-        "          ACCURACY 0.05\n" + scc_lines + "        &END TBLITE",
-        1,
-    )
-    if mixer == "tblite":
+    if method != "GXTB":
+        scc_lines = f"          SCC_RESTART_WRITE_FILE_NAME {scc_restart_out.name}\n"
+        if scc_restart is not None:
+            restart_name = os.path.relpath(scc_restart, start=scc_restart_out.parent)
+            scc_lines = f"          SCC_RESTART_FILE_NAME {restart_name}\n" + scc_lines
+        text = text.replace(
+            "          ACCURACY 0.05\n        &END TBLITE",
+            "          ACCURACY 0.05\n" + scc_lines + "        &END TBLITE",
+            1,
+        )
+    if mixer == "tblite" and method != "GXTB":
         marker = "        &END TBLITE\n      &END XTB"
         replacement = (
             "        &END TBLITE\n"
@@ -115,7 +117,7 @@ def continuation_input(
         text = text.replace("        GFN_TYPE TBLITE", "        GFN_TYPE TBLITE\n        SCC_MIXER CP2K", 1)
         if disable_diis:
             text = text.replace("      EPS_SCF 1.0E-9", "      EPS_SCF 1.0E-9\n      EPS_DIIS 1.0E-10", 1)
-    if restart is not None:
+    if restart is not None and method != "GXTB":
         text = text.replace(
             "  &DFT\n",
             f"  &DFT\n    WFN_RESTART_FILE_NAME {restart.resolve()}\n",
@@ -149,15 +151,15 @@ def run_point(
     min_weight: float,
     max_weight: float,
     weight_factor: float,
-) -> tuple[Path, Path, Path, Path]:
+) -> tuple[Path, Path, Path | None, Path | None]:
     tag = continuation_scale_tag(scale)
     project = f"{ref.solid}_{method}_eos_cont_{variant}_{mesh}_{tag}"
     run_dir = base.ROOT / "runs" / f"continuation_{variant}" / method / ref.solid / mesh / tag
     inp = run_dir / f"{project}.inp"
     out = run_dir / f"{project}.out"
     scc_restart_out = run_dir / f"{project}-SCC-RESTART.npz"
-    scc_restart_input = scc_restart
-    if extrapolate_scc and scc_restart is not None and previous_scc_restart is not None:
+    scc_restart_input = None if method == "GXTB" else scc_restart
+    if method != "GXTB" and extrapolate_scc and scc_restart is not None and previous_scc_restart is not None:
         if previous_scale is None:
             raise ValueError("previous_scale is required for SCC extrapolation")
         scc_restart_input = run_dir / f"{project}-SCC-PREDICTED.npz"
@@ -193,12 +195,16 @@ def run_point(
         ),
     )
     code = base.run_cp2k(cp2k, inp, out, threads)
-    restart_out = run_dir / f"{project}-RESTART.kp"
-    if code != 0 or not base.output_ok(out) or not restart_out.exists() or not scc_restart_out.exists():
+    restart_out = None if method == "GXTB" else run_dir / f"{project}-RESTART.kp"
+    scc_output = None if method == "GXTB" else scc_restart_out
+    missing_restart = method != "GXTB" and (
+        restart_out is None or not restart_out.exists() or not scc_restart_out.exists()
+    )
+    if code != 0 or not base.output_ok(out) or missing_restart:
         raise RuntimeError(f"Continuation failed at scale {scale:.5f}; inspect {out}")
     energy = base.parse_energy(out)
     print(f"ok {ref.solid} {method} {mesh} scale={scale:.5f} energy={energy:.12f}", flush=True)
-    return inp, out, restart_out, scc_restart_out
+    return inp, out, restart_out, scc_output
 
 
 def promote(
@@ -211,14 +217,14 @@ def promote(
     out: Path,
 ) -> None:
     project = eos.eos_project(ref.solid, method, mesh, scale)
-    run_dir = base.ROOT / "runs" / "eos" / method / ref.solid / mesh / eos.scale_tag(scale)
+    run_dir = base.ROOT / "runs" / "eos" / method / ref.solid / mesh / eos.scale_tag(scale, method)
     target_out = run_dir / f"{project}.out"
     run_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy2(out, target_out)
     eos.strategy_path(target_out).write_text(
         json.dumps(
             {
-                "strategy": "volume_continuation",
+                "strategy": "native_gxtb_fdiis_adaptive" if method == "GXTB" else "volume_continuation",
                 "completed": True,
                 "predecessor_scale": predecessor_scale,
                 "continuation_input": str(inp.relative_to(base.ROOT)),
@@ -244,7 +250,7 @@ def main() -> int:
     parser.add_argument("--threads", type=int, default=1)
     parser.add_argument("--variant", default="tblite_default")
     parser.add_argument("--mixer", choices=("tblite", "cp2k"), default="tblite")
-    parser.add_argument("--max-scf", type=int, default=1200)
+    parser.add_argument("--max-scf", type=int)
     parser.add_argument("--damping", type=float, default=0.4)
     parser.add_argument("--memory", type=int, default=6)
     parser.add_argument("--alpha", type=float, default=0.2)
@@ -255,12 +261,25 @@ def main() -> int:
     parser.add_argument("--weight-factor", type=float, default=0.01)
     parser.add_argument("--extrapolate-scc", action="store_true")
     parser.add_argument("--promote", action="store_true")
+    parser.add_argument("--prune-transients", action="store_true")
     args = parser.parse_args()
 
     refs = {ref.solid: ref for ref in base.REFERENCES}
     if args.solid not in refs:
         parser.error(f"Unknown solid {args.solid!r}")
     ref = refs[args.solid]
+    max_scf = args.max_scf if args.max_scf is not None else (300 if args.method == "GXTB" else 1200)
+    if args.method == "GXTB":
+        if args.promote:
+            parser.error(
+                "GXTB continuation outputs are diagnostic-only and cannot be promoted into "
+                "production because they lack the canonical campaign stamp; use "
+                "run_goldzak12_eos_benchmark.py --adaptive-scale SOLID=SCALE instead"
+            )
+        if args.mixer != "tblite" or args.disable_diis:
+            parser.error("GXTB continuation permits only the native save_tblite FDIIS mixer")
+        if args.extrapolate_scc or args.start_restart or args.start_scc_restart or args.previous_scc_restart:
+            parser.error("GXTB adaptive points run independently; restart/extrapolation options are disabled")
 
     start_scc_restart = args.start_scc_restart.resolve() if args.start_scc_restart else None
     if start_scc_restart is not None and not start_scc_restart.exists():
@@ -282,7 +301,7 @@ def main() -> int:
             args.threads,
             args.variant,
             args.mixer,
-            args.max_scf,
+            max_scf,
             args.damping,
             args.memory,
             args.alpha,
@@ -322,7 +341,7 @@ def main() -> int:
             args.threads,
             args.variant,
             args.mixer,
-            args.max_scf,
+            max_scf,
             args.damping,
             args.memory,
             args.alpha,
@@ -337,6 +356,14 @@ def main() -> int:
         previous_scc_restart = current_scc_restart
         previous_scale = predecessor
         predecessor = scale
+    if args.prune_transients and args.method == "GXTB":
+        count, size = base.prune_gxtb_transients(
+            (
+                base.ROOT / "runs" / f"continuation_{args.variant}" / "GXTB",
+                base.ROOT / "runs" / "eos" / "GXTB",
+            )
+        )
+        print(f"Pruned {count} validated GXTB transient file(s), {size} byte(s).")
     return 0
 
 

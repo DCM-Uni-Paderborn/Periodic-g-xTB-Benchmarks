@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import csv
+import fcntl
 import json
 import math
 import os
@@ -13,6 +15,8 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+import x23b_common as common
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -47,7 +51,8 @@ SYSTEMS = [
     {"id": "urea", "label": "Urea", "ref_energy": 102.1, "ref_volume": 140.8},
 ]
 
-METHODS = ["GFN1", "GFN2"]
+PUBLISHED_METHODS = list(common.PUBLISHED_METHODS)
+METHODS = list(common.METHODS)
 MESHES = [
     {"id": "gamma", "label": "Gamma", "scheme": None},
     {"id": "k111", "label": "1x1x1", "scheme": "MACDONALD 1 1 1 0.0 0.0 0.0"},
@@ -210,6 +215,15 @@ BOESE_DFT_D3_VOLUMES = {
         "urea": 146.9,
     },
 }
+
+
+def canonical_method(value: str) -> str:
+    aliases = {"GFN1-xTB": "GFN1", "GFN2-xTB": "GFN2", "g-xTB": "GXTB", "GXTB": "GXTB"}
+    return aliases.get(value, value)
+
+
+def method_label(method: str) -> str:
+    return "g-xTB" if method == "GXTB" else f"{method}-xTB"
 
 
 def clean_element(element: str) -> str:
@@ -432,6 +446,8 @@ def cp2k_header(project: str, run_type: str) -> list[str]:
 
 
 def cp2k_dft(method: str, mesh: dict[str, object] | None = None, periodic: bool = True) -> list[str]:
+    if method not in METHODS:
+        raise ValueError(f"unsupported X23b method: {method}")
     lines = [
         "  &DFT",
         "    &QS",
@@ -439,6 +455,13 @@ def cp2k_dft(method: str, mesh: dict[str, object] | None = None, periodic: bool 
         "      METHOD xTB",
         "      &XTB",
         "        GFN_TYPE TBLITE",
+    ]
+    if method == "GXTB":
+        # save_tblite's native complete-Fock potential mixer is the production
+        # g-xTB algorithm (two damped starts followed by Fock DIIS).  Do not
+        # add a TBLITE_MIXER override or switch this to the CP2K density mixer.
+        lines += ["        SCC_MIXER TBLITE"]
+    lines += [
         "        &TBLITE",
         f"          METHOD {method}",
         "          ACCURACY 0.1",
@@ -455,8 +478,8 @@ def cp2k_dft(method: str, mesh: dict[str, object] | None = None, periodic: bool 
             "      FULL_GRID F",
             "      SYMMETRY_BACKEND SPGLIB",
             "      SYMMETRY_REDUCTION_METHOD SPGLIB",
-            "    &END KPOINTS",
         ]
+        lines += ["    &END KPOINTS"]
     if not periodic:
         lines += [
             "    &POISSON",
@@ -525,7 +548,9 @@ def crystal_input(system: dict[str, object], geom: dict[str, object], method: st
             "  &END CELL_OPT",
             "&END MOTION",
         ]
-    return "\n".join(lines) + "\n"
+    text = "\n".join(lines) + "\n"
+    common.validate_method_input(text, method)
+    return text
 
 
 def molecule_input(system: dict[str, object], atoms: list[dict[str, object]], method: str) -> str:
@@ -559,15 +584,87 @@ def molecule_input(system: dict[str, object], atoms: list[dict[str, object]], me
         "  &END GEO_OPT",
         "&END MOTION",
     ]
-    return "\n".join(lines) + "\n"
+    text = "\n".join(lines) + "\n"
+    common.validate_method_input(text, method)
+    return text
 
 
-def prepare(refdata: Path) -> None:
+def parse_xyz(path: Path) -> list[dict[str, object]]:
+    lines = path.read_text().splitlines()
+    if len(lines) < 2:
+        raise ValueError(f"invalid XYZ file: {path}")
+    expected = int(lines[0].strip())
+    atoms: list[dict[str, object]] = []
+    for line in lines[2:]:
+        parts = line.split()
+        if len(parts) < 4:
+            continue
+        atoms.append(
+            {
+                "element": clean_element(parts[0]),
+                "coord": [float(parts[1]), float(parts[2]), float(parts[3])],
+            }
+        )
+    if len(atoms) != expected:
+        raise ValueError(f"expected {expected} atoms in {path}, found {len(atoms)}")
+    return atoms
+
+
+def prepare_local_production_inputs(methods: list[str], include_fixed_reference: bool = False) -> None:
+    """Generate method-owned production inputs from the frozen local structures."""
+
+    metadata = json.loads((DATA / "metadata.json").read_text())
+    known = {str(row["id"]): row for row in metadata["systems"]}
+    expected = {str(row["id"]) for row in SYSTEMS}
+    if set(known) != expected:
+        raise ValueError("local X23b metadata is not the complete 23-system benchmark")
+    for method in methods:
+        for system in SYSTEMS:
+            sid = str(system["id"])
+            geom = parse_cif(ROOT / "structures" / "cif" / f"{sid}.cif")
+            mol_atoms = parse_xyz(ROOT / "structures" / "molecules_xyz" / f"{sid}.xyz")
+            mol_dir = ROOT / "inputs" / "molecule_geoopt" / method
+            mol_dir.mkdir(parents=True, exist_ok=True)
+            (mol_dir / f"{sid}_{method}_mol_geoopt.inp").write_text(molecule_input(system, mol_atoms, method))
+            cell_dir = ROOT / "inputs" / "cellopt_gamma" / method
+            cell_dir.mkdir(parents=True, exist_ok=True)
+            (cell_dir / f"{sid}_{method}_gamma_cellopt.inp").write_text(
+                crystal_input(system, geom, method, MESHES[0], "CELL_OPT")
+            )
+            if include_fixed_reference:
+                for mesh in MESHES:
+                    sp_dir = ROOT / "inputs" / "crystal_sp" / str(mesh["id"]) / method
+                    sp_dir.mkdir(parents=True, exist_ok=True)
+                    (sp_dir / f"{sid}_{method}_{mesh['id']}_sp.inp").write_text(
+                        crystal_input(system, geom, method, mesh, "ENERGY")
+                    )
+    per_system = 2 + (len(MESHES) if include_fixed_reference else 0)
+    qualifier = " including fixed-reference SPs" if include_fixed_reference else ""
+    print(
+        f"Prepared {len(methods) * len(SYSTEMS) * per_system} production inputs"
+        f"{qualifier} for {', '.join(methods)}"
+    )
+
+
+def prepare(
+    refdata: Path,
+    methods: list[str] | None = None,
+    production_only: bool = False,
+    include_fixed_reference: bool = False,
+) -> None:
+    selected_methods = methods or PUBLISHED_METHODS
+    if production_only:
+        if include_fixed_reference and set(selected_methods) != {"GXTB"}:
+            raise ValueError("fixed-reference local preparation is restricted to --method GXTB")
+        prepare_local_production_inputs(selected_methods, include_fixed_reference=include_fixed_reference)
+        return
+    if "GXTB" in selected_methods:
+        raise ValueError("GXTB must be prepared with --production-only from the frozen local X23b structures")
     expt = refdata / "25_x23" / "expt"
     qe = refdata / "25_x23" / "b86bpbe-xdm"
     for directory in [DATA, FIGURES, ROOT / "structures" / "cif", ROOT / "structures" / "molecules_xyz"]:
         directory.mkdir(parents=True, exist_ok=True)
-    metadata = {"systems": [], "methods": METHODS, "meshes": MESHES}
+    metadata = {"systems": [], "methods": PUBLISHED_METHODS, "meshes": MESHES}
     for system in SYSTEMS:
         sid = str(system["id"])
         cif_path = expt / f"{sid}.cif"
@@ -604,7 +701,7 @@ def prepare(refdata: Path) -> None:
                 "structure_source": source_note,
             }
         )
-        for method in METHODS:
+        for method in selected_methods:
             mol_dir = ROOT / "inputs" / "molecule_geoopt" / method
             mol_dir.mkdir(parents=True, exist_ok=True)
             (mol_dir / f"{sid}_{method}_mol_geoopt.inp").write_text(molecule_input(system, mol_atoms, method))
@@ -682,6 +779,217 @@ def completed_cp2k_run(output: Path) -> bool:
     return "PROGRAM ENDED" in text
 
 
+PRODUCTION_PHASES = ("molecule_geoopt", "cellopt_gamma")
+FIXED_REFERENCE_PHASE = "crystal_sp"
+RUN_PHASES = (*PRODUCTION_PHASES, FIXED_REFERENCE_PHASE)
+
+
+def phase_completed(phase: str, output: Path) -> bool:
+    if phase in PRODUCTION_PHASES:
+        # CP2K prints "GEOMETRY OPTIMIZATION COMPLETED" for both GEO_OPT and
+        # CELL_OPT in the builds used for the frozen X23b calculations.
+        return completed_cp2k_run(output) and completed_optimization(output)
+    if phase == FIXED_REFERENCE_PHASE:
+        return completed_cp2k_run(output) and parse_energy(output) is not None
+    raise ValueError(f"unsupported X23b production phase: {phase}")
+
+
+def run_phase_one(
+    input_path: Path,
+    phase: str,
+    method: str,
+    cp2k: Path,
+    threads: int,
+    force: bool,
+    prune_transients: bool,
+    mesh_id: str | None = None,
+    campaign_identity: dict[str, object] | None = None,
+) -> tuple[Path, int, str]:
+    text = input_path.read_text()
+    common.validate_method_input(text, method)
+    stem = input_path.stem
+    if phase == FIXED_REFERENCE_PHASE:
+        if mesh_id is None:
+            raise ValueError("fixed-reference crystal single point requires a mesh id")
+        run_dir = ROOT / "runs" / phase / mesh_id / method / stem
+        stamp_phase = f"x23b_fixed_reference_{mesh_id}"
+    else:
+        run_dir = ROOT / "runs" / phase / method / stem
+        stamp_phase = f"x23b_{phase}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    run_input = run_dir / input_path.name
+    output = run_dir / f"{stem}.out"
+    with input_path.open() as input_lock:
+        try:
+            fcntl.flock(input_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return input_path, common.BUSY_RETURN_CODE, "BUSY"
+        stamp_matches, _ = common.job_stamp_matches(
+            run_dir,
+            input_path,
+            cp2k,
+            method,
+            stamp_phase,
+            campaign_identity=campaign_identity,
+        )
+        if not force and output.exists() and method == "GXTB":
+            recorded_matches, _ = common.recorded_job_stamp_matches(
+                run_dir,
+                input_path,
+                method,
+                stamp_phase,
+                output,
+                campaign_identity=campaign_identity,
+                accepted_status_prefixes=("converged", "max_iter"),
+            )
+            if not stamp_matches or not recorded_matches:
+                return input_path, 1, "STALE_OUTPUT"
+        if not force and phase_completed(phase, output):
+            if prune_transients:
+                common.prune_gxtb_transients(
+                    run_dir, keep_final_restart=phase != FIXED_REFERENCE_PHASE
+                )
+            return input_path, 0, "SKIP_CONVERGED"
+        if force:
+            for path in run_dir.iterdir():
+                if path.is_dir():
+                    shutil.rmtree(path)
+                else:
+                    path.unlink()
+        shutil.copyfile(input_path, run_input)
+        env = common.thread_environment(threads)
+        process = subprocess.run(
+            [str(cp2k), "-i", run_input.name, "-o", output.name],
+            cwd=run_dir,
+            env=env,
+            check=False,
+        )
+        (run_dir / "returncode.txt").write_text(f"{process.returncode}\n")
+        if process.returncode == 0 and phase_completed(phase, output):
+            action = "CONVERGED"
+            if prune_transients:
+                common.prune_gxtb_transients(
+                    run_dir, keep_final_restart=phase != FIXED_REFERENCE_PHASE
+                )
+        elif process.returncode != 0:
+            action = "FAILED"
+        elif output.is_file() and "MAXIMUM NUMBER OF OPTIMIZATION STEPS REACHED" in output.read_text(errors="ignore"):
+            action = "MAX_ITER"
+        else:
+            action = "INCOMPLETE"
+        if method == "GXTB":
+            details: dict[str, object] = {
+                "returncode": process.returncode,
+                "action": action,
+                "output": str(output),
+            }
+            if output.is_file():
+                details["output_sha256"] = common.sha256_file(output)
+            common.write_job_stamp(
+                run_dir,
+                input_path,
+                cp2k,
+                method,
+                stamp_phase,
+                action.lower(),
+                details=details,
+                campaign_identity=campaign_identity,
+            )
+        return input_path, process.returncode, action
+
+
+def run_production_phases(args: argparse.Namespace) -> None:
+    methods = args.method
+    if args.force and set(methods) != {"GXTB"}:
+        raise ValueError("--force is restricted to selectively requested GXTB runs")
+    if args.prune_transients and set(methods) != {"GXTB"}:
+        raise ValueError("--prune-transients is restricted to GXTB")
+    if args.fixed_reference_mesh and FIXED_REFERENCE_PHASE not in args.phase:
+        raise ValueError("--fixed-reference-mesh requires --phase crystal_sp")
+    if FIXED_REFERENCE_PHASE in args.phase and set(methods) != {"GXTB"}:
+        raise ValueError("fixed-reference single points require explicit --method GXTB")
+    selected_systems = set(args.system) if args.system else {str(row["id"]) for row in SYSTEMS}
+    inputs: list[tuple[Path, str, str, str | None]] = []
+    for phase in args.phase:
+        for method in methods:
+            meshes: list[str | None] = [None]
+            if phase == FIXED_REFERENCE_PHASE:
+                meshes = args.fixed_reference_mesh or [str(mesh["id"]) for mesh in MESHES]
+            for mesh_id in meshes:
+                if phase == FIXED_REFERENCE_PHASE:
+                    directory = ROOT / "inputs" / phase / str(mesh_id) / method
+                    suffix = f"_{method}_{mesh_id}_sp.inp"
+                else:
+                    directory = ROOT / "inputs" / phase / method
+                    suffix = f"_{method}_{'mol_geoopt' if phase == 'molecule_geoopt' else 'gamma_cellopt'}.inp"
+                selected = [
+                    path
+                    for path in sorted(directory.glob(f"*{suffix}"))
+                    if path.name.removesuffix(suffix) in selected_systems
+                ]
+                if len(selected) != len(selected_systems):
+                    found = {path.name.removesuffix(suffix) for path in selected}
+                    missing = sorted(selected_systems - found)
+                    label = f"{phase}/{mesh_id}/{method}" if mesh_id else f"{phase}/{method}"
+                    raise ValueError(f"{label}: missing prepared inputs: {', '.join(missing)}")
+                inputs.extend((path, phase, method, mesh_id) for path in selected)
+
+    campaign_identity = None
+    if "GXTB" in methods:
+        common.require_gxtb_build_artifacts(
+            cp2k=args.cp2k,
+            cp2k_source=args.cp2k_source,
+            save_tblite=args.save_tblite,
+            save_tblite_source=args.save_tblite_source,
+            campaign_manifest=args.campaign_manifest,
+        )
+        common.update_gxtb_provenance(
+            ROOT,
+            cp2k=args.cp2k,
+            cp2k_source=args.cp2k_source,
+            save_tblite=args.save_tblite,
+            save_tblite_source=args.save_tblite_source,
+            campaign_manifest=args.campaign_manifest,
+        )
+        campaign_identity = common.load_campaign_identity(ROOT)
+
+    failed: list[Path] = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
+        futures = {
+            pool.submit(
+                run_phase_one,
+                path,
+                phase,
+                method,
+                args.cp2k.resolve(),
+                args.threads_per_job,
+                args.force,
+                args.prune_transients,
+                mesh_id,
+                campaign_identity,
+            ): (path, phase, method, mesh_id)
+            for path, phase, method, mesh_id in inputs
+        }
+        for future in concurrent.futures.as_completed(futures):
+            path, phase, method, mesh_id = futures[future]
+            _, returncode, action = future.result()
+            phase_label = f"{phase}/{mesh_id}" if mesh_id else phase
+            print(f"{action:16s} {phase_label}/{method}/{path.name} rc={returncode}", flush=True)
+            if returncode != 0 or action in {"FAILED", "MAX_ITER", "INCOMPLETE", "BUSY", "STALE_OUTPUT"}:
+                failed.append(path)
+    if "GXTB" in methods:
+        common.update_gxtb_provenance(
+            ROOT,
+            cp2k=args.cp2k,
+            cp2k_source=args.cp2k_source,
+            save_tblite=args.save_tblite,
+            save_tblite_source=args.save_tblite_source,
+            campaign_manifest=args.campaign_manifest,
+        )
+    if failed:
+        raise SystemExit(f"{len(failed)} X23b production jobs are not converged")
+
+
 def parse_last_volume(output: Path) -> float | None:
     if not output.exists():
         return None
@@ -705,13 +1013,13 @@ def stats(errors: list[float]) -> dict[str, float]:
     }
 
 
-def load_cellopt_rows(path: Path) -> dict[tuple[str, str], dict[str, str]]:
+def load_cellopt_rows(path: Path, methods: list[str]) -> dict[tuple[str, str], dict[str, str]]:
     rows: dict[tuple[str, str], dict[str, str]] = {}
     with path.open(newline="") as handle:
         for row in csv.DictReader(handle):
-            method = row.get("method", "").removesuffix("-xTB")
+            method = canonical_method(row.get("method", ""))
             system = row.get("system", "")
-            if method not in METHODS or not system:
+            if method not in methods or not system:
                 continue
             if row.get("opt_completed", "True").lower() != "true":
                 continue
@@ -720,7 +1028,7 @@ def load_cellopt_rows(path: Path) -> dict[tuple[str, str], dict[str, str]]:
                 raise ValueError(f"duplicate cell-optimization row for {method}/{system}")
             rows[key] = row
 
-    expected = {(method, str(system["id"])) for method in METHODS for system in SYSTEMS}
+    expected = {(method, str(system["id"])) for method in methods for system in SYSTEMS}
     missing = sorted(expected - set(rows))
     extra = sorted(set(rows) - expected)
     if missing or extra:
@@ -736,13 +1044,13 @@ def load_cellopt_rows(path: Path) -> dict[tuple[str, str], dict[str, str]]:
     return rows
 
 
-def load_final_kpoint_rows(path: Path) -> dict[tuple[str, str], dict[str, str]]:
+def load_final_kpoint_rows(path: Path, methods: list[str]) -> dict[tuple[str, str], dict[str, str]]:
     rows: dict[tuple[str, str], dict[str, str]] = {}
     with path.open(newline="") as handle:
         for row in csv.DictReader(handle):
-            method = row.get("method", "").removesuffix("-xTB")
+            method = canonical_method(row.get("method", ""))
             system = row.get("system", "")
-            if method not in METHODS or not system:
+            if method not in methods or not system:
                 continue
             key = (method, system)
             if key in rows:
@@ -754,12 +1062,12 @@ def load_final_kpoint_rows(path: Path) -> dict[tuple[str, str], dict[str, str]]:
                         raise ValueError(f"missing finite {field} for {method}/{system}")
             rows[key] = row
 
-    expected = {(method, str(system["id"])) for method in METHODS for system in SYSTEMS}
+    expected = {(method, str(system["id"])) for method in methods for system in SYSTEMS}
     missing = sorted(expected - set(rows))
     extra = sorted(set(rows) - expected)
     if missing or extra:
         raise ValueError(
-            "final-geometry k-point CSV is not a complete 46-case X23b set: "
+            f"final-geometry k-point CSV is not a complete {len(expected)}-case X23b set: "
             f"missing={missing}; unexpected={extra}"
         )
     return rows
@@ -780,33 +1088,89 @@ def analyse(
     make_figures: bool = True,
     cellopt_csv: Path | None = None,
     final_kpoint_csv: Path | None = None,
+    methods: list[str] | None = None,
+    output_dir: Path = DATA,
+    include_fixed_reference: bool = True,
 ) -> dict[str, object]:
+    selected_methods = methods or PUBLISHED_METHODS
+    if len(set(selected_methods)) != len(selected_methods) or any(method not in METHODS for method in selected_methods):
+        raise ValueError(f"invalid method selection: {selected_methods}")
+    if "GXTB" in selected_methods and (cellopt_csv is None or final_kpoint_csv is None):
+        raise ValueError("GXTB analysis requires complete --cellopt-csv and --final-kpoint-csv inputs")
+    campaign_identity = (
+        common.load_campaign_identity(ROOT) if "GXTB" in selected_methods else None
+    )
+    output_dir.mkdir(parents=True, exist_ok=True)
     metadata = json.loads((DATA / "metadata.json").read_text())
     systems = metadata["systems"]
-    external_cellopt = load_cellopt_rows(cellopt_csv) if cellopt_csv is not None else None
-    final_kpoints = load_final_kpoint_rows(final_kpoint_csv) if final_kpoint_csv is not None else None
+    external_cellopt = load_cellopt_rows(cellopt_csv, selected_methods) if cellopt_csv is not None else None
+    final_kpoints = load_final_kpoint_rows(final_kpoint_csv, selected_methods) if final_kpoint_csv is not None else None
     if final_kpoints is not None and external_cellopt is None:
         raise ValueError("final-geometry k-point energies require --cellopt-csv")
     rows_energy: list[dict[str, object]] = []
     rows_volume: list[dict[str, object]] = []
-    results: dict[str, object] = {"methods": METHODS, "meshes": MESHES, "systems": systems, "energy_rows": [], "volume_rows": []}
+    results: dict[str, object] = {
+        "methods": selected_methods,
+        "meshes": MESHES,
+        "systems": systems,
+        "energy_rows": [],
+        "volume_rows": [],
+    }
 
     gas: dict[tuple[str, str], float | None] = {}
     for system in systems:
-        for method in METHODS:
+        for method in selected_methods:
             stem = f"{system['id']}_{method}_mol_geoopt"
             output = ROOT / "runs" / "molecule_geoopt" / method / stem / f"{stem}.out"
-            gas[(system["id"], method)] = parse_energy(output) if completed_optimization(output) else None
+            trusted = completed_optimization(output) and completed_cp2k_run(output)
+            if trusted and method == "GXTB":
+                input_path = ROOT / "inputs" / "molecule_geoopt" / method / f"{stem}.inp"
+                trusted, _ = common.recorded_job_stamp_matches(
+                    output.parent,
+                    input_path,
+                    method,
+                    "x23b_molecule_geoopt",
+                    output,
+                    campaign_identity=campaign_identity,
+                )
+            gas[(system["id"], method)] = parse_energy(output) if trusted else None
+    if "GXTB" in selected_methods:
+        missing_gas = sorted(
+            f"{method}/{system['id']}"
+            for system in systems
+            for method in selected_methods
+            if gas[(system["id"], method)] is None
+        )
+        if missing_gas:
+            raise ValueError("complete method-owned gas optimizations required: " + ", ".join(missing_gas))
 
     for system in systems:
         n_mol = int(system["molecules_per_cell"])
         ref_energy = float(system["ref_energy"])
-        for method in METHODS:
+        for method in selected_methods:
             gas_energy = gas[(system["id"], method)]
-            for mesh in MESHES:
+            for mesh in MESHES if include_fixed_reference else []:
                 stem = f"{system['id']}_{method}_{mesh['id']}_sp"
                 output = ROOT / "runs" / "crystal_sp" / str(mesh["id"]) / method / stem / f"{stem}.out"
-                crystal_energy = parse_energy(output) if completed_cp2k_run(output) else None
+                trusted = completed_cp2k_run(output)
+                if trusted and method == "GXTB":
+                    input_path = (
+                        ROOT
+                        / "inputs"
+                        / "crystal_sp"
+                        / str(mesh["id"])
+                        / method
+                        / f"{stem}.inp"
+                    )
+                    trusted, _ = common.recorded_job_stamp_matches(
+                        output.parent,
+                        input_path,
+                        method,
+                        f"x23b_fixed_reference_{mesh['id']}",
+                        output,
+                        campaign_identity=campaign_identity,
+                    )
+                crystal_energy = parse_energy(output) if trusted else None
                 complete = crystal_energy is not None and gas_energy is not None
                 lattice = None
                 error = None
@@ -817,7 +1181,7 @@ def analyse(
                     {
                         "calculation": "single_point",
                         "mesh": mesh["id"],
-                        "method": f"{method}-xTB",
+                        "method": method_label(method),
                         "system": system["id"],
                         "label": system["label"],
                         "complete": complete,
@@ -854,7 +1218,7 @@ def analyse(
                 {
                     "calculation": "cell_opt",
                     "mesh": cellopt_mesh,
-                    "method": f"{method}-xTB",
+                    "method": method_label(method),
                     "system": system["id"],
                     "label": system["label"],
                     "complete": complete,
@@ -867,7 +1231,7 @@ def analyse(
                 {
                     "calculation": "cell_opt",
                     "mesh": cellopt_mesh,
-                    "method": f"{method}-xTB",
+                    "method": method_label(method),
                     "system": system["id"],
                     "label": system["label"],
                     "complete": complete,
@@ -895,7 +1259,7 @@ def analyse(
                         {
                             "calculation": "cell_opt_single_point",
                             "mesh": mesh,
-                            "method": f"{method}-xTB",
+                            "method": method_label(method),
                             "system": system["id"],
                             "label": system["label"],
                             "complete": True,
@@ -905,8 +1269,24 @@ def analyse(
                         }
                     )
 
+    if include_fixed_reference and "GXTB" in selected_methods:
+        fixed_rows = [
+            row
+            for row in rows_energy
+            if row["calculation"] == "single_point" and row["method"] == method_label("GXTB")
+        ]
+        incomplete_fixed = [
+            f"{row['mesh']}/{row['system']}" for row in fixed_rows if not row["complete"]
+        ]
+        expected_fixed = len(systems) * len(MESHES)
+        if len(fixed_rows) != expected_fixed or incomplete_fixed:
+            raise ValueError(
+                f"complete {expected_fixed}-case GXTB fixed-reference diagnostic required: "
+                + ", ".join(incomplete_fixed[:20])
+            )
+
     write_csv(
-        DATA / "x23b_lattice_energies.csv",
+        output_dir / "x23b_lattice_energies.csv",
         rows_energy,
         [
             "calculation",
@@ -921,7 +1301,7 @@ def analyse(
         ],
     )
     write_csv(
-        DATA / "x23b_cell_volumes.csv",
+        output_dir / "x23b_cell_volumes.csv",
         rows_volume,
         [
             "calculation",
@@ -936,18 +1316,29 @@ def analyse(
             "volume_error_percent",
         ],
     )
-    summaries = summarize(rows_energy, rows_volume)
-    write_csv(DATA / "x23b_summary.csv", summaries, ["quantity", "calculation", "mesh", "method", "ME", "MAE", "RMSE", "MaxAE"])
+    summaries = summarize(rows_energy, rows_volume, selected_methods)
+    write_csv(
+        output_dir / "x23b_summary.csv",
+        summaries,
+        ["quantity", "calculation", "mesh", "method", "ME", "MAE", "RMSE", "MaxAE"],
+    )
     results["energy_rows"] = rows_energy
     results["volume_rows"] = rows_volume
     results["summary"] = summaries
-    (DATA / "x23b_results.json").write_text(json.dumps(results, indent=2) + "\n")
+    (output_dir / "x23b_results.json").write_text(json.dumps(results, indent=2) + "\n")
     if make_figures:
+        if output_dir.resolve() != DATA.resolve():
+            raise ValueError("figures can only be regenerated from the curated X23b/data tables")
         publication_plotter = ROOT.parent / "scripts" / "update_x23b_k222_figures.py"
         if external_cellopt is not None and publication_plotter.exists():
             subprocess.run([sys.executable, str(publication_plotter)], cwd=ROOT.parent, check=True)
         else:
             make_plots(summaries, rows_energy, rows_volume)
+    if "GXTB" in selected_methods:
+        common.update_gxtb_provenance(
+            ROOT,
+            publication_tables_updated=output_dir.resolve() == DATA.resolve(),
+        )
     return results
 
 
@@ -958,13 +1349,18 @@ def write_csv(path: Path, rows: list[dict[str, object]], fieldnames: list[str]) 
         writer.writerows(rows)
 
 
-def summarize(rows_energy: list[dict[str, object]], rows_volume: list[dict[str, object]]) -> list[dict[str, object]]:
+def summarize(
+    rows_energy: list[dict[str, object]],
+    rows_volume: list[dict[str, object]],
+    methods: list[str] | None = None,
+) -> list[dict[str, object]]:
+    selected_methods = methods or PUBLISHED_METHODS
     summaries: list[dict[str, object]] = []
     calculations = sorted({str(row["calculation"]) for row in rows_energy})
     for calculation in calculations:
         meshes = sorted({str(row["mesh"]) for row in rows_energy if row["calculation"] == calculation})
         for mesh in meshes:
-            for method in [f"{name}-xTB" for name in METHODS]:
+            for method in [method_label(name) for name in selected_methods]:
                 errors = [
                     float(row["error_kJmol"])
                     for row in rows_energy
@@ -985,7 +1381,7 @@ def summarize(rows_energy: list[dict[str, object]], rows_volume: list[dict[str, 
                     )
     volume_meshes = sorted({str(row["mesh"]) for row in rows_volume})
     for mesh in volume_meshes:
-        for method in [f"{name}-xTB" for name in METHODS]:
+        for method in [method_label(name) for name in selected_methods]:
             errors = [
                 float(row["volume_error_percent"])
                 for row in rows_volume
@@ -1333,23 +1729,80 @@ plot '{dat}' using 5:1:3:7 with xerrorbars pt 0 lw 1.6 lc rgb '#9c9c9c' title 'm
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["prepare", "analyse", "all"], nargs="?", default="all")
+    parser.add_argument("command", choices=["prepare", "run", "analyse", "all"], nargs="?", default="all")
     parser.add_argument("--refdata", type=Path, default=Path(os.environ.get("REFDATA_X23", "../refdata")))
-    parser.add_argument("--cellopt-csv", type=Path, help="complete 46-row native-Bloch k222 cell-optimization result table")
+    parser.add_argument("--method", action="append", choices=METHODS)
+    parser.add_argument(
+        "--production-only",
+        action="store_true",
+        help="prepare gas GEO_OPT and Gamma CELL_OPT inputs from the frozen local structures",
+    )
+    parser.add_argument(
+        "--include-fixed-reference",
+        action="store_true",
+        help="opt in to preparation/analysis of the frozen-crystal Gamma, k111, k222, and k333 diagnostic",
+    )
+    parser.add_argument("--phase", action="append", choices=RUN_PHASES)
+    parser.add_argument(
+        "--fixed-reference-mesh",
+        action="append",
+        choices=[str(mesh["id"]) for mesh in MESHES],
+        help="fixed-reference mesh(es); explicit crystal_sp phase defaults to all four",
+    )
+    parser.add_argument("--cp2k", type=Path)
+    parser.add_argument("--cp2k-source", type=Path)
+    parser.add_argument("--save-tblite", type=Path)
+    parser.add_argument("--save-tblite-source", type=Path)
+    parser.add_argument(
+        "--campaign-manifest",
+        type=Path,
+        default=common.DEFAULT_CAMPAIGN_MANIFEST,
+        help="frozen V1 build manifest (single source of truth)",
+    )
+    parser.add_argument("--jobs", type=int, default=6)
+    parser.add_argument("--threads-per-job", type=int, default=1)
+    parser.add_argument("--system", action="append", choices=sorted(str(row["id"]) for row in SYSTEMS))
+    parser.add_argument("--force", action="store_true")
+    parser.add_argument("--prune-transients", action="store_true")
+    parser.add_argument("--cellopt-csv", type=Path, help="complete selected-method native-Bloch k222 result table")
     parser.add_argument(
         "--final-kpoint-csv",
         type=Path,
         help="complete k222/k333/k444 energy table on the final k222 geometries",
     )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        help="analysis destination; GXTB defaults to data/gxtb_staging so published tables are not overwritten",
+    )
     parser.add_argument("--skip-plots", action="store_true")
     args = parser.parse_args()
+    methods = args.method or PUBLISHED_METHODS
+    args.method = methods
+    args.phase = args.phase or list(PRODUCTION_PHASES)
     if args.command in {"prepare", "all"}:
-        prepare(args.refdata)
+        prepare(
+            args.refdata,
+            methods=methods,
+            production_only=args.production_only,
+            include_fixed_reference=args.include_fixed_reference,
+        )
+    if args.command == "run":
+        if args.cp2k is None:
+            parser.error("run requires --cp2k")
+        run_production_phases(args)
     if args.command in {"analyse", "all"}:
+        output_dir = args.output_dir
+        if output_dir is None:
+            output_dir = DATA / "gxtb_staging" if "GXTB" in methods else DATA
+        include_fixed_reference = args.include_fixed_reference or "GXTB" not in methods
         analyse(
-            make_figures=not args.skip_plots,
+            make_figures=not args.skip_plots and output_dir.resolve() == DATA.resolve(),
             cellopt_csv=args.cellopt_csv,
             final_kpoint_csv=args.final_kpoint_csv,
+            methods=methods,
+            output_dir=output_dir,
+            include_fixed_reference=include_fixed_reference,
         )
 
 

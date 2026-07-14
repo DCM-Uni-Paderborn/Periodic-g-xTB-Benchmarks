@@ -1,0 +1,434 @@
+{
+  "campaign_identity": {
+    "campaign_id": "gxtb-pbc-v1-20260714",
+    "cp2k_cmake_cache_sha256": "ec13707340edd43be9bddf70edf1fd8e1848d1cee50e11e1c4f1274959ea2346",
+    "cp2k_embedded_source_revision": "18d37c9464",
+    "cp2k_executable_sha256": "c3c19763eef2fcd51b0266db811be20d0a3d13a586c1bbd4eb0e83c59cca2c8a",
+    "cp2k_loaded_library_sha256": "a1ab82829a43d872b32d2a4f9b929c394f96e5dd0d293db163716c946ad3b8b3",
+    "cp2k_source_revision": "18d37c946413dba1b848f57563c46d16b866ce20",
+    "dependency_lock_sha256": "f80b045dd5bae175d16d035433b0507ab72c755973f081f9a1df891c4f36e191",
+    "fingerprint_sha256": "31a22ed28d2cdec9e9b071236a0fa4c1d30cb0d7cfb6a93f652f08758c83223e",
+    "save_tblite_cmake_cache_sha256": "416eb47811121fb515932564e062f0f12ff4c3136d147e292069f7d2b07c0679",
+    "save_tblite_executable_sha256": "8b0a1d5acd36df23efeb9078dceced61adb95a3cc8523f25ff76114da602cfa5",
+    "save_tblite_library_sha256": "8ce501b698e1b7ea5db03bc4db979302dc08253e843ee44cb5ef2aecb5a4668c",
+    "save_tblite_source_revision": "1449febde312874cd0fac4227919f5ba4e4b69b8",
+    "schema": 1
+  },
+  "campaign_manifest": {
+    "path": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/campaigns/gxtb-pbc-v1-20260714/build_manifest.json",
+    "sha256": "58be3ac65bbe72803c97adc059a5e08adbc86a47b895d8fac51201e2e4a10d60"
+  },
+  "campaign_state_at_check": "validation_in_progress",
+  "checked_at_utc": "2026-07-14T06:06:22.812434+00:00",
+  "checks": {
+    "energy": true,
+    "forces": true,
+    "full_kpoint_count": true,
+    "spglib_reduces_mesh": true,
+    "spglib_reports_complete_mesh_mapping": true,
+    "stress": true
+  },
+  "gate_id": "x23b-ammonia-gxtb-shifted-k222-full-vs-spglib-force-stress-v1",
+  "jobs": {
+    "full": {
+      "energy_hartree": -226.4312680844839,
+      "forces": [
+        {
+          "atom": 1,
+          "element": "N",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.006181639226187,
+            -0.006181639226188,
+            -0.006181639226187
+          ]
+        },
+        {
+          "atom": 2,
+          "element": "N",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.006181639226188,
+            0.006181639226187,
+            0.006181639226187
+          ]
+        },
+        {
+          "atom": 3,
+          "element": "N",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.006181639226187,
+            -0.006181639226188,
+            0.006181639226187
+          ]
+        },
+        {
+          "atom": 4,
+          "element": "N",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.006181639226187,
+            0.006181639226187,
+            -0.006181639226188
+          ]
+        },
+        {
+          "atom": 5,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.01350519272433,
+            0.003547642288537,
+            -0.01164500380648
+          ]
+        },
+        {
+          "atom": 6,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.01350519272433,
+            -0.003547642288537,
+            0.01164500380648
+          ]
+        },
+        {
+          "atom": 7,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.01164500380648,
+            0.01350519272433,
+            0.003547642288537
+          ]
+        },
+        {
+          "atom": 8,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.01164500380648,
+            0.01350519272433,
+            -0.003547642288537
+          ]
+        },
+        {
+          "atom": 9,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.003547642288537,
+            -0.01164500380648,
+            0.01350519272433
+          ]
+        },
+        {
+          "atom": 10,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.003547642288538,
+            0.01164500380648,
+            0.01350519272433
+          ]
+        },
+        {
+          "atom": 11,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.003547642288537,
+            0.01164500380648,
+            -0.01350519272433
+          ]
+        },
+        {
+          "atom": 12,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.003547642288537,
+            -0.01164500380648,
+            -0.01350519272433
+          ]
+        },
+        {
+          "atom": 13,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.01164500380648,
+            -0.01350519272433,
+            -0.003547642288537
+          ]
+        },
+        {
+          "atom": 14,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.01164500380648,
+            -0.01350519272433,
+            0.003547642288538
+          ]
+        },
+        {
+          "atom": 15,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.01350519272433,
+            0.003547642288538,
+            0.01164500380648
+          ]
+        },
+        {
+          "atom": 16,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.01350519272433,
+            -0.003547642288537,
+            -0.01164500380648
+          ]
+        }
+      ],
+      "input_sha256": "d14ce8597c4ef1f6e16cca9abcdfa101f77f3411f73d80561e533177bd57c4f6",
+      "kpoint_count": 8,
+      "kpoint_count_source": "hashed_input_contract",
+      "kpoint_mesh": null,
+      "kpoint_mesh_rows": 0,
+      "output_path": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/X23b/runs/validation/gxtb_k222_force_stress_v1_frozen/full/cp2k.out",
+      "output_sha256": "7f0f12ac448e14ce00582350390c873920eeda437c497c39013c42c1d467d0a0",
+      "stress_gpa": [
+        [
+          -0.685324086942,
+          -2.73018963064e-14,
+          3.80652932307e-15
+        ],
+        [
+          -2.73018963064e-14,
+          -0.685324086987,
+          -3.30999914211e-14
+        ],
+        [
+          3.80652932307e-15,
+          -3.30999914211e-14,
+          -0.68532408703
+        ]
+      ]
+    },
+    "spglib": {
+      "energy_hartree": -226.4312680844839,
+      "forces": [
+        {
+          "atom": 1,
+          "element": "N",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.006181639226187,
+            -0.006181639226188,
+            -0.006181639226187
+          ]
+        },
+        {
+          "atom": 2,
+          "element": "N",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.006181639226188,
+            0.006181639226188,
+            0.006181639226188
+          ]
+        },
+        {
+          "atom": 3,
+          "element": "N",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.006181639226187,
+            -0.006181639226188,
+            0.006181639226187
+          ]
+        },
+        {
+          "atom": 4,
+          "element": "N",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.006181639226188,
+            0.006181639226187,
+            -0.006181639226188
+          ]
+        },
+        {
+          "atom": 5,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.01350519272433,
+            0.003547642288537,
+            -0.01164500380648
+          ]
+        },
+        {
+          "atom": 6,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.01350519272433,
+            -0.003547642288537,
+            0.01164500380648
+          ]
+        },
+        {
+          "atom": 7,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.01164500380648,
+            0.01350519272433,
+            0.003547642288537
+          ]
+        },
+        {
+          "atom": 8,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.01164500380648,
+            0.01350519272433,
+            -0.003547642288537
+          ]
+        },
+        {
+          "atom": 9,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.003547642288537,
+            -0.01164500380648,
+            0.01350519272433
+          ]
+        },
+        {
+          "atom": 10,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.003547642288538,
+            0.01164500380648,
+            0.01350519272433
+          ]
+        },
+        {
+          "atom": 11,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.003547642288537,
+            0.01164500380648,
+            -0.01350519272433
+          ]
+        },
+        {
+          "atom": 12,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.003547642288537,
+            -0.01164500380648,
+            -0.01350519272433
+          ]
+        },
+        {
+          "atom": 13,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.01164500380648,
+            -0.01350519272433,
+            -0.003547642288537
+          ]
+        },
+        {
+          "atom": 14,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            0.01164500380648,
+            -0.01350519272433,
+            0.003547642288538
+          ]
+        },
+        {
+          "atom": 15,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.01350519272433,
+            0.003547642288538,
+            0.01164500380648
+          ]
+        },
+        {
+          "atom": 16,
+          "element": "H",
+          "kind": null,
+          "vector_hartree_per_bohr": [
+            -0.01350519272433,
+            -0.003547642288537,
+            -0.01164500380648
+          ]
+        }
+      ],
+      "input_sha256": "3268361dde2d951b89052cc71437e22c66fe928c99f136e330883e7cd59bc501",
+      "kpoint_count": 4,
+      "kpoint_count_source": "cp2k_output",
+      "kpoint_mesh": [
+        2,
+        2,
+        2
+      ],
+      "kpoint_mesh_rows": 8,
+      "output_path": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/X23b/runs/validation/gxtb_k222_force_stress_v1_frozen/spglib/cp2k.out",
+      "output_sha256": "b5204ef8735d5d6e92a8fc79441c042c89b0b1b510c0dd3f815ac6900ad44b0d",
+      "stress_gpa": [
+        [
+          -0.685324086942,
+          -2.22655676357e-14,
+          9.33361983689e-15
+        ],
+        [
+          -2.22655676357e-14,
+          -0.685324086987,
+          -2.36036230253e-14
+        ],
+        [
+          9.33361983689e-15,
+          -2.36036230253e-14,
+          -0.68532408703
+        ]
+      ]
+    }
+  },
+  "metrics": {
+    "energy_abs_hartree": 0.0,
+    "force_max_abs_hartree_per_bohr": 1.0000680839006293e-15,
+    "force_rms_hartree_per_bohr": 2.500170209751573e-16,
+    "stress_max_abs_gpa": 9.496368395799998e-15,
+    "stress_rms_gpa": 5.697842647022407e-15
+  },
+  "passed": true,
+  "schema": 1,
+  "specification": {
+    "path": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/X23b/validation/gxtb_k222_force_stress/gate_spec.json",
+    "sha256": "838d7db0beb11b7ce9f61484fbdb158c25fb083a6a0bc816aee05672e5bad7b6"
+  },
+  "tolerances": {
+    "energy_max_abs_hartree": 1e-09,
+    "force_max_abs_hartree_per_bohr": 1e-06,
+    "stress_max_abs_gpa": 1e-05
+  }
+}

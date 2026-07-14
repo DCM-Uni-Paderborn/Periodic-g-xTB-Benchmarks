@@ -1,0 +1,149 @@
+{
+  "campaign_id": "gxtb-pbc-v1-20260714",
+  "campaign_state": "production_ready",
+  "production_ready_local_date": "2026-07-14",
+  "created_local_date": "2026-07-14",
+  "implementation": {
+    "current_version": 1,
+    "description": "explicit full-mesh expansion and foldback behind CP2K SPGLIB reduction",
+    "next_version": 2,
+    "next_version_policy": "separate campaign; must reproduce V1 before replacement"
+  },
+  "reference_protocol": {
+    "name": "Advancing GFN2-xTB for Periodic Systems via multipolar Ewald Summation in CP2K",
+    "overleaf_project": "6a10b9fe73f44487d1021bed",
+    "checkout": "/tmp/gfn2_overleaf_reference_20260714",
+    "revision": "eb9f475",
+    "mode": "read_only",
+    "modified": false
+  },
+  "cp2k": {
+    "repository": "https://github.com/DCM-Uni-Paderborn/cp2k.git",
+    "branch": "g-xTB-pbc",
+    "revision": "18d37c946413dba1b848f57563c46d16b866ce20",
+    "source_clean": true,
+    "upstream_master_at_freeze": "97cfbf5b46f7b027063859fdd8ce60b404b22a6c",
+    "upstream_unique_commits_missing": 0,
+    "binary": "/tmp/cp2k_gxtb_18d37c_bench_build/bin/cp2k.psmp",
+    "binary_sha256": "c3c19763eef2fcd51b0266db811be20d0a3d13a586c1bbd4eb0e83c59cca2c8a",
+    "loaded_library": "/tmp/cp2k_gxtb_18d37c_bench_build/src/libcp2k.2026.1.dylib",
+    "loaded_library_sha256": "a1ab82829a43d872b32d2a4f9b929c394f96e5dd0d293db163716c946ad3b8b3",
+    "cmake_cache_sha256": "ec13707340edd43be9bddf70edf1fd8e1848d1cee50e11e1c4f1274959ea2346",
+    "reported_revision": "18d37c9464",
+    "features": [
+      "mpi",
+      "openmp",
+      "scalapack",
+      "spglib",
+      "tblite",
+      "tblite_gxtb"
+    ]
+  },
+  "save_tblite": {
+    "repository": "https://github.com/DCM-Uni-Paderborn/save_tblite.git",
+    "branch": "cp2k-integration",
+    "revision": "1449febde312874cd0fac4227919f5ba4e4b69b8",
+    "source_clean": true,
+    "reported_version": "0.6.0",
+    "cli": "/tmp/save_tblite_1449feb_bench_install/bin/tblite",
+    "cli_sha256": "8b0a1d5acd36df23efeb9078dceced61adb95a3cc8523f25ff76114da602cfa5",
+    "static_library": "/tmp/save_tblite_1449feb_bench_install/lib/libtblite.a",
+    "static_library_sha256": "8ce501b698e1b7ea5db03bc4db979302dc08253e843ee44cb5ef2aecb5a4668c",
+    "cmake_cache_sha256": "416eb47811121fb515932564e062f0f12ff4c3136d147e292069f7d2b07c0679",
+    "ddx_enabled": false,
+    "pbc_mirror_revision": "083f22030f0be7abff3e3d27b35c141c04c2aa6d"
+  },
+  "fetched_dependencies": {
+    "dftd4": "99d64ee83832fda03df2c7dd7b7fd9f4c9ebb098",
+    "mctc-lib": "7dc5636fecc8157797632feeb90106cdd8fc08fb",
+    "mstore": "35e76c96162bd4be8b1e729043aea6cf43b147d6",
+    "multicharge": "8abf1566a13c9c343d42f27ba9ab7d63b2da2454",
+    "s-dftd3": "6f0b06fbfa8653a23ca55c453772ce3af4420706",
+    "test-drive": "9c3401e30dbd2da1add77aaa252a4c6928fe39a1",
+    "toml-f": "d5e92701d28b647323ce05ecbcbf302dd19792f7"
+  },
+  "host": {
+    "operating_system": "macOS 15.7.4 (24G517)",
+    "architecture": "arm64",
+    "logical_cpus": 14,
+    "memory_bytes": 38654705664,
+    "gcc": "16.1.0",
+    "gfortran": "16.1.0",
+    "cmake": "4.3.4",
+    "ninja": "1.13.2",
+    "openmpi": "5.0.9",
+    "openblas": "0.3.33",
+    "spglib": "2.7.0"
+  },
+  "validation": {
+    "save_tblite_gxtb_wrapper": "passed",
+    "save_tblite_known_exceptions": [
+      "three narrowly over-threshold finite-difference cases",
+      "DDX-disabled C-API and XTBML cases"
+    ],
+    "cp2k_gxtb_core": {
+      "passed": 49,
+      "failed": 0
+    },
+    "cp2k_gxtb_spglib": {
+      "passed": 9,
+      "failed": 0
+    },
+    "benchmark_workflow_unit_tests": {
+      "passed": 58,
+      "failed": 0
+    },
+    "dmc13_gamma_cp2k_vs_cli": {
+      "pairs": 13,
+      "max_abs_delta_hartree": 2.969500201288611e-08,
+      "max_abs_delta_per_water_hartree": 1.648137034256554e-09,
+      "result_csv_sha256": "02297be201bc744356f58c070bedabf84dc0b8291545e0ccf3ae28f787a225e9",
+      "provenance_sha256": "ec60edb70cf291231e3865df9c8de80c3031609b7b4eeb34af7b0a5702d7d739",
+      "status": "passed"
+    },
+    "dmc13_full_grid_vs_spglib": {
+      "pairs": 6,
+      "max_abs_delta_hartree": 0.0,
+      "result_sha256": "b8f45167fd8bfae5cdf953f729302032312c222c60cc9b0c59562fc04280e81c",
+      "status": "passed"
+    },
+    "x23b_shifted_k222_full_grid_vs_spglib": {
+      "energy_abs_delta_hartree": 0.0,
+      "force_max_abs_delta_hartree_per_bohr": 1.0000680839006293e-15,
+      "stress_max_abs_delta_gpa": 9.496368395799998e-15,
+      "full_kpoints": 8,
+      "spglib_special_kpoints": 4,
+      "result_sha256": "140a726de2f0c7a7450fca88d31b842a9beacb98fef1dd0683fd567457517ce5",
+      "status": "passed"
+    }
+  },
+  "production_protocol": {
+    "kpoint_reduction": "SPGLIB",
+    "full_grid": false,
+    "gxtb_internal_evaluation": "coupled full mesh",
+    "scc_mixer": "TBLITE Fock DIIS",
+    "omp_threads_per_job": 1,
+    "blas_threads_per_job": 1,
+    "continuum_solvation_eligible": false
+  },
+  "benchmarks": {
+    "DMC-ICE13": {
+      "members": 13,
+      "meshes": ["gamma", "k111", "k222", "k333", "k444", "k555"],
+      "production_jobs": 78,
+      "primary_mesh": "k333"
+    },
+    "X23b": {
+      "members": 23,
+      "production_jobs": 115,
+      "stages": ["gas_geo_opt", "gamma_cell_opt", "k222_cell_opt", "k333_sp", "k444_sp"]
+    },
+    "LC12": {
+      "members": 12,
+      "save_tblite_atom_jobs": 13,
+      "cp2k_atom_check_jobs": 13,
+      "eos_jobs": 132,
+      "final_meshes": ["k333", "k444", "k555"]
+    }
+  }
+}

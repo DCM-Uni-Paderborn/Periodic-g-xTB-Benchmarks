@@ -1,0 +1,175 @@
+{
+  "campaign_id": "gxtb-pbc-v1-20260714",
+  "campaign_state": "production_ready",
+  "production_ready_local_date": "2026-07-14",
+  "created_local_date": "2026-07-14",
+  "implementation": {
+    "current_version": 1,
+    "description": "explicit full-mesh expansion and foldback behind CP2K SPGLIB reduction",
+    "next_version": 2,
+    "next_version_policy": "separate campaign; must reproduce V1 before replacement"
+  },
+  "reference_protocol": {
+    "name": "Advancing GFN2-xTB for Periodic Systems via multipolar Ewald Summation in CP2K",
+    "overleaf_project": "6a10b9fe73f44487d1021bed",
+    "checkout": "/tmp/gfn2_overleaf_reference_20260714",
+    "revision": "eb9f475",
+    "mode": "read_only",
+    "modified": false
+  },
+  "cp2k": {
+    "repository": "https://github.com/DCM-Uni-Paderborn/cp2k.git",
+    "branch": "g-xTB-pbc",
+    "revision": "18d37c946413dba1b848f57563c46d16b866ce20",
+    "source_clean": true,
+    "upstream_master_at_freeze": "97cfbf5b46f7b027063859fdd8ce60b404b22a6c",
+    "upstream_unique_commits_missing": 0,
+    "binary": "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/install/cp2k/bin/cp2k.psmp",
+    "binary_sha256": "c6b51be7e356170dcb39a597d0e389bd701586e6131365ba317da3968c36eea7",
+    "loaded_library": "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/install/cp2k/lib/libcp2k.so.2026.1",
+    "loaded_library_sha256": "7813f8b2afddf5c355cbf41a06109d59f2872d5dd0be6645093c2f04489c1975",
+    "cmake_cache_sha256": "908b5c96f44ae861b371b8e95d8011c674cbf874e83efd48f47f2227c1b41756",
+    "reported_revision": "18d37c9",
+    "features": [
+      "mpi",
+      "openmp",
+      "scalapack",
+      "spglib",
+      "tblite",
+      "tblite_gxtb"
+    ]
+  },
+  "save_tblite": {
+    "repository": "https://github.com/DCM-Uni-Paderborn/save_tblite.git",
+    "branch": "cp2k-integration",
+    "revision": "1449febde312874cd0fac4227919f5ba4e4b69b8",
+    "source_clean": true,
+    "reported_version": "0.6.0",
+    "cli": "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/install/save_tblite/bin/tblite",
+    "cli_sha256": "e590bce468964fb3d6ab8a4ffe9d5313f0b6a4ce87be9cf1456c6b6a8be1c690",
+    "static_library": "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/install/save_tblite/lib/libtblite.a",
+    "static_library_sha256": "19dc000c604529048a99d7590193e68e026b58d2326e995369be7ebb0e65b577",
+    "cmake_cache_sha256": "dd5952d04098d313e493d08adda6725f810e2407451cb900f7bf5554f948cc12",
+    "ddx_enabled": false,
+    "pbc_mirror_revision": "083f22030f0be7abff3e3d27b35c141c04c2aa6d"
+  },
+  "fetched_dependencies": {
+    "dftd4": "99d64ee83832fda03df2c7dd7b7fd9f4c9ebb098",
+    "mctc-lib": "7dc5636fecc8157797632feeb90106cdd8fc08fb",
+    "mstore": "35e76c96162bd4be8b1e729043aea6cf43b147d6",
+    "multicharge": "8abf1566a13c9c343d42f27ba9ab7d63b2da2454",
+    "s-dftd3": "6f0b06fbfa8653a23ca55c453772ce3af4420706",
+    "test-drive": "9c3401e30dbd2da1add77aaa252a4c6928fe39a1",
+    "toml-f": "d5e92701d28b647323ce05ecbcbf302dd19792f7"
+  },
+  "host": {
+    "operating_system": "Linux (terok.casus.science)",
+    "architecture": "x86_64",
+    "logical_cpus": 240,
+    "memory_bytes": 540092764160,
+    "gcc": "15.2.0",
+    "gfortran": "15.2.0",
+    "cmake": "4.1.0",
+    "ninja": "1.13.1",
+    "openmpi": "5.0.8",
+    "openblas": "0.3.29",
+    "spglib": "2.6.0"
+  },
+  "validation": {
+    "save_tblite_gxtb_wrapper": "passed",
+    "save_tblite_known_exceptions": [
+      "three narrowly over-threshold finite-difference cases",
+      "DDX-disabled C-API and XTBML cases"
+    ],
+    "cp2k_gxtb_core": {
+      "passed": 49,
+      "failed": 0
+    },
+    "cp2k_gxtb_spglib": {
+      "passed": 9,
+      "failed": 0
+    },
+    "benchmark_workflow_unit_tests": {
+      "passed": 58,
+      "failed": 0
+    },
+    "dmc13_gamma_cp2k_vs_cli": {
+      "pairs": 13,
+      "max_abs_delta_hartree": 2.969500201288611E-8,
+      "max_abs_delta_per_water_hartree": 1.648137034256554E-9,
+      "result_csv_sha256": "02297be201bc744356f58c070bedabf84dc0b8291545e0ccf3ae28f787a225e9",
+      "provenance_sha256": "ec60edb70cf291231e3865df9c8de80c3031609b7b4eeb34af7b0a5702d7d739",
+      "status": "passed"
+    },
+    "dmc13_full_grid_vs_spglib": {
+      "pairs": 6,
+      "max_abs_delta_hartree": 0.0,
+      "result_sha256": "b8f45167fd8bfae5cdf953f729302032312c222c60cc9b0c59562fc04280e81c",
+      "status": "passed"
+    },
+    "x23b_shifted_k222_full_grid_vs_spglib": {
+      "energy_abs_delta_hartree": 0.0,
+      "force_max_abs_delta_hartree_per_bohr": 1.0000680839006293E-15,
+      "stress_max_abs_delta_gpa": 9.496368395799998E-15,
+      "full_kpoints": 8,
+      "spglib_special_kpoints": 4,
+      "result_sha256": "140a726de2f0c7a7450fca88d31b842a9beacb98fef1dd0683fd567457517ce5",
+      "status": "passed"
+    }
+  },
+  "production_protocol": {
+    "kpoint_reduction": "SPGLIB",
+    "full_grid": false,
+    "gxtb_internal_evaluation": "coupled full mesh",
+    "scc_mixer": "TBLITE Fock DIIS",
+    "omp_threads_per_job": 1,
+    "blas_threads_per_job": 1,
+    "continuum_solvation_eligible": false
+  },
+  "benchmarks": {
+    "DMC-ICE13": {
+      "members": 13,
+      "meshes": [
+        "gamma",
+        "k111",
+        "k222",
+        "k333",
+        "k444",
+        "k555"
+      ],
+      "production_jobs": 78,
+      "primary_mesh": "k333"
+    },
+    "X23b": {
+      "members": 23,
+      "production_jobs": 115,
+      "stages": [
+        "gas_geo_opt",
+        "gamma_cell_opt",
+        "k222_cell_opt",
+        "k333_sp",
+        "k444_sp"
+      ]
+    },
+    "LC12": {
+      "members": 12,
+      "save_tblite_atom_jobs": 13,
+      "cp2k_atom_check_jobs": 13,
+      "eos_jobs": 132,
+      "final_meshes": [
+        "k333",
+        "k444",
+        "k555"
+      ]
+    }
+  },
+  "execution_build": {
+    "id": "terok-c6b51be7",
+    "qualification_manifest": "DMC-ICE13/data/execution_builds/terok-c6b51be7/execution_build_manifest.json",
+    "qualification_status": "passed",
+    "cross_architecture_total_energy_tolerance_hartree": 1E-10,
+    "cross_architecture_relative_energy_tolerance_kjmol_per_h2o": 0.001,
+    "observed_max_abs_total_energy_delta_hartree": 1.1368683772161603E-13,
+    "observed_max_abs_relative_energy_delta_kjmol_per_h2o": 3.731059905476286E-11
+  }
+}

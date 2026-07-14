@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import csv
+import hashlib
 import json
 import math
 import os
@@ -20,6 +21,8 @@ import run_goldzak12_benchmark as base  # noqa: E402
 
 ROOT = base.ROOT
 DEFAULT_SCALES = (0.82, 0.88, 0.94, 0.98, 1.00, 1.02, 1.06, 1.12, 1.20, 1.30, 1.45)
+DEFAULT_RESULT_MESH = "k555"
+MINIMUM_REDUCED_GXTB_FITS = 8
 # Physical LC12 EOS curves vary by less than 2 Eh over the sampled interval.
 # A much lower total energy is the numerical signature of the SCC charge collapse.
 CHARGE_COLLAPSE_ENERGY_DROP_HARTREE = 25.0
@@ -50,37 +53,292 @@ ADAPTIVE_SCALES = {
         0.93,
     ),
 }
+BUILTIN_ADAPTIVE_SCALES = {key: tuple(values) for key, values in ADAPTIVE_SCALES.items()}
+GXTB_BRANCH_DISCONTINUITY_HARTREE = 1.0
+# The LC12 conventional cells all contain eight atoms. This tolerance only
+# suppresses sub-meV/atom numerical noise in the GXTB EOS topology test; it is
+# not an energy-discontinuity threshold.
+GXTB_TOPOLOGY_TOLERANCE_HARTREE = 1.0e-4
+GXTB_CLASSIFICATION_ACTIONS = {"exclude", "retain"}
+FINAL_INPUT_LINEAGE_SCHEMA = 1
 
 
-def scale_tag(scale: float) -> str:
-    return f"s{scale:.3f}".replace(".", "p")
+def gxtb_scale_manifest_path() -> Path:
+    return ROOT / "data" / "gxtb_eos_scale_manifest.json"
+
+
+def gxtb_classification_manifest_path() -> Path:
+    return ROOT / "data" / "gxtb_eos_classifications.json"
+
+
+def adaptive_scales_only(solid: str, method: str) -> tuple[float, ...]:
+    built_in = set(BUILTIN_ADAPTIVE_SCALES.get((solid, method), ()))
+    return tuple(value for value in ADAPTIVE_SCALES.get((solid, method), ()) if value not in built_in)
+
+
+def restore_gxtb_scale_manifest(mesh: str, methods: tuple[str, ...]) -> None:
+    """Restore previously requested adaptive GXTB points for a safe resume."""
+    path = gxtb_scale_manifest_path()
+    if "GXTB" not in methods or not path.exists():
+        return
+    try:
+        payload = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return
+    if payload.get("schema_version") != 1 or payload.get("eos_mesh") != mesh:
+        return
+    for record in payload.get("systems", []):
+        if record.get("method") != "GXTB":
+            continue
+        solid = str(record.get("solid", ""))
+        values = tuple(float(value) for value in record.get("adaptive_scales", []))
+        if solid and values:
+            key = (solid, "GXTB")
+            ADAPTIVE_SCALES[key] = tuple(sorted(set(ADAPTIVE_SCALES.get(key, ())) | set(values)))
+
+
+def write_gxtb_scale_manifest(
+    mesh: str,
+    base_scales: tuple[float, ...],
+    methods: tuple[str, ...],
+) -> dict[str, object] | None:
+    if "GXTB" not in methods:
+        return None
+    payload: dict[str, object] = {
+        "schema_version": 1,
+        "benchmark": "LC12 (Goldzak12)",
+        "eos_mesh": mesh,
+        "method": "GXTB",
+        "base_scales": list(base_scales),
+        "systems": [
+            {
+                "solid": ref.solid,
+                "method": "GXTB",
+                "requested_scales": list(scales_for(ref.solid, "GXTB", base_scales)),
+                "adaptive_scales": list(adaptive_scales_only(ref.solid, "GXTB")),
+            }
+            for ref in base.REFERENCES
+        ],
+    }
+    path = gxtb_scale_manifest_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    return payload
+
+
+def read_gxtb_scale_manifest() -> dict[str, object] | None:
+    path = gxtb_scale_manifest_path()
+    if not path.exists():
+        return None
+    try:
+        payload = json.loads(path.read_text())
+    except json.JSONDecodeError:
+        return None
+    return payload if payload.get("schema_version") == 1 else None
+
+
+def load_gxtb_classifications(path: Path) -> dict[tuple[str, str, float], dict[str, str]]:
+    """Load explicit branch exclusions/waivers; heuristic candidates never self-resolve."""
+    if not path.exists():
+        return {}
+    payload = json.loads(path.read_text())
+    entries = payload.get("entries", [])
+    refs = {ref.solid for ref in base.REFERENCES}
+    result: dict[tuple[str, str, float], dict[str, str]] = {}
+    for entry in entries:
+        solid = str(entry.get("solid", ""))
+        mesh = str(entry.get("mesh", ""))
+        method = str(entry.get("method", "GXTB"))
+        action = str(entry.get("action", ""))
+        classification = str(entry.get("classification", "")).strip()
+        rationale = str(entry.get("rationale", "")).strip()
+        try:
+            scale = round(float(entry["scale"]), 5)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError(f"Invalid GXTB classification scale: {entry!r}") from exc
+        if solid not in refs or method != "GXTB" or not mesh:
+            raise ValueError(f"Invalid GXTB classification target: {entry!r}")
+        if action not in GXTB_CLASSIFICATION_ACTIONS or not classification or not rationale:
+            raise ValueError(
+                "Every GXTB classification needs action=exclude|retain, classification, and rationale: "
+                f"{entry!r}"
+            )
+        key = (solid, mesh, scale)
+        if key in result:
+            raise ValueError(f"Duplicate GXTB classification: {key}")
+        result[key] = {
+            "action": action,
+            "classification": classification,
+            "rationale": rationale,
+        }
+    return result
+
+
+def gxtb_branch_candidates(
+    points: list[tuple[float, float, float | None, bool]],
+) -> dict[float, float]:
+    """Flag, but never automatically exclude, large local EOS discontinuities."""
+    valid = sorted((scale, float(energy)) for _, scale, energy, ok in points if ok and energy is not None)
+    candidates: dict[float, float] = {}
+    for index in range(1, len(valid) - 1):
+        left_scale, left_energy = valid[index - 1]
+        scale, energy = valid[index]
+        right_scale, right_energy = valid[index + 1]
+        fraction = (scale - left_scale) / (right_scale - left_scale)
+        interpolated = left_energy + fraction * (right_energy - left_energy)
+        residual = abs(energy - interpolated)
+        if residual >= GXTB_BRANCH_DISCONTINUITY_HARTREE:
+            candidates[round(scale, 5)] = residual
+    # Local interpolation cannot diagnose an endpoint.  A jump far larger
+    # than the documented physical LC12 energy span is therefore reported as
+    # an endpoint candidate, still without automatically excluding it.
+    if len(valid) >= 2:
+        for endpoint, neighbor in ((valid[0], valid[1]), (valid[-1], valid[-2])):
+            scale, energy = endpoint
+            jump = abs(energy - neighbor[1])
+            if jump >= CHARGE_COLLAPSE_ENERGY_DROP_HARTREE:
+                candidates[round(scale, 5)] = jump
+    return candidates
+
+
+def scale_tag(scale: float, method: str = "") -> str:
+    # Preserve frozen GFN1/GFN2 paths while giving targeted GXTB points enough
+    # precision to prevent adaptive-grid filename collisions.
+    precision = 5 if method == "GXTB" else 3
+    return f"s{scale:.{precision}f}".replace(".", "p")
 
 
 def eos_project(solid: str, method: str, mesh: str, scale: float) -> str:
-    return f"{solid}_{method}_eos_{mesh}_{scale_tag(scale)}"
+    return f"{solid}_{method}_eos_{mesh}_{scale_tag(scale, method)}"
 
 
 def final_project(solid: str, method: str, mesh: str) -> str:
     return f"{solid}_{method}_eos_final_{mesh}"
 
 
+def final_input_path(solid: str, method: str, mesh: str) -> Path:
+    project = final_project(solid, method, mesh)
+    return ROOT / "runs" / "eos_final_sp" / method / solid / mesh / f"{project}.inp"
+
+
+def final_input_lineage_path(input_path: Path) -> Path:
+    return input_path.with_suffix(input_path.suffix + ".eos.json")
+
+
+def write_final_input_lineage(
+    input_path: Path,
+    fit: dict[str, object],
+    mesh: str,
+    *,
+    valid: bool,
+    reason: str,
+) -> dict[str, object]:
+    payload: dict[str, object] = {
+        "schema_version": FINAL_INPUT_LINEAGE_SCHEMA,
+        "benchmark": "LC12 (Goldzak12)",
+        "valid": valid,
+        "reason": reason,
+        "solid": str(fit.get("solid", "")),
+        "method": str(fit.get("method", "")),
+        "eos_mesh": str(fit.get("eos_mesh", "")),
+        "energy_mesh": mesh,
+        "fit_status": str(fit.get("fit_status", "")),
+        "a_eos_A": str(fit.get("a_eos_A", "")),
+        "input": str(input_path.resolve()),
+        "input_sha256": base.sha256(input_path) if input_path.is_file() else "",
+        "kpoint_mesh_contract": base.KPOINT_MESH_CONTRACT,
+    }
+    path = final_input_lineage_path(input_path)
+    base.write_file(path, json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    return payload
+
+
+def final_input_lineage_issue(
+    input_path: Path, fit: dict[str, object], mesh: str
+) -> str | None:
+    """Return why a GXTB final input is not derived from the current EOS fit."""
+    if not input_path.is_file():
+        return f"missing final input {input_path}"
+    lineage_path = final_input_lineage_path(input_path)
+    if not lineage_path.is_file():
+        return f"missing EOS lineage for {input_path}"
+    try:
+        lineage = json.loads(lineage_path.read_text())
+    except (json.JSONDecodeError, OSError) as exc:
+        return f"invalid EOS lineage for {input_path}: {exc}"
+    expected = {
+        "schema_version": FINAL_INPUT_LINEAGE_SCHEMA,
+        "valid": True,
+        "solid": str(fit.get("solid", "")),
+        "method": "GXTB",
+        "eos_mesh": str(fit.get("eos_mesh", "")),
+        "energy_mesh": mesh,
+        "fit_status": "quadratic",
+        "a_eos_A": str(fit.get("a_eos_A", "")),
+        "input_sha256": base.sha256(input_path),
+        "kpoint_mesh_contract": base.KPOINT_MESH_CONTRACT,
+    }
+    for key, value in expected.items():
+        if lineage.get(key) != value:
+            return f"EOS lineage {key} mismatch for {input_path}"
+    refs = {ref.solid: ref for ref in base.REFERENCES}
+    solid = str(fit.get("solid", ""))
+    if solid not in refs or not fit.get("a_eos_A"):
+        return f"invalid EOS fit identity for {input_path}"
+    project = final_project(solid, "GXTB", mesh)
+    expected_text = base.solid_input(
+        refs[solid], "GXTB", "ENERGY", mesh, float(fit["a_eos_A"]), project
+    )
+    if input_path.read_text() != expected_text:
+        return f"final input does not match the current EOS minimum for {input_path}"
+    try:
+        base.validate_method_input(input_path.read_text(), "GXTB")
+    except ValueError as exc:
+        return str(exc)
+    return None
+
+
+def invalidate_existing_gxtb_final_inputs(
+    fits: list[dict[str, object]], meshes: list[str]
+) -> None:
+    """Mark pre-fit/reference-cell final inputs unusable until regenerated."""
+    for fit in fits:
+        if fit.get("method") != "GXTB":
+            continue
+        valid_fit = bool(fit.get("a_eos_A")) and fit.get("fit_status") == "quadratic"
+        for mesh in meshes:
+            input_path = final_input_path(str(fit["solid"]), "GXTB", mesh)
+            if not input_path.is_file():
+                continue
+            if valid_fit and final_input_lineage_issue(input_path, fit, mesh) is None:
+                continue
+            reason = (
+                "awaiting regeneration from the current quadratic EOS minimum"
+                if valid_fit
+                else "no valid quadratic EOS minimum; reference-cell/stale input is not runnable"
+            )
+            write_final_input_lineage(input_path, fit, mesh, valid=False, reason=reason)
+
+
 def scales_for(solid: str, method: str, scales: tuple[float, ...]) -> tuple[float, ...]:
     return tuple(sorted(set(scales) | set(ADAPTIVE_SCALES.get((solid, method), ()))))
 
 
-def eos_job_specs(mesh: str, scales: tuple[float, ...]) -> list[tuple[str, Path, Path, bool]]:
+def eos_job_specs(
+    mesh: str, scales: tuple[float, ...], methods: tuple[str, ...] = base.METHODS
+) -> list[tuple[str, Path, Path, bool]]:
     specs: list[tuple[str, Path, Path, bool]] = []
     for ref in base.REFERENCES:
-        for method in base.METHODS:
+        for method in methods:
             for scale in scales_for(ref.solid, method, scales):
                 project = eos_project(ref.solid, method, mesh, scale)
                 a = ref.a_exp * scale
-                run_dir = ROOT / "runs" / "eos" / method / ref.solid / mesh / scale_tag(scale)
+                run_dir = ROOT / "runs" / "eos" / method / ref.solid / mesh / scale_tag(scale, method)
                 inp = run_dir / f"{project}.inp"
                 out = run_dir / f"{project}.out"
                 text = base.solid_input(ref, method, "ENERGY", mesh, a, project)
                 base.write_file(inp, text)
-                specs.append((f"eos {method} {ref.solid} {mesh} {scale_tag(scale)}", inp, out, False))
+                specs.append((f"eos {method} {ref.solid} {mesh} {scale_tag(scale, method)}", inp, out, False))
     return specs
 
 
@@ -102,13 +360,22 @@ def read_strategy(output: Path) -> str:
         return "unknown"
 
 
-def output_charge_collapsed(output: Path) -> bool:
+def output_charge_collapsed(output: Path, method: str) -> bool:
+    if method != "GFN2":
+        return False
     energy = base.parse_energy(output)
     return energy is not None and energy < CATASTROPHIC_CHARGE_COLLAPSE_ENERGY_HARTREE
 
 
-def usable_output_ok(output: Path, require_opt: bool = False) -> bool:
-    return base.output_ok(output, require_opt=require_opt) and not output_charge_collapsed(output)
+def usable_output_ok(output: Path, method: str, require_opt: bool = False) -> bool:
+    return base.output_ok(output, require_opt=require_opt) and not output_charge_collapsed(output, method)
+
+
+def spec_method(spec: tuple[str, Path, Path, bool]) -> str:
+    parts = spec[0].split()
+    if len(parts) < 2 or parts[1] not in base.METHODS:
+        raise ValueError(f"Cannot determine method from job label {spec[0]!r}")
+    return parts[1]
 
 
 def retries_exhausted(output: Path) -> bool:
@@ -151,25 +418,52 @@ def run_jobs(
     threads: int,
     force: bool,
     retry_scf: bool = True,
+    campaign_fingerprint: dict[str, object] | None = None,
 ) -> None:
-    pending = [
-        spec
-        for spec in specs
-        if force
-        or (
-            not usable_output_ok(spec[2], require_opt=spec[3])
-            and not retries_exhausted(spec[2])
+    cp2k_identity = base.executable_fingerprint(cp2k)
+
+    def signature(spec: tuple[str, Path, Path, bool]) -> dict[str, object]:
+        return base.job_signature(
+            cp2k,
+            spec[1],
+            command_contract={"driver": "cp2k", "omp_threads": threads},
+            executable_identity=cp2k_identity,
+            campaign_fingerprint=campaign_fingerprint,
         )
-    ]
+
+    pending: list[tuple[str, Path, Path, bool]] = []
+    exhausted_before_run: list[tuple[str, Path, Path, bool]] = []
+    for spec in specs:
+        method = spec_method(spec)
+        if method == "GXTB" and campaign_fingerprint is None:
+            raise ValueError("GXTB EOS jobs require a validated campaign fingerprint")
+        base.validate_method_input(spec[1].read_text(), method)
+        usable = usable_output_ok(spec[2], method, require_opt=spec[3])
+        stamped = method != "GXTB" or base.job_stamp_matches(spec[2], signature(spec))
+        if not force and usable and stamped:
+            continue
+        if not force and method != "GXTB" and retries_exhausted(spec[2]):
+            exhausted_before_run.append(spec)
+            continue
+        pending.append(spec)
     if not pending:
+        if exhausted_before_run:
+            raise RuntimeError(
+                "Previously exhausted CP2K SCF retries remain unresolved: "
+                + ", ".join(sorted(spec[0] for spec in exhausted_before_run))
+            )
         print("No EOS jobs pending.")
         return
 
     def worker(spec: tuple[str, Path, Path, bool]) -> tuple[str, int, bool, tuple[str, Path, Path, bool]]:
         label, inp, out, require_opt = spec
+        method = spec_method(spec)
         code = base.run_cp2k(cp2k, inp, out, threads)
-        ok = usable_output_ok(out, require_opt=require_opt)
-        write_strategy(out, "default_tblite_mixer", ok)
+        ok = usable_output_ok(out, method, require_opt=require_opt)
+        strategy = "native_gxtb_fdiis" if method == "GXTB" else "default_tblite_mixer"
+        write_strategy(out, strategy, ok)
+        if method == "GXTB":
+            base.write_job_stamp(out, signature(spec), completed=ok, return_code=code)
         return label, code, ok, spec
 
     print(f"Running {len(pending)} CP2K jobs with {jobs} worker(s), OMP_NUM_THREADS={threads}.")
@@ -185,14 +479,25 @@ def run_jobs(
             if not ok:
                 failed.append(spec)
 
-    if not retry_scf or not failed:
-        return
+    gxtb_failed = [spec for spec in failed if spec_method(spec) == "GXTB"]
+    terminal_failed = exhausted_before_run + gxtb_failed
+    if gxtb_failed:
+        print(
+            "Native g-XTB FDIIS did not converge for: "
+            + ", ".join(spec[0] for spec in gxtb_failed)
+            + "; no alternative mixer retry is permitted by the production protocol.",
+            file=sys.stderr,
+        )
+    failed = [spec for spec in failed if spec_method(spec) != "GXTB"]
+    if not retry_scf:
+        terminal_failed.extend(failed)
+        failed = []
 
     profiles = (
         ("retry_m1_d005", 1200, 1, 0.05),
         ("retry_m1_d001", 2400, 1, 0.01),
     )
-    for profile, iterations, memory, damping in profiles:
+    for profile, iterations, memory, damping in profiles if retry_scf else ():
         if not failed:
             break
         print(
@@ -204,7 +509,7 @@ def run_jobs(
             label, inp, out, require_opt = spec
             robust_inp = retry_input(inp, iterations, memory, damping, profile)
             code = base.run_cp2k(cp2k, robust_inp, out, threads)
-            ok = usable_output_ok(out, require_opt=require_opt)
+            ok = usable_output_ok(out, spec_method(spec), require_opt=require_opt)
             write_strategy(out, profile, ok)
             return label, code, ok, spec
 
@@ -223,6 +528,12 @@ def run_jobs(
 
     if failed:
         print("SCF retries exhausted for: " + ", ".join(spec[0] for spec in failed), file=sys.stderr)
+        terminal_failed.extend(failed)
+    if terminal_failed:
+        raise RuntimeError(
+            f"{len(terminal_failed)} CP2K job(s) failed after preserving completed jobs: "
+            + ", ".join(sorted(spec[0] for spec in terminal_failed))
+        )
 
 
 def load_eos_points(
@@ -230,13 +541,25 @@ def load_eos_points(
     method: str,
     mesh: str,
     scales: tuple[float, ...],
+    campaign_fingerprint: dict[str, object] | None = None,
 ) -> list[tuple[float, float, float | None, bool]]:
     points: list[tuple[float, float, float | None, bool]] = []
     for scale in scales:
         project = eos_project(ref.solid, method, mesh, scale)
-        out = ROOT / "runs" / "eos" / method / ref.solid / mesh / scale_tag(scale) / f"{project}.out"
+        out = ROOT / "runs" / "eos" / method / ref.solid / mesh / scale_tag(scale, method) / f"{project}.out"
         energy = base.parse_energy(out)
         ok = base.output_ok(out)
+        if method == "GXTB":
+            if campaign_fingerprint is None:
+                raise ValueError("GXTB EOS collection requires a campaign fingerprint")
+            issue = base.completed_stamp_campaign_issue(
+                out,
+                campaign_fingerprint,
+                executable_role="cp2k",
+                require_completed=ok,
+            )
+            if issue:
+                raise RuntimeError(issue)
         points.append((ref.a_exp * scale, scale, energy, ok))
     return sorted(points)
 
@@ -322,20 +645,100 @@ def fit_eos(points: list[tuple[float, float, float, bool]]) -> dict[str, object]
     }
 
 
-def make_eos_table(mesh: str, scales: tuple[float, ...]) -> list[dict[str, object]]:
+def gxtb_topology_reversals(
+    points: list[tuple[float, float, float, bool]],
+    tolerance_hartree: float = GXTB_TOPOLOGY_TOLERANCE_HARTREE,
+) -> list[tuple[float, float, float]]:
+    """Return energy-direction reversals relative to the sampled global minimum.
+
+    A single-well EOS must decrease monotonically towards its sampled global
+    minimum and increase monotonically away from it. This catches a lower
+    compressed branch plus a higher local well even when a local quadratic fit
+    happens to look acceptable. Adaptive points cannot remove an existing
+    reversal; only an explicitly reviewed point exclusion can change the set
+    passed to this gate.
+    """
+    ordered = sorted(
+        (float(a), float(scale), float(energy))
+        for a, scale, energy, ok in points
+        if ok and energy is not None
+    )
+    if len(ordered) < 3:
+        return []
+    global_index = min(range(len(ordered)), key=lambda index: ordered[index][2])
+    reversals: list[tuple[float, float, float]] = []
+    for index in range(global_index):
+        delta = ordered[index + 1][2] - ordered[index][2]
+        if delta > tolerance_hartree:
+            reversals.append((ordered[index][1], ordered[index + 1][1], delta))
+    for index in range(global_index, len(ordered) - 1):
+        delta = ordered[index + 1][2] - ordered[index][2]
+        if delta < -tolerance_hartree:
+            reversals.append((ordered[index][1], ordered[index + 1][1], delta))
+    return reversals
+
+
+def fit_gxtb_eos(points: list[tuple[float, float, float, bool]]) -> dict[str, object]:
+    """Fit a GXTB EOS only after enforcing a sampled single-well topology."""
+    reversals = gxtb_topology_reversals(points)
+    if not reversals:
+        return fit_eos(points)
+    ordered = sorted(
+        (float(a), float(scale), float(energy))
+        for a, scale, energy, ok in points
+        if ok and energy is not None
+    )
+    global_minimum = min(ordered, key=lambda point: point[2])
+    return {
+        "a_eos_A": "",
+        "energy_fit_hartree": "",
+        "fit_status": "nonmonotonic_branch",
+        "n_points": len(ordered),
+        "grid_min_a_A": f"{global_minimum[0]:.10f}",
+        "grid_min_scale": f"{global_minimum[1]:.5f}",
+        "grid_min_energy_hartree": f"{global_minimum[2]:.12f}",
+        "topology_reversal_count": len(reversals),
+        "topology_max_reversal_hartree": f"{max(abs(item[2]) for item in reversals):.12f}",
+    }
+
+
+def make_eos_table(
+    mesh: str,
+    scales: tuple[float, ...],
+    methods: tuple[str, ...] = base.METHODS,
+    classifications: dict[tuple[str, str, float], dict[str, str]] | None = None,
+    campaign_fingerprint: dict[str, object] | None = None,
+) -> list[dict[str, object]]:
+    classifications = classifications or {}
     rows: list[dict[str, object]] = []
     point_rows: list[dict[str, object]] = []
+    branch_rows: list[dict[str, object]] = []
+    unresolved_templates: list[dict[str, object]] = []
     for ref in base.REFERENCES:
-        for method in base.METHODS:
+        for method in methods:
             requested_scales = scales_for(ref.solid, method, scales)
-            all_points = load_eos_points(ref, method, mesh, requested_scales)
-            collapsed_scales = charge_collapsed_scales(all_points)
+            all_points = load_eos_points(
+                ref, method, mesh, requested_scales, campaign_fingerprint
+            )
+            legacy_collapsed_scales = (
+                charge_collapsed_scales(all_points) if method == "GFN2" else set()
+            )
+            candidates = gxtb_branch_candidates(all_points) if method == "GXTB" else {}
+            explicit = {
+                scale: classifications[(ref.solid, mesh, scale)]
+                for scale in (round(value, 5) for value in requested_scales)
+                if (ref.solid, mesh, scale) in classifications
+            }
+            explicit_excluded_scales = {
+                scale for scale, entry in explicit.items() if entry["action"] == "exclude"
+            }
+            excluded_scales = legacy_collapsed_scales | explicit_excluded_scales
             points = [
                 (a, scale, energy, ok)
                 for a, scale, energy, ok in all_points
-                if energy is not None and ok and scale not in collapsed_scales
+                if energy is not None and ok and round(scale, 5) not in excluded_scales
             ]
-            fit = fit_eos(points)
+            fit = fit_gxtb_eos(points) if method == "GXTB" else fit_eos(points)
             rows.append(
                 {
                     "solid": ref.solid,
@@ -346,14 +749,50 @@ def make_eos_table(mesh: str, scales: tuple[float, ...]) -> list[dict[str, objec
                     "n_requested": len(requested_scales),
                     "n_completed": len(points),
                     "n_converged_raw": sum(ok and energy is not None for _, _, energy, ok in all_points),
-                    "n_charge_collapsed": len(collapsed_scales),
+                    "n_charge_collapsed": len(legacy_collapsed_scales)
+                    + sum(
+                        entry["classification"] == "charge_collapse"
+                        and entry["action"] == "exclude"
+                        for entry in explicit.values()
+                    ),
+                    "n_explicit_excluded": len(explicit_excluded_scales),
+                    "n_unresolved_branch_candidates": sum(
+                        scale not in explicit for scale in candidates
+                    ),
                     **fit,
                 }
             )
             for a, scale, energy, ok in all_points:
+                normalized_scale = round(scale, 5)
                 project = eos_project(ref.solid, method, mesh, scale)
-                output = ROOT / "runs" / "eos" / method / ref.solid / mesh / scale_tag(scale) / f"{project}.out"
-                charge_collapsed = scale in collapsed_scales
+                output = ROOT / "runs" / "eos" / method / ref.solid / mesh / scale_tag(scale, method) / f"{project}.out"
+                entry = explicit.get(normalized_scale)
+                candidate_residual = candidates.get(normalized_scale)
+                excluded = normalized_scale in excluded_scales
+                if not ok:
+                    if entry is not None and entry["action"] == "exclude":
+                        diagnostic = entry["classification"]
+                        resolution = "explicit_failure_classification"
+                    else:
+                        diagnostic = "scf_failure"
+                        resolution = "failed_job"
+                elif energy is None:
+                    diagnostic = "missing_energy"
+                    resolution = "failed_job"
+                elif entry is not None:
+                    diagnostic = entry["classification"]
+                    resolution = (
+                        "explicit_exclusion" if entry["action"] == "exclude" else "explicit_waiver"
+                    )
+                elif candidate_residual is not None:
+                    diagnostic = "branch_discontinuity_candidate"
+                    resolution = "unresolved_candidate"
+                elif normalized_scale in legacy_collapsed_scales:
+                    diagnostic = "charge_collapse"
+                    resolution = "legacy_automatic_filter"
+                else:
+                    diagnostic = ""
+                    resolution = ""
                 point_rows.append(
                     {
                         "solid": ref.solid,
@@ -363,14 +802,210 @@ def make_eos_table(mesh: str, scales: tuple[float, ...]) -> list[dict[str, objec
                         "a_A": f"{a:.10f}",
                         "energy_hartree": f"{energy:.12f}" if energy is not None else "",
                         "completed": ok,
-                        "valid_for_eos": ok and not charge_collapsed,
-                        "diagnostic": "charge_collapse" if charge_collapsed else "",
+                        "valid_for_eos": ok and energy is not None and not excluded,
+                        "diagnostic": diagnostic,
+                        "classification_resolution": resolution,
+                        "classification_rationale": entry["rationale"] if entry is not None else "",
                         "scf_strategy": read_strategy(output),
                     }
                 )
-    base.write_csv(ROOT / "data" / "eos_points.csv", point_rows)
-    base.write_csv(ROOT / "data" / "eos_fits.csv", rows)
+                if method == "GXTB" and (candidate_residual is not None or entry is not None):
+                    branch_rows.append(
+                        {
+                            "solid": ref.solid,
+                            "method": method,
+                            "mesh": mesh,
+                            "scale": f"{scale:.5f}",
+                            "automatic_candidate": candidate_residual is not None,
+                            "interpolation_residual_hartree": (
+                                f"{candidate_residual:.12f}" if candidate_residual is not None else ""
+                            ),
+                            "classification": entry["classification"] if entry is not None else "",
+                            "action": entry["action"] if entry is not None else "",
+                            "rationale": entry["rationale"] if entry is not None else "",
+                            "resolution": resolution,
+                            "interpretation": (
+                                "numerical branch candidate; not a physical failure until explicitly classified"
+                            ),
+                        }
+                    )
+                    if entry is None:
+                        unresolved_templates.append(
+                            {
+                                "solid": ref.solid,
+                                "method": "GXTB",
+                                "mesh": mesh,
+                                "scale": scale,
+                                "classification": "",
+                                "action": "",
+                                "rationale": "",
+                            }
+                        )
+    base.merge_method_rows(
+        ROOT / "data" / "eos_points.csv",
+        point_rows,
+        methods,
+        sort_key=lambda row: (
+            [ref.solid for ref in base.REFERENCES].index(str(row["solid"])),
+            base.METHODS.index(str(row["method"])),
+            float(row["scale"]),
+        ),
+    )
+    base.merge_method_rows(
+        ROOT / "data" / "eos_fits.csv",
+        rows,
+        methods,
+        sort_key=lambda row: (
+            [ref.solid for ref in base.REFERENCES].index(str(row["solid"])),
+            base.METHODS.index(str(row["method"])),
+        ),
+    )
+    if "GXTB" in methods:
+        base.write_csv(ROOT / "data" / "gxtb_eos_branch_diagnostics.csv", branch_rows)
+        candidate_path = ROOT / "data" / "gxtb_eos_classification_candidates.json"
+        candidate_path.parent.mkdir(parents=True, exist_ok=True)
+        candidate_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "instructions": (
+                        "Copy reviewed entries to gxtb_eos_classifications.json and set action "
+                        "to exclude or retain plus a nonempty classification and rationale."
+                    ),
+                    "entries": unresolved_templates,
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n"
+        )
     return rows
+
+
+def suggested_adaptive_scales(row: dict[str, object], requested: tuple[float, ...]) -> tuple[float, ...]:
+    ordered = sorted(set(requested))
+    grid_text = str(row.get("grid_min_scale", ""))
+    grid = float(grid_text) if grid_text else 1.0
+    if not ordered:
+        return (0.98, 1.00, 1.02)
+    index = min(range(len(ordered)), key=lambda idx: abs(ordered[idx] - grid))
+    suggestions: set[float] = set()
+    if index > 0:
+        suggestions.add((ordered[index - 1] + ordered[index]) / 2.0)
+    else:
+        step = ordered[1] - ordered[0] if len(ordered) > 1 else 0.04
+        suggestions.add(max(0.01, ordered[0] - step / 2.0))
+    if index + 1 < len(ordered):
+        suggestions.add((ordered[index] + ordered[index + 1]) / 2.0)
+    else:
+        step = ordered[-1] - ordered[-2] if len(ordered) > 1 else 0.04
+        suggestions.add(ordered[-1] + step / 2.0)
+    # A second pair close to the apparent minimum helps distinguish a narrow
+    # smooth well from an SCC branch switch.
+    local_step = min(
+        (abs(value - grid) for value in ordered if abs(value - grid) > 1.0e-8),
+        default=0.04,
+    )
+    suggestions.update({max(0.01, grid - local_step / 3.0), grid + local_step / 3.0})
+    return tuple(
+        sorted(round(value, 5) for value in suggestions if round(value, 5) not in ordered)
+    )
+
+
+def write_gxtb_adaptive_followup(
+    fits: list[dict[str, object]], scales: tuple[float, ...]
+) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for fit in fits:
+        if fit.get("method") != "GXTB" or fit.get("fit_status") == "quadratic":
+            continue
+        solid = str(fit["solid"])
+        requested = scales_for(solid, "GXTB", scales)
+        suggestions = suggested_adaptive_scales(fit, requested)
+        command_args = " ".join(f"--adaptive-scale {solid}={value:.5f}" for value in suggestions)
+        rows.append(
+            {
+                "solid": solid,
+                "method": "GXTB",
+                "fit_status": fit.get("fit_status", ""),
+                "n_requested": fit.get("n_requested", ""),
+                "n_completed": fit.get("n_completed", ""),
+                "grid_min_scale": fit.get("grid_min_scale", ""),
+                "classification": "requires_adaptive_investigation",
+                "interpretation": "numerical EOS/branch investigation required; not a physical failure",
+                "suggested_scales": ";".join(f"{value:.5f}" for value in suggestions),
+                "adaptive_investigated": bool(adaptive_scales_only(solid, "GXTB")),
+                "rerun_arguments": command_args,
+            }
+        )
+    base.write_csv(ROOT / "data" / "gxtb_adaptive_followup.csv", rows)
+    lines = [
+        "# GXTB adaptive EOS follow-up",
+        "",
+        "These entries are numerical EOS/branch diagnostics, not physical failures.",
+        "Review `gxtb_eos_branch_diagnostics.csv`, run the suggested scales, and classify/waive",
+        "every branch candidate explicitly in `gxtb_eos_classifications.json`.",
+        "",
+    ]
+    if not rows:
+        lines.append("No invalid GXTB EOS fits were detected.")
+    else:
+        lines += [
+            "| solid | fit status | adaptive attempted | suggested scales |",
+            "|---|---|---:|---|",
+        ]
+        for row in rows:
+            lines.append(
+                f"| {row['solid']} | {row['fit_status']} | {row['adaptive_investigated']} | "
+                f"{row['suggested_scales']} |"
+            )
+    path = ROOT / "data" / "gxtb_adaptive_followup.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines) + "\n")
+    return rows
+
+
+def enforce_gxtb_coverage(
+    fits: list[dict[str, object]],
+    followup: list[dict[str, object]],
+    *,
+    allow_reduced_coverage: bool,
+    minimum_valid_fits: int = MINIMUM_REDUCED_GXTB_FITS,
+) -> None:
+    gxtb_fits = [row for row in fits if row.get("method") == "GXTB"]
+    if not gxtb_fits:
+        return
+    branch_path = ROOT / "data" / "gxtb_eos_branch_diagnostics.csv"
+    branch_rows = base.read_csv(branch_path)
+    unresolved = [row for row in branch_rows if row.get("resolution") == "unresolved_candidate"]
+    if unresolved:
+        labels = ", ".join(f"{row['solid']}@{row['scale']}" for row in unresolved)
+        raise RuntimeError(
+            "Unresolved GXTB SCC-branch candidates require an explicit exclude/retain entry "
+            f"with rationale in {gxtb_classification_manifest_path()}: {labels}"
+        )
+    valid = [row for row in gxtb_fits if row.get("fit_status") == "quadratic"]
+    invalid = [row for row in gxtb_fits if row.get("fit_status") != "quadratic"]
+    if not invalid:
+        return
+    labels = ", ".join(f"{row['solid']}={row['fit_status']}" for row in invalid)
+    if not allow_reduced_coverage:
+        raise RuntimeError(
+            "Invalid GXTB EOS curves require adaptive follow-up before final single points: "
+            + labels
+            + ". See data/gxtb_adaptive_followup.csv; use --allow-reduced-coverage only after investigation."
+        )
+    if len(valid) < minimum_valid_fits:
+        raise RuntimeError(
+            f"Reduced GXTB coverage is not meaningful: {len(valid)} valid quadratic fits, "
+            f"minimum {minimum_valid_fits}."
+        )
+    not_investigated = [row for row in followup if not truth(row["adaptive_investigated"])]
+    if not_investigated:
+        raise RuntimeError(
+            "--allow-reduced-coverage requires adaptive scales for every invalid GXTB curve: "
+            + ", ".join(str(row["solid"]) for row in not_investigated)
+        )
 
 
 def final_sp_specs(fits: list[dict[str, object]], meshes: list[str]) -> list[tuple[str, Path, Path, bool]]:
@@ -378,27 +1013,74 @@ def final_sp_specs(fits: list[dict[str, object]], meshes: list[str]) -> list[tup
     specs: list[tuple[str, Path, Path, bool]] = []
     for row in fits:
         a_text = row.get("a_eos_A", "")
-        if a_text == "":
+        if a_text == "" or (row.get("method") == "GXTB" and row.get("fit_status") != "quadratic"):
             continue
         ref = refs[str(row["solid"])]
         method = str(row["method"])
         a = float(a_text)
+        if method == "GXTB" and not row.get("eos_mesh"):
+            raise ValueError(f"GXTB final input for {ref.solid} lacks its EOS mesh provenance")
         for mesh in meshes:
             project = final_project(ref.solid, method, mesh)
             run_dir = ROOT / "runs" / "eos_final_sp" / method / ref.solid / mesh
             inp = run_dir / f"{project}.inp"
             out = run_dir / f"{project}.out"
             base.write_file(inp, base.solid_input(ref, method, "ENERGY", mesh, a, project))
+            if method == "GXTB":
+                write_final_input_lineage(
+                    inp,
+                    row,
+                    mesh,
+                    valid=True,
+                    reason="generated from the current quadratic EOS minimum",
+                )
             specs.append((f"eos-final {method} {ref.solid} {mesh}", inp, out, False))
     return specs
 
 
-def collect_results(fits: list[dict[str, object]], result_meshes: list[str], result_mesh: str) -> tuple[list[dict[str, object]], list[dict[str, object]], list[dict[str, object]]]:
+GXTB_FIT_APPROVAL_FIELDS = (
+    "solid",
+    "method",
+    "eos_mesh",
+    "a_eos_A",
+    "energy_fit_hartree",
+    "fit_status",
+    "fit_rmse_hartree",
+    "n_requested",
+    "n_completed",
+    "n_converged_raw",
+    "n_explicit_excluded",
+    "n_unresolved_branch_candidates",
+    "topology_reversal_count",
+    "topology_max_reversal_hartree",
+)
+
+
+def gxtb_fit_approval_sha256(fits: list[dict[str, object]]) -> str:
+    records = [
+        {field: str(row.get(field, "")) for field in GXTB_FIT_APPROVAL_FIELDS}
+        for row in fits
+        if row.get("method") == "GXTB"
+    ]
+    records.sort(key=lambda row: row["solid"])
+    payload = json.dumps(records, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode()).hexdigest()
+
+
+def collect_results(
+    fits: list[dict[str, object]],
+    result_meshes: list[str],
+    result_mesh: str,
+    methods: tuple[str, ...] = base.METHODS,
+    campaign_fingerprint: dict[str, object] | None = None,
+) -> tuple[list[dict[str, object]], list[dict[str, object]], list[dict[str, object]]]:
     refs = {ref.solid: ref for ref in base.REFERENCES}
-    atom_e = base.atom_energies()
+    atom_e = base.atom_energies(methods, campaign_fingerprint)
     rows: list[dict[str, object]] = []
     for fit in fits:
-        if not fit.get("a_eos_A"):
+        if not fit.get("a_eos_A") or (
+            fit.get("method") == "GXTB" and fit.get("fit_status") != "quadratic"
+        ):
             continue
         ref = refs[str(fit["solid"])]
         method = str(fit["method"])
@@ -411,6 +1093,17 @@ def collect_results(fits: list[dict[str, object]], result_meshes: list[str], res
         for mesh in result_meshes:
             project = final_project(ref.solid, method, mesh)
             out = ROOT / "runs" / "eos_final_sp" / method / ref.solid / mesh / f"{project}.out"
+            if method == "GXTB":
+                if campaign_fingerprint is None:
+                    raise ValueError("GXTB final collection requires a campaign fingerprint")
+                issue = base.completed_stamp_campaign_issue(
+                    out,
+                    campaign_fingerprint,
+                    executable_role="cp2k",
+                    require_completed=base.output_ok(out),
+                )
+                if issue:
+                    raise RuntimeError(issue)
             e_solid = base.parse_energy(out)
             ecoh = (atom_sum - e_solid) * base.HARTREE_TO_EV / n_atoms if atom_sum is not None and e_solid is not None else None
             rows.append(
@@ -432,7 +1125,7 @@ def collect_results(fits: list[dict[str, object]], result_meshes: list[str], res
                     "ecoh_error_eV_per_atom": f"{(ecoh - ref.ecoh_exp):.8f}" if ecoh is not None else "",
                     "ecoh_abs_error_eV_per_atom": f"{abs(ecoh - ref.ecoh_exp):.8f}" if ecoh is not None else "",
                     "solid_energy_hartree": f"{e_solid:.12f}" if e_solid is not None else "",
-                    "atom_reference_source": "tblite_cli",
+                    "atom_reference_source": "save_tblite_cli" if method == "GXTB" else "tblite_cli",
                     "a_HF_A": ref.a_hf,
                     "a_MP2_A": ref.a_mp2,
                     "a_SCS_MP2_A": ref.a_scs_mp2,
@@ -443,27 +1136,62 @@ def collect_results(fits: list[dict[str, object]], result_meshes: list[str], res
                     "ecoh_SOS_MP2_eV_per_atom": ref.ecoh_sos_mp2,
                 }
             )
-    base.write_csv(ROOT / "data" / "eos_results.csv", rows)
-    summary = summary_rows(rows, result_mesh)
+    rows = base.merge_method_rows(
+        ROOT / "data" / "eos_results.csv",
+        rows,
+        methods,
+        sort_key=lambda row: (
+            [ref.solid for ref in base.REFERENCES].index(str(row["solid"])),
+            base.METHODS.index(str(row["method"])),
+            str(row["energy_mesh"]),
+        ),
+    )
+    summary = summary_rows(rows, result_mesh, methods)
     lit_summary = literature_summary()
     base.write_csv(ROOT / "data" / "eos_summary.csv", summary + lit_summary)
     convergence = kpoint_convergence(rows)
     base.write_csv(ROOT / "data" / "eos_kpoint_convergence.csv", convergence)
-    write_markdown(rows, summary, lit_summary, convergence, result_mesh, fits)
+    common_summary, common_solids = common_subset_summary(rows, result_mesh, methods)
+    base.write_csv(ROOT / "data" / "eos_common_subset_summary.csv", common_summary)
+    base.write_csv(
+        ROOT / "data" / "eos_common_subset_systems.csv",
+        [{"solid": solid} for solid in common_solids],
+    )
+    all_fits = [dict(row) for row in base.read_csv(ROOT / "data" / "eos_fits.csv")]
+    write_markdown(rows, summary, lit_summary, convergence, result_mesh, all_fits, common_summary, common_solids)
     plot(rows, summary, lit_summary, result_mesh)
-    plot_eos_diagnostics(fits)
+    plot_eos_diagnostics(all_fits)
     return rows, summary, convergence
 
 
-def summary_rows(rows: list[dict[str, object]], result_mesh: str) -> list[dict[str, object]]:
+def truth(value: object) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() == "true"
+
+
+def summary_rows(
+    rows: list[dict[str, object]],
+    result_mesh: str,
+    required_methods: tuple[str, ...] = (),
+) -> list[dict[str, object]]:
     summary: list[dict[str, object]] = []
-    for method in base.METHODS:
-        selected = [r for r in rows if r["method"] == method and r["energy_mesh"] == result_mesh and r["sp_completed"]]
+    available_methods = tuple(
+        method
+        for method in base.METHODS
+        if method in required_methods or any(r["method"] == method for r in rows)
+    )
+    for method in available_methods:
+        selected = [
+            r
+            for r in rows
+            if r["method"] == method and r["energy_mesh"] == result_mesh and truth(r["sp_completed"])
+        ]
         a_err = [float(r["a_error_A"]) for r in selected if r["a_error_A"] != ""]
         e_err = [float(r["ecoh_error_eV_per_atom"]) for r in selected if r["ecoh_error_eV_per_atom"] != ""]
         summary.append(
             {
-                "source": "CP2K/tblite EOS",
+                "source": "CP2K/save_tblite EOS" if method == "GXTB" else "CP2K/tblite EOS",
                 "method": method,
                 "n_complete": len(selected),
                 "a_ME_A": mean(a_err),
@@ -475,6 +1203,53 @@ def summary_rows(rows: list[dict[str, object]], result_mesh: str) -> list[dict[s
             }
         )
     return summary
+
+
+def common_subset_summary(
+    rows: list[dict[str, object]],
+    result_mesh: str,
+    required_methods: tuple[str, ...] = (),
+) -> tuple[list[dict[str, object]], tuple[str, ...]]:
+    methods = tuple(
+        method
+        for method in base.METHODS
+        if method in required_methods or any(r["method"] == method for r in rows)
+    )
+    valid_by_method: dict[str, set[str]] = {}
+    by_key: dict[tuple[str, str], dict[str, object]] = {}
+    for method in methods:
+        selected = [
+            row
+            for row in rows
+            if row["method"] == method
+            and row["energy_mesh"] == result_mesh
+            and truth(row["sp_completed"])
+            and row.get("a_error_A", "") != ""
+            and row.get("ecoh_error_eV_per_atom", "") != ""
+        ]
+        valid_by_method[method] = {str(row["solid"]) for row in selected}
+        by_key.update({(str(row["solid"]), method): row for row in selected})
+    common = set.intersection(*(valid_by_method[method] for method in methods)) if methods else set()
+    ordered = tuple(ref.solid for ref in base.REFERENCES if ref.solid in common)
+    summary: list[dict[str, object]] = []
+    for method in methods:
+        method_rows = [by_key[(solid, method)] for solid in ordered]
+        a_err = [float(row["a_error_A"]) for row in method_rows]
+        e_err = [float(row["ecoh_error_eV_per_atom"]) for row in method_rows]
+        summary.append(
+            {
+                "method": method,
+                "n_common": len(ordered),
+                "systems": ";".join(ordered),
+                "a_ME_A": mean(a_err),
+                "a_MAE_A": mae(a_err),
+                "a_RMSE_A": rmse(a_err),
+                "ecoh_ME_eV_per_atom": mean(e_err),
+                "ecoh_MAE_eV_per_atom": mae(e_err),
+                "ecoh_RMSE_eV_per_atom": rmse(e_err),
+            }
+        )
+    return summary, ordered
 
 
 def literature_summary() -> list[dict[str, object]]:
@@ -549,6 +1324,8 @@ def write_markdown(
     convergence: list[dict[str, object]],
     result_mesh: str,
     fits: list[dict[str, object]],
+    common_summary: list[dict[str, object]],
+    common_solids: tuple[str, ...],
 ) -> None:
     selected = [r for r in rows if r["energy_mesh"] == result_mesh]
     by_key = {(r["solid"], r["method"]): r for r in selected}
@@ -566,13 +1343,16 @@ def write_markdown(
     fit_labels = {
         "no_local_minimum": "no bracketed minimum",
         "poor_quadratic_fit": "discontinuous EOS",
+        "nonmonotonic_branch": "nonmonotonic/multibranch EOS",
     }
-    for method in base.METHODS:
+    methods = tuple(method for method in base.METHODS if any(fit["method"] == method for fit in fits))
+    for method in methods:
         method_fits = [fit for fit in fits if fit["method"] == method]
         excluded = [
             f"{fit['solid']} ({fit_labels.get(str(fit['fit_status']), str(fit['fit_status']))})"
             for fit in method_fits
             if fit.get("a_eos_A", "") == ""
+            or (method == "GXTB" and fit.get("fit_status") != "quadratic")
         ]
         lines.append(f"| {method} | {len(method_fits) - len(excluded)}/{len(method_fits)} | {', '.join(excluded) or '-'} |")
     lines += [
@@ -587,30 +1367,40 @@ def write_markdown(
             f"| {row['source']} | {row['method']} | {row['n_complete']} | {row['a_ME_A']} | {row['a_MAE_A']} | "
             f"{row['ecoh_ME_eV_per_atom']} | {row['ecoh_MAE_eV_per_atom']} |"
         )
+    header = ["solid", "a exp"]
+    for method in methods:
+        header += [f"a {method}", f"da {method}"]
+    header.append("Ecoh exp")
+    for method in methods:
+        header += [f"Ecoh {method}", f"dE {method}"]
+    lines += ["", "## Per-system GFN comparison", "", "| " + " | ".join(header) + " |"]
+    lines.append("|---|" + "---:|" * (len(header) - 1))
+    for ref in base.REFERENCES:
+        cells = [ref.solid, f"{ref.a_exp:.3f}"]
+        for method in methods:
+            row = by_key.get((ref.solid, method), {})
+            cells += [base.fmt(row.get("a_calc_A"), 4), base.fmt(row.get("a_error_A"), 4)]
+        cells.append(f"{ref.ecoh_exp:.2f}")
+        for method in methods:
+            row = by_key.get((ref.solid, method), {})
+            cells += [
+                base.fmt(row.get("ecoh_calc_eV_per_atom"), 3),
+                base.fmt(row.get("ecoh_error_eV_per_atom"), 3),
+            ]
+        lines.append("| " + " | ".join(cells) + " |")
     lines += [
         "",
-        "## Per-system GFN comparison",
+        "## Common valid GFN subset",
         "",
-        "| solid | a exp | a GFN1 | da GFN1 | a GFN2 | da GFN2 | Ecoh exp | Ecoh GFN1 | dE GFN1 | Ecoh GFN2 | dE GFN2 |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "Systems: " + (", ".join(common_solids) if common_solids else "none"),
+        "",
+        "| method | n common | a ME (A) | a MAE (A) | Ecoh ME (eV/atom) | Ecoh MAE (eV/atom) |",
+        "|---|---:|---:|---:|---:|---:|",
     ]
-    for ref in base.REFERENCES:
-        g1 = by_key.get((ref.solid, "GFN1"), {})
-        g2 = by_key.get((ref.solid, "GFN2"), {})
+    for row in common_summary:
         lines.append(
-            "| {solid} | {aexp:.3f} | {a1} | {da1} | {a2} | {da2} | {eexp:.2f} | {e1} | {de1} | {e2} | {de2} |".format(
-                solid=ref.solid,
-                aexp=ref.a_exp,
-                a1=base.fmt(g1.get("a_calc_A"), 4),
-                da1=base.fmt(g1.get("a_error_A"), 4),
-                a2=base.fmt(g2.get("a_calc_A"), 4),
-                da2=base.fmt(g2.get("a_error_A"), 4),
-                eexp=ref.ecoh_exp,
-                e1=base.fmt(g1.get("ecoh_calc_eV_per_atom"), 3),
-                de1=base.fmt(g1.get("ecoh_error_eV_per_atom"), 3),
-                e2=base.fmt(g2.get("ecoh_calc_eV_per_atom"), 3),
-                de2=base.fmt(g2.get("ecoh_error_eV_per_atom"), 3),
-            )
+            f"| {row['method']} | {row['n_common']} | {row['a_ME_A']} | {row['a_MAE_A']} | "
+            f"{row['ecoh_ME_eV_per_atom']} | {row['ecoh_MAE_eV_per_atom']} |"
         )
     lines += [
         "",
@@ -619,7 +1409,7 @@ def write_markdown(
         "| method | mesh vs k555 | mean abs delta (eV/atom) | max abs delta (eV/atom) |",
         "|---|---|---:|---:|",
     ]
-    for method in base.METHODS:
+    for method in methods:
         for mesh in ("k333", "k444"):
             vals = [abs(float(r["delta_ecoh_eV_per_atom"])) for r in convergence if r["method"] == method and r["mesh"] == mesh]
             lines.append(f"| {method} | {mesh} | {sum(vals) / len(vals):.6f} | {max(vals):.6f} |" if vals else f"| {method} | {mesh} |  |  |")
@@ -627,56 +1417,54 @@ def write_markdown(
 
 
 def plot(rows: list[dict[str, object]], summary: list[dict[str, object]], lit_summary: list[dict[str, object]], result_mesh: str) -> None:
-    selected = [r for r in rows if r["energy_mesh"] == result_mesh and r["sp_completed"]]
+    selected = [r for r in rows if r["energy_mesh"] == result_mesh and truth(r["sp_completed"])]
     solids = [ref.solid for ref in base.REFERENCES]
     x = np.arange(len(solids))
-    width = 0.36
-    colors = {"GFN1": "#4C78A8", "GFN2": "#F58518"}
-    for key, ylabel, name in [
-        ("a_error_A", "lattice-constant error (A)", "goldzak12_eos_lattice_errors"),
-        ("ecoh_error_eV_per_atom", "cohesive-energy error (eV/atom)", "goldzak12_eos_cohesive_errors"),
-    ]:
-        fig, ax = plt.subplots(figsize=(10.5, 4.6))
-        for i, method in enumerate(base.METHODS):
-            vals = []
-            missing_positions = []
-            for solid in solids:
-                row = next((r for r in selected if r["solid"] == solid and r["method"] == method), None)
-                vals.append(float(row[key]) if row and row[key] != "" else np.nan)
-            positions = x + (i - 0.5) * width
-            missing_positions = [position for position, value in zip(positions, vals) if np.isnan(value)]
-            ax.bar(positions, vals, width, label=method, color=colors[method])
-            for position in missing_positions:
-                ax.annotate(
-                    "n/a",
-                    (position, 0.0),
-                    xytext=(0, 5),
-                    textcoords="offset points",
-                    ha="center",
-                    va="bottom",
-                    color="#666666",
-                    fontsize=8,
-                )
-        ax.axhline(0, color="black", linewidth=0.8)
-        ax.set_xticks(x)
-        ax.set_xticklabels(solids, rotation=45, ha="right")
-        ax.set_ylabel(ylabel)
-        ax.set_title(f"LC12 (Goldzak12) EOS CP2K/tblite native-Bloch {result_mesh}")
-        ax.legend(frameon=False)
-        ax.grid(axis="y", color="#d0d0d0", linewidth=0.6, alpha=0.7)
-        fig.tight_layout()
-        out = ROOT / "figures" / name
-        out.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(out.with_suffix(".png"), dpi=220)
-        fig.savefig(out.with_suffix(".pdf"))
-        plt.close(fig)
+    methods = tuple(method for method in base.METHODS if any(r["method"] == method for r in selected))
+    width = min(0.8 / max(len(methods), 1), 0.36)
+    colors = base.METHOD_COLORS
+    if selected:
+        for key, ylabel, name in [
+            ("a_error_A", "lattice-constant error (A)", "goldzak12_eos_lattice_errors"),
+            ("ecoh_error_eV_per_atom", "cohesive-energy error (eV/atom)", "goldzak12_eos_cohesive_errors"),
+        ]:
+            fig, ax = plt.subplots(figsize=(10.5, 4.6))
+            for i, method in enumerate(methods):
+                vals = []
+                for solid in solids:
+                    row = next((r for r in selected if r["solid"] == solid and r["method"] == method), None)
+                    vals.append(float(row[key]) if row and row[key] != "" else np.nan)
+                positions = x + (i - (len(methods) - 1) / 2.0) * width
+                missing_positions = [position for position, value in zip(positions, vals) if np.isnan(value)]
+                ax.bar(positions, vals, width, label=method, color=colors[method])
+                for position in missing_positions:
+                    ax.annotate("n/a", (position, 0.0), xytext=(0, 5), textcoords="offset points", ha="center", va="bottom", color="#666666", fontsize=8)
+            ax.axhline(0, color="black", linewidth=0.8)
+            ax.set_xticks(x)
+            ax.set_xticklabels(solids, rotation=45, ha="right")
+            ax.set_ylabel(ylabel)
+            ax.set_title(f"LC12 (Goldzak12) EOS CP2K/tblite native-Bloch {result_mesh}")
+            ax.legend(frameon=False)
+            ax.grid(axis="y", color="#d0d0d0", linewidth=0.6, alpha=0.7)
+            fig.tight_layout()
+            out = ROOT / "figures" / name
+            out.parent.mkdir(parents=True, exist_ok=True)
+            fig.savefig(out.with_suffix(".png"), dpi=220)
+            fig.savefig(out.with_suffix(".pdf"))
+            plt.close(fig)
 
-    labels = [f"{r['method']}\n(n={r['n_complete']})" for r in lit_summary + summary]
-    a_mae = [float(r["a_MAE_A"]) for r in lit_summary] + [float(r["a_MAE_A"]) for r in summary]
-    e_mae = [float(r["ecoh_MAE_eV_per_atom"]) for r in lit_summary] + [float(r["ecoh_MAE_eV_per_atom"]) for r in summary]
+    plottable_summary = [
+        row
+        for row in summary
+        if row["a_MAE_A"] != "" and row["ecoh_MAE_eV_per_atom"] != ""
+    ]
+    labels = [f"{r['method']}\n(n={r['n_complete']})" for r in lit_summary + plottable_summary]
+    a_mae = [float(r["a_MAE_A"]) for r in lit_summary + plottable_summary]
+    e_mae = [float(r["ecoh_MAE_eV_per_atom"]) for r in lit_summary + plottable_summary]
     fig, axes = plt.subplots(1, 2, figsize=(10.8, 4.2))
-    axes[0].bar(labels, a_mae, color=["#72B7B2"] * len(lit_summary) + ["#4C78A8", "#F58518"])
-    axes[1].bar(labels, e_mae, color=["#72B7B2"] * len(lit_summary) + ["#4C78A8", "#F58518"])
+    method_colors = [base.METHOD_COLORS.get(str(row["method"]), "#999999") for row in plottable_summary]
+    axes[0].bar(labels, a_mae, color=["#72B7B2"] * len(lit_summary) + method_colors)
+    axes[1].bar(labels, e_mae, color=["#72B7B2"] * len(lit_summary) + method_colors)
     axes[0].set_ylabel("MAE a (A)")
     axes[1].set_ylabel("MAE Ecoh (eV/atom)")
     for ax in axes:
@@ -691,14 +1479,28 @@ def plot(rows: list[dict[str, object]], summary: list[dict[str, object]], lit_su
 
 
 def plot_eos_diagnostics(fits: list[dict[str, object]]) -> None:
-    with (ROOT / "data" / "eos_points.csv").open(newline="") as handle:
+    points_path = ROOT / "data" / "eos_points.csv"
+    if not points_path.exists():
+        return
+    with points_path.open(newline="") as handle:
         points = list(csv.DictReader(handle))
-    fit_by_key = {(str(row["solid"]), str(row["method"])): row for row in fits}
-    systems = ("MgO", "LiH")
-    fig, axes = plt.subplots(1, 2, figsize=(10.8, 4.4), sharey=True)
-    for ax, solid in zip(axes, systems):
+    invalid = [
+        fit
+        for fit in fits
+        if fit.get("a_eos_A", "") == ""
+        or (fit.get("method") == "GXTB" and fit.get("fit_status") != "quadratic")
+    ]
+    if not invalid:
+        return
+    ncols = min(3, len(invalid))
+    nrows = math.ceil(len(invalid) / ncols)
+    fig, axes_array = plt.subplots(nrows, ncols, figsize=(5.4 * ncols, 4.2 * nrows), squeeze=False)
+    axes = list(axes_array.flat)
+    for ax, fit in zip(axes, invalid):
+        solid = str(fit["solid"])
+        method = str(fit["method"])
         selected = sorted(
-            (row for row in points if row["solid"] == solid and row["method"] == "GFN2"),
+            (row for row in points if row["solid"] == solid and row["method"] == method),
             key=lambda row: float(row["scale"]),
         )
         completed = [
@@ -712,13 +1514,18 @@ def plot_eos_diagnostics(fits: list[dict[str, object]]) -> None:
             for row in selected
             if row["completed"] != "True" and row.get("diagnostic") != "charge_collapse"
         ]
+        if not completed:
+            ax.set_title(f"{method}/{solid}: no converged EOS points")
+            ax.set_axis_off()
+            continue
         energy_min = min(float(row["energy_hartree"]) for row in completed)
         scales = [float(row["scale"]) for row in completed]
         relative = [
             (float(row["energy_hartree"]) - energy_min) * base.HARTREE_TO_EV / 8.0 for row in completed
         ]
-        ax.plot(scales, relative, color="#D97706", linewidth=1.2, alpha=0.75)
-        ax.scatter(scales, relative, color="#D97706", s=38, label="converged")
+        color = base.METHOD_COLORS.get(method, "#666666")
+        ax.plot(scales, relative, color=color, linewidth=1.2, alpha=0.75)
+        ax.scatter(scales, relative, color=color, s=38, label="converged")
         marker_height = max(relative) * 1.08 if max(relative) > 0 else 1.0
         for row in unstable:
             scale = float(row["scale"])
@@ -728,74 +1535,340 @@ def plot_eos_diagnostics(fits: list[dict[str, object]]) -> None:
             scale = float(row["scale"])
             ax.axvline(scale, color="#B91C1C", linewidth=0.8, linestyle=":", alpha=0.7)
             ax.scatter(scale, marker_height, color="#B91C1C", marker="x", s=48, label="charge-collapsed SCC solution")
-        fit = fit_by_key[(solid, "GFN2")]
-        label = "no bracketed minimum" if fit["fit_status"] == "no_local_minimum" else "discontinuous EOS"
-        ax.set_title(f"{solid}: {label}")
+        labels = {
+            "no_local_minimum": "no bracketed minimum",
+            "poor_quadratic_fit": "discontinuous EOS",
+            "insufficient_points": "insufficient points",
+            "nonmonotonic_branch": "nonmonotonic/multibranch EOS",
+        }
+        label = labels.get(str(fit["fit_status"]), str(fit["fit_status"]))
+        ax.set_title(f"{method}/{solid}: {label}")
         ax.set_xlabel("lattice scale (a / experimental a)")
         ax.grid(color="#d0d0d0", linewidth=0.6, alpha=0.7)
+    for ax in axes[len(invalid) :]:
+        ax.set_axis_off()
     axes[0].set_ylabel("relative energy (eV/atom)")
     handles, labels = axes[0].get_legend_handles_labels()
     unique = dict(zip(labels, handles))
     axes[0].legend(unique.values(), unique.keys(), frameon=False)
-    fig.suptitle("LC12 GFN2 EOS diagnostics (native-Bloch k444)")
+    fig.suptitle("LC12 invalid-EOS diagnostics (native-Bloch k444)")
     fig.tight_layout()
-    output = ROOT / "figures" / "goldzak12_gfn2_eos_diagnostics"
+    output = ROOT / "figures" / "goldzak12_eos_diagnostics"
     fig.savefig(output.with_suffix(".png"), dpi=220)
     fig.savefig(output.with_suffix(".pdf"))
     plt.close(fig)
 
 
+def add_cli_adaptive_scales(
+    specs: list[str], methods: tuple[str, ...], parser: argparse.ArgumentParser
+) -> None:
+    if specs and len(methods) != 1:
+        parser.error("--adaptive-scale requires exactly one selected --method")
+    refs = {ref.solid for ref in base.REFERENCES}
+    for spec in specs:
+        try:
+            solid, value = spec.split("=", 1)
+            scale = float(value)
+        except ValueError:
+            parser.error(f"Bad --adaptive-scale {spec!r}; expected SOLID=SCALE")
+        if solid not in refs:
+            parser.error(f"Unknown --adaptive-scale solid {solid!r}")
+        if scale <= 0.0:
+            parser.error("Adaptive EOS scales must be positive")
+        key = (solid, methods[0])
+        ADAPTIVE_SCALES[key] = tuple(sorted(set(ADAPTIVE_SCALES.get(key, ())) | {scale}))
+
+
+def final_stage_is_explicitly_approved(
+    methods: tuple[str, ...],
+    *,
+    stop_after_eos: bool,
+    fit_only: bool,
+    approve_fits: bool,
+) -> bool:
+    if stop_after_eos or fit_only:
+        return False
+    return "GXTB" not in methods or approve_fits
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cp2k", type=Path, default=base.DEFAULT_CP2K)
+    parser.add_argument("--cp2k", type=Path)
     parser.add_argument("--tblite", type=Path, default=base.DEFAULT_TBLITE)
+    parser.add_argument("--save-tblite", type=Path)
+    parser.add_argument(
+        "--campaign-manifest",
+        type=Path,
+        default=base.DEFAULT_GXTB_CAMPAIGN_MANIFEST,
+        help="central frozen GXTB build manifest (source of executable/library paths and hashes)",
+    )
+    parser.add_argument(
+        "--cp2k-library",
+        type=Path,
+        help="optional exact libcp2k override; must match the campaign manifest",
+    )
+    parser.add_argument(
+        "--save-tblite-library",
+        type=Path,
+        help="optional libtblite.a override; must match the campaign manifest",
+    )
     parser.add_argument("--cp2k-source", type=Path, default=base.DEFAULT_CP2K_SOURCE)
     parser.add_argument("--tblite-source", type=Path, default=base.DEFAULT_TBLITE_SOURCE)
+    parser.add_argument("--save-tblite-source", type=Path, default=base.DEFAULT_SAVE_TBLITE_SOURCE)
+    parser.add_argument(
+        "--method",
+        action="append",
+        choices=base.METHODS,
+        help="method to run; repeat as needed (default: GFN1 and GFN2)",
+    )
     parser.add_argument("--jobs", type=int, default=6)
     parser.add_argument("--threads", type=int, default=1)
     parser.add_argument("--force", action="store_true")
+    parser.add_argument(
+        "--stop-after-eos",
+        action="store_true",
+        help="run/collect EOS points and fits, but never launch final single points",
+    )
+    parser.add_argument(
+        "--fit-only",
+        action="store_true",
+        help="collect already stamped EOS outputs and refresh fits without launching jobs",
+    )
+    parser.add_argument(
+        "--approve-fits",
+        action="store_true",
+        help="explicitly approve the current GXTB fit fingerprint and launch final single points",
+    )
     parser.add_argument("--eos-mesh", default="k444")
     parser.add_argument("--energy-mesh", action="append", default=[])
-    parser.add_argument("--result-mesh", default="k444")
+    parser.add_argument("--result-mesh", default=DEFAULT_RESULT_MESH)
     parser.add_argument("--scale", type=float, action="append", default=[])
+    parser.add_argument(
+        "--adaptive-scale",
+        action="append",
+        default=[],
+        metavar="SOLID=SCALE",
+        help="add a targeted EOS scale for the single selected method",
+    )
+    parser.add_argument(
+        "--classification-manifest",
+        type=Path,
+        default=gxtb_classification_manifest_path(),
+        help="reviewed per-point GXTB branch exclusions/waivers with rationale",
+    )
+    parser.add_argument(
+        "--allow-reduced-coverage",
+        action="store_true",
+        help="allow investigated invalid GXTB curves while retaining a meaningful subset",
+    )
+    parser.add_argument(
+        "--minimum-valid-fits",
+        type=int,
+        default=MINIMUM_REDUCED_GXTB_FITS,
+        help="minimum quadratic GXTB fits when reduced coverage is explicitly allowed",
+    )
+    parser.add_argument(
+        "--prune-transients",
+        action="store_true",
+        help="after validation, remove only large restart/WFN transients below GXTB run trees",
+    )
     args = parser.parse_args()
 
     scales = tuple(args.scale) if args.scale else DEFAULT_SCALES
     energy_meshes = args.energy_mesh or ["k333", "k444", "k555"]
+    methods = base.selected_methods(args.method)
+    if args.fit_only and (args.force or args.approve_fits):
+        parser.error("--fit-only cannot be combined with --force or --approve-fits")
+    if args.stop_after_eos and args.approve_fits:
+        parser.error("--stop-after-eos cannot be combined with --approve-fits")
+    if not 1 <= args.minimum_valid_fits <= len(base.REFERENCES):
+        parser.error(f"--minimum-valid-fits must be between 1 and {len(base.REFERENCES)}")
+    campaign_fingerprint: dict[str, object] | None = None
+    if "GXTB" in methods:
+        try:
+            campaign_fingerprint, campaign_paths = base.validated_gxtb_campaign_from_manifest(
+                args.campaign_manifest,
+                args.cp2k_source,
+                args.save_tblite_source,
+                cp2k_override=args.cp2k,
+                cp2k_library_override=args.cp2k_library,
+                save_tblite_override=args.save_tblite,
+                save_tblite_library_override=args.save_tblite_library,
+            )
+            args.cp2k = campaign_paths["cp2k"]
+            args.cp2k_library = campaign_paths["cp2k_library"]
+            args.save_tblite = campaign_paths["save_tblite"]
+            args.save_tblite_library = campaign_paths["save_tblite_library"]
+        except (OSError, ValueError) as exc:
+            parser.error(str(exc))
+    else:
+        args.cp2k = args.cp2k or base.DEFAULT_CP2K
+        args.save_tblite = args.save_tblite or base.DEFAULT_SAVE_TBLITE
+    restore_gxtb_scale_manifest(args.eos_mesh, methods)
+    add_cli_adaptive_scales(args.adaptive_scale, methods, parser)
     if args.result_mesh not in energy_meshes:
         parser.error(f"--result-mesh {args.result_mesh} must also be supplied as --energy-mesh")
-    base.write_build_provenance(
-        args.cp2k,
-        args.tblite,
-        args.cp2k_source,
-        args.tblite_source,
-        {
+    try:
+        classifications = load_gxtb_classifications(args.classification_manifest)
+    except (ValueError, json.JSONDecodeError) as exc:
+        parser.error(str(exc))
+    scale_manifest = write_gxtb_scale_manifest(args.eos_mesh, scales, methods)
+    protocol = {
             "benchmark": "LC12 (Goldzak12)",
+            "methods": methods,
             "cell_protocol": "cubic equation of state",
             "eos_mesh": args.eos_mesh,
             "energy_meshes": energy_meshes,
             "result_mesh": args.result_mesh,
             "scales": scales,
             "adaptive_scales": {f"{solid}/{method}": values for (solid, method), values in ADAPTIVE_SCALES.items()},
+            "gxtb_scale_manifest": scale_manifest,
+            "gxtb_scale_manifest_sha256": (
+                base.sha256(gxtb_scale_manifest_path()) if scale_manifest is not None else None
+            ),
+            "gxtb_classification_manifest": str(args.classification_manifest.resolve()),
+            "gxtb_classification_manifest_sha256": (
+                base.sha256(args.classification_manifest)
+                if args.classification_manifest.is_file()
+                else None
+            ),
+            "allow_reduced_coverage": args.allow_reduced_coverage,
+            "minimum_valid_gxtb_fits": args.minimum_valid_fits,
             "kpoint_scheme": "CP2K native Bloch MACDONALD with full SPGLIB symmetry reduction",
+            "kpoint_mesh_contract": base.KPOINT_MESH_CONTRACT,
+            "legacy_gxtb_full_grid_policy": base.LEGACY_GXTB_FULL_GRID_POLICY,
+            "gxtb_energy_stress_policy": base.GXTB_ENERGY_STRESS_POLICY,
+            "gxtb_atom_scf_policy": base.GXTB_ATOM_SCF_POLICY,
+            "final_input_lineage_schema": FINAL_INPUT_LINEAGE_SCHEMA,
+            "fit_approval_required": "GXTB" in methods,
+            "fit_approved": False,
+            "approved_gxtb_fit_sha256": None,
             "smearing_temperature_K": 300.0,
             "reported_energy": "Total energy extrapolated to T->0",
             "tblite_accuracy": 0.05,
-            "charge_collapse_filter_hartree_below_curve_median": CHARGE_COLLAPSE_ENERGY_DROP_HARTREE,
+            "legacy_gfn2_charge_collapse_filter_hartree_below_curve_median": CHARGE_COLLAPSE_ENERGY_DROP_HARTREE,
             "catastrophic_charge_collapse_energy_hartree": CATASTROPHIC_CHARGE_COLLAPSE_ENERGY_HARTREE,
-            "default_scf_strategy": "tblite modified-Broyden defaults",
+            "gxtb_branch_candidate_interpolation_residual_hartree": GXTB_BRANCH_DISCONTINUITY_HARTREE,
+            "gxtb_branch_policy": "automatic candidates require explicit per-point exclusion or retain waiver with rationale",
+            "gxtb_topology_tolerance_hartree_per_eight_atom_cell": GXTB_TOPOLOGY_TOLERANCE_HARTREE,
+            "gxtb_topology_policy": "sampled energy must decrease to the global minimum and increase away from it",
+            "default_scf_strategy": "native g-XTB FDIIS" if methods == ("GXTB",) else "tblite modified-Broyden defaults",
             "scf_retry_strategies": [
                 "TBLITE_MIXER ITERATIONS 1200 MEMORY 1 DAMPING 0.05",
                 "TBLITE_MIXER ITERATIONS 2400 MEMORY 1 DAMPING 0.01",
-            ],
-        },
+            ] if any(method in base.LEGACY_METHODS for method in methods) else [],
+            "gxtb_scc_mixer": "SCC_MIXER TBLITE (save_tblite native FDIIS)" if "GXTB" in methods else None,
+            "cp2k_density_mixing": "METHOD DIRECT_P_MIXING; ALPHA 0.2",
+            "atom_reference": "matching CLI, --method gxtb, explicit 2S spin" if "GXTB" in methods else "matching tblite CLI",
+            "conventional_cell_atoms": 8,
+            "eos_failure_policy": "failed jobs are fatal; invalid GXTB fits require adaptive investigation and explicit reduced-coverage opt-in",
+        }
+    legacy = tuple(method for method in methods if method in base.LEGACY_METHODS)
+
+    def write_provenance() -> None:
+        if legacy:
+            base.write_build_provenance(
+                args.cp2k, args.tblite, args.cp2k_source, args.tblite_source, protocol
+            )
+        if "GXTB" in methods:
+            assert campaign_fingerprint is not None
+            base.write_gxtb_build_provenance(
+                args.cp2k,
+                args.save_tblite,
+                args.cp2k_source,
+                args.save_tblite_source,
+                protocol,
+                campaign_fingerprint,
+                args.campaign_manifest,
+            )
+
+    write_provenance()
+    if legacy:
+        base.setup_inputs(args.eos_mesh, energy_meshes, legacy)
+    if not args.fit_only:
+        base.run_tblite_atom_jobs(
+            args.tblite,
+            args.jobs,
+            args.force,
+            methods,
+            args.save_tblite,
+            campaign_fingerprint,
+        )
+        try:
+            run_jobs(
+                eos_job_specs(args.eos_mesh, scales, methods),
+                args.cp2k,
+                args.jobs,
+                args.threads,
+                args.force,
+                campaign_fingerprint=campaign_fingerprint,
+            )
+        except RuntimeError:
+            # Preserve a complete diagnostic/classification record even though the
+            # production invocation must remain nonzero for every failed job.
+            failed_fits = make_eos_table(
+                args.eos_mesh,
+                scales,
+                methods,
+                classifications,
+                campaign_fingerprint,
+            )
+            if "GXTB" in methods:
+                invalidate_existing_gxtb_final_inputs(failed_fits, energy_meshes)
+                write_gxtb_adaptive_followup(failed_fits, scales)
+            raise
+    fits = make_eos_table(
+        args.eos_mesh,
+        scales,
+        methods,
+        classifications,
+        campaign_fingerprint,
     )
-    base.setup_inputs(args.eos_mesh, energy_meshes)
-    base.run_tblite_atom_jobs(args.tblite, args.jobs, args.force)
-    run_jobs(eos_job_specs(args.eos_mesh, scales), args.cp2k, args.jobs, args.threads, args.force)
-    fits = make_eos_table(args.eos_mesh, scales)
-    run_jobs(final_sp_specs(fits, energy_meshes), args.cp2k, args.jobs, args.threads, args.force)
-    collect_results(fits, energy_meshes, args.result_mesh)
+    if "GXTB" in methods:
+        invalidate_existing_gxtb_final_inputs(fits, energy_meshes)
+    followup = write_gxtb_adaptive_followup(fits, scales) if "GXTB" in methods else []
+    current_fit_sha = gxtb_fit_approval_sha256(fits) if "GXTB" in methods else None
+    protocol["current_gxtb_fit_sha256"] = current_fit_sha
+    write_provenance()
+    if not final_stage_is_explicitly_approved(
+        methods,
+        stop_after_eos=args.stop_after_eos,
+        fit_only=args.fit_only,
+        approve_fits=args.approve_fits,
+    ):
+        print(
+            "EOS staging complete; final single points were not launched. "
+            "Review eos_fits.csv and branch diagnostics, then rerun with --approve-fits."
+        )
+        return 0
+    enforce_gxtb_coverage(
+        fits,
+        followup,
+        allow_reduced_coverage=args.allow_reduced_coverage,
+        minimum_valid_fits=args.minimum_valid_fits,
+    )
+    if "GXTB" in methods:
+        protocol["fit_approved"] = True
+        protocol["approved_gxtb_fit_sha256"] = current_fit_sha
+        write_provenance()
+    try:
+        run_jobs(
+            final_sp_specs(fits, energy_meshes),
+            args.cp2k,
+            args.jobs,
+            args.threads,
+            args.force,
+            campaign_fingerprint=campaign_fingerprint,
+        )
+    except RuntimeError:
+        collect_results(
+            fits, energy_meshes, args.result_mesh, methods, campaign_fingerprint
+        )
+        raise
+    collect_results(fits, energy_meshes, args.result_mesh, methods, campaign_fingerprint)
+    if args.prune_transients and "GXTB" in methods:
+        count, size = base.prune_gxtb_transients()
+        print(f"Pruned {count} validated GXTB transient file(s), {size} byte(s).")
     return 0
 
 
