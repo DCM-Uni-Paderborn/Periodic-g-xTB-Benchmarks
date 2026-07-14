@@ -749,12 +749,23 @@ def validate_campaign_identity(identity: Mapping[str, object]) -> None:
 
 
 def campaign_identity_from_manifest(
-    manifest: Mapping[str, object], manifest_path: Path
+    manifest: Mapping[str, object],
+    manifest_path: Path,
+    *,
+    allowed_campaign_states: tuple[str, ...] = ("production_ready",),
 ) -> dict[str, object]:
     """Read the frozen build declarations which are the campaign source of truth."""
-    if manifest.get("campaign_state") != "production_ready":
+    campaign_state = str(manifest.get("campaign_state", ""))
+    if campaign_state not in allowed_campaign_states:
+        if allowed_campaign_states == ("production_ready",):
+            raise ValueError(
+                f"GXTB campaign {manifest.get('campaign_id', '<unknown>')} is not "
+                f"production_ready (state: {campaign_state or '<missing>'})"
+            )
+        allowed = ", ".join(allowed_campaign_states)
         raise ValueError(
-            f"GXTB campaign {manifest.get('campaign_id', '<unknown>')} is not production_ready"
+            f"GXTB campaign {manifest.get('campaign_id', '<unknown>')} has state "
+            f"{campaign_state or '<missing>'}; allowed state(s): {allowed}"
         )
     cp2k = manifest.get("cp2k")
     save = manifest.get("save_tblite")
@@ -1020,6 +1031,7 @@ def validated_gxtb_campaign_from_manifest(
     cp2k_library_override: Path | None = None,
     save_tblite_override: Path | None = None,
     save_tblite_library_override: Path | None = None,
+    allowed_campaign_states: tuple[str, ...] = ("production_ready",),
 ) -> tuple[dict[str, object], dict[str, Path]]:
     """Resolve and verify all GXTB build artifacts from the central frozen manifest."""
     manifest_path = manifest_path.resolve(strict=True)
@@ -1029,7 +1041,11 @@ def validated_gxtb_campaign_from_manifest(
         save_record = manifest["save_tblite"]
     except (json.JSONDecodeError, KeyError, TypeError) as exc:
         raise ValueError(f"Invalid GXTB campaign manifest {manifest_path}: {exc}") from exc
-    declared_identity = campaign_identity_from_manifest(manifest, manifest_path)
+    declared_identity = campaign_identity_from_manifest(
+        manifest,
+        manifest_path,
+        allowed_campaign_states=allowed_campaign_states,
+    )
     if cp2k_record.get("source_clean") is not True:
         raise ValueError("campaign manifest does not certify a clean CP2K source")
     if save_record.get("source_clean") is not True:
