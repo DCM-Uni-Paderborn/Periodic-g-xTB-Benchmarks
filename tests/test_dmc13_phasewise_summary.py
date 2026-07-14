@@ -232,6 +232,32 @@ class DMC13PhasewiseSummaryTests(unittest.TestCase):
             self.assertFalse(csv_path.exists())
             self.assertFalse(json_path.exists())
 
+    def test_frozen_repository_data_are_post5582_energy_qualified(self) -> None:
+        payload, _ = summary.build_summary(REPOSITORY / "DMC-ICE13")
+        qualification = payload["publication_qualification"]
+        self.assertEqual(
+            qualification["status"],
+            "qualified_by_post5582_energy_sentinel",
+        )
+        self.assertTrue(qualification["paper_freeze_authorized"])
+        self.assertTrue(qualification["gxtb_old_results_reusable"])
+        self.assertEqual(
+            qualification["candidate_manifest"]["sha256"],
+            summary.EXPECTED_POST_5582_MANIFEST_SHA256,
+        )
+        gxtb = payload["methods"]["GXTB"]
+        self.assertEqual(
+            gxtb["provenance"]["cp2k_source_revision"],
+            "18d37c946413dba1b848f57563c46d16b866ce20",
+        )
+        self.assertEqual(
+            gxtb["publication_qualification"]["raw_data_origin"],
+            "pre_cp2k_pr_5582",
+        )
+        self.assertFalse(
+            gxtb["publication_qualification"]["raw_outputs_relabelled"]
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

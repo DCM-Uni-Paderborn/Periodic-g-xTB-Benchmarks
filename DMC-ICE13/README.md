@@ -216,10 +216,11 @@ carry a strictly identical `k333` fixed-mesh comparison for GFN1-xTB,
 GFN2-xTB, and g-xTB.  This fixed-mesh block is a cross-method diagnostic, not
 the primary converged result; the g-xTB `k333` value is explicitly labelled
 `numerically_unconverged_same_mesh_comparator` and must not be substituted for
-the phase-wise k-point-converged value.  Until the post-#5582 cross-build gate
-below has passed, the numerically converged pre-#5582 g-xTB result is also
-explicitly labelled `diagnostic_pre_post_5582_requalification`, with
-`paper_freeze_authorized: false` and `old_results_reusable: false`.
+the phase-wise k-point-converged value.  The raw g-xTB matrix was executed
+before CP2K PR #5582 and retains that build identity in every raw record.  It
+is not relabelled as post-#5582 data.  The energy-only sentinel qualification
+below now authorizes its use in the DMC-ICE13 paper table while preserving the
+pre-#5582 origin explicitly.
 
 ### Same-source builds on another architecture
 
@@ -407,6 +408,30 @@ matrix contains the selected and immediately previous mesh for all twelve
 non-reference phases, each corresponding same-mesh Ih energy, and all thirteen
 raw `k333` energies used by the fixed-mesh comparator.  Only a hash-bound
 `full_publication_matrix_passed` report from this automatically derived matrix
-sets `old_results_reusable: true` and `paper_freeze_authorized: true`.  The
-report path is removed before every attempt and remains absent after any
-failure, preventing a stale passing report from surviving a failed rerun.
+sets `old_results_reusable: true` and `paper_freeze_authorized: true` in this
+generic runner.  The report path is removed before every attempt and remains
+absent after any failure, preventing a stale passing report from surviving a
+failed rerun.
+
+#### Accepted DMC-ICE13 energy-only sentinel qualification
+
+For the frozen DMC-ICE13 energy benchmark, an explicitly reviewed narrower
+policy was accepted after the generic runner was written.  The existing 62/62
+successful pre-#5582 production matrix is qualified by rerunning the exact
+frozen ice-VII `k666` input with the production-ready post-#5582 build.  The
+old and post-#5582 energies are respectively
+`-917.472187146001147` and `-917.472187146001261` Ha, an absolute difference
+of `1.14e-13` Ha; both calculations required 12 SCC iterations.  This is well
+inside the accepted `1e-10` Ha energy tolerance.
+
+The immutable candidate manifest is archived at
+`campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json` with SHA256
+`b0feea6a411f02dedb1eb57190092e35d38f4c5705a985893d9f97070ddb1d51`.
+`data/dmc_ice13_gxtb_post5582_energy_sentinel_qualification.json` binds that
+manifest, the exact sentinel input, both output hashes, the 113-record frozen
+validation index, the phase-wise source tables, and the original build
+provenance.  The finalizer revalidates every binding before it can emit
+`qualified_by_post5582_energy_sentinel`.  This exception qualifies only
+DMC-ICE13 total and relative energies; it does not qualify forces, stress,
+X23b, or LC10 data, and it never changes the pre-#5582 source revisions stored
+with the raw results.

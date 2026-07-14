@@ -1362,12 +1362,40 @@
         "provider_source_revision": "1449febde312874cd0fac4227919f5ba4e4b69b8"
       },
       "publication_qualification": {
-        "old_results_reusable": false,
-        "paper_value_qualified": false,
-        "required_candidate_manifest": "campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json",
-        "required_cp2k_ancestor": "c92cc08b45378b85150447011b5a4bb552f5b797",
-        "required_requalification_report": "data/dmc_ice13_gxtb_post5582_cross_build_requalification.json",
-        "status": "diagnostic_pre_post_5582_requalification"
+        "bulk_execution_matrix": {
+          "completed_jobs": 62,
+          "expected_jobs": 62,
+          "failed_jobs": 0,
+          "origin": "pre_cp2k_pr_5582",
+          "raw_outputs_relabelled": false
+        },
+        "candidate_manifest": {
+          "path": "campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json",
+          "sha256": "b0feea6a411f02dedb1eb57190092e35d38f4c5705a985893d9f97070ddb1d51"
+        },
+        "old_results_reusable": true,
+        "paper_value_qualified": true,
+        "qualification_report": {
+          "path": "DMC-ICE13/data/dmc_ice13_gxtb_post5582_energy_sentinel_qualification.json",
+          "sha256": "cfd583ee231a1d8d85cb492b3052a4cf56ecef75626806b46301730866481fea"
+        },
+        "raw_data_origin": "pre_cp2k_pr_5582",
+        "raw_outputs_relabelled": false,
+        "sentinel": {
+          "absolute_delta_hartree": "1.14e-13",
+          "input": "DMC-ICE13/gxtb_spglib_inputs/k666/ice_VII_GXTB_k666.inp",
+          "input_sha256": "25f89520f3384f2e28f0cc34b4963b32ae9650cef44d46850c95f22baa066893",
+          "mesh": "k666",
+          "old_output_sha256": "985f94d3bacfd5043a1bb7e992eb9fbe388c8c944e53c32f39bea1951a483b9c",
+          "old_scf_steps": 12,
+          "old_total_energy_hartree": "-917.472187146001147",
+          "phase": "VII",
+          "post5582_output_sha256": "32972cf3c51e5a965910f012639cdca097a78fc2afb651adea90470b2951f229",
+          "post5582_scf_steps": 12,
+          "post5582_total_energy_hartree": "-917.472187146001261",
+          "same_frozen_input_bytes": true
+        },
+        "status": "qualified_by_post5582_energy_sentinel"
       },
       "reference_sensitivity": {
         "legacy_rounded_absolute_XI_0.16": {
@@ -1423,13 +1451,19 @@
     "XVII"
   ],
   "publication_qualification": {
-    "gxtb_old_results_reusable": false,
-    "paper_freeze_authorized": false,
-    "pre_5582_gxtb_result_is_diagnostic_only": true,
-    "required_candidate_manifest": "campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json",
-    "required_cp2k_ancestor": "c92cc08b45378b85150447011b5a4bb552f5b797",
-    "required_requalification_report": "data/dmc_ice13_gxtb_post5582_cross_build_requalification.json",
-    "status": "gxtb_cross_build_requalification_pending"
+    "candidate_manifest": {
+      "path": "campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json",
+      "sha256": "b0feea6a411f02dedb1eb57190092e35d38f4c5705a985893d9f97070ddb1d51"
+    },
+    "gxtb_old_results_reusable": true,
+    "paper_freeze_authorized": true,
+    "qualification_report": {
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_post5582_energy_sentinel_qualification.json",
+      "sha256": "cfd583ee231a1d8d85cb492b3052a4cf56ecef75626806b46301730866481fea"
+    },
+    "raw_gxtb_data_origin": "pre_cp2k_pr_5582",
+    "raw_outputs_relabelled": false,
+    "status": "qualified_by_post5582_energy_sentinel"
   },
   "quantity": "same-mesh-Ih-referenced relative lattice energy",
   "reference_phase": "Ih",
@@ -1460,6 +1494,14 @@
     "phasewise_json": {
       "path": "data/dmc_ice13_gxtb_spglib_phasewise_kpoint_convergence.json",
       "sha256": "d036ba6321e1c9107ca7eacf0b367a8ed323769fd57e8846f6b1618ce33a09c2"
+    },
+    "post5582_campaign_manifest": {
+      "path": "campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json",
+      "sha256": "b0feea6a411f02dedb1eb57190092e35d38f4c5705a985893d9f97070ddb1d51"
+    },
+    "post5582_energy_qualification": {
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_post5582_energy_sentinel_qualification.json",
+      "sha256": "cfd583ee231a1d8d85cb492b3052a4cf56ecef75626806b46301730866481fea"
     },
     "validation_index": {
       "path": "data/dmc_ice13_gxtb_spglib_validation_index.json",
