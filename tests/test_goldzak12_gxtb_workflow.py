@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-import json
 import csv
+import json
+import math
+import re
 import subprocess
 import sys
 import tempfile
@@ -39,6 +41,45 @@ def fake_campaign(
 
 
 class Goldzak12GXTBInputTests(unittest.TestCase):
+    def test_hysteresis_note_metrics_are_derived_from_the_pinned_eos_table(self) -> None:
+        table = REPOSITORY / "Goldzak12" / "data" / "eos_fits.csv"
+        note = REPOSITORY / "Goldzak12" / "data" / "gxtb_wfn_hysteresis.md"
+        with table.open() as handle:
+            rows = list(csv.DictReader(handle))
+        gxtb = [
+            row
+            for row in rows
+            if row["method"] == "GXTB"
+            and row["fit_status"] == "quadratic"
+            and row["a_eos_A"]
+        ]
+        self.assertEqual(
+            {row["solid"] for row in gxtb},
+            {"C", "Si", "SiC", "BN", "BP", "AlN", "AlP", "MgS", "LiF", "LiCl"},
+        )
+        errors = [float(row["a_eos_A"]) - float(row["a_exp_A"]) for row in gxtb]
+        expected = {
+            "ME": sum(errors) / len(errors),
+            "MAE": sum(abs(error) for error in errors) / len(errors),
+            "RMSE": math.sqrt(sum(error * error for error in errors) / len(errors)),
+            "MaxAE": max(abs(error) for error in errors),
+        }
+        text = note.read_text()
+        match = re.search(
+            r"SHA256 `(?P<sha>[0-9a-f]{64})`\) are "
+            r"ME `(?P<ME>[-+0-9.]+)` angstrom, "
+            r"MAE `(?P<MAE>[-+0-9.]+)` angstrom, "
+            r"RMSE `(?P<RMSE>[-+0-9.]+)` angstrom, and "
+            r"MaxAE `(?P<MaxAE>[-+0-9.]+)` angstrom",
+            text,
+        )
+        self.assertIsNotNone(match)
+        assert match is not None
+        self.assertEqual(match.group("sha"), base.sha256(table))
+        for label, value in expected.items():
+            self.assertAlmostEqual(float(match.group(label)), value, places=10)
+        self.assertNotIn("0.16713620093", text)
+
     def test_solid_input_pins_native_fdiis_and_shared_spglib_contract(self) -> None:
         text = base.solid_input(base.REFERENCES[0], "GXTB", "ENERGY", "k444", 3.553, "C_GXTB")
         self.assertIn("METHOD GXTB", text)
