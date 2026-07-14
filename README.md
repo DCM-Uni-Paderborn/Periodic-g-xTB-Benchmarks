@@ -28,6 +28,9 @@ in this repository.
   revision.
 - `scripts/`: helper scripts used for the final k-point, cell-optimization,
   and CP2K-native-vs-tblite-CLI checks.
+- `scripts/finalize_paper_benchmark_bundle.py`: fail-closed aggregation of the
+  three completed benchmark-specific publication bundles into one CSV, JSON
+  lineage record, and set of TeX number macros under `paper/`.
 - `FINAL_RESULTS.md`, `CODE_PATCHES.md`, and `paper_revision_numbers.csv`:
   compact provenance for the current paper revision.
 
@@ -49,6 +52,17 @@ ACP k-space successor build is still in qualification. See
 The current g-xTB DMC-ICE13 and LC12 values are therefore explicitly
 provisional, and X23b has no g-xTB accuracy result yet. The publication
 finalizers refuse incomplete or unhashed data.
+
+After the DMC-ICE13, X23b, and LC12 finalizers have all succeeded, create the
+single manuscript-facing bundle with
+
+```bash
+python3 scripts/finalize_paper_benchmark_bundle.py
+```
+
+The command deletes stale aggregate outputs and fails without emitting a
+replacement if any child bundle is incomplete, has changed hashes, lacks the
+three-method comparison, or has inconsistent coverage.
 
 ## Frozen GFN1/GFN2 comparison snapshot
 
