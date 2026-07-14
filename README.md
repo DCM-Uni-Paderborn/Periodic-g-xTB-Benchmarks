@@ -30,7 +30,10 @@ in this repository.
   and CP2K-native-vs-tblite-CLI checks.
 - `scripts/finalize_paper_benchmark_bundle.py`: fail-closed aggregation of the
   three completed benchmark-specific publication bundles into one CSV, JSON
-  lineage record, and set of TeX number macros under `paper/`.
+  lineage record, and set of TeX number macros under `paper/`. The JSON and
+  TeX exports additionally contain like-for-like g-XTB-minus-GFN2 deltas,
+  error ratios, and percentage changes. LC12 comparisons are emitted only for
+  the identical three-method common subset, never across differing coverage.
 - `FINAL_RESULTS.md`, `CODE_PATCHES.md`, and `paper_revision_numbers.csv`:
   compact provenance for the current paper revision.
 
