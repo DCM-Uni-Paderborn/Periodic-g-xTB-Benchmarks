@@ -23,7 +23,9 @@ in this repository.
   state, cohesive energies, literature comparisons, and SCC-root diagnostics.
 - `campaigns/`: immutable g-xTB build, protocol, and qualification manifests.
 - `validation/`: molecular, primitive-cell/supercell, symmetry, force, and
-  stress regression inputs for the CP2K/save_tblite bridge.
+  stress regression inputs for the CP2K/save_tblite bridge. The canonical
+  artifact digests removed from the manuscript and Supplementary Material are
+  stored in `validation/paper_artifact_sha256.json`.
 - `patches/`: local CP2K and tblite patches used for the final benchmark
   revision.
 - `scripts/`: helper scripts used for the final k-point, cell-optimization,
