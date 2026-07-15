@@ -66,6 +66,7 @@ the completed external build review.
 
 ```bash
 python3 Goldzak12/scripts/run_goldzak12_k_convergence.py \
+  --method GXTB \
   --campaign-manifest /path/to/build_manifest.json \
   --campaign-manifest-sha256 REVIEWED_64_HEX_SHA256 \
   --cp2k-source /path/to/clean/cp2k-g-xTB-pbc \
@@ -78,6 +79,13 @@ python3 Goldzak12/scripts/run_goldzak12_k_convergence.py \
 
 python3 Goldzak12/scripts/finalize_goldzak12_paper_summary.py
 ```
+
+`--method` is repeatable and defaults to all three methods for backwards
+compatibility.  The production GXTB continuation uses `--method GXTB`: it
+leaves the frozen external GFN1/GFN2 provenance, atom references, and run trees
+untouched.  A selective run records only its execution scope; the publication
+finalizer remains fail-closed and accepts only the complete three-method by
+LC10 bundle.
 
 On Terok, use the shared fail-closed MPI/affinity path.  The manifest hash must
 come from the completed build qualification; do not compute and accept a new
@@ -92,6 +100,7 @@ MANIFEST_SHA256=REPLACE_WITH_EXTERNALLY_REVIEWED_SHA256
 MPI=/path/to/qualified/environment/bin/mpirun
 
 python3 Goldzak12/scripts/run_goldzak12_k_convergence.py \
+  --method GXTB \
   --campaign-manifest "$MANIFEST" \
   --campaign-manifest-sha256 "$MANIFEST_SHA256" \
   --cp2k-source /path/to/clean/cp2k-g-xTB-pbc \

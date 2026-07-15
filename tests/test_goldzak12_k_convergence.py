@@ -43,6 +43,42 @@ def complete_values() -> list[dict[str, object]]:
 
 
 class LC10AdaptiveKConvergenceTests(unittest.TestCase):
+    def test_repeatable_method_selector_defaults_and_canonicalizes(self) -> None:
+        self.assertEqual(kconv.selected_methods(None), kconv.METHODS)
+        self.assertEqual(kconv.selected_methods([]), kconv.METHODS)
+        self.assertEqual(
+            kconv.selected_methods(["GXTB", "GFN1"]),
+            ("GFN1", "GXTB"),
+        )
+        with self.assertRaisesRegex(ValueError, "at most once"):
+            kconv.selected_methods(["GXTB", "GXTB"])
+        with self.assertRaisesRegex(ValueError, "unknown method"):
+            kconv.selected_methods(["GFN0"])
+
+    def test_gxtb_only_convergence_has_exact_lc10_scope(self) -> None:
+        rows = [row for row in complete_values() if row["method"] == "GXTB"]
+        steps, selections, pending = kconv.assess_convergence(
+            rows, methods=("GXTB",)
+        )
+        self.assertEqual(pending, [])
+        self.assertEqual(len(selections), len(kconv.PAPER_SYSTEMS))
+        self.assertEqual({row["method"] for row in selections}, {"GXTB"})
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "data").mkdir()
+            payload = kconv.write_convergence_artifacts(
+                root,
+                rows,
+                steps,
+                selections,
+                pending,
+                campaign={"campaign_id": "test"},
+                fits_sha256="f" * 64,
+                methods=("GXTB",),
+            )
+        self.assertEqual(payload["status"], "converged")
+        self.assertEqual(payload["methods"], ["GXTB"])
+
     def test_exact_thresholds_and_single_step_take_denser_value(self) -> None:
         rows = complete_values()
         # C/GFN1 passes already at 3->4, exactly on both inclusive limits.

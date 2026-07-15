@@ -57,6 +57,19 @@ CONVERGENCE_NAME = "lc10_adaptive_k_convergence.json"
 SCALE_MANIFEST_NAME = "lc10_k_convergence_scale_manifest.json"
 
 
+def selected_methods(requested: Iterable[str] | None) -> tuple[str, ...]:
+    """Return a unique selection in the canonical publication order."""
+    selected = tuple(requested or ())
+    if not selected:
+        return METHODS
+    if len(selected) != len(set(selected)):
+        raise ValueError("--method may select each method at most once")
+    unknown = sorted(set(selected) - set(METHODS))
+    if unknown:
+        raise ValueError(f"unknown method selection: {', '.join(unknown)}")
+    return tuple(method for method in METHODS if method in selected)
+
+
 def mesh_name(number: int) -> str:
     if number < 1:
         raise ValueError("k-mesh number must be positive")
@@ -82,7 +95,10 @@ def equilibrium_paths(root: Path, solid: str, method: str, mesh: str) -> tuple[P
     return input_path, output_path, input_path.with_suffix(".inp.eos.json")
 
 
-def fit_fingerprint(fits: Iterable[dict[str, object]]) -> str:
+def fit_fingerprint(
+    fits: Iterable[dict[str, object]],
+    methods: tuple[str, ...] = METHODS,
+) -> str:
     fields = (
         "solid",
         "method",
@@ -102,9 +118,15 @@ def fit_fingerprint(fits: Iterable[dict[str, object]]) -> str:
     records = [
         {field: str(row.get(field, "")) for field in fields}
         for row in fits
-        if row.get("solid") in PAPER_SYSTEMS and row.get("method") in METHODS
+        if row.get("solid") in PAPER_SYSTEMS and row.get("method") in methods
     ]
-    records.sort(key=lambda row: (METHODS.index(row["method"]), row["solid"], mesh_number(row["eos_mesh"])))
+    records.sort(
+        key=lambda row: (
+            methods.index(row["method"]),
+            row["solid"],
+            mesh_number(row["eos_mesh"]),
+        )
+    )
     encoded = json.dumps(records, sort_keys=True, separators=(",", ":")).encode()
     return hashlib.sha256(encoded).hexdigest()
 
@@ -112,6 +134,7 @@ def fit_fingerprint(fits: Iterable[dict[str, object]]) -> str:
 def equilibrium_specs(
     root: Path,
     fits: Iterable[dict[str, object]],
+    methods: tuple[str, ...] = METHODS,
 ) -> list[tuple[str, Path, Path, bool]]:
     refs = {ref.solid: ref for ref in base.LC10_PAPER_REFERENCES}
     specs: list[tuple[str, Path, Path, bool]] = []
@@ -119,7 +142,7 @@ def equilibrium_specs(
         solid = str(fit.get("solid", ""))
         method = str(fit.get("method", ""))
         mesh = str(fit.get("eos_mesh", ""))
-        if solid not in refs or method not in METHODS:
+        if solid not in refs or method not in methods:
             continue
         if fit.get("fit_status") != "quadratic" or not str(fit.get("a_eos_A", "")):
             raise RuntimeError(f"invalid independent EOS fit: {method}/{solid}/{mesh}")
@@ -155,10 +178,11 @@ def collect_independent_values(
     root: Path,
     fits: Iterable[dict[str, object]],
     campaign: dict[str, object],
+    methods: tuple[str, ...] = METHODS,
 ) -> list[dict[str, object]]:
     refs = {ref.solid: ref for ref in base.LC10_PAPER_REFERENCES}
     atom_energies = base.atom_energies(
-        METHODS,
+        methods,
         campaign,
         PAPER_ELEMENTS,
         campaign_bind_all_methods=True,
@@ -168,7 +192,7 @@ def collect_independent_values(
         solid = str(fit.get("solid", ""))
         method = str(fit.get("method", ""))
         mesh = str(fit.get("eos_mesh", ""))
-        if solid not in refs or method not in METHODS:
+        if solid not in refs or method not in methods:
             continue
         if fit.get("fit_status") != "quadratic" or not str(fit.get("a_eos_A", "")):
             raise RuntimeError(f"invalid independent EOS fit: {method}/{solid}/{mesh}")
@@ -235,7 +259,7 @@ def collect_independent_values(
         )
     rows.sort(
         key=lambda row: (
-            METHODS.index(str(row["method"])),
+            methods.index(str(row["method"])),
             PAPER_SYSTEMS.index(str(row["solid"])),
             int(row["mesh_n"]),
         )
@@ -246,6 +270,7 @@ def collect_independent_values(
 def assess_convergence(
     values: Iterable[dict[str, object]],
     *,
+    methods: tuple[str, ...] = METHODS,
     require_initial_meshes: bool = True,
 ) -> tuple[list[dict[str, object]], list[dict[str, object]], list[tuple[str, str, int]]]:
     by_key: dict[tuple[str, str, int], dict[str, object]] = {}
@@ -261,7 +286,7 @@ def assess_convergence(
     steps: list[dict[str, object]] = []
     selections: list[dict[str, object]] = []
     pending: list[tuple[str, str, int]] = []
-    for method in METHODS:
+    for method in methods:
         for solid in PAPER_SYSTEMS:
             numbers = sorted(number for m, s, number in by_key if (m, s) == (method, solid))
             if require_initial_meshes and not set(INITIAL_MESH_NUMBERS) <= set(numbers):
@@ -338,14 +363,14 @@ def assess_convergence(
                 )
     steps.sort(
         key=lambda row: (
-            METHODS.index(str(row["method"])),
+            methods.index(str(row["method"])),
             PAPER_SYSTEMS.index(str(row["solid"])),
             mesh_number(str(row["coarse_mesh"])),
         )
     )
     selections.sort(
         key=lambda row: (
-            METHODS.index(str(row["method"])),
+            methods.index(str(row["method"])),
             PAPER_SYSTEMS.index(str(row["solid"])),
         )
     )
@@ -376,6 +401,7 @@ def write_convergence_artifacts(
     *,
     campaign: dict[str, object],
     fits_sha256: str,
+    methods: tuple[str, ...] = METHODS,
 ) -> dict[str, object]:
     data = root / "data"
     data.mkdir(parents=True, exist_ok=True)
@@ -394,13 +420,13 @@ def write_convergence_artifacts(
     complete = (
         not pending
         and not unconverged
-        and len(selections) == len(METHODS) * len(PAPER_SYSTEMS)
+        and len(selections) == len(methods) * len(PAPER_SYSTEMS)
     )
     payload: dict[str, object] = {
         "schema_version": CONVERGENCE_SCHEMA,
         "benchmark": "LC10 (fixed Goldzak12 subset)",
         "status": "converged" if complete else "incomplete",
-        "methods": list(METHODS),
+        "methods": list(methods),
         "paper_systems": list(PAPER_SYSTEMS),
         "diagnostic_only_systems": list(base.LC10_DIAGNOSTIC_ONLY_SOLIDS),
         "algorithm": {
@@ -469,13 +495,14 @@ def scale_manifest(
     root: Path,
     fits: Iterable[dict[str, object]],
     scales: tuple[float, ...],
+    methods: tuple[str, ...] = METHODS,
 ) -> dict[str, object]:
     records = []
     for fit in fits:
         method = str(fit.get("method", ""))
         solid = str(fit.get("solid", ""))
         mesh = str(fit.get("eos_mesh", ""))
-        if method not in METHODS or solid not in PAPER_SYSTEMS:
+        if method not in methods or solid not in PAPER_SYSTEMS:
             continue
         records.append(
             {
@@ -487,7 +514,7 @@ def scale_manifest(
         )
     records.sort(
         key=lambda row: (
-            METHODS.index(row["method"]),
+            methods.index(row["method"]),
             PAPER_SYSTEMS.index(row["solid"]),
             mesh_number(row["mesh"]),
         )
@@ -495,7 +522,7 @@ def scale_manifest(
     payload = {
         "schema_version": 1,
         "benchmark": "LC10 independent-EOS k convergence",
-        "methods": list(METHODS),
+        "methods": list(methods),
         "paper_systems": list(PAPER_SYSTEMS),
         "records": records,
     }
@@ -529,6 +556,12 @@ def main() -> int:
     parser.add_argument("--save-tblite-library", type=Path)
     parser.add_argument("--cp2k-source", type=Path, required=True)
     parser.add_argument("--save-tblite-source", type=Path, required=True)
+    parser.add_argument(
+        "--method",
+        action="append",
+        choices=METHODS,
+        help="method to execute; repeat to select multiple methods (default: all)",
+    )
     parser.add_argument("--jobs", type=int, default=1)
     parser.add_argument("--threads", type=int, default=1)
     parser.add_argument("--mpi-ranks-per-job", type=int, default=1)
@@ -547,6 +580,11 @@ def main() -> int:
         default=eos.gxtb_classification_manifest_path(),
     )
     args = parser.parse_args()
+
+    try:
+        run_methods = selected_methods(args.method)
+    except ValueError as error:
+        parser.error(str(error))
 
     if not re.fullmatch(r"[0-9a-f]{64}", args.campaign_manifest_sha256):
         parser.error("--campaign-manifest-sha256 must be 64 lowercase hexadecimal digits")
@@ -610,13 +648,18 @@ def main() -> int:
 
     protocol: dict[str, object] = {
         "benchmark": "LC10 (fixed Goldzak12 subset)",
-        "methods": list(METHODS),
+        "methods": list(run_methods),
+        "execution_methods": list(run_methods),
+        "publication_methods": list(METHODS),
+        "frozen_external_baseline_methods": [
+            method for method in METHODS if method not in run_methods
+        ],
         "selected_solids": list(PAPER_SYSTEMS),
         "paper_systems": list(PAPER_SYSTEMS),
         "diagnostic_only_systems": list(base.LC10_DIAGNOSTIC_ONLY_SOLIDS),
         "exact_lc10_scope": True,
-        "single_cp2k_binary_for_all_methods": True,
-        "single_tblite_provider_for_all_methods": "save_tblite",
+        "single_cp2k_binary_for_selected_methods": True,
+        "single_tblite_provider_for_selected_methods": "save_tblite",
         "campaign_manifest_sha256_external_pin": args.campaign_manifest_sha256,
         "adaptive_k_convergence": {
             "initial_meshes": [mesh_name(number) for number in INITIAL_MESH_NUMBERS],
@@ -653,25 +696,29 @@ def main() -> int:
             else None
         ),
     }
+    if run_methods == METHODS:
+        protocol["single_cp2k_binary_for_all_methods"] = True
+        protocol["single_tblite_provider_for_all_methods"] = "save_tblite"
 
     def write_provenance() -> None:
-        # Both records intentionally name the same CP2K and save_tblite binaries.
-        base.write_build_provenance(
-            cp2k,
-            save_tblite,
-            args.cp2k_source,
-            args.save_tblite_source,
-            protocol,
-        )
-        base.write_gxtb_build_provenance(
-            cp2k,
-            save_tblite,
-            args.cp2k_source,
-            args.save_tblite_source,
-            protocol,
-            campaign,
-            args.campaign_manifest,
-        )
+        if any(method in base.LEGACY_METHODS for method in run_methods):
+            base.write_build_provenance(
+                cp2k,
+                save_tblite,
+                args.cp2k_source,
+                args.save_tblite_source,
+                protocol,
+            )
+        if "GXTB" in run_methods:
+            base.write_gxtb_build_provenance(
+                cp2k,
+                save_tblite,
+                args.cp2k_source,
+                args.save_tblite_source,
+                protocol,
+                campaign,
+                args.campaign_manifest,
+            )
 
     write_provenance()
     if not args.fit_only:
@@ -679,7 +726,7 @@ def main() -> int:
             save_tblite,
             args.jobs,
             args.force,
-            METHODS,
+            run_methods,
             save_tblite,
             campaign,
             PAPER_ELEMENTS,
@@ -688,7 +735,7 @@ def main() -> int:
 
     targets: set[tuple[str, str, int]] = {
         (method, solid, number)
-        for method in METHODS
+        for method in run_methods
         for solid in PAPER_SYSTEMS
         for number in INITIAL_MESH_NUMBERS
     }
@@ -698,7 +745,7 @@ def main() -> int:
     for row in base.read_csv(base.ROOT / "data" / "eos_fits.csv"):
         method = str(row.get("method", ""))
         solid = str(row.get("solid", ""))
-        if method not in METHODS or solid not in PAPER_SYSTEMS:
+        if method not in run_methods or solid not in PAPER_SYSTEMS:
             continue
         try:
             number = mesh_number(str(row.get("eos_mesh", "")))
@@ -721,7 +768,7 @@ def main() -> int:
             targets - completed_targets,
             key=lambda item: (
                 item[2],
-                METHODS.index(item[0]),
+                run_methods.index(item[0]),
                 PAPER_SYSTEMS.index(item[1]),
             ),
         )
@@ -730,7 +777,7 @@ def main() -> int:
             new_targets = []
         for number in sorted({item[2] for item in new_targets}):
             mesh = mesh_name(number)
-            for method in METHODS:
+            for method in run_methods:
                 solids = tuple(
                     solid
                     for solid in PAPER_SYSTEMS
@@ -764,7 +811,7 @@ def main() -> int:
         all_fits = [
             dict(row)
             for row in base.read_csv(base.ROOT / "data" / "eos_fits.csv")
-            if row.get("method") in METHODS and row.get("solid") in PAPER_SYSTEMS
+            if row.get("method") in run_methods and row.get("solid") in PAPER_SYSTEMS
         ]
         expected_fit_keys = targets if not args.fit_only else {
             (str(row["method"]), str(row["solid"]), mesh_number(str(row["eos_mesh"])))
@@ -789,8 +836,18 @@ def main() -> int:
                 "invalid independent EOS fits require scale/branch review before k adaptation: "
                 + ", ".join("/".join((method, solid, mesh_name(number))) for method, solid, number in invalid)
             )
-        active_fits = [fit_by_key[key] for key in sorted(expected_fit_keys)]
-        eq_specs = equilibrium_specs(base.ROOT, active_fits)
+        active_fits = [
+            fit_by_key[key]
+            for key in sorted(
+                expected_fit_keys,
+                key=lambda item: (
+                    run_methods.index(item[0]),
+                    PAPER_SYSTEMS.index(item[1]),
+                    item[2],
+                ),
+            )
+        ]
+        eq_specs = equilibrium_specs(base.ROOT, active_fits, run_methods)
         if not args.fit_only:
             eos.run_jobs(
                 eq_specs,
@@ -804,13 +861,17 @@ def main() -> int:
                 campaign_bind_all_methods=True,
             )
         validate_campaign_outputs(eq_specs, campaign)
-        final_values = collect_independent_values(base.ROOT, active_fits, campaign)
-        final_steps, final_selections, final_pending = assess_convergence(final_values)
-        scale_payload = scale_manifest(base.ROOT, active_fits, scales)
+        final_values = collect_independent_values(
+            base.ROOT, active_fits, campaign, run_methods
+        )
+        final_steps, final_selections, final_pending = assess_convergence(
+            final_values, methods=run_methods
+        )
+        scale_payload = scale_manifest(base.ROOT, active_fits, scales, run_methods)
         scale_path = base.ROOT / "data" / SCALE_MANIFEST_NAME
         protocol["k_convergence_scale_manifest_sha256"] = base.sha256(scale_path)
         protocol["k_convergence_scale_manifest"] = scale_payload
-        protocol["current_fit_sha256"] = fit_fingerprint(active_fits)
+        protocol["current_fit_sha256"] = fit_fingerprint(active_fits, run_methods)
         convergence = write_convergence_artifacts(
             base.ROOT,
             final_values,
@@ -819,6 +880,7 @@ def main() -> int:
             final_pending,
             campaign=campaign,
             fits_sha256=base.sha256(base.ROOT / "data" / "eos_fits.csv"),
+            methods=run_methods,
         )
         protocol["k_convergence_status"] = convergence["status"]
         protocol["k_convergence_artifact_sha256"] = base.sha256(
@@ -845,7 +907,7 @@ def main() -> int:
             )
         targets.update(final_pending)
 
-    expected_selections = len(METHODS) * len(PAPER_SYSTEMS)
+    expected_selections = len(run_methods) * len(PAPER_SYSTEMS)
     if len(final_selections) != expected_selections or any(
         row.get("selection_status") != "converged" for row in final_selections
     ):
@@ -869,7 +931,7 @@ def main() -> int:
     }
     fixed_fits = [
         fit_lookup[(method, solid, FIXED_GEOMETRY_EOS_MESH)]
-        for method in METHODS
+        for method in run_methods
         for solid in PAPER_SYSTEMS
     ]
     fixed_specs = eos.final_sp_specs(
@@ -893,7 +955,7 @@ def main() -> int:
         fixed_fits,
         list(FIXED_GEOMETRY_ENERGY_MESHES),
         "k555",
-        METHODS,
+        run_methods,
         campaign,
         campaign_bind_all_methods=True,
     )
