@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "purpose": "Machine-readable provenance for artifacts cited without inline digests in the JCP manuscript and Supplementary Material",
+  "algorithm": "SHA-256",
+  "artifacts": [
+    {
+      "id": "dmc13_gamma_cli_parity",
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_spglib_gamma_cli_check.csv",
+      "sha256": "02297be201bc744356f58c070bedabf84dc0b8291545e0ccf3ae28f787a225e9"
+    },
+    {
+      "id": "dmc13_phasewise_method_summary",
+      "path": "DMC-ICE13/data/dmc_ice13_gfn_gxtb_phasewise_summary.json",
+      "sha256": "87c546c99c6b0dbdff1c8ad9f75e8801589ad67fbd2950deb3eea8d9d9492c93"
+    },
+    {
+      "id": "dmc13_post_pr5582_energy_sentinel",
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_post5582_energy_sentinel_qualification.json",
+      "sha256": "cfd583ee231a1d8d85cb492b3052a4cf56ecef75626806b46301730866481fea"
+    },
+    {
+      "id": "x23b_k222_force_stress_gate",
+      "path": "campaigns/gxtb-pbc-v1-20260714/x23b-k222-force-stress-gate.json",
+      "sha256": "140a726de2f0c7a7450fca88d31b842a9beacb98fef1dd0683fd567457517ce5"
+    },
+    {
+      "id": "dmc13_raw_kpoint_result_matrix",
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_spglib_kpoint_results.json",
+      "sha256": "d28420a5bc54033dbc8c06d5c1ddd1bed7aef7960a39eb36b46a5f76d208aa17"
+    },
+    {
+      "id": "dmc13_phase_vii_plot_data",
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_phase_vii_kpoint_convergence.csv",
+      "sha256": "b80e4a2da1f3714242e267a5ae398148f8aa31c37c85db86c7304d86dcd96e31"
+    }
+  ]
+}
