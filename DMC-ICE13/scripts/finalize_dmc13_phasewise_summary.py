@@ -10,6 +10,7 @@ import json
 import math
 import os
 from collections import Counter
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 
@@ -37,6 +38,21 @@ NONREFERENCE_PHASES = (
     "XVII",
 )
 SUMMARY_STEM = "dmc_ice13_gfn_gxtb_phasewise_summary"
+FIXED_COMPARISON_MESH = "k333"
+FIXED_COMPARISON_LABEL = "3x3x3"
+REQUIRED_POST_5582_ANCESTOR = "c92cc08b45378b85150447011b5a4bb552f5b797"
+POST_5582_CAMPAIGN_MANIFEST = (
+    "campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json"
+)
+POST_5582_REQUALIFICATION_REPORT = (
+    "data/dmc_ice13_gxtb_post5582_cross_build_requalification.json"
+)
+POST_5582_SENTINEL_QUALIFICATION = (
+    "data/dmc_ice13_gxtb_post5582_energy_sentinel_qualification.json"
+)
+EXPECTED_POST_5582_MANIFEST_SHA256 = (
+    "b0feea6a411f02dedb1eb57190092e35d38f4c5705a985893d9f97070ddb1d51"
+)
 
 
 def sha256(path: Path) -> str:
@@ -90,6 +106,153 @@ def artifact(path: Path, root: Path) -> dict[str, str]:
     if not path.is_file():
         raise ValueError(f"required artifact is missing: {path}")
     return {"path": relative_path(path, root), "sha256": sha256(path)}
+
+
+def load_post5582_energy_qualification(root: Path) -> dict[str, Any] | None:
+    """Validate the accepted energy-only sentinel qualification, if present."""
+    repository = root.parent
+    report_path = root / POST_5582_SENTINEL_QUALIFICATION
+    if not report_path.is_file():
+        return None
+    report = read_json(report_path)
+    if (
+        report.get("schema_version") != 1
+        or report.get("benchmark") != "DMC-ICE13"
+        or report.get("status") != "qualified_by_post5582_energy_sentinel"
+        or report.get("paper_freeze_authorized") is not True
+        or report.get("old_results_reusable") is not True
+    ):
+        raise ValueError("invalid post-#5582 DMC13 qualification status")
+
+    matrix = report.get("bulk_execution_matrix")
+    if not isinstance(matrix, dict) or (
+        matrix.get("expected_jobs"),
+        matrix.get("completed_jobs"),
+        matrix.get("failed_jobs"),
+        matrix.get("origin"),
+        matrix.get("raw_outputs_relabelled"),
+    ) != (62, 62, 0, "pre_cp2k_pr_5582", False):
+        raise ValueError(
+            "post-#5582 qualification does not preserve the 62/62 raw-data origin"
+        )
+
+    candidate = report.get("candidate_build")
+    if not isinstance(candidate, dict):
+        raise ValueError("post-#5582 qualification lacks candidate-build provenance")
+    manifest_path = repository / str(candidate.get("manifest", ""))
+    manifest_digest = candidate.get("manifest_sha256")
+    if (
+        manifest_digest != EXPECTED_POST_5582_MANIFEST_SHA256
+        or not manifest_path.is_file()
+        or sha256(manifest_path) != EXPECTED_POST_5582_MANIFEST_SHA256
+    ):
+        raise ValueError("post-#5582 campaign manifest hash mismatch")
+    manifest = read_json(manifest_path)
+    cp2k = manifest.get("cp2k")
+    provider = manifest.get("save_tblite")
+    validation = manifest.get("validation")
+    if not all(isinstance(value, dict) for value in (cp2k, provider, validation)):
+        raise ValueError("post-#5582 campaign manifest is incomplete")
+    if (
+        manifest.get("campaign_state") != "production_ready"
+        or cp2k.get("revision") != candidate.get("cp2k_revision")
+        or cp2k.get("required_post5582_ancestor")
+        != candidate.get("required_post5582_ancestor")
+        or candidate.get("required_post5582_ancestor")
+        != REQUIRED_POST_5582_ANCESTOR
+        or provider.get("revision") != candidate.get("save_tblite_revision")
+    ):
+        raise ValueError("post-#5582 candidate-build identity mismatch")
+
+    pre5582 = report.get("pre5582_artifacts")
+    if not isinstance(pre5582, dict):
+        raise ValueError("post-#5582 qualification lacks pre-#5582 artifacts")
+    for label in (
+        "build_provenance",
+        "kpoint_results",
+        "phasewise_csv",
+        "phasewise_json",
+        "validation_index",
+    ):
+        record = pre5582.get(label)
+        if not isinstance(record, dict):
+            raise ValueError(f"post-#5582 qualification lacks {label}")
+        path = repository / str(record.get("path", ""))
+        if not path.is_file() or sha256(path) != record.get("sha256"):
+            raise ValueError(f"post-#5582 qualification {label} hash mismatch")
+    validation_record = pre5582["validation_index"]
+    validation_index = read_json(repository / validation_record["path"])
+    records = validation_index.get("records")
+    if not isinstance(records, list) or len(records) != validation_record.get(
+        "record_count"
+    ):
+        raise ValueError("post-#5582 qualification validation-index count mismatch")
+
+    sentinel = report.get("sentinel")
+    manifest_sentinel = validation.get("dmc13_post5582_energy_sentinel")
+    if not isinstance(sentinel, dict) or not isinstance(manifest_sentinel, dict):
+        raise ValueError("post-#5582 DMC13 sentinel is missing")
+    if (
+        sentinel.get("phase"),
+        sentinel.get("mesh"),
+        sentinel.get("old_scf_steps"),
+        sentinel.get("post5582_scf_steps"),
+        sentinel.get("same_frozen_input_bytes"),
+    ) != ("VII", "k666", 12, 12, True):
+        raise ValueError("post-#5582 DMC13 sentinel identity mismatch")
+    input_path = repository / str(sentinel.get("input", ""))
+    if not input_path.is_file() or sha256(input_path) != sentinel.get("input_sha256"):
+        raise ValueError("post-#5582 DMC13 sentinel input hash mismatch")
+    old_record = next(
+        (
+            item
+            for item in records
+            if item.get("mesh") == "k666" and item.get("phase") == "VII"
+        ),
+        None,
+    )
+    if not isinstance(old_record, dict) or (
+        old_record.get("input_sha256") != sentinel.get("input_sha256")
+        or old_record.get("output_sha256") != sentinel.get("old_output_sha256")
+    ):
+        raise ValueError("post-#5582 sentinel does not bind the pre-#5582 record")
+    if (
+        manifest_sentinel.get("status") != "passed"
+        or manifest_sentinel.get("input_sha256") != sentinel.get("input_sha256")
+        or manifest_sentinel.get("output_sha256")
+        != sentinel.get("post5582_output_sha256")
+    ):
+        raise ValueError("post-#5582 sentinel does not bind the candidate manifest")
+    try:
+        old_energy = Decimal(sentinel["old_total_energy_hartree"])
+        new_energy = Decimal(sentinel["post5582_total_energy_hartree"])
+        declared_delta = Decimal(sentinel["absolute_delta_hartree"])
+    except (KeyError, InvalidOperation) as error:
+        raise ValueError("invalid exact decimal DMC13 sentinel energies") from error
+    if abs(new_energy - old_energy) != declared_delta or declared_delta != Decimal(
+        "1.14e-13"
+    ):
+        raise ValueError("post-#5582 DMC13 sentinel energy delta mismatch")
+    policy = report.get("accepted_policy")
+    if not isinstance(policy, dict) or (
+        policy.get("name") != "dmc13-single-energy-sentinel-requalification-v1"
+        or policy.get("scope") != "DMC-ICE13 total and relative energies only"
+        or finite_float(policy.get("energy_tolerance_hartree"), "sentinel tolerance")
+        < float(declared_delta)
+    ):
+        raise ValueError("post-#5582 DMC13 sentinel policy mismatch")
+
+    return {
+        "status": "qualified_by_post5582_energy_sentinel",
+        "paper_value_qualified": True,
+        "old_results_reusable": True,
+        "raw_data_origin": "pre_cp2k_pr_5582",
+        "raw_outputs_relabelled": False,
+        "bulk_execution_matrix": matrix,
+        "qualification_report": artifact(report_path, repository),
+        "candidate_manifest": artifact(manifest_path, repository),
+        "sentinel": sentinel,
+    }
 
 
 def provenance_record(
@@ -176,6 +339,14 @@ def build_summary(root: Path) -> tuple[dict[str, Any], list[dict[str, object]]]:
         "gxtb_provenance": artifact(gxtb_provenance_path, root),
         "geometries": artifact(geometries_path, root),
     }
+    post5582_qualification = load_post5582_energy_qualification(root)
+    if post5582_qualification is not None:
+        sources["post5582_energy_qualification"] = post5582_qualification[
+            "qualification_report"
+        ]
+        sources["post5582_campaign_manifest"] = post5582_qualification[
+            "candidate_manifest"
+        ]
 
     report_methods = report.get("methods")
     result_meshes = results.get("results")
@@ -329,9 +500,149 @@ def build_summary(root: Path) -> tuple[dict[str, Any], list[dict[str, object]]]:
             for mesh in sorted(mesh_distribution, key=mesh_size)
         }
         mesh_sizes = [mesh_size(mesh) for mesh in selected_mesh_by_phase.values()]
+
+        fixed_mesh_result = result_meshes.get(FIXED_COMPARISON_MESH, {}).get(
+            method, {}
+        )
+        if not isinstance(fixed_mesh_result, dict) or fixed_mesh_result.get(
+            "complete"
+        ) is not True:
+            raise ValueError(
+                f"{method}/{FIXED_COMPARISON_MESH} fixed-mesh result is incomplete"
+            )
+        fixed_energies = fixed_mesh_result.get("energies_hartree")
+        fixed_per_h2o = fixed_mesh_result.get("per_h2o_hartree")
+        fixed_relative_reported = fixed_mesh_result.get("relative_kjmol")
+        if not all(
+            isinstance(value, dict)
+            for value in (fixed_energies, fixed_per_h2o, fixed_relative_reported)
+        ):
+            raise ValueError(
+                f"{method}/{FIXED_COMPARISON_MESH} fixed-mesh raw energies are missing"
+            )
+        fixed_ih_count = int(
+            geometries.get("Ih", {}).get("counts", {}).get("O", 0)
+        )
+        fixed_ih_total = finite_float(
+            fixed_energies.get("Ih"),
+            f"{method}/Ih/{FIXED_COMPARISON_MESH} total energy",
+        )
+        if fixed_ih_count <= 0:
+            raise ValueError("invalid H2O count for Ih")
+        fixed_ih_per_h2o = fixed_ih_total / fixed_ih_count
+        if not math.isclose(
+            fixed_ih_per_h2o,
+            finite_float(
+                fixed_per_h2o.get("Ih"),
+                f"{method}/Ih/{FIXED_COMPARISON_MESH} per-H2O energy",
+            ),
+            rel_tol=0.0,
+            abs_tol=1.0e-12,
+        ):
+            raise ValueError(
+                f"{method}/Ih/{FIXED_COMPARISON_MESH} per-H2O energy mismatch"
+            )
+        fixed_errors: list[float] = []
+        fixed_phases: dict[str, Any] = {}
+        for phase in NONREFERENCE_PHASES:
+            phase_count = int(
+                geometries.get(phase, {}).get("counts", {}).get("O", 0)
+            )
+            if phase_count <= 0:
+                raise ValueError(f"invalid H2O count for {phase}")
+            phase_total = finite_float(
+                fixed_energies.get(phase),
+                f"{method}/{phase}/{FIXED_COMPARISON_MESH} total energy",
+            )
+            phase_per_h2o = phase_total / phase_count
+            if not math.isclose(
+                phase_per_h2o,
+                finite_float(
+                    fixed_per_h2o.get(phase),
+                    f"{method}/{phase}/{FIXED_COMPARISON_MESH} per-H2O energy",
+                ),
+                rel_tol=0.0,
+                abs_tol=1.0e-12,
+            ):
+                raise ValueError(
+                    f"{method}/{phase}/{FIXED_COMPARISON_MESH} per-H2O energy mismatch"
+                )
+            relative = (
+                phase_per_h2o - fixed_ih_per_h2o
+            ) * HARTREE_TO_KJMOL
+            if not math.isclose(
+                relative,
+                finite_float(
+                    fixed_relative_reported.get(phase),
+                    f"{method}/{phase}/{FIXED_COMPARISON_MESH} relative energy",
+                ),
+                rel_tol=0.0,
+                abs_tol=1.0e-9,
+            ):
+                raise ValueError(
+                    f"{method}/{phase}/{FIXED_COMPARISON_MESH} same-mesh-Ih mismatch"
+                )
+            dmc_relative = finite_float(
+                phase_convergence[phase].get("dmc_relative_kjmol_per_h2o"),
+                f"DMC/{phase} relative energy",
+            )
+            error = relative - dmc_relative
+            fixed_errors.append(error)
+            fixed_phases[phase] = {
+                "phase_total_energy_hartree": phase_total,
+                "phase_n_h2o": phase_count,
+                "phase_energy_per_h2o_hartree": phase_per_h2o,
+                "ih_total_energy_hartree": fixed_ih_total,
+                "ih_n_h2o": fixed_ih_count,
+                "ih_energy_per_h2o_hartree": fixed_ih_per_h2o,
+                "relative_energy_kjmol_per_h2o": relative,
+                "dmc_relative_energy_kjmol_per_h2o": dmc_relative,
+                "error_kjmol_per_h2o": error,
+            }
+        fixed_metrics = stats(fixed_errors)
+        stored_fixed_metrics = fixed_mesh_result.get("stats_nonreference")
+        if stored_fixed_metrics is not None:
+            if not isinstance(stored_fixed_metrics, dict):
+                raise ValueError(
+                    f"{method}/{FIXED_COMPARISON_MESH} fixed-mesh statistics are invalid"
+                )
+            for key, value in fixed_metrics.items():
+                stored = finite_float(
+                    stored_fixed_metrics.get(key),
+                    f"{method}/{FIXED_COMPARISON_MESH} {key}",
+                )
+                if not math.isclose(value, stored, rel_tol=0.0, abs_tol=1.0e-9):
+                    raise ValueError(
+                        f"{method}/{FIXED_COMPARISON_MESH} aggregate {key} mismatch"
+                    )
+        fixed_status = (
+            "numerically_unconverged_same_mesh_comparator"
+            if method == "GXTB"
+            else "same_mesh_comparator"
+        )
+        publication_qualification = (
+            post5582_qualification
+            if method == "GXTB" and post5582_qualification is not None
+            else {
+                "status": "diagnostic_pre_post_5582_requalification",
+                "paper_value_qualified": False,
+                "old_results_reusable": False,
+                "required_cp2k_ancestor": REQUIRED_POST_5582_ANCESTOR,
+                "required_candidate_manifest": POST_5582_CAMPAIGN_MANIFEST,
+                "required_requalification_report": (
+                    POST_5582_REQUALIFICATION_REPORT
+                ),
+            }
+            if method == "GXTB"
+            else {
+                "status": "frozen_reference_baseline",
+                "paper_value_qualified": True,
+            }
+        )
         method_payloads[method] = {
             "method_label": METHOD_LABELS[method],
             "status": "phasewise_kpoint_converged",
+            "publication_qualification": publication_qualification,
             "n_nonreference_phases": len(NONREFERENCE_PHASES),
             "metrics_kjmol_per_h2o": metrics,
             "selected_mesh_by_phase": selected_mesh_by_phase,
@@ -346,6 +657,15 @@ def build_summary(root: Path) -> tuple[dict[str, Any], list[dict[str, object]]]:
                 "legacy_rounded_absolute_XI_0.16": metrics,
                 "primary_explicit_relative_XI_0.15": stats(primary_errors),
             },
+            "fixed_k333_same_mesh_comparison": {
+                "mesh": FIXED_COMPARISON_MESH,
+                "mesh_label": FIXED_COMPARISON_LABEL,
+                "nk_total": 27,
+                "status": fixed_status,
+                "phasewise_kpoint_converged_value": False,
+                "metrics_kjmol_per_h2o": fixed_metrics,
+                "phases": fixed_phases,
+            },
             "phases": phases,
             "provenance": provenance,
         }
@@ -354,12 +674,25 @@ def build_summary(root: Path) -> tuple[dict[str, Any], list[dict[str, object]]]:
                 "method_id": method,
                 "method_label": METHOD_LABELS[method],
                 "status": "phasewise_kpoint_converged",
+                "publication_status": publication_qualification["status"],
+                "paper_value_qualified": str(
+                    publication_qualification["paper_value_qualified"]
+                ).lower(),
                 "N_nonreference_phases": len(NONREFERENCE_PHASES),
                 "reference_phase": "Ih",
                 "ME_kJmol_per_H2O": f"{metrics['ME']:.9f}",
                 "MAE_kJmol_per_H2O": f"{metrics['MAE']:.9f}",
                 "RMSE_kJmol_per_H2O": f"{metrics['RMSE']:.9f}",
                 "MaxAE_kJmol_per_H2O": f"{metrics['MaxAE']:.9f}",
+                "fixed_k333_status": fixed_status,
+                "fixed_k333_ME_kJmol_per_H2O": f"{fixed_metrics['ME']:.9f}",
+                "fixed_k333_MAE_kJmol_per_H2O": f"{fixed_metrics['MAE']:.9f}",
+                "fixed_k333_RMSE_kJmol_per_H2O": (
+                    f"{fixed_metrics['RMSE']:.9f}"
+                ),
+                "fixed_k333_MaxAE_kJmol_per_H2O": (
+                    f"{fixed_metrics['MaxAE']:.9f}"
+                ),
                 "convergence_threshold_kJmol_per_H2O": (
                     f"{CONVERGENCE_THRESHOLD_KJMOL_PER_H2O:.6f}"
                 ),
@@ -421,6 +754,45 @@ def build_summary(root: Path) -> tuple[dict[str, Any], list[dict[str, object]]]:
             "same_mesh_ih_required": True,
             "later_available_evidence_safety_check": True,
         },
+        "fixed_k333_same_mesh_comparison": {
+            "mesh": FIXED_COMPARISON_MESH,
+            "mesh_label": FIXED_COMPARISON_LABEL,
+            "nk_total": 27,
+            "purpose": (
+                "identical fixed-mesh comparator across GFN1-xTB, GFN2-xTB, "
+                "and g-xTB"
+            ),
+            "not_a_phasewise_converged_result": True,
+            "gxtb_warning": (
+                "The g-xTB k333 value is numerically unconverged and must not "
+                "be substituted for the phase-wise k-point-converged result."
+            ),
+        },
+        "publication_qualification": (
+            {
+                "status": post5582_qualification["status"],
+                "paper_freeze_authorized": True,
+                "gxtb_old_results_reusable": True,
+                "raw_gxtb_data_origin": "pre_cp2k_pr_5582",
+                "raw_outputs_relabelled": False,
+                "qualification_report": post5582_qualification[
+                    "qualification_report"
+                ],
+                "candidate_manifest": post5582_qualification[
+                    "candidate_manifest"
+                ],
+            }
+            if post5582_qualification is not None
+            else {
+                "status": "gxtb_cross_build_requalification_pending",
+                "paper_freeze_authorized": False,
+                "gxtb_old_results_reusable": False,
+                "pre_5582_gxtb_result_is_diagnostic_only": True,
+                "required_cp2k_ancestor": REQUIRED_POST_5582_ANCESTOR,
+                "required_candidate_manifest": POST_5582_CAMPAIGN_MANIFEST,
+                "required_requalification_report": POST_5582_REQUALIFICATION_REPORT,
+            }
+        ),
         "sources": sources,
         "methods": method_payloads,
     }
@@ -431,12 +803,19 @@ CSV_FIELDS = (
     "method_id",
     "method_label",
     "status",
+    "publication_status",
+    "paper_value_qualified",
     "N_nonreference_phases",
     "reference_phase",
     "ME_kJmol_per_H2O",
     "MAE_kJmol_per_H2O",
     "RMSE_kJmol_per_H2O",
     "MaxAE_kJmol_per_H2O",
+    "fixed_k333_status",
+    "fixed_k333_ME_kJmol_per_H2O",
+    "fixed_k333_MAE_kJmol_per_H2O",
+    "fixed_k333_RMSE_kJmol_per_H2O",
+    "fixed_k333_MaxAE_kJmol_per_H2O",
     "convergence_threshold_kJmol_per_H2O",
     "minimum_selected_mesh_n",
     "maximum_selected_mesh_n",

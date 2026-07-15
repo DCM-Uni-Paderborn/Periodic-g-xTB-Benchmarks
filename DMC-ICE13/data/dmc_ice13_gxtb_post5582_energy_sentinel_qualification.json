@@ -1,0 +1,70 @@
+{
+  "accepted_policy": {
+    "energy_tolerance_hartree": 1e-10,
+    "name": "dmc13-single-energy-sentinel-requalification-v1",
+    "scope": "DMC-ICE13 total and relative energies only",
+    "does_not_qualify": [
+      "forces",
+      "stress",
+      "X23b",
+      "LC10"
+    ]
+  },
+  "benchmark": "DMC-ICE13",
+  "bulk_execution_matrix": {
+    "completed_jobs": 62,
+    "expected_jobs": 62,
+    "failed_jobs": 0,
+    "origin": "pre_cp2k_pr_5582",
+    "raw_outputs_relabelled": false
+  },
+  "candidate_build": {
+    "cp2k_revision": "28df9380abb327d56bbf216d2469a1fd8c953fc0",
+    "manifest": "campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json",
+    "manifest_sha256": "b0feea6a411f02dedb1eb57190092e35d38f4c5705a985893d9f97070ddb1d51",
+    "required_post5582_ancestor": "c92cc08b45378b85150447011b5a4bb552f5b797",
+    "save_tblite_revision": "257ba442684c39454175e5192c8a2342b4c6380f"
+  },
+  "old_results_reusable": true,
+  "paper_freeze_authorized": true,
+  "pre5582_artifacts": {
+    "build_provenance": {
+      "path": "DMC-ICE13/data/build_provenance_gxtb_spglib.json",
+      "sha256": "22ecd6b60d4f8374f13fb995f9c372f21b8638dd765bf0e0c3bb631cfa1085ef"
+    },
+    "kpoint_results": {
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_spglib_kpoint_results.json",
+      "sha256": "d28420a5bc54033dbc8c06d5c1ddd1bed7aef7960a39eb36b46a5f76d208aa17"
+    },
+    "phasewise_csv": {
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_spglib_phasewise_kpoint_convergence.csv",
+      "sha256": "d61a3037a25487bbd5e19a5f76d2efb703f54c8ae650167565ba5c70bfdef335"
+    },
+    "phasewise_json": {
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_spglib_phasewise_kpoint_convergence.json",
+      "sha256": "d036ba6321e1c9107ca7eacf0b367a8ed323769fd57e8846f6b1618ce33a09c2"
+    },
+    "validation_index": {
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_spglib_validation_index.json",
+      "record_count": 113,
+      "sha256": "8125fa09f3552ac00ea5b21d63c9e8b3fde104e4c5d23d78cb7fde4c01a05803"
+    }
+  },
+  "qualification_id": "dmc13-pre5582-bulk-qualified-by-post5582-vii-k666-energy-sentinel-v1",
+  "schema_version": 1,
+  "sentinel": {
+    "absolute_delta_hartree": "1.14e-13",
+    "input": "DMC-ICE13/gxtb_spglib_inputs/k666/ice_VII_GXTB_k666.inp",
+    "input_sha256": "25f89520f3384f2e28f0cc34b4963b32ae9650cef44d46850c95f22baa066893",
+    "mesh": "k666",
+    "old_output_sha256": "985f94d3bacfd5043a1bb7e992eb9fbe388c8c944e53c32f39bea1951a483b9c",
+    "old_scf_steps": 12,
+    "old_total_energy_hartree": "-917.472187146001147",
+    "phase": "VII",
+    "post5582_output_sha256": "32972cf3c51e5a965910f012639cdca097a78fc2afb651adea90470b2951f229",
+    "post5582_scf_steps": 12,
+    "post5582_total_energy_hartree": "-917.472187146001261",
+    "same_frozen_input_bytes": true
+  },
+  "status": "qualified_by_post5582_energy_sentinel"
+}

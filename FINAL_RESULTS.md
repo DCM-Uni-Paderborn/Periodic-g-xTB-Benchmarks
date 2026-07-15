@@ -60,12 +60,13 @@ and 14.166994 kJ mol-1.
 
 ## LC10
 
-The paper comparison uses the fixed identical set C, Si, SiC, BN, BP, AlN,
-AlP, MgS, LiF, and LiCl for every method.  The numbers below are the earlier
-fixed-k444 GFN baselines, not the new same-binary adaptive paper table.  In the
-new protocol every method/solid independently converges both a0 and Ecoh from
-k333 through at most k888; the earliest single adjacent step passing both
-thresholds contributes its denser value.  LiH and MgO remain diagnostics.
+The paper comparison uses the fixed common set C, Si, SiC, BN, BP, AlN, AlP,
+MgS, LiF, and LiCl for every method. Cohesive energies use k555 single points
+on the k444 minima. LiH and MgO are outside this comparison scope.
+
+The GFN1/GFN2 rows below remain the frozen baseline data. The adaptive runner
+may execute g-xTB alone; its per-solid a0 and Ecoh convergence proceeds from
+k333 through at most k888 and does not relabel or overwrite those GFN rows.
 
 | Method | N | Lattice-constant MAE / A | Cohesive-energy MAE / eV atom-1 |
 |---|---:|---:|---:|
