@@ -25,6 +25,14 @@ J. Chem. Phys. 157, 134701 (2022), DOI: 10.1063/5.0102645.
   function of k-point mesh.
 - `data/dmc_ice13_kpoint_relative_energies.csv`: phase-resolved relative
   energies and errors as a function of k-point mesh.
+- `data/dmc_ice13_gxtb_adaptive_frontier.{csv,json}`: the diagnostic adaptive
+  frontier from explicit unshifted `1x1x1` (presented as Gamma after the
+  separate route-equivalence check) through `11x11x11`. At each frontier,
+  accepted phases retain their denser endpoint and unresolved phases use the
+  current mesh; this diagnostic is not an additional stopping gate.
+- `data/dmc_ice13_gxtb_phase_vii_kpoint_convergence.csv`: the complete ice-VII
+  relative-energy and adjacent-mesh sequence used in the new Supporting
+  Information.
 - `data/previous_vs_full_pr350_mae.csv` and the companion Markdown file:
   explicit comparison with the earlier partial-PR350 manuscript stack.
 - `data/dmc_ice13_relative_mae_comparison.csv`: comparison with the published
@@ -372,6 +380,18 @@ report emits the **phase-wise k-point-converged MAE** together with each
 relative energy, DMC reference, error, last delta, mesh label, `N`, and total
 k-point count.  RMS, mean absolute value, and maximum of the 12 last deltas are
 diagnostics only; they do not add a second acceptance condition.
+
+The JCP draft convergence figures and their exact plotted tables are regenerated
+from the hash-pinned raw and phase-wise JSON files with
+
+```bash
+python3 DMC-ICE13/scripts/make_dmc_adaptive_convergence_plots.py
+```
+
+The main-text figure shows the adaptive-frontier MAE through `11x11x11`; the
+SI figure resolves ice VII and demonstrates that `9x9x9 -> 10x10x10` does not
+pass, whereas `10x10x10 -> 11x11x11` changes the relative energy by only
+0.0311 kJ mol-1 per H2O and therefore satisfies the 0.05 criterion.
 
 The independent Gamma CLI comparison is likewise additive.  Run
 `scripts/dmc_gxtb_gamma_cli_check.py` with both `--cp2k` and `--tblite` only
