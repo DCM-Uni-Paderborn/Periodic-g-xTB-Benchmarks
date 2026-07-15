@@ -53,7 +53,7 @@ Current production calculations use CP2K source revision
 ACP k-space successor build is still in qualification. See
 `campaigns/gxtb-pbc-v1-20260714/` for the complete machine-readable identity.
 
-The current g-xTB DMC-ICE13 and LC12 values are therefore explicitly
+The current g-xTB DMC-ICE13 and LC10 values are therefore explicitly
 provisional, and X23b has no g-xTB accuracy result yet. The publication
 finalizers refuse incomplete or unhashed data.
 
@@ -98,3 +98,9 @@ All production k-point calculations use native Bloch sampling with full
 SPGLIB symmetry reduction. The completed production counts are 156/156 for
 DMC-ICE13, 46/46 for X23b k222 cell optimization, and 46/46 each for the
 X23b k333 and k444 final-geometry single points.
+
+The new LC10 paper table is not populated from those historical rows.  All
+three methods share one post-#5582 CP2K/save_tblite build and independently
+converge both a0 and Ecoh per solid from k333 upward without a fixed maximum
+mesh. One passing adjacent step is sufficient, both thresholds must pass, and
+the denser value is retained; no RMS or two-step gate is applied.

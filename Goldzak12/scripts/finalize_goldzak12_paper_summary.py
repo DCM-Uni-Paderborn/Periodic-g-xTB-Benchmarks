@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Freeze the validated LC12 GFN1/GFN2/g-XTB comparison for publication.
+"""Freeze the exact identical-set LC10 GFN1/GFN2/g-XTB paper comparison.
 
-The normal collectors deliberately keep method-selective working tables.  This
-finalizer is the stricter publication boundary: it recomputes every reported
-quantity from the archived raw outputs, requires the approved g-XTB EOS
-fingerprint and all k333/k444/k555 final single points, and writes one compact
-CSV plus a complete JSON lineage manifest.
+The raw Goldzak12 workspace retains LiH/MgO diagnostics.  This stricter
+publication boundary never includes those two systems in a metric: it requires
+the same ten named systems for all three methods, recomputes every reported
+quantity from archived outputs, and writes a compact CSV plus JSON lineage.
 """
 
 from __future__ import annotations
@@ -21,6 +20,7 @@ from typing import Any, Iterable, Mapping
 
 import run_goldzak12_benchmark as base
 import run_goldzak12_eos_benchmark as eos
+import run_goldzak12_k_convergence as kconv
 
 
 METHODS = ("GFN1", "GFN2", "GXTB")
@@ -29,11 +29,56 @@ METHOD_LABELS = {
     "GFN2": "GFN2-xTB",
     "GXTB": "g-xTB",
 }
-EOS_MESH = "k444"
+EOS_MESH = "adaptive_k333_until_converged"
 ENERGY_MESHES = ("k333", "k444", "k555")
-RESULT_MESH = "k555"
-SUMMARY_STEM = "lc12_gfn_gxtb_paper_summary"
-SCHEMA_VERSION = 1
+RESULT_MESH = "per_system_selected_dense_mesh"
+PAPER_SYSTEMS = base.LC10_PAPER_SOLIDS
+DIAGNOSTIC_ONLY_SYSTEMS = base.LC10_DIAGNOSTIC_ONLY_SOLIDS
+PAPER_ELEMENTS = base.LC10_PAPER_ELEMENTS
+SUMMARY_STEM = "lc10_gfn_gxtb_paper_summary"
+SCHEMA_VERSION = 4
+SUMMARY_FIELDS = (
+    "method_id",
+    "method_label",
+    "scope",
+    "n_systems",
+    "coverage_denominator",
+    "systems",
+    "eos_mesh",
+    "result_mesh",
+    "lattice_ME_A",
+    "lattice_MAE_A",
+    "lattice_RMSE_A",
+    "lattice_MaxAE_A",
+    "cohesive_ME_eV_per_atom",
+    "cohesive_MAE_eV_per_atom",
+    "cohesive_RMSE_eV_per_atom",
+    "cohesive_MaxAE_eV_per_atom",
+)
+
+
+def validate_adaptive_mesh_limit_contract(
+    record: Mapping[str, object], context: str
+) -> None:
+    """Reject any scientific mesh cap while permitting an optional resource guard."""
+    if "maximum_mesh" in record:
+        raise ValueError(f"{context} still contains a scientific maximum mesh")
+    if (
+        "scientific_maximum_mesh" not in record
+        or record.get("scientific_maximum_mesh") is not None
+    ):
+        raise ValueError(f"{context} must have no scientific maximum mesh")
+    if record.get("technical_resource_guard_is_convergence") is not False:
+        raise ValueError(f"{context} resource guard could be mistaken for convergence")
+    guard = record.get("technical_resource_guard_mesh")
+    if guard is None:
+        return
+    try:
+        number = kconv.mesh_number(str(guard))
+    except ValueError as error:
+        raise ValueError(f"{context} has an invalid technical resource guard") from error
+    if number < max(kconv.INITIAL_MESH_NUMBERS):
+        raise ValueError(f"{context} technical resource guard is below the initial meshes")
 
 
 def sha256(path: Path) -> str:
@@ -134,7 +179,7 @@ def unique_by(
 
 def stats(errors: list[float]) -> dict[str, float]:
     if not errors:
-        raise ValueError("cannot summarize an empty LC12 error set")
+        raise ValueError("cannot summarize an empty LC10 error set")
     return {
         "ME": sum(errors) / len(errors),
         "MAE": sum(abs(value) for value in errors) / len(errors),
@@ -146,7 +191,7 @@ def stats(errors: list[float]) -> dict[str, float]:
 def fit_is_valid(row: Mapping[str, object], method: str) -> bool:
     if not str(row.get("a_eos_A", "")).strip():
         return False
-    return method != "GXTB" or row.get("fit_status") == "quadratic"
+    return method in METHODS and row.get("fit_status") == "quadratic"
 
 
 def portable_gxtb_stamp(
@@ -228,7 +273,7 @@ def validate_build_provenance(
     legacy_protocol = legacy.get("protocol")
     protocol = gxtb.get("protocol")
     if not isinstance(legacy_protocol, dict) or not isinstance(protocol, dict):
-        raise ValueError("LC12 build provenance lacks its protocol")
+        raise ValueError("LC10 build provenance lacks its protocol")
     if legacy_protocol.get("result_mesh") != RESULT_MESH:
         raise ValueError("GFN1/GFN2 provenance has the wrong result mesh")
     if protocol.get("eos_mesh") != EOS_MESH or protocol.get("result_mesh") != RESULT_MESH:
@@ -237,7 +282,23 @@ def validate_build_provenance(
         raise ValueError("g-XTB provenance does not contain k333/k444/k555")
     if protocol.get("fit_approval_required") is not True or protocol.get("fit_approved") is not True:
         raise ValueError("g-XTB EOS fits are not explicitly approved")
-    gxtb_fits = [row for row in fits if row.get("method") == "GXTB"]
+    selected_solids = tuple(str(value) for value in protocol.get("selected_solids", []))
+    if (
+        protocol.get("exact_lc10_scope") is not True
+        or len(selected_solids) != len(PAPER_SYSTEMS)
+        or set(selected_solids) != set(PAPER_SYSTEMS)
+        or tuple(protocol.get("paper_systems", ())) != PAPER_SYSTEMS
+        or tuple(protocol.get("diagnostic_only_systems", ()))
+        != DIAGNOSTIC_ONLY_SYSTEMS
+    ):
+        raise ValueError("g-XTB provenance does not certify the exact fixed LC10 scope")
+    gxtb_fits = [
+        row
+        for row in fits
+        if row.get("method") == "GXTB" and row.get("solid") in PAPER_SYSTEMS
+    ]
+    if {row.get("solid") for row in gxtb_fits} != set(PAPER_SYSTEMS):
+        raise ValueError("g-XTB fit fingerprint does not cover the exact LC10 set")
     current_fit_hash = eos.gxtb_fit_approval_sha256(gxtb_fits)
     if protocol.get("approved_gxtb_fit_sha256") != current_fit_hash:
         raise ValueError("approved g-XTB EOS fingerprint differs from eos_fits.csv")
@@ -288,6 +349,144 @@ def validate_build_provenance(
     )
 
 
+def validate_adaptive_build_provenance(
+    root: Path,
+    fits: list[dict[str, str]],
+) -> tuple[dict[str, Any], dict[str, object], dict[str, object]]:
+    """Validate the one-binary, save_tblite-for-all publication campaign."""
+    data = root / "data"
+    legacy_path = data / "build_provenance.json"
+    gxtb_path = data / "build_provenance_gxtb.json"
+    legacy = read_json(legacy_path)
+    gxtb = read_json(gxtb_path)
+    legacy_protocol = legacy.get("protocol")
+    protocol = gxtb.get("protocol")
+    if not isinstance(legacy_protocol, dict) or not isinstance(protocol, dict):
+        raise ValueError("LC10 build provenance lacks its protocol")
+    if legacy_protocol != protocol:
+        raise ValueError("GFN1/GFN2 and g-XTB do not share the exact production protocol")
+    if protocol.get("single_cp2k_binary_for_all_methods") is not True:
+        raise ValueError("LC10 production does not certify one CP2K binary for all methods")
+    if protocol.get("single_tblite_provider_for_all_methods") != "save_tblite":
+        raise ValueError("LC10 production does not certify save_tblite for all methods")
+    if tuple(protocol.get("methods", ())) != METHODS:
+        raise ValueError("LC10 production does not contain exactly GFN1/GFN2/GXTB")
+    if (
+        protocol.get("exact_lc10_scope") is not True
+        or tuple(protocol.get("selected_solids", ())) != PAPER_SYSTEMS
+        or tuple(protocol.get("paper_systems", ())) != PAPER_SYSTEMS
+        or tuple(protocol.get("diagnostic_only_systems", ()))
+        != DIAGNOSTIC_ONLY_SYSTEMS
+    ):
+        raise ValueError("production provenance does not certify the exact LC10 scope")
+    adaptive = protocol.get("adaptive_k_convergence")
+    if not isinstance(adaptive, dict):
+        raise ValueError("adaptive k-convergence protocol is missing")
+    expected_adaptive = {
+        "initial_meshes": ["k333", "k444", "k555"],
+        "required_consecutive_passing_steps": 1,
+        "aggregate_rms_gate": False,
+        "criteria_combination": "AND",
+        "lattice_abs_delta_threshold_A": kconv.LATTICE_THRESHOLD_A,
+        "cohesive_abs_delta_threshold_kJmol_per_atom": (
+            kconv.ECOH_THRESHOLD_KJMOL_PER_ATOM
+        ),
+        "cohesive_abs_delta_threshold_eV_per_atom": (
+            kconv.ECOH_THRESHOLD_EV_PER_ATOM
+        ),
+        "selected_value_policy": (
+            "take denser n+1 value from earliest passing step"
+        ),
+        "equilibrium_energy_protocol": (
+            "single point at each mesh's own independent EOS minimum"
+        ),
+    }
+    for field, expected in expected_adaptive.items():
+        if adaptive.get(field) != expected:
+            raise ValueError(f"adaptive k-convergence {field} mismatch")
+    validate_adaptive_mesh_limit_contract(
+        adaptive, "adaptive k-convergence protocol"
+    )
+    fixed = protocol.get("fixed_geometry_single_point_diagnostic")
+    if not isinstance(fixed, dict) or fixed != {
+        "separate_from_adaptive_selection": True,
+        "eos_mesh": kconv.FIXED_GEOMETRY_EOS_MESH,
+        "energy_meshes": list(kconv.FIXED_GEOMETRY_ENERGY_MESHES),
+    }:
+        raise ValueError("fixed-geometry k-point diagnostic is not cleanly separated")
+    if protocol.get("fit_approval_required") is not True or protocol.get("fit_approved") is not True:
+        raise ValueError("adaptive LC10 EOS fits are not explicitly approved")
+    relevant_fits = [
+        dict(row)
+        for row in fits
+        if row.get("method") in METHODS and row.get("solid") in PAPER_SYSTEMS
+    ]
+    current_hash = kconv.fit_fingerprint(relevant_fits)
+    if protocol.get("current_fit_sha256") != current_hash:
+        raise ValueError("current adaptive EOS fingerprint differs from eos_fits.csv")
+    if protocol.get("approved_fit_sha256") != current_hash:
+        raise ValueError("approved adaptive EOS fingerprint differs from eos_fits.csv")
+
+    campaign = gxtb.get("campaign_identity")
+    if not isinstance(campaign, dict):
+        raise ValueError("g-XTB provenance lacks the complete campaign identity")
+    base.validate_campaign_identity(campaign)
+    manifest_path, manifest_record = validate_manifest(root, gxtb, campaign)
+    manifest_sha = sha256(manifest_path)
+    if protocol.get("campaign_manifest_sha256_external_pin") != manifest_sha:
+        raise ValueError("external production-manifest hash pin mismatch")
+    convergence_path = data / kconv.CONVERGENCE_NAME
+    if protocol.get("k_convergence_artifact_sha256") != sha256(convergence_path):
+        raise ValueError("adaptive k-convergence artifact hash differs from provenance")
+    scale_path = data / kconv.SCALE_MANIFEST_NAME
+    if protocol.get("k_convergence_scale_manifest_sha256") != sha256(scale_path):
+        raise ValueError("adaptive k-convergence scale-manifest hash differs from provenance")
+
+    legacy_cp2k = legacy.get("cp2k")
+    legacy_provider = legacy.get("tblite")
+    gxtb_cp2k = gxtb.get("cp2k")
+    gxtb_provider = gxtb.get("save_tblite")
+    if not all(
+        isinstance(item, dict)
+        for item in (legacy_cp2k, legacy_provider, gxtb_cp2k, gxtb_provider)
+    ):
+        raise ValueError("incomplete one-binary build provenance")
+    assert isinstance(legacy_cp2k, dict)
+    assert isinstance(legacy_provider, dict)
+    assert isinstance(gxtb_cp2k, dict)
+    assert isinstance(gxtb_provider, dict)
+    if not (
+        legacy_cp2k.get("sha256")
+        == gxtb_cp2k.get("sha256")
+        == campaign.get("cp2k_executable_sha256")
+    ):
+        raise ValueError("GFN1/GFN2/g-XTB CP2K binary hashes differ")
+    if not (
+        legacy_provider.get("sha256")
+        == gxtb_provider.get("sha256")
+        == campaign.get("save_tblite_executable_sha256")
+    ):
+        raise ValueError("GFN1/GFN2/g-XTB save_tblite provider hashes differ")
+    return (
+        gxtb,
+        campaign,
+        {
+            "all_methods": {
+                "legacy_record": artifact(legacy_path, root),
+                "gxtb_record": artifact(gxtb_path, root),
+                "campaign_manifest": manifest_record,
+                "campaign_manifest_path_used": relative_path(manifest_path, root),
+                "campaign_identity": campaign,
+                "cp2k": gxtb_cp2k,
+                "provider_name": "save_tblite",
+                "provider": gxtb_provider,
+                "same_cp2k_binary": True,
+                "same_save_tblite_provider": True,
+            }
+        },
+    )
+
+
 def validate_scale_manifest(
     root: Path,
     point_rows: list[dict[str, str]],
@@ -295,20 +494,41 @@ def validate_scale_manifest(
     manifest = read_json(root / "data" / "gxtb_eos_scale_manifest.json")
     if manifest.get("eos_mesh") != EOS_MESH:
         raise ValueError("g-XTB scale manifest has the wrong EOS mesh")
+    if (
+        manifest.get("benchmark") != "LC10 (fixed Goldzak12 subset)"
+        or tuple(manifest.get("paper_systems", ())) != PAPER_SYSTEMS
+        or tuple(manifest.get("diagnostic_only_systems", ()))
+        != DIAGNOSTIC_ONLY_SYSTEMS
+    ):
+        raise ValueError("g-XTB scale manifest does not declare the fixed LC10 scope")
     expected: set[tuple[str, str]] = set()
     systems = manifest.get("systems")
     if not isinstance(systems, list):
         raise ValueError("g-XTB scale manifest has no system list")
+    manifest_solids = [
+        str(item.get("solid", "")) for item in systems if isinstance(item, dict)
+    ]
+    if (
+        len(manifest_solids) != len(PAPER_SYSTEMS)
+        or set(manifest_solids) != set(PAPER_SYSTEMS)
+    ):
+        raise ValueError("g-XTB scale manifest is not exactly the ten-system paper set")
     for item in systems:
         if not isinstance(item, dict) or item.get("method") != "GXTB":
             raise ValueError("invalid g-XTB scale-manifest record")
         solid = str(item.get("solid", ""))
+        if solid not in PAPER_SYSTEMS:
+            raise ValueError(f"non-LC10 solid in g-XTB scale manifest: {solid}")
         for scale in item.get("requested_scales", []):
             expected.add((solid, f"{float(scale):.5f}"))
+    if {solid for solid, _ in expected} != set(PAPER_SYSTEMS):
+        raise ValueError("g-XTB scale manifest does not cover exactly ten paper solids")
     actual = {
         (row.get("solid", ""), f"{float(row.get('scale', 'nan')):.5f}")
         for row in point_rows
-        if row.get("method") == "GXTB" and row.get("mesh") == EOS_MESH
+        if row.get("method") == "GXTB"
+        and row.get("mesh") == EOS_MESH
+        and row.get("solid") in PAPER_SYSTEMS
     }
     if expected != actual:
         raise ValueError(
@@ -327,23 +547,26 @@ def validate_atom_references(
     check_path = data / "atom_reference_cp2k_vs_save_tblite_gxtb.csv"
     rows = read_csv(legacy_path) + read_csv(gxtb_path)
     by_key = unique_by(rows, ("method", "element"), "atom reference")
-    elements = tuple(sorted(base.ELEMENT_MULTIPLICITY))
+    elements = PAPER_ELEMENTS
     expected = {(method, element) for method in METHODS for element in elements}
-    if set(by_key) != expected:
+    if not expected <= set(by_key):
         raise ValueError(
-            "atom-reference coverage differs: "
-            f"missing {sorted(expected - set(by_key))}, unexpected {sorted(set(by_key) - expected)}"
+            "LC10 atom-reference coverage is incomplete: "
+            f"missing {sorted(expected - set(by_key))}"
         )
     energies: dict[tuple[str, str], float] = {}
     lineage: dict[str, object] = {method: {} for method in METHODS}
     for method, element in sorted(expected):
         row = by_key[(method, element)]
-        expected_source = "save_tblite_cli" if method == "GXTB" else "tblite_cli"
+        expected_source = "save_tblite_cli"
         if row.get("source") != expected_source:
             raise ValueError(f"{method}/{element} atom-reference source mismatch")
         json_path = root / "runs" / "atoms_cli" / method / element / f"atom_{element}_{method}.json"
         out_path = json_path.with_suffix(".out")
         xyz_path = json_path.parent / f"atom_{element}.xyz"
+        expected_xyz = f"1\n{element} atom\n{element} 0.0 0.0 0.0\n"
+        if xyz_path.read_text() != expected_xyz:
+            raise ValueError(f"{method}/{element} atom geometry contract mismatch")
         raw_energy = base.parse_tblite_json_energy(json_path)
         if raw_energy is None:
             raise ValueError(f"cannot parse {method}/{element} atom energy")
@@ -356,18 +579,27 @@ def validate_atom_references(
             "stdout": artifact(out_path, root),
             "geometry": artifact(xyz_path, root),
         }
-        if method == "GXTB":
-            record["campaign_stamp"] = portable_gxtb_stamp(
-                json_path, xyz_path, campaign, "save_tblite", root
-            )
+        record["campaign_stamp"] = portable_gxtb_stamp(
+            json_path, xyz_path, campaign, "save_tblite", root
+        )
+        stamp = read_json(base.job_stamp_path(json_path))
+        expected_command = {
+            "driver": "tblite_run",
+            "method": base.method_cli_name(method),
+            "spin_2S": base.ELEMENT_MULTIPLICITY[element] - 1,
+            "accuracy": 0.05,
+            "restart": False,
+        }
+        if stamp.get("command_contract") != expected_command:
+            raise ValueError(f"{method}/{element} atom command contract mismatch")
         cast_lineage = lineage[method]
         assert isinstance(cast_lineage, dict)
         cast_lineage[element] = record
 
     checks = read_csv(check_path)
     check_by_element = unique_by(checks, ("element",), "g-XTB atom check")
-    if set(key[0] for key in check_by_element) != set(elements):
-        raise ValueError("g-XTB CP2K/save_tblite atom check is incomplete")
+    if not set(elements) <= set(key[0] for key in check_by_element):
+        raise ValueError("g-XTB CP2K/save_tblite LC10 atom check is incomplete")
     check_lineage: dict[str, object] = {}
     for element in elements:
         row = check_by_element[(element,)]
@@ -424,42 +656,52 @@ def validate_eos_and_collect_lineage(
     dict[tuple[str, str], dict[str, str]],
     dict[str, dict[str, object]],
 ]:
-    refs = {ref.solid: ref for ref in base.REFERENCES}
-    fit_by_key = unique_by(fits, ("solid", "method"), "EOS fit")
-    expected_fit_keys = {(solid, method) for solid in refs for method in METHODS}
+    known_fit_keys = {
+        (ref.solid, method) for ref in base.REFERENCES for method in METHODS
+    }
+    all_fit_by_key = unique_by(fits, ("solid", "method"), "EOS fit")
+    foreign_fit_keys = set(all_fit_by_key) - known_fit_keys
+    if foreign_fit_keys:
+        raise ValueError(f"foreign EOS-fit records: {sorted(foreign_fit_keys)}")
+    expected_fit_keys = {(solid, method) for solid in PAPER_SYSTEMS for method in METHODS}
+    fit_by_key = {
+        key: row for key, row in all_fit_by_key.items() if key in expected_fit_keys
+    }
     if set(fit_by_key) != expected_fit_keys:
         raise ValueError(
-            "EOS-fit coverage differs: "
+            "exact LC10 EOS-fit coverage differs: "
             f"missing {sorted(expected_fit_keys - set(fit_by_key))}, "
             f"unexpected {sorted(set(fit_by_key) - expected_fit_keys)}"
         )
-    for row in fits:
+    for row in fit_by_key.values():
         if row.get("eos_mesh") != EOS_MESH:
             raise ValueError(f"{row.get('method')}/{row.get('solid')} has the wrong EOS mesh")
-    point_by_key = unique_by(points, ("solid", "method", "mesh", "scale"), "EOS point")
+    paper_points = [row for row in points if row.get("solid") in PAPER_SYSTEMS]
+    point_by_key = unique_by(
+        paper_points, ("solid", "method", "mesh", "scale"), "LC10 EOS point"
+    )
     del point_by_key  # duplicate detection is the purpose of this index
     validate_scale_manifest(root, points)
     branch_rows = read_optional_csv(root / "data" / "gxtb_eos_branch_diagnostics.csv")
     unresolved_branches = [
-        row for row in branch_rows if row.get("resolution") == "unresolved_candidate"
+        row
+        for row in branch_rows
+        if row.get("solid") in PAPER_SYSTEMS
+        and row.get("resolution") == "unresolved_candidate"
     ]
     if unresolved_branches:
-        raise ValueError("g-XTB branch diagnostics still contain unresolved candidates")
+        raise ValueError("LC10 g-XTB branch diagnostics still contain unresolved candidates")
 
     points_by_fit: dict[tuple[str, str], list[dict[str, str]]] = {}
-    for row in points:
+    for row in paper_points:
         key = (row.get("solid", ""), row.get("method", ""))
         if key not in expected_fit_keys or row.get("mesh") != EOS_MESH:
             raise ValueError(f"unexpected EOS point identity: {key}/{row.get('mesh')}")
         points_by_fit.setdefault(key, []).append(row)
 
     valid_gxtb = 0
-    invalid_gxtb: list[str] = []
+    invalid_fits: list[str] = []
     failed_gxtb_points: list[str] = []
-    followup_by_solid = {
-        row.get("solid", ""): row
-        for row in read_optional_csv(root / "data" / "gxtb_adaptive_followup.csv")
-    }
     lineage: dict[str, dict[str, object]] = {method: {} for method in METHODS}
     for key in sorted(expected_fit_keys, key=lambda item: (METHODS.index(item[1]), item[0])):
         solid, method = key
@@ -498,6 +740,18 @@ def validate_eos_and_collect_lineage(
             )
             input_path = run_dir / f"{project}.inp"
             output_path = run_dir / f"{project}.out"
+            expected_input = base.solid_input(
+                refs[solid],
+                method,
+                "ENERGY",
+                mesh,
+                refs[solid].a_exp * scale,
+                project,
+            )
+            if input_path.read_text() != expected_input:
+                raise ValueError(
+                    f"raw EOS input contract mismatch: {method}/{solid}/{mesh}/{scale}"
+                )
             record: dict[str, object] = {
                 "scale": scale,
                 "a_A": finite_float(row.get("a_A"), f"{method}/{solid}@{scale} lattice value"),
@@ -586,82 +840,28 @@ def validate_eos_and_collect_lineage(
         if fit_is_valid(fit, method):
             if method == "GXTB":
                 valid_gxtb += 1
-        elif method == "GXTB":
-            invalid_gxtb.append(solid)
+        else:
+            invalid_fits.append(f"{method}/{solid}")
         lineage[method][solid] = {
             "fit": dict(fit),
             "eos_points": point_lineage,
         }
 
-    allow_reduced = bool(protocol.get("allow_reduced_coverage"))
-    minimum = int(protocol.get("minimum_valid_gxtb_fits", -1))
-    if failed_gxtb_points and not allow_reduced:
+    if failed_gxtb_points:
         raise ValueError(
-            "g-XTB has explicitly classified failed EOS points without reduced-coverage approval: "
+            "exact LC10 g-XTB coverage has failed EOS points: "
             + ", ".join(failed_gxtb_points)
         )
-    if invalid_gxtb and not allow_reduced:
+    if invalid_fits:
         raise ValueError(
-            "g-XTB EOS coverage is reduced without explicit approval: "
-            + ", ".join(invalid_gxtb)
+            "exact LC10 EOS coverage is incomplete: " + ", ".join(invalid_fits)
         )
-    if allow_reduced and valid_gxtb < minimum:
+    if valid_gxtb != len(PAPER_SYSTEMS):
         raise ValueError(
-            f"g-XTB has {valid_gxtb} valid fits, below the approved minimum {minimum}"
+            f"exact LC10 g-XTB EOS coverage has {valid_gxtb} valid fits, "
+            f"expected {len(PAPER_SYSTEMS)}"
         )
-    for solid in invalid_gxtb:
-        row = followup_by_solid.get(solid)
-        if (
-            row is None
-            or not truth(row.get("adaptive_investigated"))
-            or not row.get("classification")
-            or not row.get("interpretation")
-        ):
-            raise ValueError(f"g-XTB invalid EOS fit lacks adaptive investigation: {solid}")
-        system = lineage["GXTB"][solid]
-        system["reporting_status"] = "excluded_no_valid_eos_minimum"
-        system["adaptive_followup"] = dict(row)
-        discarded: dict[str, object] = {}
-        fit = fit_by_key[(solid, "GXTB")]
-        for mesh in ENERGY_MESHES:
-            input_path = (
-                root
-                / "runs"
-                / "eos_final_sp"
-                / "GXTB"
-                / solid
-                / mesh
-                / f"{eos.final_project(solid, 'GXTB', mesh)}.inp"
-            )
-            if not input_path.is_file():
-                continue
-            lineage_path = eos.final_input_lineage_path(input_path)
-            invalid_lineage = read_json(lineage_path)
-            if (
-                invalid_lineage.get("schema_version") != eos.FINAL_INPUT_LINEAGE_SCHEMA
-                or invalid_lineage.get("valid") is not False
-                or invalid_lineage.get("solid") != solid
-                or invalid_lineage.get("method") != "GXTB"
-                or invalid_lineage.get("energy_mesh") != mesh
-                or invalid_lineage.get("fit_status") != fit.get("fit_status")
-                or invalid_lineage.get("input_sha256") != sha256(input_path)
-            ):
-                raise ValueError(
-                    f"invalid-fit g-XTB final input is not explicitly invalidated: {solid}/{mesh}"
-                )
-            output_path = input_path.with_suffix(".out")
-            discarded[mesh] = {
-                "status": "not_reported_invalid_eos_fit",
-                "input": artifact(input_path, root),
-                "invalidation_lineage": artifact(lineage_path, root),
-                "preexisting_output": optional_artifact(output_path, root),
-                "preexisting_campaign_stamp": optional_artifact(
-                    base.job_stamp_path(output_path), root
-                ),
-            }
-        if discarded:
-            system["discarded_final_artifacts"] = discarded
-    for solid in lineage["GXTB"]:
+    for solid in PAPER_SYSTEMS:
         lineage["GXTB"][solid].setdefault(
             "reporting_status", "reported_at_approved_eos_minimum"
         )
@@ -677,7 +877,12 @@ def validate_final_results(
     campaign: dict[str, object],
 ) -> tuple[dict[str, list[dict[str, object]]], dict[str, dict[str, object]]]:
     refs = {ref.solid: ref for ref in base.REFERENCES}
-    result_by_key = unique_by(results, ("solid", "method", "energy_mesh"), "final result")
+    paper_results = [row for row in results if row.get("solid") in PAPER_SYSTEMS]
+    result_by_key = unique_by(
+        paper_results,
+        ("solid", "method", "energy_mesh"),
+        "LC10 final result",
+    )
     valid_fit_keys = {
         key for key, fit in fit_by_key.items() if fit_is_valid(fit, key[1])
     }
@@ -688,7 +893,7 @@ def validate_final_results(
     }
     if set(result_by_key) != expected_results:
         raise ValueError(
-            "final single-point coverage differs: "
+            "exact LC10 final single-point coverage differs: "
             f"missing {sorted(expected_results - set(result_by_key))}, "
             f"unexpected {sorted(set(result_by_key) - expected_results)}"
         )
@@ -820,6 +1025,530 @@ def validate_final_results(
     return selected, eos_lineage
 
 
+def validate_adaptive_k_results(
+    root: Path,
+    fits: list[dict[str, str]],
+    points: list[dict[str, str]],
+    atom_energies: dict[tuple[str, str], float],
+    campaign: dict[str, object],
+    protocol: Mapping[str, object],
+) -> tuple[
+    dict[str, list[dict[str, object]]],
+    dict[str, dict[str, object]],
+    dict[str, object],
+]:
+    """Recompute every adaptive decision from raw EOS/equilibrium outputs."""
+    data = root / "data"
+    convergence_path = data / kconv.CONVERGENCE_NAME
+    values_path = data / kconv.VALUES_NAME
+    steps_path = data / kconv.STEPS_NAME
+    selection_path = data / kconv.SELECTION_NAME
+    scale_path = data / kconv.SCALE_MANIFEST_NAME
+    convergence = read_json(convergence_path)
+    values = read_csv(values_path)
+    steps = read_csv(steps_path)
+    selections = read_csv(selection_path)
+    scale_manifest = read_json(scale_path)
+
+    if convergence.get("schema_version") != kconv.CONVERGENCE_SCHEMA:
+        raise ValueError("adaptive k-convergence schema mismatch")
+    if convergence.get("status") != "converged":
+        raise ValueError("adaptive k-convergence is not complete")
+    if convergence.get("campaign_identity") != campaign:
+        raise ValueError("adaptive k-convergence campaign identity mismatch")
+    if convergence.get("methods") != list(METHODS):
+        raise ValueError("adaptive k-convergence method set mismatch")
+    if convergence.get("paper_systems") != list(PAPER_SYSTEMS):
+        raise ValueError("adaptive k-convergence LC10 set mismatch")
+    algorithm = convergence.get("algorithm")
+    expected_algorithm = {
+        "name": "one-step adaptive convergence",
+        "initial_meshes": ["k333", "k444", "k555"],
+        "required_consecutive_passing_steps": 1,
+        "aggregate_rms_gate": False,
+        "criteria_combination": "AND",
+        "lattice_abs_delta_threshold_A": kconv.LATTICE_THRESHOLD_A,
+        "cohesive_abs_delta_threshold_kJmol_per_atom": (
+            kconv.ECOH_THRESHOLD_KJMOL_PER_ATOM
+        ),
+        "cohesive_abs_delta_threshold_eV_per_atom": (
+            kconv.ECOH_THRESHOLD_EV_PER_ATOM
+        ),
+        "selected_value": (
+            "denser value from the earliest passing n->n+1 step"
+        ),
+    }
+    if not isinstance(algorithm, dict):
+        raise ValueError("adaptive one-step decision algorithm mismatch")
+    for field, expected in expected_algorithm.items():
+        if algorithm.get(field) != expected:
+            raise ValueError("adaptive one-step decision algorithm mismatch")
+    allowed_algorithm_fields = set(expected_algorithm) | {
+        "scientific_maximum_mesh",
+        "technical_resource_guard_mesh",
+        "technical_resource_guard_is_convergence",
+    }
+    if set(algorithm) != allowed_algorithm_fields:
+        raise ValueError("adaptive one-step decision algorithm mismatch")
+    validate_adaptive_mesh_limit_contract(
+        algorithm, "adaptive k-convergence algorithm"
+    )
+    protocol_adaptive = protocol.get("adaptive_k_convergence")
+    if not isinstance(protocol_adaptive, dict) or any(
+        algorithm.get(field) != protocol_adaptive.get(field)
+        for field in (
+            "scientific_maximum_mesh",
+            "technical_resource_guard_mesh",
+            "technical_resource_guard_is_convergence",
+        )
+    ):
+        raise ValueError(
+            "adaptive k-convergence resource policy differs from build provenance"
+        )
+    if (
+        convergence.get("pending")
+        or convergence.get("unconverged")
+        or convergence.get("resource_errors")
+    ):
+        raise ValueError("adaptive k-convergence contains unresolved systems")
+    if convergence.get("eos_fits_sha256") != sha256(data / "eos_fits.csv"):
+        raise ValueError("adaptive k-convergence EOS-fit table hash mismatch")
+    artifacts = convergence.get("artifacts")
+    if not isinstance(artifacts, dict):
+        raise ValueError("adaptive k-convergence artifact manifest is missing")
+    for name, path in (
+        (kconv.VALUES_NAME, values_path),
+        (kconv.STEPS_NAME, steps_path),
+        (kconv.SELECTION_NAME, selection_path),
+    ):
+        record = artifacts.get(name)
+        if not isinstance(record, dict):
+            raise ValueError(f"adaptive artifact record is missing: {name}")
+        if (
+            record.get("path") != f"data/{name}"
+            or record.get("sha256") != sha256(path)
+            or int(record.get("size_bytes", -1)) != path.stat().st_size
+        ):
+            raise ValueError(f"adaptive artifact fingerprint mismatch: {name}")
+
+    relevant_fits = [
+        row
+        for row in fits
+        if row.get("method") in METHODS and row.get("solid") in PAPER_SYSTEMS
+    ]
+    fit_by_key = unique_by(
+        relevant_fits, ("method", "solid", "eos_mesh"), "independent EOS fit"
+    )
+    expected_initial = {
+        (method, solid, mesh)
+        for method in METHODS
+        for solid in PAPER_SYSTEMS
+        for mesh in ("k333", "k444", "k555")
+    }
+    if not expected_initial <= set(fit_by_key):
+        raise ValueError(
+            "independent EOS fits lack the exact three-method LC10 initial meshes"
+        )
+    for method in METHODS:
+        for solid in PAPER_SYSTEMS:
+            numbers = sorted(
+                kconv.mesh_number(mesh)
+                for m, s, mesh in fit_by_key
+                if (m, s) == (method, solid)
+            )
+            if numbers[0] != 3 or numbers[-1] > 8 or numbers != list(
+                range(3, numbers[-1] + 1)
+            ):
+                raise ValueError(
+                    f"invalid adaptive EOS mesh sequence for {method}/{solid}: {numbers}"
+                )
+    value_by_key = unique_by(
+        values, ("method", "solid", "mesh"), "independent EOS value"
+    )
+    if set(value_by_key) != set(fit_by_key):
+        raise ValueError(
+            "independent EOS value coverage differs from EOS fits: "
+            f"missing {sorted(set(fit_by_key) - set(value_by_key))}, "
+            f"unexpected {sorted(set(value_by_key) - set(fit_by_key))}"
+        )
+
+    scale_records = scale_manifest.get("records")
+    if (
+        scale_manifest.get("schema_version") != 1
+        or scale_manifest.get("methods") != list(METHODS)
+        or scale_manifest.get("paper_systems") != list(PAPER_SYSTEMS)
+        or not isinstance(scale_records, list)
+    ):
+        raise ValueError("independent EOS scale manifest has the wrong scope")
+    scale_by_key: dict[tuple[str, str, str], dict[str, object]] = {}
+    for item in scale_records:
+        if not isinstance(item, dict):
+            raise ValueError("invalid independent EOS scale record")
+        key = (str(item.get("method", "")), str(item.get("solid", "")), str(item.get("mesh", "")))
+        if key in scale_by_key:
+            raise ValueError(f"duplicate independent EOS scale record: {key}")
+        scale_by_key[key] = item
+    if set(scale_by_key) != set(fit_by_key):
+        raise ValueError("independent EOS scale-manifest coverage differs from fits")
+
+    relevant_points = [
+        row
+        for row in points
+        if row.get("method") in METHODS and row.get("solid") in PAPER_SYSTEMS
+    ]
+    point_by_fit: dict[tuple[str, str, str], list[dict[str, str]]] = {}
+    for row in relevant_points:
+        key = (row.get("method", ""), row.get("solid", ""), row.get("mesh", ""))
+        point_by_fit.setdefault(key, []).append(row)
+    if set(point_by_fit) != set(fit_by_key):
+        raise ValueError("independent EOS point coverage differs from fits")
+
+    refs = {ref.solid: ref for ref in base.LC10_PAPER_REFERENCES}
+    system_lineage: dict[str, dict[str, object]] = {
+        method: {solid: {"independent_eos_meshes": {}} for solid in PAPER_SYSTEMS}
+        for method in METHODS
+    }
+    regenerated_values: list[dict[str, object]] = []
+    for key in sorted(
+        fit_by_key,
+        key=lambda item: (
+            METHODS.index(item[0]),
+            PAPER_SYSTEMS.index(item[1]),
+            kconv.mesh_number(item[2]),
+        ),
+    ):
+        method, solid, mesh = key
+        fit = fit_by_key[key]
+        if not fit_is_valid(fit, method):
+            raise ValueError(f"invalid independent EOS fit: {method}/{solid}/{mesh}")
+        if int(fit.get("n_unresolved_branch_candidates", "0") or 0) != 0:
+            raise ValueError(f"unresolved branch candidate: {method}/{solid}/{mesh}")
+        expected_scales = {
+            f"{float(value):.5f}"
+            for value in scale_by_key[key].get("requested_scales", [])
+        }
+        point_rows = point_by_fit[key]
+        if len(point_rows) != len({row.get("scale", "") for row in point_rows}):
+            raise ValueError(f"duplicate EOS scale: {method}/{solid}/{mesh}")
+        actual_scales = {f"{float(row.get('scale', 'nan')):.5f}" for row in point_rows}
+        if actual_scales != expected_scales:
+            raise ValueError(f"EOS scale coverage mismatch: {method}/{solid}/{mesh}")
+        numeric: list[tuple[float, float, float, bool]] = []
+        raw_lineage: list[dict[str, object]] = []
+        for point in sorted(point_rows, key=lambda row: float(row["scale"])):
+            scale = float(point["scale"])
+            project = eos.eos_project(solid, method, mesh, scale)
+            run_dir = (
+                root
+                / "runs"
+                / "eos"
+                / method
+                / solid
+                / mesh
+                / eos.scale_tag(scale, method)
+            )
+            input_path = run_dir / f"{project}.inp"
+            output_path = run_dir / f"{project}.out"
+            if not base.output_ok(output_path):
+                raise ValueError(f"incomplete raw EOS output: {method}/{solid}/{mesh}/{scale}")
+            raw_energy = base.parse_energy(output_path)
+            if raw_energy is None:
+                raise ValueError(f"missing raw EOS energy: {method}/{solid}/{mesh}/{scale}")
+            close(
+                raw_energy,
+                finite_float(point.get("energy_hartree"), "raw EOS table energy"),
+                f"{method}/{solid}/{mesh}/{scale} EOS energy",
+                1.0e-10,
+            )
+            stamp = portable_gxtb_stamp(
+                output_path, input_path, campaign, "cp2k", root
+            )
+            valid = truth(point.get("valid_for_eos"))
+            numeric.append((float(point["a_A"]), scale, raw_energy, valid))
+            raw_lineage.append(
+                {
+                    "scale": scale,
+                    "a_A": float(point["a_A"]),
+                    "energy_hartree": raw_energy,
+                    "valid_for_eos": valid,
+                    "input": artifact(input_path, root),
+                    "output": artifact(output_path, root),
+                    "campaign_stamp": stamp,
+                }
+            )
+        valid_numeric = [item for item in numeric if item[3]]
+        regenerated = (
+            eos.fit_gxtb_eos(valid_numeric)
+            if method == "GXTB"
+            else eos.fit_eos(valid_numeric)
+        )
+        if regenerated.get("fit_status") != fit.get("fit_status"):
+            raise ValueError(f"EOS fit status mismatch: {method}/{solid}/{mesh}")
+        close(
+            finite_float(fit.get("a_eos_A"), "stored EOS a0"),
+            finite_float(regenerated.get("a_eos_A"), "regenerated EOS a0"),
+            f"{method}/{solid}/{mesh} a0",
+            5.0e-10,
+        )
+        close(
+            finite_float(fit.get("energy_fit_hartree"), "stored fit energy"),
+            finite_float(regenerated.get("energy_fit_hartree"), "regenerated fit energy"),
+            f"{method}/{solid}/{mesh} fit energy",
+            5.0e-11,
+        )
+
+        value = value_by_key[key]
+        ref = refs[solid]
+        eq_input, eq_output, eq_lineage_path = kconv.equilibrium_paths(
+            root, solid, method, mesh
+        )
+        expected_eq_input = base.solid_input(
+            ref,
+            method,
+            "ENERGY",
+            mesh,
+            float(fit["a_eos_A"]),
+            kconv.equilibrium_project(solid, method, mesh),
+        )
+        if eq_input.read_text() != expected_eq_input:
+            raise ValueError(f"equilibrium input contract mismatch: {method}/{solid}/{mesh}")
+        if not base.output_ok(eq_output):
+            raise ValueError(f"incomplete equilibrium output: {method}/{solid}/{mesh}")
+        solid_energy = base.parse_energy(eq_output)
+        if solid_energy is None:
+            raise ValueError(f"missing equilibrium energy: {method}/{solid}/{mesh}")
+        eq_stamp = portable_gxtb_stamp(
+            eq_output, eq_input, campaign, "cp2k", root
+        )
+        eq_lineage = read_json(eq_lineage_path)
+        if (
+            eq_lineage.get("schema_version") != kconv.EQUILIBRIUM_LINEAGE_SCHEMA
+            or eq_lineage.get("solid") != solid
+            or eq_lineage.get("method") != method
+            or eq_lineage.get("eos_mesh") != mesh
+            or eq_lineage.get("energy_mesh") != mesh
+            or eq_lineage.get("a_eos_A") != fit.get("a_eos_A")
+            or eq_lineage.get("fit_record_sha256")
+            != hashlib.sha256(
+                json.dumps(fit, sort_keys=True, separators=(",", ":")).encode()
+            ).hexdigest()
+            or eq_lineage.get("input_sha256") != sha256(eq_input)
+            or eq_lineage.get("kpoint_mesh_contract") != base.KPOINT_MESH_CONTRACT
+        ):
+            raise ValueError(f"equilibrium EOS lineage mismatch: {method}/{solid}/{mesh}")
+        atom_sum = sum(
+            atom_energies[(method, element)] * count
+            for element, count in base.atom_counts(ref).items()
+        )
+        n_atoms = len(base.conventional_cell_atoms(ref))
+        ecoh = (atom_sum - solid_energy) * base.HARTREE_TO_EV / n_atoms
+        close(
+            solid_energy,
+            finite_float(value.get("solid_energy_hartree"), "stored equilibrium energy"),
+            f"{method}/{solid}/{mesh} equilibrium energy",
+            1.0e-10,
+        )
+        close(
+            ecoh,
+            finite_float(value.get("ecoh_eV_per_atom"), "stored equilibrium Ecoh"),
+            f"{method}/{solid}/{mesh} equilibrium Ecoh",
+            5.0e-10,
+        )
+        close(
+            finite_float(fit.get("a_eos_A"), "fit a0"),
+            finite_float(value.get("a0_A"), "stored adaptive a0"),
+            f"{method}/{solid}/{mesh} adaptive a0",
+            5.0e-10,
+        )
+        if (
+            value.get("value_source")
+            != "single_point_at_own_independent_eos_minimum"
+            or value.get("atom_reference_source") != "save_tblite_cli"
+            or value.get("input_sha256") != sha256(eq_input)
+            or value.get("output_sha256") != sha256(eq_output)
+            or value.get("lineage_sha256") != sha256(eq_lineage_path)
+            or value.get("campaign_stamp_sha256")
+            != sha256(base.job_stamp_path(eq_output))
+        ):
+            raise ValueError(f"adaptive value lineage mismatch: {method}/{solid}/{mesh}")
+        regenerated_values.append(dict(value))
+        meshes = system_lineage[method][solid]["independent_eos_meshes"]
+        assert isinstance(meshes, dict)
+        meshes[mesh] = {
+            "a0_A": float(value["a0_A"]),
+            "cohesive_energy_eV_per_atom": ecoh,
+            "fit": dict(fit),
+            "eos_points": raw_lineage,
+            "equilibrium_input": artifact(eq_input, root),
+            "equilibrium_output": artifact(eq_output, root),
+            "equilibrium_input_lineage": artifact(eq_lineage_path, root),
+            "campaign_stamp": eq_stamp,
+        }
+
+    recomputed_steps, recomputed_selections, pending = kconv.assess_convergence(
+        regenerated_values
+    )
+    if pending:
+        raise ValueError(f"adaptive decisions still request meshes: {pending}")
+    if kconv._csv_bytes(recomputed_steps) != steps_path.read_bytes():
+        raise ValueError("stored adaptive step decisions differ from raw values")
+    if kconv._csv_bytes(recomputed_selections) != selection_path.read_bytes():
+        raise ValueError("stored adaptive selections differ from raw values")
+
+    selected: dict[str, list[dict[str, object]]] = {method: [] for method in METHODS}
+    for row in recomputed_selections:
+        if row.get("selection_status") != "converged":
+            raise ValueError(f"unconverged adaptive selection: {row}")
+        method = str(row["method"])
+        solid = str(row["solid"])
+        ref = refs[solid]
+        selected_row = {
+            "solid": solid,
+            "structure": ref.structure,
+            "method": method,
+            "selected_mesh": str(row["selected_mesh"]),
+            "converged_from_mesh": str(row["converged_from_mesh"]),
+            "a_calc_A": float(row["a0_A"]),
+            "a_ref_A": ref.a_exp,
+            "a_error_A": float(row["a0_A"]) - ref.a_exp,
+            "ecoh_calc_eV_per_atom": float(row["ecoh_eV_per_atom"]),
+            "ecoh_ref_eV_per_atom": ref.ecoh_exp,
+            "ecoh_error_eV_per_atom": float(row["ecoh_eV_per_atom"])
+            - ref.ecoh_exp,
+        }
+        selected[method].append(selected_row)
+        system_lineage[method][solid]["adaptive_selection"] = dict(row)
+        system_lineage[method][solid]["reported_result"] = selected_row
+        system_lineage[method][solid]["reporting_status"] = (
+            "reported_at_denser_value_of_earliest_single_passing_adjacent_step"
+        )
+    if any(len(selected[method]) != len(PAPER_SYSTEMS) for method in METHODS):
+        raise ValueError("adaptive selection is not exactly three methods by LC10")
+    return selected, system_lineage, {
+        "convergence": artifact(convergence_path, root),
+        "values": artifact(values_path, root),
+        "steps": artifact(steps_path, root),
+        "selection": artifact(selection_path, root),
+        "scale_manifest": artifact(scale_path, root),
+    }
+
+
+def validate_fixed_geometry_diagnostic(
+    root: Path,
+    results: list[dict[str, str]],
+    fits: list[dict[str, str]],
+    atom_energies: dict[tuple[str, str], float],
+    campaign: dict[str, object],
+    system_lineage: dict[str, dict[str, object]],
+) -> dict[str, object]:
+    """Validate, but never select from, the historical fixed-geometry SP series."""
+    relevant = [
+        row
+        for row in results
+        if row.get("method") in METHODS and row.get("solid") in PAPER_SYSTEMS
+    ]
+    by_key = unique_by(
+        relevant,
+        ("method", "solid", "energy_mesh"),
+        "fixed-geometry single point",
+    )
+    expected = {
+        (method, solid, mesh)
+        for method in METHODS
+        for solid in PAPER_SYSTEMS
+        for mesh in kconv.FIXED_GEOMETRY_ENERGY_MESHES
+    }
+    if set(by_key) != expected:
+        raise ValueError("fixed-geometry SP diagnostic coverage is not exactly 3x10x3")
+    fit_by_key = unique_by(
+        [
+            row
+            for row in fits
+            if row.get("method") in METHODS
+            and row.get("solid") in PAPER_SYSTEMS
+            and row.get("eos_mesh") == kconv.FIXED_GEOMETRY_EOS_MESH
+        ],
+        ("method", "solid"),
+        "fixed-geometry anchor fit",
+    )
+    refs = {ref.solid: ref for ref in base.LC10_PAPER_REFERENCES}
+    for method, solid, mesh in sorted(expected):
+        row = by_key[(method, solid, mesh)]
+        if row.get("eos_mesh") != kconv.FIXED_GEOMETRY_EOS_MESH:
+            raise ValueError(f"fixed-geometry anchor mismatch: {method}/{solid}/{mesh}")
+        fit = fit_by_key[(method, solid)]
+        project = eos.final_project(solid, method, mesh)
+        run_dir = root / "runs" / "eos_final_sp" / method / solid / mesh
+        input_path = run_dir / f"{project}.inp"
+        output_path = run_dir / f"{project}.out"
+        expected_input = base.solid_input(
+            refs[solid],
+            method,
+            "ENERGY",
+            mesh,
+            float(fit["a_eos_A"]),
+            project,
+        )
+        if input_path.read_text() != expected_input:
+            raise ValueError(
+                f"fixed-geometry input contract mismatch: {method}/{solid}/{mesh}"
+            )
+        if not base.output_ok(output_path):
+            raise ValueError(f"incomplete fixed-geometry SP: {method}/{solid}/{mesh}")
+        energy = base.parse_energy(output_path)
+        if energy is None:
+            raise ValueError(f"missing fixed-geometry SP energy: {method}/{solid}/{mesh}")
+        close(
+            energy,
+            finite_float(row.get("solid_energy_hartree"), "fixed SP table energy"),
+            f"{method}/{solid}/{mesh} fixed SP energy",
+            1.0e-10,
+        )
+        close(
+            finite_float(fit.get("a_eos_A"), "k444 anchor a0"),
+            finite_float(row.get("a_calc_A"), "fixed SP a0"),
+            f"{method}/{solid}/{mesh} fixed SP a0",
+            5.0e-8,
+        )
+        ref = refs[solid]
+        atom_sum = sum(
+            atom_energies[(method, element)] * count
+            for element, count in base.atom_counts(ref).items()
+        )
+        ecoh = (atom_sum - energy) * base.HARTREE_TO_EV / len(
+            base.conventional_cell_atoms(ref)
+        )
+        close(
+            ecoh,
+            finite_float(row.get("ecoh_calc_eV_per_atom"), "fixed SP Ecoh"),
+            f"{method}/{solid}/{mesh} fixed SP Ecoh",
+            5.0e-8,
+        )
+        stamp = portable_gxtb_stamp(
+            output_path, input_path, campaign, "cp2k", root
+        )
+        record = {
+            "geometry_source_eos_mesh": kconv.FIXED_GEOMETRY_EOS_MESH,
+            "energy_mesh": mesh,
+            "a0_A": float(fit["a_eos_A"]),
+            "cohesive_energy_eV_per_atom": ecoh,
+            "input": artifact(input_path, root),
+            "output": artifact(output_path, root),
+            "campaign_stamp": stamp,
+            "publication_selection_eligible": False,
+        }
+        system = system_lineage[method][solid]
+        fixed = system.setdefault("fixed_geometry_single_point_diagnostic", {})
+        assert isinstance(fixed, dict)
+        fixed[mesh] = record
+    return {
+        "table": artifact(root / "data" / "eos_results.csv", root),
+        "geometry_source_eos_mesh": kconv.FIXED_GEOMETRY_EOS_MESH,
+        "energy_meshes": list(kconv.FIXED_GEOMETRY_ENERGY_MESHES),
+        "publication_selection_eligible": False,
+    }
+
+
 def scope_record(
     method: str,
     scope: str,
@@ -827,6 +1556,11 @@ def scope_record(
     ordered_systems: tuple[str, ...],
 ) -> dict[str, object]:
     by_solid = {str(row["solid"]): row for row in rows}
+    if len(rows) != len(by_solid) or set(by_solid) != set(ordered_systems):
+        raise ValueError(
+            f"{method} rows do not match the exact LC10 paper set: "
+            f"found {sorted(by_solid)}"
+        )
     chosen = [by_solid[solid] for solid in ordered_systems]
     a_stats = stats([float(row["a_error_A"]) for row in chosen])
     e_stats = stats([float(row["ecoh_error_eV_per_atom"]) for row in chosen])
@@ -835,7 +1569,7 @@ def scope_record(
         "method_label": METHOD_LABELS[method],
         "scope": scope,
         "n_systems": len(chosen),
-        "coverage_denominator": len(base.REFERENCES),
+        "coverage_denominator": len(PAPER_SYSTEMS),
         "systems": ";".join(ordered_systems),
         "eos_mesh": EOS_MESH,
         "result_mesh": RESULT_MESH,
@@ -850,18 +1584,92 @@ def scope_record(
     }
 
 
-def write_csv(path: Path, rows: list[dict[str, object]]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
-        writer.writeheader()
-        for row in rows:
-            writer.writerow(
-                {
-                    key: f"{value:.9f}" if isinstance(value, float) else value
-                    for key, value in row.items()
+def csv_text(rows: list[dict[str, object]]) -> str:
+    import io
+
+    stream = io.StringIO(newline="")
+    writer = csv.DictWriter(stream, fieldnames=SUMMARY_FIELDS, lineterminator="\n")
+    writer.writeheader()
+    for row in rows:
+        writer.writerow(
+            {
+                key: f"{row[key]:.12f}" if isinstance(row[key], float) else row[key]
+                for key in SUMMARY_FIELDS
+            }
+        )
+    return stream.getvalue()
+
+
+def comparison_records(
+    rows: list[dict[str, object]],
+) -> dict[str, dict[str, dict[str, float]]]:
+    by_method = {str(row["method_id"]): row for row in rows}
+    if set(by_method) != set(METHODS):
+        raise ValueError("LC10 comparisons require exactly GFN1, GFN2, and GXTB")
+    result: dict[str, dict[str, dict[str, float]]] = {}
+    for baseline in ("GFN1", "GFN2"):
+        metrics: dict[str, dict[str, float]] = {}
+        for quantity in ("lattice", "cohesive"):
+            for statistic in ("ME", "MAE", "RMSE", "MaxAE"):
+                unit_suffix = "A" if quantity == "lattice" else "eV_per_atom"
+                field = f"{quantity}_{statistic}_{unit_suffix}"
+                current = float(by_method["GXTB"][field])
+                reference = float(by_method[baseline][field])
+                record = {
+                    "gxtb": current,
+                    "baseline": reference,
+                    "delta_gxtb_minus_baseline": current - reference,
                 }
+                if reference != 0.0:
+                    record["ratio_gxtb_over_baseline"] = current / reference
+                    record["percent_change"] = 100.0 * (current / reference - 1.0)
+                metrics[f"{quantity}_{statistic}"] = record
+        result[f"GXTB_vs_{baseline}"] = metrics
+    return result
+
+
+def tex_text(
+    rows: list[dict[str, object]],
+    comparisons: Mapping[str, Mapping[str, Mapping[str, float]]],
+) -> str:
+    method_tokens = {"GFN1": "GfnOne", "GFN2": "GfnTwo", "GXTB": "GxTB"}
+    statistic_tokens = {"ME": "ME", "MAE": "MAE", "RMSE": "RMSE", "MaxAE": "MaxAE"}
+    lines = [
+        "% Generated by finalize_goldzak12_paper_summary.py; do not edit.",
+        "% LiH and MgO are diagnostics outside this fixed identical-set LC10 statistic.",
+        f"\\providecommand{{\\LCtenN}}{{{len(PAPER_SYSTEMS)}}}",
+        "\\providecommand{\\LCtenSystems}{" + ", ".join(PAPER_SYSTEMS) + "}",
+    ]
+    for row in rows:
+        token = method_tokens[str(row["method_id"])]
+        for quantity, quantity_token, suffix in (
+            ("lattice", "Lattice", "A"),
+            ("cohesive", "Cohesive", "eV_per_atom"),
+        ):
+            for statistic, statistic_token in statistic_tokens.items():
+                value = float(row[f"{quantity}_{statistic}_{suffix}"])
+                lines.append(
+                    f"\\providecommand{{\\LCten{token}{quantity_token}{statistic_token}}}"
+                    f"{{{value:.9f}}}"
+                )
+    for baseline, baseline_token in (("GFN1", "GfnOne"), ("GFN2", "GfnTwo")):
+        record = comparisons[f"GXTB_vs_{baseline}"]
+        for quantity, quantity_token in (("lattice", "Lattice"), ("cohesive", "Cohesive")):
+            metric = record[f"{quantity}_MAE"]
+            prefix = f"\\LCtenGxTBvs{baseline_token}{quantity_token}MAE"
+            lines.append(
+                f"\\providecommand{{{prefix}Delta}}"
+                f"{{{metric['delta_gxtb_minus_baseline']:.9f}}}"
             )
+            lines.append(
+                f"\\providecommand{{{prefix}Ratio}}"
+                f"{{{metric['ratio_gxtb_over_baseline']:.9f}}}"
+            )
+            lines.append(
+                f"\\providecommand{{{prefix}PercentChange}}"
+                f"{{{metric['percent_change']:.6f}}}"
+            )
+    return "\n".join(lines) + "\n"
 
 
 def build_summary(root: Path) -> tuple[dict[str, object], list[dict[str, object]]]:
@@ -872,54 +1680,46 @@ def build_summary(root: Path) -> tuple[dict[str, object], list[dict[str, object]
     fits = read_csv(fit_path)
     points = read_csv(point_path)
     results = read_csv(result_path)
-    gxtb_provenance, campaign, build_provenance = validate_build_provenance(root, fits)
+    gxtb_provenance, campaign, build_provenance = validate_adaptive_build_provenance(
+        root, fits
+    )
     protocol = gxtb_provenance["protocol"]
     assert isinstance(protocol, dict)
     atom_energies, atom_lineage, atom_check = validate_atom_references(root, campaign)
-    fit_by_key, eos_lineage = validate_eos_and_collect_lineage(
-        root, fits, points, campaign, protocol
-    )
-    selected, system_lineage = validate_final_results(
+    selected, system_lineage, adaptive_sources = validate_adaptive_k_results(
         root,
-        results,
-        fit_by_key,
-        eos_lineage,
+        fits,
+        points,
         atom_energies,
         campaign,
+        protocol,
+    )
+    fixed_diagnostic = validate_fixed_geometry_diagnostic(
+        root,
+        results,
+        fits,
+        atom_energies,
+        campaign,
+        system_lineage,
     )
 
-    reference_order = tuple(ref.solid for ref in base.REFERENCES)
-    available_systems = {
-        method: tuple(solid for solid in reference_order if any(row["solid"] == solid for row in selected[method]))
-        for method in METHODS
-    }
-    common_systems = tuple(
-        solid
-        for solid in reference_order
-        if all(solid in available_systems[method] for method in METHODS)
-    )
-    if not common_systems:
-        raise ValueError("the three-method LC12 common subset is empty")
-    reduced_gxtb_coverage = (
-        len(available_systems["GXTB"]) < len(base.REFERENCES)
-    )
     summary_rows: list[dict[str, object]] = []
     method_payload: dict[str, object] = {}
     for method in METHODS:
-        available = scope_record(
-            method, "method_available_coverage", selected[method], available_systems[method]
+        paper_record = scope_record(
+            method,
+            "fixed_identical_lc10",
+            selected[method],
+            PAPER_SYSTEMS,
         )
-        common = scope_record(
-            method, "three_method_common_subset", selected[method], common_systems
-        )
-        summary_rows.extend((available, common))
+        summary_rows.append(paper_record)
         method_payload[method] = {
             "method_label": METHOD_LABELS[method],
-            "available_coverage": available,
-            "three_method_common_subset": common,
+            "paper_benchmark": paper_record,
             "atom_references": atom_lineage[method],
             "systems": system_lineage[method],
         }
+    comparisons = comparison_records(summary_rows)
 
     source_paths = {
         "reference": data / "reference_goldzak2022.csv",
@@ -929,7 +1729,7 @@ def build_summary(root: Path) -> tuple[dict[str, object], list[dict[str, object]
         "legacy_atom_references": data / "atom_energies_tblite_cli.csv",
         "gxtb_atom_references": data / "atom_energies_save_tblite_cli_gxtb.csv",
         "gxtb_atom_check": data / "atom_reference_cp2k_vs_save_tblite_gxtb.csv",
-        "gxtb_scale_manifest": data / "gxtb_eos_scale_manifest.json",
+        "k_convergence_scale_manifest": data / kconv.SCALE_MANIFEST_NAME,
         "legacy_build_provenance": data / "build_provenance.json",
         "gxtb_build_provenance": data / "build_provenance_gxtb.json",
     }
@@ -944,64 +1744,100 @@ def build_summary(root: Path) -> tuple[dict[str, object], list[dict[str, object]
             sources[name] = item
     payload: dict[str, object] = {
         "schema_version": SCHEMA_VERSION,
-        "benchmark": "LC12 (Goldzak12)",
-        "status": (
-            "publication_ready_reduced_coverage"
-            if reduced_gxtb_coverage
-            else "publication_ready"
-        ),
+        "benchmark": "LC10 (fixed Goldzak12 subset)",
+        "status": "publication_ready",
+        "coverage": {
+            "required": len(PAPER_SYSTEMS),
+            "common": len(PAPER_SYSTEMS),
+            "systems": list(PAPER_SYSTEMS),
+            "exact_identical_three_method_coverage": True,
+            "coverage_denominator": len(PAPER_SYSTEMS),
+        },
         "methods": method_payload,
         "protocol": {
             "eos_mesh": EOS_MESH,
-            "energy_meshes": list(ENERGY_MESHES),
+            "initial_eos_meshes": ["k333", "k444", "k555"],
+            "scientific_maximum_eos_mesh": None,
+            "technical_resource_guard_mesh": protocol[
+                "adaptive_k_convergence"
+            ]["technical_resource_guard_mesh"],
             "result_mesh": RESULT_MESH,
+            "adaptive_selection": {
+                "required_consecutive_passing_steps": 1,
+                "aggregate_rms_gate": False,
+                "criteria_combination": "AND",
+                "lattice_abs_delta_threshold_A": kconv.LATTICE_THRESHOLD_A,
+                "cohesive_abs_delta_threshold_kJmol_per_atom": (
+                    kconv.ECOH_THRESHOLD_KJMOL_PER_ATOM
+                ),
+                "cohesive_abs_delta_threshold_eV_per_atom": (
+                    kconv.ECOH_THRESHOLD_EV_PER_ATOM
+                ),
+                "selected_value_policy": (
+                    "denser n+1 value from earliest passing adjacent step"
+                ),
+            },
+            "fixed_geometry_single_points": fixed_diagnostic,
             "lattice_unit": "angstrom",
             "cohesive_energy_unit": "eV/atom",
-            "common_subset_systems": list(common_systems),
-            "common_subset_count": len(common_systems),
-            "gxtb_fit_approval_sha256": protocol["approved_gxtb_fit_sha256"],
-            "gxtb_allow_reduced_coverage": bool(protocol.get("allow_reduced_coverage")),
-            "gxtb_reduced_coverage_reported": reduced_gxtb_coverage,
-            "gxtb_minimum_valid_fits": int(protocol.get("minimum_valid_gxtb_fits", -1)),
+            "paper_systems": list(PAPER_SYSTEMS),
+            "paper_system_count": len(PAPER_SYSTEMS),
+            "diagnostic_only_systems": list(DIAGNOSTIC_ONLY_SYSTEMS),
+            "diagnostic_note": (
+                "LiH and MgO are outside the fixed LC10 statistic; their branch "
+                "diagnostics and multistart calculations are not publication prerequisites."
+            ),
+            "fit_approval_sha256": protocol["approved_fit_sha256"],
         },
         "summary_rows": summary_rows,
+        "gxtb_vs_gfn_baseline_comparisons": comparisons,
         "atom_reference_acceptance": atom_check,
         "build_provenance": build_provenance,
         "sources": sources,
     }
+    payload["sources"].update(adaptive_sources)  # type: ignore[union-attr]
     return payload, summary_rows
 
 
-def finalize(root: Path) -> tuple[Path, Path]:
+def finalize(root: Path) -> tuple[Path, Path, Path]:
     data = root / "data"
     csv_path = data / f"{SUMMARY_STEM}.csv"
     json_path = data / f"{SUMMARY_STEM}.json"
+    tex_path = data / f"{SUMMARY_STEM}.tex"
     csv_temp = data / f".{SUMMARY_STEM}.csv.tmp.{os.getpid()}"
     json_temp = data / f".{SUMMARY_STEM}.json.tmp.{os.getpid()}"
-    csv_path.unlink(missing_ok=True)
-    json_path.unlink(missing_ok=True)
-    csv_temp.unlink(missing_ok=True)
-    json_temp.unlink(missing_ok=True)
+    tex_temp = data / f".{SUMMARY_STEM}.tex.tmp.{os.getpid()}"
+    for path in (csv_path, json_path, tex_path, csv_temp, json_temp, tex_temp):
+        path.unlink(missing_ok=True)
     try:
         payload, rows = build_summary(root)
-        write_csv(csv_temp, rows)
+        csv_temp.write_text(csv_text(rows))
+        comparisons = payload["gxtb_vs_gfn_baseline_comparisons"]
+        assert isinstance(comparisons, Mapping)
+        tex_temp.write_text(tex_text(rows, comparisons))
         payload["paper_summary_csv"] = {
             "path": relative_path(csv_path, root),
             "sha256": sha256(csv_temp),
             "size_bytes": csv_temp.stat().st_size,
         }
+        payload["paper_summary_tex"] = {
+            "path": relative_path(tex_path, root),
+            "sha256": sha256(tex_temp),
+            "size_bytes": tex_temp.stat().st_size,
+        }
         json_temp.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
         os.replace(csv_temp, csv_path)
+        os.replace(tex_temp, tex_path)
         os.replace(json_temp, json_path)
     except BaseException:
-        # A two-file publication bundle has no useful partially committed state.
-        csv_path.unlink(missing_ok=True)
-        json_path.unlink(missing_ok=True)
+        # A three-file publication bundle has no useful partially committed state.
+        for path in (csv_path, json_path, tex_path):
+            path.unlink(missing_ok=True)
         raise
     finally:
-        csv_temp.unlink(missing_ok=True)
-        json_temp.unlink(missing_ok=True)
-    return csv_path, json_path
+        for path in (csv_temp, json_temp, tex_temp):
+            path.unlink(missing_ok=True)
+    return csv_path, json_path, tex_path
 
 
 def main() -> int:
@@ -1014,11 +1850,12 @@ def main() -> int:
     )
     args = parser.parse_args()
     try:
-        csv_path, json_path = finalize(args.root.resolve())
+        csv_path, json_path, tex_path = finalize(args.root.resolve())
     except (OSError, ValueError) as error:
         parser.error(str(error))
-    print(f"LC12 publication summary: {csv_path}")
-    print(f"LC12 publication lineage: {json_path}")
+    print(f"LC10 publication summary: {csv_path}")
+    print(f"LC10 publication lineage: {json_path}")
+    print(f"LC10 publication TeX macros: {tex_path}")
     return 0
 
 

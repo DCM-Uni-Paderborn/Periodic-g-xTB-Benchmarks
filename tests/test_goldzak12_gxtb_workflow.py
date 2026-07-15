@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-import json
 import csv
+import json
+import math
+import re
 import subprocess
 import sys
 import tempfile
@@ -39,6 +41,45 @@ def fake_campaign(
 
 
 class Goldzak12GXTBInputTests(unittest.TestCase):
+    def test_hysteresis_note_metrics_are_derived_from_the_pinned_eos_table(self) -> None:
+        table = REPOSITORY / "Goldzak12" / "data" / "eos_fits.csv"
+        note = REPOSITORY / "Goldzak12" / "data" / "gxtb_wfn_hysteresis.md"
+        with table.open() as handle:
+            rows = list(csv.DictReader(handle))
+        gxtb = [
+            row
+            for row in rows
+            if row["method"] == "GXTB"
+            and row["fit_status"] == "quadratic"
+            and row["a_eos_A"]
+        ]
+        self.assertEqual(
+            {row["solid"] for row in gxtb},
+            {"C", "Si", "SiC", "BN", "BP", "AlN", "AlP", "MgS", "LiF", "LiCl"},
+        )
+        errors = [float(row["a_eos_A"]) - float(row["a_exp_A"]) for row in gxtb]
+        expected = {
+            "ME": sum(errors) / len(errors),
+            "MAE": sum(abs(error) for error in errors) / len(errors),
+            "RMSE": math.sqrt(sum(error * error for error in errors) / len(errors)),
+            "MaxAE": max(abs(error) for error in errors),
+        }
+        text = note.read_text()
+        match = re.search(
+            r"SHA256 `(?P<sha>[0-9a-f]{64})`\) are "
+            r"ME `(?P<ME>[-+0-9.]+)` angstrom, "
+            r"MAE `(?P<MAE>[-+0-9.]+)` angstrom, "
+            r"RMSE `(?P<RMSE>[-+0-9.]+)` angstrom, and "
+            r"MaxAE `(?P<MaxAE>[-+0-9.]+)` angstrom",
+            text,
+        )
+        self.assertIsNotNone(match)
+        assert match is not None
+        self.assertEqual(match.group("sha"), base.sha256(table))
+        for label, value in expected.items():
+            self.assertAlmostEqual(float(match.group(label)), value, places=10)
+        self.assertNotIn("0.16713620093", text)
+
     def test_solid_input_pins_native_fdiis_and_shared_spglib_contract(self) -> None:
         text = base.solid_input(base.REFERENCES[0], "GXTB", "ENERGY", "k444", 3.553, "C_GXTB")
         self.assertIn("METHOD GXTB", text)
@@ -140,6 +181,14 @@ class Goldzak12GXTBInputTests(unittest.TestCase):
                 specs = eos.eos_job_specs("k444", eos.DEFAULT_SCALES, ("GXTB",))
                 self.assertEqual(len(specs), 12 * len(eos.DEFAULT_SCALES))
                 self.assertTrue(all("/GXTB/" in str(spec[1]) for spec in specs))
+                common_ten = (
+                    "C", "Si", "SiC", "BN", "BP", "AlN", "AlP", "MgS", "LiF", "LiCl"
+                )
+                selected = eos.eos_job_specs(
+                    "k444", eos.DEFAULT_SCALES, ("GXTB",), common_ten
+                )
+                self.assertEqual(len(selected), 10 * len(eos.DEFAULT_SCALES))
+                self.assertFalse(any(" LiH " in spec[0] or " MgO " in spec[0] for spec in selected))
                 fits = [
                     {
                         "solid": ref.solid,
@@ -343,6 +392,97 @@ class Goldzak12GXTBAtomTests(unittest.TestCase):
 
 
 class Goldzak12GXTBMixerAndPruneTests(unittest.TestCase):
+    def test_execution_record_is_additive_and_pool_only_runs_pending_jobs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            executable = root / "cp2k"
+            executable.write_bytes(b"cp2k")
+            inp = root / "job.inp"
+            out = root / "job.out"
+            inp.write_text(
+                base.solid_input(
+                    base.REFERENCES[0], "GXTB", "ENERGY", "k444", 3.553, "job"
+                )
+            )
+            campaign = fake_campaign(
+                cp2k_executable_sha=base.sha256(executable)
+            )
+            signature = base.job_signature(
+                executable,
+                inp,
+                command_contract={"driver": "cp2k", "omp_threads": 1},
+                campaign_fingerprint=campaign,
+            )
+
+            class FakePool:
+                mpi_ranks_per_job = 2
+
+                def __init__(self) -> None:
+                    self.complete = False
+                    self.run_calls = 0
+                    self.write_calls = 0
+
+                def record_issue(self, _output: Path, _stamp: Path) -> str | None:
+                    return None if self.complete else "missing execution record"
+
+                def run_cp2k(
+                    self, _cp2k: Path, _input: Path, output: Path
+                ) -> tuple[int, dict[str, object]]:
+                    self.run_calls += 1
+                    output.write_text("PROGRAM ENDED\n")
+                    return 0, {"separate": True}
+
+                def write_record(
+                    self,
+                    _output: Path,
+                    _observation: dict[str, object],
+                    _stamp: Path,
+                ) -> dict[str, str]:
+                    self.write_calls += 1
+                    self.complete = True
+                    return {"path": "execution.json", "sha256": "fixture"}
+
+            pool = FakePool()
+            spec = [("eos GXTB C k444 s1p000", inp, out, False)]
+            eos.run_jobs(
+                spec,
+                executable,
+                1,
+                1,
+                False,
+                campaign_fingerprint=campaign,
+                execution_pool=pool,  # type: ignore[arg-type]
+            )
+            self.assertEqual((pool.run_calls, pool.write_calls), (1, 1))
+            stamp = json.loads(base.job_stamp_path(out).read_text())
+            self.assertEqual(stamp, {**signature, "completed": True, "return_code": 0})
+            self.assertNotIn("execution_provenance", stamp)
+            frozen_output = out.read_bytes()
+            pool.complete = False
+            with self.assertRaisesRegex(RuntimeError, "refusing an implicit destructive rerun"):
+                eos.run_jobs(
+                    spec,
+                    executable,
+                    1,
+                    1,
+                    False,
+                    campaign_fingerprint=campaign,
+                    execution_pool=pool,  # type: ignore[arg-type]
+                )
+            self.assertEqual(out.read_bytes(), frozen_output)
+            self.assertEqual((pool.run_calls, pool.write_calls), (1, 1))
+            pool.complete = True
+            eos.run_jobs(
+                spec,
+                executable,
+                1,
+                1,
+                False,
+                campaign_fingerprint=campaign,
+                execution_pool=pool,  # type: ignore[arg-type]
+            )
+            self.assertEqual((pool.run_calls, pool.write_calls), (1, 1))
+
     def test_failed_gxtb_job_is_not_retried_with_an_alternative_mixer(self) -> None:
         calls: list[Path] = []
         with tempfile.TemporaryDirectory() as tmp:
@@ -468,6 +608,18 @@ class Goldzak12GXTBCampaignFingerprintTests(unittest.TestCase):
         relocated["campaign_state"] = "validation_in_progress"
         with self.assertRaisesRegex(ValueError, "not production_ready"):
             base.campaign_identity_from_manifest(relocated, Path("second.json"))
+        diagnostic = base.campaign_identity_from_manifest(
+            relocated,
+            Path("second.json"),
+            allowed_campaign_states=("validation_in_progress",),
+        )
+        self.assertEqual(diagnostic, first)
+        with self.assertRaisesRegex(ValueError, r"allowed state\(s\): qualification_pending"):
+            base.campaign_identity_from_manifest(
+                relocated,
+                Path("second.json"),
+                allowed_campaign_states=("qualification_pending",),
+            )
 
     def test_manifest_rejects_replaced_libtblite_archive(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -642,6 +794,14 @@ class Goldzak12GXTBProtocolTests(unittest.TestCase):
                 eos.ADAPTIVE_SCALES[("C", "GXTB")] = (0.99, 1.01)
                 payload = eos.write_gxtb_scale_manifest("k444", eos.DEFAULT_SCALES, ("GXTB",))
                 self.assertIsNotNone(payload)
+                self.assertEqual(
+                    [item["solid"] for item in payload["systems"]],
+                    list(base.LC10_PAPER_SOLIDS),
+                )
+                self.assertEqual(
+                    payload["diagnostic_only_systems"],
+                    list(base.LC10_DIAGNOSTIC_ONLY_SOLIDS),
+                )
                 record = next(item for item in payload["systems"] if item["solid"] == "C")
                 self.assertEqual(record["adaptive_scales"], [0.99, 1.01])
                 self.assertIn(0.99, record["requested_scales"])

@@ -64,6 +64,11 @@ The paper comparison uses the fixed common set C, Si, SiC, BN, BP, AlN, AlP,
 MgS, LiF, and LiCl for every method. Cohesive energies use k555 single points
 on the k444 minima. LiH and MgO are outside this comparison scope.
 
+The GFN1/GFN2 rows below remain the frozen baseline data. The adaptive runner
+may execute g-xTB alone; its per-solid a0 and Ecoh convergence proceeds from
+k333 upward without a fixed maximum mesh and does not relabel or overwrite
+those GFN rows.
+
 | Method | N | Lattice-constant MAE / A | Cohesive-energy MAE / eV atom-1 |
 |---|---:|---:|---:|
 | GFN1-xTB | 10 | 0.145118 | 1.543851 |

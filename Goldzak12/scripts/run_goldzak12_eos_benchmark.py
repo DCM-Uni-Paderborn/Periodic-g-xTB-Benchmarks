@@ -8,14 +8,18 @@ import hashlib
 import json
 import math
 import os
+import re
 import subprocess
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+import benchmark_execution as execution  # noqa: E402
 import run_goldzak12_benchmark as base  # noqa: E402
 
 
@@ -101,12 +105,15 @@ def write_gxtb_scale_manifest(
     mesh: str,
     base_scales: tuple[float, ...],
     methods: tuple[str, ...],
+    solids: tuple[str, ...] = base.LC10_PAPER_SOLIDS,
 ) -> dict[str, object] | None:
     if "GXTB" not in methods:
         return None
     payload: dict[str, object] = {
         "schema_version": 1,
-        "benchmark": "LC12 (Goldzak12)",
+        "benchmark": "LC10 (fixed Goldzak12 subset)",
+        "paper_systems": list(base.LC10_PAPER_SOLIDS),
+        "diagnostic_only_systems": list(base.LC10_DIAGNOSTIC_ONLY_SOLIDS),
         "eos_mesh": mesh,
         "method": "GXTB",
         "base_scales": list(base_scales),
@@ -118,6 +125,7 @@ def write_gxtb_scale_manifest(
                 "adaptive_scales": list(adaptive_scales_only(ref.solid, "GXTB")),
             }
             for ref in base.REFERENCES
+            if ref.solid in solids
         ],
     }
     path = gxtb_scale_manifest_path()
@@ -325,10 +333,15 @@ def scales_for(solid: str, method: str, scales: tuple[float, ...]) -> tuple[floa
 
 
 def eos_job_specs(
-    mesh: str, scales: tuple[float, ...], methods: tuple[str, ...] = base.METHODS
+    mesh: str,
+    scales: tuple[float, ...],
+    methods: tuple[str, ...] = base.METHODS,
+    solids: tuple[str, ...] | None = None,
 ) -> list[tuple[str, Path, Path, bool]]:
     specs: list[tuple[str, Path, Path, bool]] = []
     for ref in base.REFERENCES:
+        if solids is not None and ref.solid not in solids:
+            continue
         for method in methods:
             for scale in scales_for(ref.solid, method, scales):
                 project = eos_project(ref.solid, method, mesh, scale)
@@ -419,7 +432,13 @@ def run_jobs(
     force: bool,
     retry_scf: bool = True,
     campaign_fingerprint: dict[str, object] | None = None,
+    execution_pool: execution.ExecutionPool | None = None,
+    campaign_bind_all_methods: bool = False,
 ) -> None:
+    if campaign_bind_all_methods and campaign_fingerprint is None:
+        raise ValueError(
+            "campaign_bind_all_methods requires a validated campaign fingerprint"
+        )
     cp2k_identity = base.executable_fingerprint(cp2k)
 
     def signature(spec: tuple[str, Path, Path, bool]) -> dict[str, object]:
@@ -433,19 +452,36 @@ def run_jobs(
 
     pending: list[tuple[str, Path, Path, bool]] = []
     exhausted_before_run: list[tuple[str, Path, Path, bool]] = []
+    execution_evidence_failures: list[tuple[str, str]] = []
     for spec in specs:
         method = spec_method(spec)
         if method == "GXTB" and campaign_fingerprint is None:
             raise ValueError("GXTB EOS jobs require a validated campaign fingerprint")
         base.validate_method_input(spec[1].read_text(), method)
         usable = usable_output_ok(spec[2], method, require_opt=spec[3])
-        stamped = method != "GXTB" or base.job_stamp_matches(spec[2], signature(spec))
+        campaign_bound = method == "GXTB" or campaign_bind_all_methods
+        stamped = not campaign_bound or base.job_stamp_matches(spec[2], signature(spec))
         if not force and usable and stamped:
+            if execution_pool is None:
+                continue
+            issue = execution_pool.record_issue(spec[2], base.job_stamp_path(spec[2]))
+            if issue is None:
+                continue
+            execution_evidence_failures.append((spec[0], issue))
             continue
         if not force and method != "GXTB" and retries_exhausted(spec[2]):
             exhausted_before_run.append(spec)
             continue
         pending.append(spec)
+    if execution_evidence_failures:
+        details = "; ".join(
+            f"{label}: {issue}" for label, issue in execution_evidence_failures
+        )
+        raise RuntimeError(
+            "scientifically completed outputs have missing/invalid separate execution "
+            "evidence; refusing an implicit destructive rerun (use --force only after review): "
+            + details
+        )
     if not pending:
         if exhausted_before_run:
             raise RuntimeError(
@@ -458,15 +494,34 @@ def run_jobs(
     def worker(spec: tuple[str, Path, Path, bool]) -> tuple[str, int, bool, tuple[str, Path, Path, bool]]:
         label, inp, out, require_opt = spec
         method = spec_method(spec)
-        code = base.run_cp2k(cp2k, inp, out, threads)
+        observation: dict[str, object] | None = None
+        if execution_pool is None:
+            code = base.run_cp2k(cp2k, inp, out, threads)
+        else:
+            code, observation = execution_pool.run_cp2k(cp2k, inp, out)
         ok = usable_output_ok(out, method, require_opt=require_opt)
         strategy = "native_gxtb_fdiis" if method == "GXTB" else "default_tblite_mixer"
         write_strategy(out, strategy, ok)
-        if method == "GXTB":
+        if method == "GXTB" or campaign_bind_all_methods:
             base.write_job_stamp(out, signature(spec), completed=ok, return_code=code)
+            if execution_pool is not None:
+                assert observation is not None
+                execution_pool.write_record(
+                    out,
+                    observation,
+                    base.job_stamp_path(out),
+                )
         return label, code, ok, spec
 
-    print(f"Running {len(pending)} CP2K jobs with {jobs} worker(s), OMP_NUM_THREADS={threads}.")
+    parallel_label = (
+        f", MPI ranks/job={execution_pool.mpi_ranks_per_job}, exact taskset pool"
+        if execution_pool is not None
+        else ""
+    )
+    print(
+        f"Running {len(pending)} CP2K jobs with {jobs} worker(s), "
+        f"OMP_NUM_THREADS={threads}{parallel_label}."
+    )
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
         futures = {pool.submit(worker, spec): spec for spec in pending}
         done = 0
@@ -702,19 +757,49 @@ def fit_gxtb_eos(points: list[tuple[float, float, float, bool]]) -> dict[str, ob
     }
 
 
+def merge_keyed_rows(
+    path: Path,
+    rows: list[dict[str, object]],
+    key_fields: tuple[str, ...],
+    *,
+    sort_key: Callable[[dict[str, object]], object] | None = None,
+) -> list[dict[str, object]]:
+    """Replace records by scientific identity without dropping other k meshes.
+
+    The original single-EOS workflow replaced every row of a selected method.
+    A genuine k-convergence campaign evaluates several independent EOS meshes,
+    so method-only replacement would silently discard the preceding mesh.
+    """
+    new_keys = {
+        tuple(str(row.get(field, "")) for field in key_fields) for row in rows
+    }
+    preserved = [
+        dict(row)
+        for row in base.read_csv(path)
+        if tuple(str(row.get(field, "")) for field in key_fields) not in new_keys
+    ]
+    merged: list[dict[str, object]] = preserved + rows
+    if sort_key is not None:
+        merged.sort(key=sort_key)
+    base.write_csv(path, merged)
+    return merged
+
+
 def make_eos_table(
     mesh: str,
     scales: tuple[float, ...],
     methods: tuple[str, ...] = base.METHODS,
     classifications: dict[tuple[str, str, float], dict[str, str]] | None = None,
     campaign_fingerprint: dict[str, object] | None = None,
+    solids: tuple[str, ...] = base.LC10_PAPER_SOLIDS,
 ) -> list[dict[str, object]]:
     classifications = classifications or {}
     rows: list[dict[str, object]] = []
     point_rows: list[dict[str, object]] = []
     branch_rows: list[dict[str, object]] = []
-    unresolved_templates: list[dict[str, object]] = []
     for ref in base.REFERENCES:
+        if ref.solid not in solids:
+            continue
         for method in methods:
             requested_scales = scales_for(ref.solid, method, scales)
             all_points = load_eos_points(
@@ -829,39 +914,50 @@ def make_eos_table(
                             ),
                         }
                     )
-                    if entry is None:
-                        unresolved_templates.append(
-                            {
-                                "solid": ref.solid,
-                                "method": "GXTB",
-                                "mesh": mesh,
-                                "scale": scale,
-                                "classification": "",
-                                "action": "",
-                                "rationale": "",
-                            }
-                        )
-    base.merge_method_rows(
+    merge_keyed_rows(
         ROOT / "data" / "eos_points.csv",
         point_rows,
-        methods,
+        ("solid", "method", "mesh", "scale"),
         sort_key=lambda row: (
             [ref.solid for ref in base.REFERENCES].index(str(row["solid"])),
             base.METHODS.index(str(row["method"])),
+            int(str(row["mesh"])[1:]),
             float(row["scale"]),
         ),
     )
-    base.merge_method_rows(
+    merge_keyed_rows(
         ROOT / "data" / "eos_fits.csv",
         rows,
-        methods,
+        ("solid", "method", "eos_mesh"),
         sort_key=lambda row: (
             [ref.solid for ref in base.REFERENCES].index(str(row["solid"])),
             base.METHODS.index(str(row["method"])),
+            int(str(row["eos_mesh"])[1:]),
         ),
     )
     if "GXTB" in methods:
-        base.write_csv(ROOT / "data" / "gxtb_eos_branch_diagnostics.csv", branch_rows)
+        branch_path = ROOT / "data" / "gxtb_eos_branch_diagnostics.csv"
+        selected_solid_set = set(solids)
+        preserved_branch_rows = [
+            dict(row)
+            for row in base.read_csv(branch_path)
+            if not (
+                row.get("method") == "GXTB"
+                and row.get("solid") in selected_solid_set
+                and row.get("mesh") == mesh
+            )
+        ]
+        combined_branch_rows: list[dict[str, object]] = (
+            preserved_branch_rows + branch_rows
+        )
+        combined_branch_rows.sort(
+            key=lambda row: (
+                [ref.solid for ref in base.REFERENCES].index(str(row["solid"])),
+                int(str(row["mesh"])[1:]),
+                float(row["scale"]),
+            )
+        )
+        base.write_csv(branch_path, combined_branch_rows)
         candidate_path = ROOT / "data" / "gxtb_eos_classification_candidates.json"
         candidate_path.parent.mkdir(parents=True, exist_ok=True)
         candidate_path.write_text(
@@ -872,7 +968,19 @@ def make_eos_table(
                         "Copy reviewed entries to gxtb_eos_classifications.json and set action "
                         "to exclude or retain plus a nonempty classification and rationale."
                     ),
-                    "entries": unresolved_templates,
+                    "entries": [
+                        {
+                            "solid": row["solid"],
+                            "method": "GXTB",
+                            "mesh": row["mesh"],
+                            "scale": float(row["scale"]),
+                            "classification": "",
+                            "action": "",
+                            "rationale": "",
+                        }
+                        for row in combined_branch_rows
+                        if row.get("resolution") == "unresolved_candidate"
+                    ],
                 },
                 indent=2,
                 sort_keys=True,
@@ -1008,10 +1116,16 @@ def enforce_gxtb_coverage(
         )
 
 
-def final_sp_specs(fits: list[dict[str, object]], meshes: list[str]) -> list[tuple[str, Path, Path, bool]]:
+def final_sp_specs(
+    fits: list[dict[str, object]],
+    meshes: list[str],
+    solids: tuple[str, ...] | None = None,
+) -> list[tuple[str, Path, Path, bool]]:
     refs = {ref.solid: ref for ref in base.REFERENCES}
     specs: list[tuple[str, Path, Path, bool]] = []
     for row in fits:
+        if solids is not None and str(row.get("solid", "")) not in solids:
+            continue
         a_text = row.get("a_eos_A", "")
         if a_text == "" or (row.get("method") == "GXTB" and row.get("fit_status") != "quadratic"):
             continue
@@ -1073,9 +1187,15 @@ def collect_results(
     result_mesh: str,
     methods: tuple[str, ...] = base.METHODS,
     campaign_fingerprint: dict[str, object] | None = None,
+    campaign_bind_all_methods: bool = False,
 ) -> tuple[list[dict[str, object]], list[dict[str, object]], list[dict[str, object]]]:
     refs = {ref.solid: ref for ref in base.REFERENCES}
-    atom_e = base.atom_energies(methods, campaign_fingerprint)
+    atom_e = base.atom_energies(
+        methods,
+        campaign_fingerprint,
+        base.LC10_PAPER_ELEMENTS,
+        campaign_bind_all_methods=campaign_bind_all_methods,
+    )
     rows: list[dict[str, object]] = []
     for fit in fits:
         if not fit.get("a_eos_A") or (
@@ -1125,7 +1245,11 @@ def collect_results(
                     "ecoh_error_eV_per_atom": f"{(ecoh - ref.ecoh_exp):.8f}" if ecoh is not None else "",
                     "ecoh_abs_error_eV_per_atom": f"{abs(ecoh - ref.ecoh_exp):.8f}" if ecoh is not None else "",
                     "solid_energy_hartree": f"{e_solid:.12f}" if e_solid is not None else "",
-                    "atom_reference_source": "save_tblite_cli" if method == "GXTB" else "tblite_cli",
+                    "atom_reference_source": (
+                        "save_tblite_cli"
+                        if method == "GXTB" or campaign_bind_all_methods
+                        else "tblite_cli"
+                    ),
                     "a_HF_A": ref.a_hf,
                     "a_MP2_A": ref.a_mp2,
                     "a_SCS_MP2_A": ref.a_scs_mp2,
@@ -1603,6 +1727,10 @@ def main() -> int:
         help="central frozen GXTB build manifest (source of executable/library paths and hashes)",
     )
     parser.add_argument(
+        "--campaign-manifest-sha256",
+        help="required external hash pin for MPI/affinity production execution",
+    )
+    parser.add_argument(
         "--cp2k-library",
         type=Path,
         help="optional exact libcp2k override; must match the campaign manifest",
@@ -1621,8 +1749,32 @@ def main() -> int:
         choices=base.METHODS,
         help="method to run; repeat as needed (default: GFN1 and GFN2)",
     )
+    parser.add_argument(
+        "--solid",
+        action="append",
+        choices=tuple(ref.solid for ref in base.REFERENCES),
+        help=(
+            "solid to execute; repeat as needed (default: the fixed ten-system "
+            "paper benchmark; LiH/MgO remain diagnostics only)"
+        ),
+    )
     parser.add_argument("--jobs", type=int, default=6)
     parser.add_argument("--threads", type=int, default=1)
+    parser.add_argument("--mpi-ranks-per-job", type=int, default=1)
+    parser.add_argument("--mpi-launcher", type=Path)
+    parser.add_argument(
+        "--mpi-launcher-arg",
+        action="append",
+        default=[],
+        help="argument passed before -np; production MPI execution requires exactly --bind-to none",
+    )
+    parser.add_argument(
+        "--cpu-set",
+        action="append",
+        default=[],
+        help="taskset CPU mask; repeat exactly once per --jobs worker",
+    )
+    parser.add_argument("--taskset", default="taskset")
     parser.add_argument("--force", action="store_true")
     parser.add_argument(
         "--stop-after-eos",
@@ -1659,7 +1811,7 @@ def main() -> int:
     parser.add_argument(
         "--allow-reduced-coverage",
         action="store_true",
-        help="allow investigated invalid GXTB curves while retaining a meaningful subset",
+        help="deprecated and rejected: the paper benchmark requires exact LC10 coverage",
     )
     parser.add_argument(
         "--minimum-valid-fits",
@@ -1677,6 +1829,25 @@ def main() -> int:
     scales = tuple(args.scale) if args.scale else DEFAULT_SCALES
     energy_meshes = args.energy_mesh or ["k333", "k444", "k555"]
     methods = base.selected_methods(args.method)
+    if args.allow_reduced_coverage:
+        parser.error(
+            "the publication benchmark has fixed LC10 coverage; reduced coverage "
+            "is not supported"
+        )
+    if args.jobs < 1 or args.threads < 1 or args.mpi_ranks_per_job < 1:
+        parser.error("--jobs, --threads, and --mpi-ranks-per-job must be positive")
+    if args.solid and len(args.solid) != len(set(args.solid)):
+        parser.error("duplicate --solid selections are not allowed")
+    selected_solids = tuple(args.solid or base.LC10_PAPER_SOLIDS)
+    exact_lc10_scope = (
+        len(selected_solids) == len(base.LC10_PAPER_SOLIDS)
+        and set(selected_solids) == set(base.LC10_PAPER_SOLIDS)
+    )
+    if "GXTB" in methods and not exact_lc10_scope:
+        parser.error(
+            "the GXTB publication runner is restricted to the exact fixed LC10 set: "
+            + ", ".join(base.LC10_PAPER_SOLIDS)
+        )
     if args.fit_only and (args.force or args.approve_fits):
         parser.error("--fit-only cannot be combined with --force or --approve-fits")
     if args.stop_after_eos and args.approve_fits:
@@ -1699,11 +1870,51 @@ def main() -> int:
             args.cp2k_library = campaign_paths["cp2k_library"]
             args.save_tblite = campaign_paths["save_tblite"]
             args.save_tblite_library = campaign_paths["save_tblite_library"]
+            base.require_git_ancestor(
+                args.cp2k_source,
+                base.REQUIRED_CP2K_POST5582_ANCESTOR,
+            )
         except (OSError, ValueError) as exc:
             parser.error(str(exc))
     else:
         args.cp2k = args.cp2k or base.DEFAULT_CP2K
         args.save_tblite = args.save_tblite or base.DEFAULT_SAVE_TBLITE
+    execution_requested = bool(
+        args.mpi_launcher
+        or args.mpi_launcher_arg
+        or args.cpu_set
+        or args.mpi_ranks_per_job != 1
+    )
+    execution_pool: execution.ExecutionPool | None = None
+    if execution_requested:
+        if methods != ("GXTB",):
+            parser.error("MPI/affinity execution records are currently restricted to GXTB-only runs")
+        if args.mpi_launcher is None:
+            parser.error("--mpi-launcher is required with MPI/affinity execution")
+        if not args.campaign_manifest_sha256 or not re.fullmatch(
+            r"[0-9a-f]{64}", args.campaign_manifest_sha256
+        ):
+            parser.error(
+                "MPI/affinity execution requires --campaign-manifest-sha256 as 64 lowercase hex digits"
+            )
+        observed_manifest_sha = base.sha256(args.campaign_manifest.resolve(strict=True))
+        if observed_manifest_sha != args.campaign_manifest_sha256:
+            parser.error(
+                "campaign manifest hash pin mismatch: expected "
+                f"{args.campaign_manifest_sha256}, observed {observed_manifest_sha}"
+            )
+        try:
+            execution_pool = execution.ExecutionPool(
+                concurrent_jobs=args.jobs,
+                mpi_ranks_per_job=args.mpi_ranks_per_job,
+                threads_per_rank=args.threads,
+                mpi_launcher=args.mpi_launcher,
+                mpi_launcher_args=args.mpi_launcher_arg,
+                cpu_sets=args.cpu_set,
+                taskset=args.taskset,
+            )
+        except (OSError, ValueError) as exc:
+            parser.error(str(exc))
     restore_gxtb_scale_manifest(args.eos_mesh, methods)
     add_cli_adaptive_scales(args.adaptive_scale, methods, parser)
     if args.result_mesh not in energy_meshes:
@@ -1712,10 +1923,16 @@ def main() -> int:
         classifications = load_gxtb_classifications(args.classification_manifest)
     except (ValueError, json.JSONDecodeError) as exc:
         parser.error(str(exc))
-    scale_manifest = write_gxtb_scale_manifest(args.eos_mesh, scales, methods)
+    scale_manifest = write_gxtb_scale_manifest(
+        args.eos_mesh, scales, methods, selected_solids
+    )
     protocol = {
-            "benchmark": "LC12 (Goldzak12)",
+            "benchmark": "LC10 (fixed Goldzak12 subset)",
             "methods": methods,
+            "selected_solids": selected_solids,
+            "paper_systems": base.LC10_PAPER_SOLIDS,
+            "diagnostic_only_systems": base.LC10_DIAGNOSTIC_ONLY_SOLIDS,
+            "exact_lc10_scope": exact_lc10_scope,
             "cell_protocol": "cubic equation of state",
             "eos_mesh": args.eos_mesh,
             "energy_meshes": energy_meshes,
@@ -1761,7 +1978,21 @@ def main() -> int:
             "cp2k_density_mixing": "METHOD DIRECT_P_MIXING; ALPHA 0.2",
             "atom_reference": "matching CLI, --method gxtb, explicit 2S spin" if "GXTB" in methods else "matching tblite CLI",
             "conventional_cell_atoms": 8,
-            "eos_failure_policy": "failed jobs are fatal; invalid GXTB fits require adaptive investigation and explicit reduced-coverage opt-in",
+            "eos_failure_policy": (
+                "all ten fixed paper systems require valid quadratic fits; LiH/MgO "
+                "branch studies are diagnostics outside the publication statistic"
+            ),
+            "execution_provenance": (
+                {
+                    "separate_from_scientific_job_stamp": True,
+                    "record_schema": execution.SCHEMA_VERSION,
+                    "contract": execution_pool.contract,
+                    "contract_sha256": execution_pool.contract_sha256,
+                }
+                if execution_pool is not None
+                else None
+            ),
+            "required_cp2k_ancestor": base.REQUIRED_CP2K_POST5582_ANCESTOR,
         }
     legacy = tuple(method for method in methods if method in base.LEGACY_METHODS)
 
@@ -1793,15 +2024,17 @@ def main() -> int:
             methods,
             args.save_tblite,
             campaign_fingerprint,
+            base.LC10_PAPER_ELEMENTS,
         )
         try:
             run_jobs(
-                eos_job_specs(args.eos_mesh, scales, methods),
+                eos_job_specs(args.eos_mesh, scales, methods, selected_solids),
                 args.cp2k,
                 args.jobs,
                 args.threads,
                 args.force,
                 campaign_fingerprint=campaign_fingerprint,
+                execution_pool=execution_pool,
             )
         except RuntimeError:
             # Preserve a complete diagnostic/classification record even though the
@@ -1812,6 +2045,7 @@ def main() -> int:
                 methods,
                 classifications,
                 campaign_fingerprint,
+                selected_solids,
             )
             if "GXTB" in methods:
                 invalidate_existing_gxtb_final_inputs(failed_fits, energy_meshes)
@@ -1823,6 +2057,7 @@ def main() -> int:
         methods,
         classifications,
         campaign_fingerprint,
+        selected_solids,
     )
     if "GXTB" in methods:
         invalidate_existing_gxtb_final_inputs(fits, energy_meshes)
@@ -1853,12 +2088,13 @@ def main() -> int:
         write_provenance()
     try:
         run_jobs(
-            final_sp_specs(fits, energy_meshes),
+            final_sp_specs(fits, energy_meshes, selected_solids),
             args.cp2k,
             args.jobs,
             args.threads,
             args.force,
             campaign_fingerprint=campaign_fingerprint,
+            execution_pool=execution_pool,
         )
     except RuntimeError:
         collect_results(

@@ -45,7 +45,11 @@ def main() -> int:
     parser.add_argument("--energy-mesh", action="append", default=[])
     parser.add_argument("--result-mesh", default=eos.DEFAULT_RESULT_MESH)
     parser.add_argument("--method", action="append", choices=base.METHODS)
-    parser.add_argument("--allow-reduced-coverage", action="store_true")
+    parser.add_argument(
+        "--allow-reduced-coverage",
+        action="store_true",
+        help="deprecated and rejected: the paper benchmark requires exact LC10 coverage",
+    )
     parser.add_argument(
         "--minimum-valid-fits",
         type=int,
@@ -54,10 +58,16 @@ def main() -> int:
     args = parser.parse_args()
     energy_meshes = args.energy_mesh or ["k333", "k444", "k555"]
     methods = base.selected_methods(args.method)
+    if args.allow_reduced_coverage:
+        parser.error(
+            "the paper benchmark has fixed LC10 coverage; reduced coverage is not allowed"
+        )
     if not 1 <= args.minimum_valid_fits <= len(base.REFERENCES):
         parser.error(f"--minimum-valid-fits must be between 1 and {len(base.REFERENCES)}")
 
-    expected_pairs = {(ref.solid, method) for ref in base.REFERENCES for method in methods}
+    expected_pairs = {
+        (solid, method) for solid in base.LC10_PAPER_SOLIDS for method in methods
+    }
     problems: list[str] = []
 
     if "GXTB" in methods:
@@ -66,7 +76,7 @@ def main() -> int:
             for row in read_csv(ROOT / "data" / "atom_energies_save_tblite_cli_gxtb.csv")
             if row["method"] == "GXTB"
         ]
-        elements = sorted(base.ELEMENT_MULTIPLICITY)
+        elements = list(base.LC10_PAPER_ELEMENTS)
         if sorted(row["element"] for row in atom_rows) != elements:
             problems.append(f"GXTB atom references: expected {len(elements)} elements, found {len(atom_rows)}")
         for row in atom_rows:
@@ -76,7 +86,11 @@ def main() -> int:
             if row.get("spin_2S") != str(base.ELEMENT_MULTIPLICITY[element] - 1):
                 problems.append(f"GXTB/{element} atom spin metadata is inconsistent")
 
-    points = [row for row in read_csv(ROOT / "data" / "eos_points.csv") if row["method"] in methods]
+    points = [
+        row
+        for row in read_csv(ROOT / "data" / "eos_points.csv")
+        if row["method"] in methods and row["solid"] in base.LC10_PAPER_SOLIDS
+    ]
     expected_point_keys: set[tuple[str, str, str]] = set()
     scale_manifest = eos.read_gxtb_scale_manifest() if "GXTB" in methods else None
     if "GXTB" in methods and scale_manifest is None:
@@ -152,8 +166,8 @@ def main() -> int:
             f"EOS points neither completed nor explicitly classified "
             f"({len(unclassified_failed_points)}): {labels}"
         )
-    if gxtb_failed_points and not args.allow_reduced_coverage:
-        problems.append("Explicitly classified failed EOS points require --allow-reduced-coverage")
+    if gxtb_failed_points:
+        problems.append("The fixed LC10 benchmark does not allow failed g-XTB EOS points")
     unclassified_exclusions = [
         row
         for row in points
@@ -181,7 +195,11 @@ def main() -> int:
             + ", ".join(f"{row['solid']}@{row['scale']}" for row in unresolved_points)
         )
 
-    fits = [row for row in read_csv(ROOT / "data" / "eos_fits.csv") if row["method"] in methods]
+    fits = [
+        row
+        for row in read_csv(ROOT / "data" / "eos_fits.csv")
+        if row["method"] in methods and row["solid"] in base.LC10_PAPER_SOLIDS
+    ]
     fit_pairs = {(row["solid"], row["method"]) for row in fits if row["eos_mesh"] == args.eos_mesh}
     if fit_pairs != expected_pairs:
         problems.append(f"EOS fit coverage differs: missing {sorted(expected_pairs - fit_pairs)}")
@@ -191,46 +209,23 @@ def main() -> int:
         if row["method"] in base.LEGACY_METHODS
         and (row["a_eos_A"] == "" or row["fit_status"] != "quadratic")
     ]
-    allowed_bad_fits = [
-        row
-        for row in legacy_bad_fits
-        if row["fit_status"] in {"poor_quadratic_fit", "no_local_minimum", "insufficient_points"}
-    ]
-    unexpected_bad_fits = [row for row in legacy_bad_fits if row not in allowed_bad_fits]
-    if unexpected_bad_fits:
-        labels = ", ".join(f"{row['method']}/{row['solid']}={row['fit_status']}" for row in unexpected_bad_fits)
-        problems.append(f"Unexpected invalid EOS fits ({len(unexpected_bad_fits)}): {labels}")
+    if legacy_bad_fits:
+        labels = ", ".join(
+            f"{row['method']}/{row['solid']}={row['fit_status']}"
+            for row in legacy_bad_fits
+        )
+        problems.append(f"Invalid fixed-LC10 legacy EOS fits: {labels}")
 
     gxtb_fits = [row for row in fits if row["method"] == "GXTB"]
     valid_gxtb_fits = [row for row in gxtb_fits if row["fit_status"] == "quadratic" and row["a_eos_A"]]
     invalid_gxtb_fits = [row for row in gxtb_fits if row not in valid_gxtb_fits]
     if "GXTB" in methods and not valid_gxtb_fits:
         problems.append("GXTB has zero valid quadratic EOS fits")
-    if invalid_gxtb_fits and not args.allow_reduced_coverage:
+    if invalid_gxtb_fits:
         problems.append(
-            "GXTB requires full 12/12 quadratic fit coverage unless --allow-reduced-coverage is explicit: "
+            "GXTB requires exact 10/10 quadratic fit coverage: "
             + ", ".join(f"{row['solid']}={row['fit_status']}" for row in invalid_gxtb_fits)
         )
-    if invalid_gxtb_fits and args.allow_reduced_coverage:
-        if len(valid_gxtb_fits) < args.minimum_valid_fits:
-            problems.append(
-                f"GXTB reduced coverage has {len(valid_gxtb_fits)} valid fits; "
-                f"minimum is {args.minimum_valid_fits}"
-            )
-        followup = {
-            row["solid"]: row for row in read_csv(ROOT / "data" / "gxtb_adaptive_followup.csv")
-        }
-        not_investigated = [
-            row
-            for row in invalid_gxtb_fits
-            if row["solid"] not in followup
-            or not truth(followup[row["solid"]].get("adaptive_investigated", "False"))
-        ]
-        if not_investigated:
-            problems.append(
-                "Invalid GXTB fits lack documented adaptive investigation: "
-                + ", ".join(row["solid"] for row in not_investigated)
-            )
     for fit in invalid_gxtb_fits:
         for mesh in energy_meshes:
             input_path = eos.final_input_path(fit["solid"], "GXTB", mesh)
@@ -249,7 +244,11 @@ def main() -> int:
             ):
                 problems.append(f"Stale GXTB final input is not explicitly invalidated: {input_path}")
 
-    results = [row for row in read_csv(ROOT / "data" / "eos_results.csv") if row["method"] in methods]
+    results = [
+        row
+        for row in read_csv(ROOT / "data" / "eos_results.csv")
+        if row["method"] in methods and row["solid"] in base.LC10_PAPER_SOLIDS
+    ]
     valid_pairs = {
         (row["solid"], row["method"])
         for row in fits
@@ -282,19 +281,6 @@ def main() -> int:
     if failed_sp:
         labels = ", ".join(f"{row['method']}/{row['solid']}/{row['energy_mesh']}" for row in failed_sp)
         problems.append(f"Incomplete final single points ({len(failed_sp)}): {labels}")
-
-    summary = read_csv(ROOT / "data" / "eos_summary.csv")
-    gfn_summary = [row for row in summary if row["method"] in methods and row["source"].startswith("CP2K/")]
-    expected_method_counts = {
-        method: sum(1 for solid, fit_method in valid_pairs if fit_method == method) for method in methods
-    }
-    if {row["method"] for row in gfn_summary} != set(methods):
-        problems.append("Summary does not contain exactly the selected methods")
-    for row in gfn_summary:
-        if int(row["n_complete"]) != expected_method_counts[row["method"]]:
-            problems.append(
-                f"Summary coverage {row['method']}: {row['n_complete']}/{expected_method_counts[row['method']]}"
-            )
 
     provenance_paths = []
     if any(method in base.LEGACY_METHODS for method in methods):
@@ -354,10 +340,18 @@ def main() -> int:
         )
         if protocol.get("approved_gxtb_fit_sha256") != current_fit_sha:
             problems.append("GXTB approved fit fingerprint differs from the current EOS fits")
-        if bool(protocol.get("allow_reduced_coverage")) != bool(args.allow_reduced_coverage):
-            problems.append("GXTB provenance reduced-coverage choice does not match validator")
-        if args.allow_reduced_coverage and int(protocol.get("minimum_valid_gxtb_fits", -1)) != args.minimum_valid_fits:
-            problems.append("GXTB provenance minimum-valid-fit threshold does not match validator")
+        if protocol.get("allow_reduced_coverage") not in (None, False):
+            problems.append("GXTB provenance must disable reduced coverage for fixed LC10")
+        selected_solids = tuple(str(value) for value in protocol.get("selected_solids", ()))
+        if (
+            protocol.get("exact_lc10_scope") is not True
+            or len(selected_solids) != len(base.LC10_PAPER_SOLIDS)
+            or set(selected_solids) != set(base.LC10_PAPER_SOLIDS)
+            or tuple(protocol.get("paper_systems", ())) != base.LC10_PAPER_SOLIDS
+            or tuple(protocol.get("diagnostic_only_systems", ()))
+            != base.LC10_DIAGNOSTIC_ONLY_SOLIDS
+        ):
+            problems.append("GXTB provenance does not certify the exact fixed LC10 scope")
         scale_path = eos.gxtb_scale_manifest_path()
         if not scale_path.is_file() or protocol.get("gxtb_scale_manifest_sha256") != base.sha256(scale_path):
             problems.append("GXTB scale manifest hash differs from build provenance")
@@ -388,7 +382,7 @@ def main() -> int:
             except (json.JSONDecodeError, OSError, TypeError, ValueError) as exc:
                 problems.append(f"GXTB campaign provenance is invalid: {exc}")
         stamp_problems: list[str] = []
-        for element in sorted(base.ELEMENT_MULTIPLICITY):
+        for element in base.LC10_PAPER_ELEMENTS:
             atom_json = (
                 ROOT
                 / "runs"
@@ -444,13 +438,13 @@ def main() -> int:
             )
 
     if problems:
-        print("LC12 validation FAILED")
+        print("LC10 validation FAILED")
         for problem in problems:
             print(f"- {problem}")
         return 1
 
     print(
-        f"LC12 validation passed: {len(points)} EOS points "
+        f"LC10 validation passed: {len(points)} EOS points "
         f"({len(failed_points)} documented nonessential/classified failures), "
         f"{len(valid_pairs)}/{len(fits)} valid fits, {len(results)} final single points."
     )

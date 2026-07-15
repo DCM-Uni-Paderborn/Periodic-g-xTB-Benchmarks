@@ -20,7 +20,10 @@ from typing import Callable, Mapping
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_GXTB_CAMPAIGN_MANIFEST = (
-    ROOT.parent / "campaigns" / "gxtb-pbc-v1-20260714" / "build_manifest.json"
+    ROOT.parent
+    / "campaigns"
+    / "gxtb-pbc-v1-post5582-20260714"
+    / "build_manifest.json"
 )
 DEFAULT_CP2K = Path(os.environ.get("CP2K", "cp2k.ssmp"))
 DEFAULT_TBLITE = Path(os.environ.get("TBLITE", "tblite"))
@@ -31,6 +34,7 @@ DEFAULT_SAVE_TBLITE_SOURCE = Path(os.environ.get("SAVE_TBLITE_SOURCE", "../save_
 HARTREE_TO_EV = 27.211386245988
 FLOAT = r"[-+]?(?:\d+\.\d*|\.\d+|\d+)(?:[Ee][-+]?\d+)?"
 CAMPAIGN_SCHEMA = 1
+REQUIRED_CP2K_POST5582_ANCESTOR = "c92cc08b45378b85150447011b5a4bb552f5b797"
 CAMPAIGN_IDENTITY_FIELDS = (
     "schema",
     "campaign_id",
@@ -45,6 +49,29 @@ CAMPAIGN_IDENTITY_FIELDS = (
     "save_tblite_cmake_cache_sha256",
     "dependency_lock_sha256",
 )
+
+
+def require_git_ancestor(source: Path, revision: str) -> None:
+    """Fail when *source* is not descended from the required full commit."""
+    if not re.fullmatch(r"[0-9a-f]{40}", revision):
+        raise ValueError(f"required source ancestor is not a full commit hash: {revision}")
+    resolved = source.resolve(strict=True)
+    present = subprocess.run(
+        ["git", "-C", str(resolved), "cat-file", "-e", f"{revision}^{{commit}}"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if present.returncode != 0:
+        raise ValueError(f"source does not contain required commit {revision}")
+    ancestor = subprocess.run(
+        ["git", "-C", str(resolved), "merge-base", "--is-ancestor", revision, "HEAD"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if ancestor.returncode != 0:
+        raise ValueError(f"source HEAD is not descended from required commit {revision}")
 
 
 @dataclass(frozen=True)
@@ -79,6 +106,33 @@ REFERENCES: tuple[Reference, ...] = (
     Reference("LiCl", "rocksalt", (("Li", 1), ("Cl", 1)), 5.072, 5.253, 5.021, 5.059, 5.078, 3.58, 2.73, 3.69, 3.58, 3.52),
 )
 
+# Publication statistics use this exact identical ten-system set for every
+# method.  LiH and MgO remain available solely to the internal diagnostics.
+LC10_PAPER_SOLIDS = (
+    "C",
+    "Si",
+    "SiC",
+    "BN",
+    "BP",
+    "AlN",
+    "AlP",
+    "MgS",
+    "LiF",
+    "LiCl",
+)
+LC10_DIAGNOSTIC_ONLY_SOLIDS = ("LiH", "MgO")
+if set(LC10_PAPER_SOLIDS) | set(LC10_DIAGNOSTIC_ONLY_SOLIDS) != {
+    ref.solid for ref in REFERENCES
+} or set(LC10_PAPER_SOLIDS) & set(LC10_DIAGNOSTIC_ONLY_SOLIDS):
+    raise RuntimeError("LC10 publication and diagnostic-only sets do not partition LC12")
+LC10_PAPER_REFERENCES = tuple(
+    next(ref for ref in REFERENCES if ref.solid == solid)
+    for solid in LC10_PAPER_SOLIDS
+)
+LC10_PAPER_ELEMENTS = tuple(
+    sorted({element for ref in LC10_PAPER_REFERENCES for element, _ in ref.formula})
+)
+
 METHODS = ("GFN1", "GFN2", "GXTB")
 LEGACY_METHODS = ("GFN1", "GFN2")
 METHOD_COLORS = {"GFN1": "#4C78A8", "GFN2": "#F58518", "GXTB": "#54A24B"}
@@ -90,14 +144,14 @@ KPOINT_MESH_CONTRACT = (
 )
 LEGACY_GXTB_FULL_GRID_POLICY = (
     "pre-SPGLIB GXTB full-grid inputs and outputs are diagnostics only and are never "
-    "accepted as LC12 production results"
+    "accepted as LC10 publication results"
 )
 GXTB_ENERGY_STRESS_POLICY = (
-    "LC12 GXTB EOS, final, and isolated-atom ENERGY inputs do not request a stress tensor; "
+    "LC10 GXTB EOS, final, and isolated-atom ENERGY inputs do not request a stress tensor; "
     "GFN1/GFN2 frozen inputs retain STRESS_TENSOR ANALYTICAL"
 )
 GXTB_ATOM_SCF_POLICY = (
-    "LC12 cohesive energies use save_tblite CLI atom energies. The independent CP2K/CLI "
+    "LC10 cohesive energies use save_tblite CLI atom energies. The independent CP2K/CLI "
     "interface gate uses CP2K's supported nonperiodic Gamma/no-smear OT path, where "
     "SCC_MIXER is ignored. This avoids CP2K's otherwise forced 300 K tblite smearing, which "
     "changes several isolated-atom states and cannot be represented at all when a minimal "
@@ -175,13 +229,12 @@ def atom_counts(ref: Reference) -> dict[str, int]:
 def kpoint_block(mesh: str, method: str) -> list[str]:
     if method not in METHODS:
         raise ValueError(f"Unknown method {method!r}")
-    if not mesh.startswith("k") or not mesh[1:].isdigit():
-        raise ValueError(f"Bad mesh {mesh!r}; expected k333, k444, ...")
-    digits = mesh[1:]
-    if len(digits) == 3 and len(set(digits)) == 1:
-        n = int(digits[0])
-    else:
-        n = int(digits)
+    match = re.fullmatch(r"k([1-9][0-9]*)\1\1", mesh)
+    if match is None:
+        raise ValueError(
+            f"Bad mesh {mesh!r}; expected a cubic mesh such as k333 or k101010"
+        )
+    n = int(match.group(1))
     shift = 0.0 if n % 2 else 1.0 / (2.0 * n)
     lines = [
         "    &KPOINTS",
@@ -749,12 +802,23 @@ def validate_campaign_identity(identity: Mapping[str, object]) -> None:
 
 
 def campaign_identity_from_manifest(
-    manifest: Mapping[str, object], manifest_path: Path
+    manifest: Mapping[str, object],
+    manifest_path: Path,
+    *,
+    allowed_campaign_states: tuple[str, ...] = ("production_ready",),
 ) -> dict[str, object]:
     """Read the frozen build declarations which are the campaign source of truth."""
-    if manifest.get("campaign_state") != "production_ready":
+    campaign_state = str(manifest.get("campaign_state", ""))
+    if campaign_state not in allowed_campaign_states:
+        if allowed_campaign_states == ("production_ready",):
+            raise ValueError(
+                f"GXTB campaign {manifest.get('campaign_id', '<unknown>')} is not "
+                f"production_ready (state: {campaign_state or '<missing>'})"
+            )
+        allowed = ", ".join(allowed_campaign_states)
         raise ValueError(
-            f"GXTB campaign {manifest.get('campaign_id', '<unknown>')} is not production_ready"
+            f"GXTB campaign {manifest.get('campaign_id', '<unknown>')} has state "
+            f"{campaign_state or '<missing>'}; allowed state(s): {allowed}"
         )
     cp2k = manifest.get("cp2k")
     save = manifest.get("save_tblite")
@@ -1020,6 +1084,7 @@ def validated_gxtb_campaign_from_manifest(
     cp2k_library_override: Path | None = None,
     save_tblite_override: Path | None = None,
     save_tblite_library_override: Path | None = None,
+    allowed_campaign_states: tuple[str, ...] = ("production_ready",),
 ) -> tuple[dict[str, object], dict[str, Path]]:
     """Resolve and verify all GXTB build artifacts from the central frozen manifest."""
     manifest_path = manifest_path.resolve(strict=True)
@@ -1029,7 +1094,11 @@ def validated_gxtb_campaign_from_manifest(
         save_record = manifest["save_tblite"]
     except (json.JSONDecodeError, KeyError, TypeError) as exc:
         raise ValueError(f"Invalid GXTB campaign manifest {manifest_path}: {exc}") from exc
-    declared_identity = campaign_identity_from_manifest(manifest, manifest_path)
+    declared_identity = campaign_identity_from_manifest(
+        manifest,
+        manifest_path,
+        allowed_campaign_states=allowed_campaign_states,
+    )
     if cp2k_record.get("source_clean") is not True:
         raise ValueError("campaign manifest does not certify a clean CP2K source")
     if save_record.get("source_clean") is not True:
@@ -1422,11 +1491,16 @@ def run_jobs(
         )
 
 
-def atom_job_specs(methods: tuple[str, ...] = METHODS) -> list[tuple[str, Path, Path, bool]]:
+def atom_job_specs(
+    methods: tuple[str, ...] = METHODS,
+    elements: tuple[str, ...] | list[str] | None = None,
+) -> list[tuple[str, Path, Path, bool]]:
     specs: list[tuple[str, Path, Path, bool]] = []
-    elements = sorted({el for ref in REFERENCES for el, _ in ref.formula})
+    selected_elements = tuple(
+        elements or sorted({el for ref in REFERENCES for el, _ in ref.formula})
+    )
     for method in methods:
-        for element in elements:
+        for element in selected_elements:
             inp = ROOT / "inputs" / "atoms" / method / f"atom_{element}_{method}.inp"
             out = ROOT / "runs" / "atoms" / method / element / f"atom_{element}_{method}.out"
             run_inp = out.parent / inp.name
@@ -1443,17 +1517,25 @@ def run_tblite_atom_jobs(
     methods: tuple[str, ...] = METHODS,
     save_tblite: Path | None = None,
     campaign_fingerprint: dict[str, object] | None = None,
+    elements: tuple[str, ...] | list[str] | None = None,
+    campaign_bind_all_methods: bool = False,
 ) -> None:
+    if campaign_bind_all_methods and campaign_fingerprint is None:
+        raise ValueError(
+            "campaign_bind_all_methods requires a validated campaign fingerprint"
+        )
     if "GXTB" in methods and campaign_fingerprint is None:
         raise ValueError("GXTB save_tblite jobs require a validated campaign fingerprint")
-    elements = sorted({el for ref in REFERENCES for el, _ in ref.formula})
+    selected_elements = tuple(
+        elements or sorted({el for ref in REFERENCES for el, _ in ref.formula})
+    )
     identities = {
         "legacy": executable_fingerprint(tblite),
         "gxtb": executable_fingerprint(save_tblite or tblite),
     }
     specs: list[tuple[str, str, Path, Path, dict[str, object]]] = []
     for method in methods:
-        for element in elements:
+        for element in selected_elements:
             run_dir = ROOT / "runs" / "atoms_cli" / method / element
             json_path = run_dir / f"atom_{element}_{method}.json"
             xyz_path = run_dir / f"atom_{element}.xyz"
@@ -1471,10 +1553,17 @@ def run_tblite_atom_jobs(
                     "restart": False,
                 },
                 executable_identity=identities["gxtb" if method == "GXTB" else "legacy"],
-                campaign_fingerprint=campaign_fingerprint if method == "GXTB" else None,
+                campaign_fingerprint=(
+                    campaign_fingerprint
+                    if method == "GXTB" or campaign_bind_all_methods
+                    else None
+                ),
             )
             if not force and json_path.exists() and parse_tblite_json_energy(json_path) is not None:
-                if method != "GXTB" or job_stamp_matches(json_path, signature):
+                if (
+                    method != "GXTB"
+                    and not campaign_bind_all_methods
+                ) or job_stamp_matches(json_path, signature):
                     continue
             specs.append((method, element, run_dir, executable, signature))
     if not specs:
@@ -1512,7 +1601,7 @@ def run_tblite_atom_jobs(
                 env=controlled_subprocess_env(1),
             )
         ok = proc.returncode == 0 and parse_tblite_json_energy(json_path) is not None
-        if method == "GXTB":
+        if method == "GXTB" or campaign_bind_all_methods:
             write_job_stamp(
                 json_path,
                 signature,
@@ -1611,17 +1700,26 @@ def sp_job_specs(
 def atom_energies(
     methods: tuple[str, ...] = METHODS,
     campaign_fingerprint: dict[str, object] | None = None,
+    elements: tuple[str, ...] | list[str] | None = None,
+    campaign_bind_all_methods: bool = False,
 ) -> dict[tuple[str, str], float]:
+    if campaign_bind_all_methods and campaign_fingerprint is None:
+        raise ValueError(
+            "campaign_bind_all_methods requires a validated campaign fingerprint"
+        )
     energies: dict[tuple[str, str], float] = {}
+    selected_elements = set(elements) if elements is not None else None
     for method in methods:
         atom_root = ROOT / "runs" / "atoms_cli" / method
         for element_dir in atom_root.glob("*"):
             if not element_dir.is_dir():
                 continue
+            if selected_elements is not None and element_dir.name not in selected_elements:
+                continue
             out = element_dir / f"atom_{element_dir.name}_{method}.json"
-            if method == "GXTB":
+            if method == "GXTB" or campaign_bind_all_methods:
                 if campaign_fingerprint is None:
-                    raise ValueError("GXTB atom collection requires a campaign fingerprint")
+                    raise ValueError("campaign-bound atom collection requires a fingerprint")
                 issue = completed_stamp_campaign_issue(
                     out, campaign_fingerprint, executable_role="save_tblite"
                 )
@@ -1635,7 +1733,11 @@ def atom_energies(
                 "method": method,
                 "element": element,
                 "energy_hartree": f"{energy:.12f}",
-                "source": "save_tblite_cli" if method == "GXTB" else "tblite_cli",
+                "source": (
+                    "save_tblite_cli"
+                    if method == "GXTB" or campaign_bind_all_methods
+                    else "tblite_cli"
+                ),
                 "multiplicity": ELEMENT_MULTIPLICITY[element],
                 "spin_2S": ELEMENT_MULTIPLICITY[element] - 1,
             }
@@ -1661,12 +1763,14 @@ def validate_atom_reference_agreement(
     methods: tuple[str, ...],
     tolerance_hartree: float = 1.0e-6,
     campaign_fingerprint: dict[str, object] | None = None,
+    elements: tuple[str, ...] | list[str] | None = None,
 ) -> list[dict[str, object]]:
     """Compare CP2K and matching CLI isolated-atom energies method by method."""
     rows: list[dict[str, object]] = []
     problems: list[str] = []
+    selected_elements = tuple(elements or sorted(ELEMENT_MULTIPLICITY))
     for method in methods:
-        for element in sorted(ELEMENT_MULTIPLICITY):
+        for element in selected_elements:
             cp2k_path = ROOT / "runs" / "atoms" / method / element / f"atom_{element}_{method}.out"
             cli_path = ROOT / "runs" / "atoms_cli" / method / element / f"atom_{element}_{method}.json"
             cp2k_energy = parse_energy(cp2k_path)
@@ -2110,9 +2214,10 @@ def main() -> int:
             methods,
             args.save_tblite,
             campaign_fingerprint,
+            LC10_PAPER_ELEMENTS,
         )
         run_jobs(
-            atom_job_specs(methods),
+            atom_job_specs(methods, LC10_PAPER_ELEMENTS),
             args.cp2k,
             args.jobs,
             args.threads,
@@ -2120,7 +2225,10 @@ def main() -> int:
             campaign_fingerprint,
         )
         validate_atom_reference_agreement(
-            methods, args.tolerance_hartree, campaign_fingerprint
+            methods,
+            args.tolerance_hartree,
+            campaign_fingerprint,
+            LC10_PAPER_ELEMENTS,
         )
         return 0
 
