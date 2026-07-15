@@ -1,0 +1,100 @@
+{
+  "artifact": "LC10 provisional g-xTB versus frozen GFN2-xTB comparison",
+  "benchmark": "LC10 fixed common subset",
+  "conversion_eV_to_kJmol": 96.4853321233,
+  "gfn2_frozen": {
+    "a0_error_A": {
+      "mae": 0.06240968,
+      "me": -0.00578455,
+      "rmse": 0.08991429
+    },
+    "ecoh_error_eV_per_atom": {
+      "mae": 1.29932483,
+      "me": 1.10698251,
+      "rmse": 1.58110318
+    },
+    "ecoh_error_kJmol_per_atom": {
+      "mae": 125.3657877586003,
+      "me": 106.80757513203426,
+      "rmse": 152.55326544350578
+    },
+    "protocol": "native-Bloch k444 equation of state; k333, k444, and k555 cohesive-energy single-point checks"
+  },
+  "gxtb_current_fail_closed": {
+    "a0_error_A": {
+      "mae": 0.1397973371300001,
+      "maxae": 0.2673569734000001,
+      "me": -0.13586636791000012,
+      "rmse": 0.16315850056713738
+    },
+    "ecoh_error_eV_per_atom": {
+      "mae": 0.2966791784435001,
+      "maxae": 0.7992316194880003,
+      "me": 0.23217106517050023,
+      "rmse": 0.35195500076461717
+    },
+    "ecoh_error_kJmol_per_atom": {
+      "mae": 28.62518906619186,
+      "maxae": 77.11412824975062,
+      "me": 22.401102332398366,
+      "rmse": 33.95849514123391
+    },
+    "mesh_counts": {
+      "k666": 1,
+      "k777": 9
+    },
+    "mesh_exception": "MgS k777 remains excluded by the SCC-root fail-closed gate and therefore retains k666",
+    "protocol": "phase-local adaptive convergence; current carried frontier, not final"
+  },
+  "mesh_matched_k444": {
+    "gfn2": {
+      "a0_mae_A": 0.06240968,
+      "ecoh_mae_eV_per_atom": 1.29932483,
+      "ecoh_mae_kJmol_per_atom": 125.3657877586003
+    },
+    "gxtb": {
+      "a0_mae_A": 0.16384382993000002,
+      "ecoh_mae_eV_per_atom": 0.42303165697940004,
+      "ecoh_mae_kJmol_per_atom": 40.81634992233156
+    },
+    "gxtb_a0_mae_ratio_to_gfn2": 2.6252951454005213,
+    "gxtb_ecoh_mae_reduction_percent_vs_gfn2": 67.4421940370831
+  },
+  "publication_status": "provisional_gxtb_final_gfn2",
+  "schema_version": 1,
+  "sources": {
+    "gfn2_summary": {
+      "path": "Goldzak12/data/eos_summary.csv",
+      "sha256": "fdfc5c9da488e5363240fc2a1eda245721cb5ccccd90d26b0237219d68ee00c8"
+    },
+    "gxtb_kmesh_table": {
+      "path": "Goldzak12/data/lc10_gxtb_kmesh_error_table_current.json",
+      "scientific_payload_sha256": "812425ec46ed8a2b9ff9f4b00af8443e4fc72f1b0d7c52ea684513a974b25065",
+      "sha256": "7261960a6cbc1aed3ecf826882080e4f862b4cd6d0b19acb027908a48c79c295"
+    },
+    "reference": {
+      "path": "Goldzak12/data/reference_goldzak2022.csv",
+      "sha256": "9cd6d545aa5a4e870a1be38ccfadda01996b44d5c0ed83224b2e5c5ac2f975e4"
+    }
+  },
+  "summary": {
+    "adaptive_a0_mae_difference_gxtb_minus_gfn2_A": 0.07738765713000009,
+    "adaptive_a0_mae_ratio_gxtb_over_gfn2": 2.239994454866618,
+    "adaptive_ecoh_mae_difference_gxtb_minus_gfn2_eV_per_atom": -1.0026456515564999,
+    "adaptive_ecoh_mae_difference_gxtb_minus_gfn2_kJmol_per_atom": -96.74059869241141,
+    "adaptive_ecoh_mae_reduction_percent_vs_gfn2": 77.16666597963035,
+    "gfn2_ecoh_mae_ratio_over_adaptive_gxtb": 4.379561912018186
+  },
+  "systems": [
+    "C",
+    "Si",
+    "SiC",
+    "BN",
+    "BP",
+    "AlN",
+    "AlP",
+    "MgS",
+    "LiF",
+    "LiCl"
+  ]
+}
