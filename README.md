@@ -101,6 +101,6 @@ X23b k333 and k444 final-geometry single points.
 
 The new LC10 paper table is not populated from those historical rows.  All
 three methods share one post-#5582 CP2K/save_tblite build and independently
-converge both a0 and Ecoh per solid from k333 through at most k888. One passing
-adjacent step is sufficient, both thresholds must pass, and the denser value
-is retained; no RMS or two-step gate is applied.
+converge both a0 and Ecoh per solid from k333 upward without a fixed maximum
+mesh. One passing adjacent step is sufficient, both thresholds must pass, and
+the denser value is retained; no RMS or two-step gate is applied.

@@ -42,6 +42,31 @@ def complete_values() -> list[dict[str, object]]:
     return rows
 
 
+def extended_gxtb_c_values(*, converge_at_12: bool) -> list[dict[str, object]]:
+    rows = [
+        row
+        for row in complete_values()
+        if not (row["method"] == "GXTB" and row["solid"] == "C")
+    ]
+    for number in range(3, 13):
+        a0 = 4.0 + 0.002 * (12 - number)
+        ecoh = 5.0 + 0.001 * (12 - number)
+        if number == 12 and converge_at_12:
+            a0 = 4.0015
+            ecoh = 5.00075
+        rows.append(
+            {
+                "solid": "C",
+                "method": "GXTB",
+                "mesh": kconv.mesh_name(number),
+                "mesh_n": number,
+                "a0_A": f"{a0:.10f}",
+                "ecoh_eV_per_atom": f"{ecoh:.12f}",
+            }
+        )
+    return rows
+
+
 class LC10AdaptiveKConvergenceTests(unittest.TestCase):
     def test_repeatable_method_selector_defaults_and_canonicalizes(self) -> None:
         self.assertEqual(kconv.selected_methods(None), kconv.METHODS)
@@ -132,33 +157,74 @@ class LC10AdaptiveKConvergenceTests(unittest.TestCase):
             )
         )
 
-    def test_k888_without_a_passing_step_is_fail_closed(self) -> None:
-        rows = complete_values()
-        rows = [
-            row
-            for row in rows
-            if not (row["method"] == "GXTB" and row["solid"] == "C")
-        ]
-        for number in range(3, 9):
-            rows.append(
-                {
-                    "solid": "C",
-                    "method": "GXTB",
-                    "mesh": kconv.mesh_name(number),
-                    "mesh_n": number,
-                    "a0_A": f"{4.0 + 0.003 * (8 - number):.10f}",
-                    "ecoh_eV_per_atom": f"{5.0 + 0.001 * (8 - number):.12f}",
-                }
-            )
-        _steps, selections, pending = kconv.assess_convergence(rows)
+    def test_no_cap_continues_beyond_k121212(self) -> None:
+        rows = extended_gxtb_c_values(converge_at_12=False)
+        _steps, selections, pending = kconv.assess_convergence(
+            rows, methods=("GXTB",)
+        )
+        self.assertEqual(pending, [("GXTB", "C", 13)])
+        self.assertFalse(
+            any(row["method"] == "GXTB" and row["solid"] == "C" for row in selections)
+        )
+
+    def test_track_can_converge_on_k111111_to_k121212_step(self) -> None:
+        rows = extended_gxtb_c_values(converge_at_12=True)
+        steps, selections, pending = kconv.assess_convergence(
+            rows, methods=("GXTB",)
+        )
         self.assertEqual(pending, [])
         chosen = next(
             row
             for row in selections
             if row["method"] == "GXTB" and row["solid"] == "C"
         )
-        self.assertEqual(chosen["selection_status"], "unconverged_at_k888")
+        self.assertEqual(chosen["converged_from_mesh"], "k111111")
+        self.assertEqual(chosen["selected_mesh"], "k121212")
+        selected_step = next(
+            row
+            for row in steps
+            if row["method"] == "GXTB"
+            and row["solid"] == "C"
+            and row["coarse_mesh"] == "k111111"
+        )
+        self.assertTrue(selected_step["both_passed"])
+
+    def test_optional_maximum_is_a_resource_error_not_convergence(self) -> None:
+        rows = extended_gxtb_c_values(converge_at_12=False)
+        steps, selections, pending = kconv.assess_convergence(
+            rows, methods=("GXTB",), maximum_mesh=12
+        )
+        self.assertEqual(pending, [])
+        chosen = next(
+            row
+            for row in selections
+            if row["method"] == "GXTB" and row["solid"] == "C"
+        )
+        self.assertEqual(chosen["selection_status"], "technical_resource_guard_reached")
         self.assertEqual(chosen["selected_mesh"], "")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "data").mkdir()
+            payload = kconv.write_convergence_artifacts(
+                root,
+                rows,
+                steps,
+                selections,
+                pending,
+                campaign={"campaign_id": "test"},
+                fits_sha256="f" * 64,
+                methods=("GXTB",),
+                maximum_mesh=12,
+            )
+        self.assertEqual(payload["status"], "technical_resource_limit_reached")
+        self.assertEqual(len(payload["resource_errors"]), 1)
+        self.assertIsNone(payload["algorithm"]["scientific_maximum_mesh"])
+        self.assertEqual(
+            payload["algorithm"]["technical_resource_guard_mesh"], "k121212"
+        )
+        self.assertFalse(
+            payload["algorithm"]["technical_resource_guard_is_convergence"]
+        )
 
     def test_manifest_explicitly_forbids_rms_and_two_step_gates(self) -> None:
         rows = complete_values()
@@ -180,6 +246,9 @@ class LC10AdaptiveKConvergenceTests(unittest.TestCase):
         self.assertEqual(stored["algorithm"]["required_consecutive_passing_steps"], 1)
         self.assertFalse(stored["algorithm"]["aggregate_rms_gate"])
         self.assertEqual(stored["algorithm"]["criteria_combination"], "AND")
+        self.assertIsNone(stored["algorithm"]["scientific_maximum_mesh"])
+        self.assertIsNone(stored["algorithm"]["technical_resource_guard_mesh"])
+        self.assertEqual(stored["resource_errors"], [])
         self.assertAlmostEqual(
             stored["algorithm"]["cohesive_abs_delta_threshold_eV_per_atom"],
             0.000518213,
@@ -188,8 +257,23 @@ class LC10AdaptiveKConvergenceTests(unittest.TestCase):
 
     def test_mesh_parser_rejects_non_cubic_meshes(self) -> None:
         self.assertEqual(kconv.mesh_number("k101010"), 10)
+        self.assertEqual(kconv.mesh_number("k121212"), 12)
+        self.assertIn(
+            "      SCHEME MACDONALD 10 10 10 0.05 0.05 0.05",
+            base.kpoint_block("k101010", "GXTB"),
+        )
+        self.assertIn(
+            "      SCHEME MACDONALD 11 11 11 0 0 0",
+            base.kpoint_block("k111111", "GXTB"),
+        )
+        self.assertIn(
+            "      SCHEME MACDONALD 12 12 12 0.04166666667 0.04166666667 0.04166666667",
+            base.kpoint_block("k121212", "GXTB"),
+        )
         with self.assertRaisesRegex(ValueError, "non-cubic"):
             kconv.mesh_number("k345")
+        with self.assertRaisesRegex(ValueError, "cubic mesh"):
+            base.kpoint_block("k345", "GXTB")
 
     def test_keyed_merge_preserves_independent_eos_meshes(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -219,6 +303,26 @@ class LC10AdaptiveKConvergenceTests(unittest.TestCase):
             )
             rows = base.read_csv(path)
         self.assertEqual({row["eos_mesh"] for row in rows}, {"k333", "k444"})
+
+    def test_scale_manifest_retains_meshes_through_k121212(self) -> None:
+        fits = [
+            {
+                "method": "GXTB",
+                "solid": "C",
+                "eos_mesh": kconv.mesh_name(number),
+            }
+            for number in range(8, 13)
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "data").mkdir()
+            payload = kconv.scale_manifest(
+                root, fits, (0.98, 1.0, 1.02), methods=("GXTB",)
+            )
+        self.assertEqual(
+            [row["mesh"] for row in payload["records"]],
+            ["k888", "k999", "k101010", "k111111", "k121212"],
+        )
 
     def test_same_campaign_stamp_is_written_for_gfn_and_gxtb(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

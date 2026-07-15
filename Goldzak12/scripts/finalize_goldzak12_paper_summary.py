@@ -29,14 +29,14 @@ METHOD_LABELS = {
     "GFN2": "GFN2-xTB",
     "GXTB": "g-xTB",
 }
-EOS_MESH = "adaptive_k333_to_k888"
+EOS_MESH = "adaptive_k333_until_converged"
 ENERGY_MESHES = ("k333", "k444", "k555")
 RESULT_MESH = "per_system_selected_dense_mesh"
 PAPER_SYSTEMS = base.LC10_PAPER_SOLIDS
 DIAGNOSTIC_ONLY_SYSTEMS = base.LC10_DIAGNOSTIC_ONLY_SOLIDS
 PAPER_ELEMENTS = base.LC10_PAPER_ELEMENTS
 SUMMARY_STEM = "lc10_gfn_gxtb_paper_summary"
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 SUMMARY_FIELDS = (
     "method_id",
     "method_label",
@@ -55,6 +55,30 @@ SUMMARY_FIELDS = (
     "cohesive_RMSE_eV_per_atom",
     "cohesive_MaxAE_eV_per_atom",
 )
+
+
+def validate_adaptive_mesh_limit_contract(
+    record: Mapping[str, object], context: str
+) -> None:
+    """Reject any scientific mesh cap while permitting an optional resource guard."""
+    if "maximum_mesh" in record:
+        raise ValueError(f"{context} still contains a scientific maximum mesh")
+    if (
+        "scientific_maximum_mesh" not in record
+        or record.get("scientific_maximum_mesh") is not None
+    ):
+        raise ValueError(f"{context} must have no scientific maximum mesh")
+    if record.get("technical_resource_guard_is_convergence") is not False:
+        raise ValueError(f"{context} resource guard could be mistaken for convergence")
+    guard = record.get("technical_resource_guard_mesh")
+    if guard is None:
+        return
+    try:
+        number = kconv.mesh_number(str(guard))
+    except ValueError as error:
+        raise ValueError(f"{context} has an invalid technical resource guard") from error
+    if number < max(kconv.INITIAL_MESH_NUMBERS):
+        raise ValueError(f"{context} technical resource guard is below the initial meshes")
 
 
 def sha256(path: Path) -> str:
@@ -360,7 +384,6 @@ def validate_adaptive_build_provenance(
         raise ValueError("adaptive k-convergence protocol is missing")
     expected_adaptive = {
         "initial_meshes": ["k333", "k444", "k555"],
-        "maximum_mesh": "k888",
         "required_consecutive_passing_steps": 1,
         "aggregate_rms_gate": False,
         "criteria_combination": "AND",
@@ -381,6 +404,9 @@ def validate_adaptive_build_provenance(
     for field, expected in expected_adaptive.items():
         if adaptive.get(field) != expected:
             raise ValueError(f"adaptive k-convergence {field} mismatch")
+    validate_adaptive_mesh_limit_contract(
+        adaptive, "adaptive k-convergence protocol"
+    )
     fixed = protocol.get("fixed_geometry_single_point_diagnostic")
     if not isinstance(fixed, dict) or fixed != {
         "separate_from_adaptive_selection": True,
@@ -1005,6 +1031,7 @@ def validate_adaptive_k_results(
     points: list[dict[str, str]],
     atom_energies: dict[tuple[str, str], float],
     campaign: dict[str, object],
+    protocol: Mapping[str, object],
 ) -> tuple[
     dict[str, list[dict[str, object]]],
     dict[str, dict[str, object]],
@@ -1037,7 +1064,6 @@ def validate_adaptive_k_results(
     expected_algorithm = {
         "name": "one-step adaptive convergence",
         "initial_meshes": ["k333", "k444", "k555"],
-        "maximum_mesh": "k888",
         "required_consecutive_passing_steps": 1,
         "aggregate_rms_gate": False,
         "criteria_combination": "AND",
@@ -1052,9 +1078,38 @@ def validate_adaptive_k_results(
             "denser value from the earliest passing n->n+1 step"
         ),
     }
-    if algorithm != expected_algorithm:
+    if not isinstance(algorithm, dict):
         raise ValueError("adaptive one-step decision algorithm mismatch")
-    if convergence.get("pending") or convergence.get("unconverged"):
+    for field, expected in expected_algorithm.items():
+        if algorithm.get(field) != expected:
+            raise ValueError("adaptive one-step decision algorithm mismatch")
+    allowed_algorithm_fields = set(expected_algorithm) | {
+        "scientific_maximum_mesh",
+        "technical_resource_guard_mesh",
+        "technical_resource_guard_is_convergence",
+    }
+    if set(algorithm) != allowed_algorithm_fields:
+        raise ValueError("adaptive one-step decision algorithm mismatch")
+    validate_adaptive_mesh_limit_contract(
+        algorithm, "adaptive k-convergence algorithm"
+    )
+    protocol_adaptive = protocol.get("adaptive_k_convergence")
+    if not isinstance(protocol_adaptive, dict) or any(
+        algorithm.get(field) != protocol_adaptive.get(field)
+        for field in (
+            "scientific_maximum_mesh",
+            "technical_resource_guard_mesh",
+            "technical_resource_guard_is_convergence",
+        )
+    ):
+        raise ValueError(
+            "adaptive k-convergence resource policy differs from build provenance"
+        )
+    if (
+        convergence.get("pending")
+        or convergence.get("unconverged")
+        or convergence.get("resource_errors")
+    ):
         raise ValueError("adaptive k-convergence contains unresolved systems")
     if convergence.get("eos_fits_sha256") != sha256(data / "eos_fits.csv"):
         raise ValueError("adaptive k-convergence EOS-fit table hash mismatch")
@@ -1637,6 +1692,7 @@ def build_summary(root: Path) -> tuple[dict[str, object], list[dict[str, object]
         points,
         atom_energies,
         campaign,
+        protocol,
     )
     fixed_diagnostic = validate_fixed_geometry_diagnostic(
         root,
@@ -1701,7 +1757,10 @@ def build_summary(root: Path) -> tuple[dict[str, object], list[dict[str, object]
         "protocol": {
             "eos_mesh": EOS_MESH,
             "initial_eos_meshes": ["k333", "k444", "k555"],
-            "maximum_eos_mesh": "k888",
+            "scientific_maximum_eos_mesh": None,
+            "technical_resource_guard_mesh": protocol[
+                "adaptive_k_convergence"
+            ]["technical_resource_guard_mesh"],
             "result_mesh": RESULT_MESH,
             "adaptive_selection": {
                 "required_consecutive_passing_steps": 1,

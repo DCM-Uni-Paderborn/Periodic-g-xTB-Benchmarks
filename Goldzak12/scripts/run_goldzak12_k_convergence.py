@@ -11,7 +11,10 @@ separate:
 
 One adjacent n^3 -> (n+1)^3 step is sufficient when *both* raw changes pass.
 The reported value is always the denser (n+1)^3 value.  There is no RMS gate
-and no requirement for a second consecutive passing interval.
+and no requirement for a second consecutive passing interval.  There is no
+scientific maximum mesh: unresolved tracks keep advancing by one mesh.  The
+optional ``--maximum-mesh`` is only a technical resource guard and reaching it
+is an explicit error, never convergence.
 """
 
 from __future__ import annotations
@@ -40,7 +43,6 @@ METHODS = ("GFN1", "GFN2", "GXTB")
 PAPER_SYSTEMS = base.LC10_PAPER_SOLIDS
 PAPER_ELEMENTS = base.LC10_PAPER_ELEMENTS
 INITIAL_MESH_NUMBERS = (3, 4, 5)
-MAXIMUM_MESH_NUMBER = 8
 LATTICE_THRESHOLD_A = 0.001
 ECOH_THRESHOLD_KJMOL_PER_ATOM = 0.05
 KJMOL_PER_EV = 96.48533212331002
@@ -48,7 +50,7 @@ ECOH_THRESHOLD_EV_PER_ATOM = ECOH_THRESHOLD_KJMOL_PER_ATOM / KJMOL_PER_EV
 FIXED_GEOMETRY_EOS_MESH = "k444"
 FIXED_GEOMETRY_ENERGY_MESHES = ("k333", "k444", "k555")
 EQUILIBRIUM_LINEAGE_SCHEMA = 1
-CONVERGENCE_SCHEMA = 1
+CONVERGENCE_SCHEMA = 2
 
 VALUES_NAME = "lc10_independent_eos_k_values.csv"
 STEPS_NAME = "lc10_adaptive_k_steps.csv"
@@ -272,7 +274,12 @@ def assess_convergence(
     *,
     methods: tuple[str, ...] = METHODS,
     require_initial_meshes: bool = True,
+    maximum_mesh: int | None = None,
 ) -> tuple[list[dict[str, object]], list[dict[str, object]], list[tuple[str, str, int]]]:
+    if maximum_mesh is not None and maximum_mesh < max(INITIAL_MESH_NUMBERS):
+        raise ValueError(
+            f"technical maximum mesh must be at least {max(INITIAL_MESH_NUMBERS)}"
+        )
     by_key: dict[tuple[str, str, int], dict[str, object]] = {}
     for row in values:
         method = str(row.get("method", ""))
@@ -349,16 +356,20 @@ def assess_convergence(
                     }
             if selected is not None:
                 selections.append(selected)
-            elif numbers[-1] < MAXIMUM_MESH_NUMBER:
+            elif maximum_mesh is None or numbers[-1] < maximum_mesh:
                 pending.append((method, solid, numbers[-1] + 1))
             else:
                 selections.append(
                     {
                         "solid": solid,
                         "method": method,
-                        "selection_status": "unconverged_at_k888",
+                        "selection_status": "technical_resource_guard_reached",
                         "selected_mesh": "",
-                        "selection_rule": "fail_closed_at_maximum_mesh",
+                        "last_evaluated_mesh": mesh_name(numbers[-1]),
+                        "technical_resource_guard_mesh": mesh_name(maximum_mesh),
+                        "selection_rule": (
+                            "resource_guard_reached_without_scientific_convergence"
+                        ),
                     }
                 )
     steps.sort(
@@ -402,6 +413,7 @@ def write_convergence_artifacts(
     campaign: dict[str, object],
     fits_sha256: str,
     methods: tuple[str, ...] = METHODS,
+    maximum_mesh: int | None = None,
 ) -> dict[str, object]:
     data = root / "data"
     data.mkdir(parents=True, exist_ok=True)
@@ -417,6 +429,11 @@ def write_convergence_artifacts(
     unconverged = [
         row for row in selections if row.get("selection_status") != "converged"
     ]
+    resource_errors = [
+        row
+        for row in unconverged
+        if row.get("selection_status") == "technical_resource_guard_reached"
+    ]
     complete = (
         not pending
         and not unconverged
@@ -425,14 +442,24 @@ def write_convergence_artifacts(
     payload: dict[str, object] = {
         "schema_version": CONVERGENCE_SCHEMA,
         "benchmark": "LC10 (fixed Goldzak12 subset)",
-        "status": "converged" if complete else "incomplete",
+        "status": (
+            "converged"
+            if complete
+            else "technical_resource_limit_reached"
+            if resource_errors
+            else "incomplete"
+        ),
         "methods": list(methods),
         "paper_systems": list(PAPER_SYSTEMS),
         "diagnostic_only_systems": list(base.LC10_DIAGNOSTIC_ONLY_SOLIDS),
         "algorithm": {
             "name": "one-step adaptive convergence",
             "initial_meshes": [mesh_name(number) for number in INITIAL_MESH_NUMBERS],
-            "maximum_mesh": mesh_name(MAXIMUM_MESH_NUMBER),
+            "scientific_maximum_mesh": None,
+            "technical_resource_guard_mesh": (
+                mesh_name(maximum_mesh) if maximum_mesh is not None else None
+            ),
+            "technical_resource_guard_is_convergence": False,
             "required_consecutive_passing_steps": 1,
             "aggregate_rms_gate": False,
             "criteria_combination": "AND",
@@ -455,6 +482,7 @@ def write_convergence_artifacts(
             for method, solid, number in pending
         ],
         "unconverged": unconverged,
+        "resource_errors": resource_errors,
         "artifacts": {
             name: {
                 "path": f"data/{name}",
@@ -562,6 +590,14 @@ def main() -> int:
         choices=METHODS,
         help="method to execute; repeat to select multiple methods (default: all)",
     )
+    parser.add_argument(
+        "--maximum-mesh",
+        type=int,
+        help=(
+            "optional technical resource guard N for an NxNxN mesh; "
+            "the default has no fixed mesh cap"
+        ),
+    )
     parser.add_argument("--jobs", type=int, default=1)
     parser.add_argument("--threads", type=int, default=1)
     parser.add_argument("--mpi-ranks-per-job", type=int, default=1)
@@ -596,6 +632,10 @@ def main() -> int:
         )
     if args.jobs < 1 or args.threads < 1 or args.mpi_ranks_per_job < 1:
         parser.error("--jobs, --threads, and --mpi-ranks-per-job must be positive")
+    if args.maximum_mesh is not None and args.maximum_mesh < max(INITIAL_MESH_NUMBERS):
+        parser.error(
+            f"--maximum-mesh must be at least {max(INITIAL_MESH_NUMBERS)}"
+        )
     if args.fit_only and (args.force or args.approve_fits):
         parser.error("--fit-only cannot be combined with --force or --approve-fits")
     if args.stop_after_convergence and args.approve_fits:
@@ -663,7 +703,13 @@ def main() -> int:
         "campaign_manifest_sha256_external_pin": args.campaign_manifest_sha256,
         "adaptive_k_convergence": {
             "initial_meshes": [mesh_name(number) for number in INITIAL_MESH_NUMBERS],
-            "maximum_mesh": mesh_name(MAXIMUM_MESH_NUMBER),
+            "scientific_maximum_mesh": None,
+            "technical_resource_guard_mesh": (
+                mesh_name(args.maximum_mesh)
+                if args.maximum_mesh is not None
+                else None
+            ),
+            "technical_resource_guard_is_convergence": False,
             "required_consecutive_passing_steps": 1,
             "aggregate_rms_gate": False,
             "criteria_combination": "AND",
@@ -751,7 +797,7 @@ def main() -> int:
             number = mesh_number(str(row.get("eos_mesh", "")))
         except ValueError:
             continue
-        if 3 <= number <= MAXIMUM_MESH_NUMBER:
+        if number >= min(INITIAL_MESH_NUMBERS):
             archived_maximum[(method, solid)] = max(
                 number, archived_maximum.get((method, solid), 3)
             )
@@ -865,7 +911,9 @@ def main() -> int:
             base.ROOT, active_fits, campaign, run_methods
         )
         final_steps, final_selections, final_pending = assess_convergence(
-            final_values, methods=run_methods
+            final_values,
+            methods=run_methods,
+            maximum_mesh=args.maximum_mesh,
         )
         scale_payload = scale_manifest(base.ROOT, active_fits, scales, run_methods)
         scale_path = base.ROOT / "data" / SCALE_MANIFEST_NAME
@@ -881,20 +929,29 @@ def main() -> int:
             campaign=campaign,
             fits_sha256=base.sha256(base.ROOT / "data" / "eos_fits.csv"),
             methods=run_methods,
+            maximum_mesh=args.maximum_mesh,
         )
         protocol["k_convergence_status"] = convergence["status"]
         protocol["k_convergence_artifact_sha256"] = base.sha256(
             base.ROOT / "data" / CONVERGENCE_NAME
         )
         write_provenance()
-        terminal = [
+        resource_limited = [
             row
             for row in final_selections
-            if row.get("selection_status") == "unconverged_at_k888"
+            if row.get("selection_status") == "technical_resource_guard_reached"
         ]
-        if terminal:
-            labels = ", ".join(f"{row['method']}/{row['solid']}" for row in terminal)
-            raise RuntimeError(f"LC10 k convergence failed closed at k888: {labels}")
+        if resource_limited:
+            assert args.maximum_mesh is not None
+            labels = ", ".join(
+                f"{row['method']}/{row['solid']}"
+                for row in resource_limited
+            )
+            raise RuntimeError(
+                "LC10 adaptive execution reached the technical "
+                f"--maximum-mesh {mesh_name(args.maximum_mesh)} without "
+                f"scientific convergence; no value was selected: {labels}"
+            )
         if not final_pending:
             break
         if args.fit_only:

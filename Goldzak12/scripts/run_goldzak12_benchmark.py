@@ -229,13 +229,12 @@ def atom_counts(ref: Reference) -> dict[str, int]:
 def kpoint_block(mesh: str, method: str) -> list[str]:
     if method not in METHODS:
         raise ValueError(f"Unknown method {method!r}")
-    if not mesh.startswith("k") or not mesh[1:].isdigit():
-        raise ValueError(f"Bad mesh {mesh!r}; expected k333, k444, ...")
-    digits = mesh[1:]
-    if len(digits) == 3 and len(set(digits)) == 1:
-        n = int(digits[0])
-    else:
-        n = int(digits)
+    match = re.fullmatch(r"k([1-9][0-9]*)\1\1", mesh)
+    if match is None:
+        raise ValueError(
+            f"Bad mesh {mesh!r}; expected a cubic mesh such as k333 or k101010"
+        )
+    n = int(match.group(1))
     shift = 0.0 if n % 2 else 1.0 / (2.0 * n)
     lines = [
         "    &KPOINTS",

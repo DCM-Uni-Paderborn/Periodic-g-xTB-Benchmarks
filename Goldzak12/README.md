@@ -25,8 +25,11 @@ Separate EOS fits and equilibrium single points are first evaluated at
 `|Delta Ecoh| <= 0.05 kJ mol-1 atom-1`
 (`0.000518213... eV atom-1`).  Exactly one passing interval suffices: there is
 no RMS gate and no two-step requirement.  The denser `(n+1)^3` values are
-reported.  An unresolved pair alone proceeds to `k666`, then `k777` and at
-most `k888`; failure at `k888` is fatal.
+reported.  An unresolved pair alone proceeds to `k666`, `k777`, `k888`,
+`k999`, `k101010`, and onward until the same two criteria pass.
+There is no scientific maximum mesh.  The optional integer
+`--maximum-mesh N` is only a technical resource guard; reaching it without a
+passing adjacent step stops with an error and never selects a value.
 
 The historical `k333/k444/k555` energy series on a common `k444` EOS geometry
 is still generated, but is explicitly a fixed-geometry diagnostic.  It never
@@ -81,11 +84,11 @@ python3 Goldzak12/scripts/finalize_goldzak12_paper_summary.py
 ```
 
 `--method` is repeatable and defaults to all three methods for backwards
-compatibility.  The production GXTB continuation uses `--method GXTB`: it
-leaves the frozen external GFN1/GFN2 provenance, atom references, and run trees
-untouched.  A selective run records only its execution scope; the publication
-finalizer remains fail-closed and accepts only the complete three-method by
-LC10 bundle.
+compatibility.  The production GXTB continuation uses `--method GXTB` without
+`--maximum-mesh`; it leaves the frozen external GFN1/GFN2 provenance, atom
+references, and run trees untouched.  A selective run records only its
+execution scope; the publication finalizer remains fail-closed and accepts
+only the complete three-method by LC10 bundle.
 
 On Terok, use the shared fail-closed MPI/affinity path.  The manifest hash must
 come from the completed build qualification; do not compute and accept a new
@@ -182,8 +185,9 @@ The finalizer atomically writes `data/lc10_gfn_gxtb_paper_summary.csv`,
 `data/lc10_gfn_gxtb_paper_summary.json`, and
 `data/lc10_gfn_gxtb_paper_summary.tex`. The CSV has exactly one ten-system row
 per method with ME, MAE, RMSE, and MaxAE for lattice constants and cohesive
-energies. Each solid may have a different selected dense mesh between `k444`
-and `k888`; the JSON records the raw adjacent criteria and selected mesh. It
+energies. Each solid may have a different selected dense mesh from `k444`
+upward without a fixed cap; the JSON records the raw adjacent criteria and
+selected mesh. It
 also adds complete EOS/equilibrium-output lineage, hashes, direct g-xTB/GFN
 comparisons, and build provenance; the TeX file exports paper macros. Missing
 or substituted systems, reduced coverage, stale stamps, a second/RMS gate, or

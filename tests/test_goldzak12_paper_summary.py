@@ -524,7 +524,9 @@ class SyntheticLC10:
             ),
             "adaptive_k_convergence": {
                 "initial_meshes": ["k333", "k444", "k555"],
-                "maximum_mesh": "k888",
+                "scientific_maximum_mesh": None,
+                "technical_resource_guard_mesh": None,
+                "technical_resource_guard_is_convergence": False,
                 "required_consecutive_passing_steps": 1,
                 "aggregate_rms_gate": False,
                 "criteria_combination": "AND",
@@ -596,6 +598,20 @@ class SyntheticLC10:
         self.write_provenance(fits)
 
 class Goldzak12PaperSummaryTests(unittest.TestCase):
+    def test_mesh_limit_contract_has_no_scientific_cap(self) -> None:
+        uncapped = {
+            "scientific_maximum_mesh": None,
+            "technical_resource_guard_mesh": None,
+            "technical_resource_guard_is_convergence": False,
+        }
+        summary.validate_adaptive_mesh_limit_contract(uncapped, "test")
+        guarded = {**uncapped, "technical_resource_guard_mesh": "k121212"}
+        summary.validate_adaptive_mesh_limit_contract(guarded, "test")
+        with self.assertRaisesRegex(ValueError, "scientific maximum"):
+            summary.validate_adaptive_mesh_limit_contract(
+                {**uncapped, "maximum_mesh": "k888"}, "test"
+            )
+
     def test_finalizes_exact_three_by_ten_bundle_with_tex_and_raw_lineage(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "Goldzak12"
