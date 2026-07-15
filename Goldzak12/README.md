@@ -336,7 +336,13 @@ of the ten paper systems stops before final single points and is recorded in
 The exact method/system/mesh grid is persisted in
 `data/lc10_k_convergence_scale_manifest.json` and used by the finalizer. A
 large local energy discontinuity is reported as a numerical SCC
-branch *candidate*, never immediately as a physical failure. Each candidate
+branch *candidate*, never immediately as a physical failure. Starting with the
+second available mesh, the runner also compares the pointwise
+`E_N(scale)-E_(N-1)(scale)` correction with its robust scale trend. An isolated
+cross-mesh residual of at least `0.01` hartree (and eight robust MADs) is
+reported fail-closed; this catches a converged alternate SCC root that can look
+locally smooth within one EOS curve. The cross-mesh gate never excludes a
+point automatically. Each candidate
 must be reviewed in `data/gxtb_eos_classifications.json` with a per-point
 `action` (`exclude` or `retain`), `classification`, and nonempty `rationale`;
 the generated `data/gxtb_eos_classification_candidates.json` is the template.

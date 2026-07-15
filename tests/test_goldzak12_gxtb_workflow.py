@@ -846,6 +846,39 @@ class Goldzak12GXTBProtocolTests(unittest.TestCase):
         self.assertEqual(eos.gxtb_topology_reversals(points), [])
         self.assertEqual(eos.fit_gxtb_eos(points)["fit_status"], "quadratic")
 
+    def test_cross_mesh_gate_flags_isolated_alternate_scc_root(self) -> None:
+        scales = (0.82, 0.88, 0.94, 0.98, 1.00, 1.02, 1.06, 1.12, 1.20, 1.30, 1.45)
+        previous = [
+            (scale, scale, -2394.0 + 0.7 * (scale - 0.98) ** 2, True)
+            for scale in scales
+        ]
+        current = [
+            (
+                scale,
+                scale,
+                energy + 0.001 + (0.104 if scale == 0.88 else 0.0),
+                True,
+            )
+            for scale, _, energy, _ in previous
+        ]
+        candidates = eos.gxtb_cross_mesh_branch_candidates(current, previous)
+        self.assertEqual(set(candidates), {0.88})
+        self.assertGreater(candidates[0.88], 0.09)
+
+    def test_cross_mesh_gate_accepts_smooth_physical_kpoint_shift(self) -> None:
+        scales = (0.82, 0.88, 0.94, 0.98, 1.00, 1.02, 1.06, 1.12, 1.20, 1.30, 1.45)
+        previous = [
+            (scale, scale, -100.0 + 0.8 * (scale - 1.0) ** 2, True)
+            for scale in scales
+        ]
+        current = [
+            (scale, scale, energy + 0.002 + 0.004 * (scale - 1.0), True)
+            for scale, _, energy, _ in previous
+        ]
+        self.assertEqual(
+            eos.gxtb_cross_mesh_branch_candidates(current, previous), {}
+        )
+
     def test_gxtb_topology_gate_rejects_a_lower_endpoint_branch(self) -> None:
         points = [
             (0.82, 0.82, -0.06710426, True),

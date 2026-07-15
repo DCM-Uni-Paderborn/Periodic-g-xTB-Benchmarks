@@ -59,6 +59,12 @@ ADAPTIVE_SCALES = {
 }
 BUILTIN_ADAPTIVE_SCALES = {key: tuple(values) for key, values in ADAPTIVE_SCALES.items()}
 GXTB_BRANCH_DISCONTINUITY_HARTREE = 1.0
+# A point that converges to a different SCC root can remain locally smooth
+# enough to evade the single-mesh EOS test.  Across adjacent k meshes the
+# physical total-energy shift is nevertheless a smooth function of volume.
+# Flag an isolated departure from that shift before it can enter an EOS fit.
+GXTB_CROSS_MESH_SHIFT_FLOOR_HARTREE = 1.0e-2
+GXTB_CROSS_MESH_MAD_MULTIPLIER = 8.0
 # The LC12 conventional cells all contain eight atoms. This tolerance only
 # suppresses sub-meV/atom numerical noise in the GXTB EOS topology test; it is
 # not an energy-discontinuity threshold.
@@ -206,6 +212,80 @@ def gxtb_branch_candidates(
             jump = abs(energy - neighbor[1])
             if jump >= CHARGE_COLLAPSE_ENERGY_DROP_HARTREE:
                 candidates[round(scale, 5)] = jump
+    return candidates
+
+
+def previous_cubic_mesh(mesh: str) -> str | None:
+    """Return the immediately preceding cubic mesh label, if one exists."""
+    match = re.fullmatch(r"k([1-9][0-9]*)\1\1", mesh)
+    if match is None:
+        raise ValueError(f"non-cubic k mesh {mesh!r}")
+    number = int(match.group(1))
+    if number <= 1:
+        return None
+    previous = number - 1
+    return f"k{previous}{previous}{previous}"
+
+
+def gxtb_cross_mesh_branch_candidates(
+    points: list[tuple[float, float, float | None, bool]],
+    previous_points: list[tuple[float, float, float | None, bool]],
+) -> dict[float, float]:
+    """Flag isolated SCC-root changes from adjacent-mesh energy shifts.
+
+    Absolute total energies are not compared directly.  For scales present in
+    both meshes we form ``E_N(scale) - E_(N-1)(scale)`` and require a candidate
+    to be anomalous both relative to the robust shift distribution and to the
+    local interpolation of its neighbours.  This distinguishes a single
+    alternate SCC solution from a smooth physical k-point correction.  The
+    detector is fail-closed only: it reports candidates but never excludes a
+    point without an explicit reviewed classification.
+    """
+    current = {
+        round(float(scale), 5): float(energy)
+        for _, scale, energy, ok in points
+        if ok and energy is not None
+    }
+    previous = {
+        round(float(scale), 5): float(energy)
+        for _, scale, energy, ok in previous_points
+        if ok and energy is not None
+    }
+    shifts = sorted(
+        (scale, current[scale] - previous[scale])
+        for scale in set(current) & set(previous)
+    )
+    if len(shifts) < 5:
+        return {}
+
+    values = np.array([shift for _, shift in shifts], dtype=float)
+    centre = float(np.median(values))
+    mad = float(np.median(np.abs(values - centre)))
+    cutoff = max(
+        GXTB_CROSS_MESH_SHIFT_FLOOR_HARTREE,
+        GXTB_CROSS_MESH_MAD_MULTIPLIER * 1.4826 * mad,
+    )
+    candidates: dict[float, float] = {}
+    for index in range(1, len(shifts) - 1):
+        left_scale, left_shift = shifts[index - 1]
+        scale, shift = shifts[index]
+        right_scale, right_shift = shifts[index + 1]
+        fraction = (scale - left_scale) / (right_scale - left_scale)
+        interpolated = left_shift + fraction * (right_shift - left_shift)
+        local_residual = abs(shift - interpolated)
+        global_residual = abs(shift - centre)
+        if local_residual >= cutoff and global_residual >= cutoff:
+            candidates[scale] = local_residual
+
+    # Endpoints have no two-sided interpolation.  Use a deliberately stricter
+    # gate so that a smooth scale dependence is not mistaken for an SCC switch.
+    endpoint_cutoff = 2.0 * cutoff
+    for index, neighbor_index in ((0, 1), (len(shifts) - 1, len(shifts) - 2)):
+        scale, shift = shifts[index]
+        neighbor_shift = shifts[neighbor_index][1]
+        residual = abs(shift - neighbor_shift)
+        if residual >= endpoint_cutoff and abs(shift - centre) >= endpoint_cutoff:
+            candidates[scale] = residual
     return candidates
 
 
@@ -808,7 +888,33 @@ def make_eos_table(
             legacy_collapsed_scales = (
                 charge_collapsed_scales(all_points) if method == "GFN2" else set()
             )
-            candidates = gxtb_branch_candidates(all_points) if method == "GXTB" else {}
+            local_candidates = gxtb_branch_candidates(all_points) if method == "GXTB" else {}
+            cross_mesh_candidates: dict[float, float] = {}
+            if method == "GXTB":
+                previous_mesh = previous_cubic_mesh(mesh)
+                previous_root = (
+                    ROOT / "runs" / "eos" / method / ref.solid / previous_mesh
+                    if previous_mesh is not None
+                    else None
+                )
+                if previous_root is not None and previous_root.is_dir():
+                    previous_points = load_eos_points(
+                        ref,
+                        method,
+                        previous_mesh,
+                        requested_scales,
+                        campaign_fingerprint,
+                    )
+                    cross_mesh_candidates = gxtb_cross_mesh_branch_candidates(
+                        all_points, previous_points
+                    )
+            candidates = {
+                scale: max(
+                    local_candidates.get(scale, 0.0),
+                    cross_mesh_candidates.get(scale, 0.0),
+                )
+                for scale in set(local_candidates) | set(cross_mesh_candidates)
+            }
             explicit = {
                 scale: classifications[(ref.solid, mesh, scale)]
                 for scale in (round(value, 5) for value in requested_scales)
@@ -853,6 +959,8 @@ def make_eos_table(
                 output = ROOT / "runs" / "eos" / method / ref.solid / mesh / scale_tag(scale, method) / f"{project}.out"
                 entry = explicit.get(normalized_scale)
                 candidate_residual = candidates.get(normalized_scale)
+                local_candidate_residual = local_candidates.get(normalized_scale)
+                cross_mesh_candidate_residual = cross_mesh_candidates.get(normalized_scale)
                 excluded = normalized_scale in excluded_scales
                 if not ok:
                     if entry is not None and entry["action"] == "exclude":
@@ -870,7 +978,11 @@ def make_eos_table(
                         "explicit_exclusion" if entry["action"] == "exclude" else "explicit_waiver"
                     )
                 elif candidate_residual is not None:
-                    diagnostic = "branch_discontinuity_candidate"
+                    diagnostic = (
+                        "cross_mesh_scc_root_candidate"
+                        if cross_mesh_candidate_residual is not None
+                        else "branch_discontinuity_candidate"
+                    )
                     resolution = "unresolved_candidate"
                 elif normalized_scale in legacy_collapsed_scales:
                     diagnostic = "charge_collapse"
@@ -904,6 +1016,26 @@ def make_eos_table(
                             "automatic_candidate": candidate_residual is not None,
                             "interpolation_residual_hartree": (
                                 f"{candidate_residual:.12f}" if candidate_residual is not None else ""
+                            ),
+                            "single_mesh_residual_hartree": (
+                                f"{local_candidate_residual:.12f}"
+                                if local_candidate_residual is not None
+                                else ""
+                            ),
+                            "cross_mesh_shift_residual_hartree": (
+                                f"{cross_mesh_candidate_residual:.12f}"
+                                if cross_mesh_candidate_residual is not None
+                                else ""
+                            ),
+                            "detection_source": (
+                                "single_mesh+cross_mesh"
+                                if local_candidate_residual is not None
+                                and cross_mesh_candidate_residual is not None
+                                else (
+                                    "cross_mesh"
+                                    if cross_mesh_candidate_residual is not None
+                                    else "single_mesh"
+                                )
                             ),
                             "classification": entry["classification"] if entry is not None else "",
                             "action": entry["action"] if entry is not None else "",
@@ -1966,6 +2098,8 @@ def main() -> int:
             "legacy_gfn2_charge_collapse_filter_hartree_below_curve_median": CHARGE_COLLAPSE_ENERGY_DROP_HARTREE,
             "catastrophic_charge_collapse_energy_hartree": CATASTROPHIC_CHARGE_COLLAPSE_ENERGY_HARTREE,
             "gxtb_branch_candidate_interpolation_residual_hartree": GXTB_BRANCH_DISCONTINUITY_HARTREE,
+            "gxtb_cross_mesh_shift_floor_hartree": GXTB_CROSS_MESH_SHIFT_FLOOR_HARTREE,
+            "gxtb_cross_mesh_shift_mad_multiplier": GXTB_CROSS_MESH_MAD_MULTIPLIER,
             "gxtb_branch_policy": "automatic candidates require explicit per-point exclusion or retain waiver with rationale",
             "gxtb_topology_tolerance_hartree_per_eight_atom_cell": GXTB_TOPOLOGY_TOLERANCE_HARTREE,
             "gxtb_topology_policy": "sampled energy must decrease to the global minimum and increase away from it",
