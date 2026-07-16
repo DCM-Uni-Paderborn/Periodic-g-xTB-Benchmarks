@@ -1,0 +1,19 @@
+CP2K_BLOCK_HELPER_QUALIFICATION
+case	grid	nirr	dE_Ha	dF_HaBohr	dStress_bar	dVirial_Ha	FDmax_Ha	pass
+k290_222_force_stress	2x2x2	1	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	true
+spglib_shifted_222_force_stress	2x2x2	3	0.000e+00	1.024e-16	2.633e-10	0.000e+00	0.000e+00	true
+time_reversal_311	3x1x1	2	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	true
+k290_222_force_stress_debug	2x2x2	1	7.105e-15	0.000e+00	0.000e+00	5.370e-10	1.893e-09	true
+time_reversal_311_force_stress	3x1x1	2	0.000e+00	0.000e+00	0.000e+00	0.000e+00	1.840e-10	true
+
+MAXIMA
+analytical_stress_bar_max_abs	2.633403625965e-10
+analytical_virial_hartree_max_abs	1.800001814267e-11
+atomic_force_hartree_per_bohr_max_abs	1.024058220000e-16
+debug_force_analytical_hartree_per_bohr_max_abs	0.000000000000e+00
+debug_force_numerical_hartree_per_bohr_max_abs	0.000000000000e+00
+energy_sequence_hartree_max_abs	7.105427357601e-15
+numerical_virial_hartree_max_abs	5.370000000227e-10
+
+ALL_PASSED	true
+SCOPE	This qualifies the CP2K one-block expansion and weighted-adjoint foldback helpers only; the production streamed exchange module is not qualified here.

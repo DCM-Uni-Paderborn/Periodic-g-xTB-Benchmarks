@@ -1,0 +1,253 @@
+{
+  "all_passed": true,
+  "baseline_comparison_gates": {
+    "analytical_stress_bar_abs": 1e-06,
+    "analytical_virial_hartree_abs": 1e-10,
+    "energy_hartree_abs": 1e-10,
+    "finite_difference_sum_hartree_abs": 1e-06,
+    "force_hartree_per_bohr_abs": 1e-10,
+    "numerical_virial_hartree_abs": 1e-09
+  },
+  "comparisons": [
+    {
+      "baseline_output_sha256": "ee273f3213e3fbee15f05b293b209892e85c5cbf74bf0b2d058e304992d44ace",
+      "case": "k290_222_force_stress",
+      "comparison_gate": true,
+      "counts": {
+        "energies": [
+          1,
+          1
+        ],
+        "force_components": [
+          0,
+          0
+        ],
+        "stress_components": [
+          0,
+          0
+        ]
+      },
+      "current_output_sha256": "c07e63521b07932ba645326cfda512565ac564cca9db70482e99505327d1eb04",
+      "derivative_gate": true,
+      "differences": {
+        "analytical_stress_bar_max_abs": 0.0,
+        "analytical_virial_hartree_max_abs": 0.0,
+        "atomic_force_hartree_per_bohr_max_abs": 0.0,
+        "debug_force_analytical_hartree_per_bohr_max_abs": 0.0,
+        "debug_force_numerical_hartree_per_bohr_max_abs": 0.0,
+        "energy_sequence_hartree_max_abs": 0.0,
+        "numerical_virial_hartree_max_abs": 0.0
+      },
+      "finite_difference_sum_hartree_max_abs": {
+        "baseline": 0.0,
+        "current": 0.0
+      },
+      "grid": [
+        2,
+        2,
+        2
+      ],
+      "input_sha256": "25f2ed3dddd50705d266ec093ba3b26768b846bad8d5840542057783166982ec",
+      "irreducible_kpoints": 1,
+      "kind": "observables",
+      "passed": true,
+      "run_gate": true
+    },
+    {
+      "baseline_output_sha256": "6a694e11b1f0e8950e05c970c230a1c5ae6e46063bf369e8808a6884526856a8",
+      "case": "spglib_shifted_222_force_stress",
+      "comparison_gate": true,
+      "counts": {
+        "energies": [
+          1,
+          1
+        ],
+        "force_components": [
+          8,
+          8
+        ],
+        "stress_components": [
+          9,
+          9
+        ]
+      },
+      "current_output_sha256": "774b14fe142d7c13c242ac5c7cad45d0497b363f12c5d428996193ddb6445723",
+      "derivative_gate": true,
+      "differences": {
+        "analytical_stress_bar_max_abs": 2.633403625965e-10,
+        "analytical_virial_hartree_max_abs": 0.0,
+        "atomic_force_hartree_per_bohr_max_abs": 1.0240582200000002e-16,
+        "debug_force_analytical_hartree_per_bohr_max_abs": 0.0,
+        "debug_force_numerical_hartree_per_bohr_max_abs": 0.0,
+        "energy_sequence_hartree_max_abs": 0.0,
+        "numerical_virial_hartree_max_abs": 0.0
+      },
+      "finite_difference_sum_hartree_max_abs": {
+        "baseline": 0.0,
+        "current": 0.0
+      },
+      "grid": [
+        2,
+        2,
+        2
+      ],
+      "input_sha256": "a93fbc314c6d9feeb71d24045d6a70e3c762de11f6eed9cd2a932156bea6db68",
+      "irreducible_kpoints": 3,
+      "kind": "observables",
+      "passed": true,
+      "run_gate": true
+    },
+    {
+      "baseline_output_sha256": "f9a6a8452209dc6570ab944f9813eaf22c7bb73323685414b449a3ce742a763e",
+      "case": "time_reversal_311",
+      "comparison_gate": true,
+      "counts": {
+        "energies": [
+          1,
+          1
+        ],
+        "force_components": [
+          0,
+          0
+        ],
+        "stress_components": [
+          0,
+          0
+        ]
+      },
+      "current_output_sha256": "6213e00d7c4acfba7a34cddbc7a0bb9f6ea18e0fb2fe352809f9d22a7d3e26ff",
+      "derivative_gate": true,
+      "differences": {
+        "analytical_stress_bar_max_abs": 0.0,
+        "analytical_virial_hartree_max_abs": 0.0,
+        "atomic_force_hartree_per_bohr_max_abs": 0.0,
+        "debug_force_analytical_hartree_per_bohr_max_abs": 0.0,
+        "debug_force_numerical_hartree_per_bohr_max_abs": 0.0,
+        "energy_sequence_hartree_max_abs": 0.0,
+        "numerical_virial_hartree_max_abs": 0.0
+      },
+      "finite_difference_sum_hartree_max_abs": {
+        "baseline": 0.0,
+        "current": 0.0
+      },
+      "grid": [
+        3,
+        1,
+        1
+      ],
+      "input_sha256": "c91eb5c520f12c592f7cd6ef5e99255bab164df3d0ac06d33a02cb6708f9c134",
+      "irreducible_kpoints": 2,
+      "kind": "observables",
+      "passed": true,
+      "run_gate": true
+    },
+    {
+      "baseline_output_sha256": "234439899774b4f6b10db2effbbc3d1ba2ea301e3e3e33b504c58ad52be94311",
+      "case": "k290_222_force_stress_debug",
+      "comparison_gate": true,
+      "counts": {
+        "energies": [
+          23,
+          23
+        ],
+        "force_components": [
+          0,
+          0
+        ],
+        "stress_components": [
+          0,
+          0
+        ]
+      },
+      "current_output_sha256": "834a7f7f1abfec5a8a10da2dbc895c22da2dfb7668458db873fd8c5fd44c1c5c",
+      "derivative_gate": true,
+      "differences": {
+        "analytical_stress_bar_max_abs": 0.0,
+        "analytical_virial_hartree_max_abs": 1.8000018142672047e-11,
+        "atomic_force_hartree_per_bohr_max_abs": 0.0,
+        "debug_force_analytical_hartree_per_bohr_max_abs": 0.0,
+        "debug_force_numerical_hartree_per_bohr_max_abs": 0.0,
+        "energy_sequence_hartree_max_abs": 7.105427357601002e-15,
+        "numerical_virial_hartree_max_abs": 5.370000000226582e-10
+      },
+      "finite_difference_sum_hartree_max_abs": {
+        "baseline": 1.885e-09,
+        "current": 1.893e-09
+      },
+      "grid": [
+        2,
+        2,
+        2
+      ],
+      "input_sha256": "709388624dda15c066e7b9b5d3e97fe57665a4d53e6f58851685dae298ca4e54",
+      "irreducible_kpoints": 1,
+      "kind": "derivatives",
+      "passed": true,
+      "run_gate": true
+    },
+    {
+      "baseline_output_sha256": "6180fbea46d174c5e629ffb885f666a67bc774f0ca6b307a7b8d87884a20648a",
+      "case": "time_reversal_311_force_stress",
+      "comparison_gate": true,
+      "counts": {
+        "energies": [
+          33,
+          33
+        ],
+        "force_components": [
+          0,
+          0
+        ],
+        "stress_components": [
+          0,
+          0
+        ]
+      },
+      "current_output_sha256": "de7e29680343ad0725622ae321762a2ecadfd40821a7c055bfcdb3df08e5baa5",
+      "derivative_gate": true,
+      "differences": {
+        "analytical_stress_bar_max_abs": 0.0,
+        "analytical_virial_hartree_max_abs": 0.0,
+        "atomic_force_hartree_per_bohr_max_abs": 0.0,
+        "debug_force_analytical_hartree_per_bohr_max_abs": 0.0,
+        "debug_force_numerical_hartree_per_bohr_max_abs": 0.0,
+        "energy_sequence_hartree_max_abs": 0.0,
+        "numerical_virial_hartree_max_abs": 0.0
+      },
+      "finite_difference_sum_hartree_max_abs": {
+        "baseline": 1.84e-10,
+        "current": 1.84e-10
+      },
+      "grid": [
+        3,
+        1,
+        1
+      ],
+      "input_sha256": "1b03853f044ccb1e58917dfd0443b846ffd967bfbad817380af553388f91677c",
+      "irreducible_kpoints": 2,
+      "kind": "derivatives",
+      "passed": true,
+      "run_gate": true
+    }
+  ],
+  "component": "cp2k-block-expansion-and-weighted-adjoint-foldback-helpers",
+  "internal_runtime_gates": {
+    "antiunitary_time_reversal": "covered-by-negative-rotp-case",
+    "blockwise_fold_vs_full_array_relative": 1e-12,
+    "physical_overlap_expansion_relative": "max(1e-6, 100*eps_geo)",
+    "probe": "deterministic-complex-Hermitian",
+    "weighted_real_adjoint_relative": 1e-10
+  },
+  "maxima": {
+    "analytical_stress_bar_max_abs": 2.633403625965e-10,
+    "analytical_virial_hartree_max_abs": 1.8000018142672047e-11,
+    "atomic_force_hartree_per_bohr_max_abs": 1.0240582200000002e-16,
+    "debug_force_analytical_hartree_per_bohr_max_abs": 0.0,
+    "debug_force_numerical_hartree_per_bohr_max_abs": 0.0,
+    "energy_sequence_hartree_max_abs": 7.105427357601002e-15,
+    "numerical_virial_hartree_max_abs": 5.370000000226582e-10
+  },
+  "oracle": "unchanged-full-array-expansion-and-foldback",
+  "schema_version": 1,
+  "scope_note": "This qualifies the CP2K one-block expansion and weighted-adjoint foldback helpers only; the production streamed exchange module is not qualified here."
+}

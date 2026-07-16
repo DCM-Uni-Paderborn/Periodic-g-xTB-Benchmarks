@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "campaign_component": "cp2k-block-expansion-and-weighted-adjoint-foldback-helpers",
+  "execution_host": "terok.casus.science",
+  "execution_date": "2026-07-16",
+  "cp2k": {
+    "base_source_revision": "28df9380abb327d56bbf216d2469a1fd8c953fc0",
+    "worktree_patch_sha256": "cba971c76abb41e324118e3e5cd4998783bdeaf1808c6a8e60f4abaee53c48db",
+    "source_file_sha256": {
+      "src/tblite_interface.F": "f9c00c6db96546dffe7997f59b4543a6aba049fbdc16aec6e717aad979cd7513",
+      "src/tblite_types.F": "e848fd796e69021a1ba21473d0fd7e2da3dbe485fe0e799e495ecd916889398e"
+    },
+    "current_binary_sha256": "3a806de140739da19b0a567d8bfcd5eec561701f6f210809488cc36b1e172066",
+    "baseline_binary_sha256": "44f7d651f88272272dde73b8fb59c9f0c0b37850256fd3ed165c9e1cbcab8129",
+    "required_features": [
+      "spglib",
+      "tblite",
+      "tblite_gxtb"
+    ]
+  },
+  "save_tblite": {
+    "source_revision": "257ba442684c39454175e5192c8a2342b4c6380f"
+  },
+  "build": {
+    "first_attempt": {
+      "status": "failed",
+      "classification": "Fortran line-length formatting error found before qualification",
+      "log": "cp2k_block_helpers/terok_build_and_launch/build_helpers.log",
+      "log_sha256": "d5b3dc7e70928c2efab70f7da930495e08742b69b9f11d940c9a80fff5a738e4"
+    },
+    "formatted_retry": {
+      "status": "passed",
+      "target": "cp2k.psmp and complete configured target set",
+      "log": "cp2k_block_helpers/terok_build_and_launch/build_helpers_retry.log",
+      "log_sha256": "78147c5acf14f0fad4222358a08dbb01ba0a9697b9006fec696e36518d6a26e0"
+    },
+    "diff_check": "passed",
+    "precommit": {
+      "prior_full_check": "passed and recorded in GXTB_SYMMETRY_V2_AUDIT.md",
+      "archive_rerun": "status OK; two unchanged files skipped by the precommit cache",
+      "record": "cp2k_block_helpers/precommit.txt",
+      "record_sha256": "13658c3b0b43f947b3f001d1271c026859ee6528f992565c4a46388f47b38b8b"
+    }
+  },
+  "runtime": {
+    "source_directories": {
+      "current_observables": "/private/tmp/cp2k_gxtb_block_helpers_results",
+      "baseline_observables": "/private/tmp/cp2k_gxtb_block_helpers_baseline_results",
+      "current_derivatives": "/private/tmp/cp2k_gxtb_block_helpers_derivative_results",
+      "baseline_derivatives": "/private/tmp/cp2k_gxtb_block_helpers_derivative_baseline_results"
+    },
+    "current_runs": 5,
+    "baseline_runs": 5,
+    "zero_returncodes": 10,
+    "program_ended_markers": 10,
+    "initial_sha256_manifests": 10,
+    "final_sha256_manifests": 10,
+    "symmetry_backends": [
+      "K290",
+      "SPGLIB",
+      "time_reversal"
+    ],
+    "meshes": [
+      "2x2x2",
+      "3x1x1"
+    ],
+    "internal_helper_gates": {
+      "physical_overlap_expansion_relative": "max(1e-6, 100*eps_geo)",
+      "weighted_real_adjoint_relative": 1e-10,
+      "blockwise_fold_vs_full_array_relative": 1e-12,
+      "deterministic_complex_hermitian_probe": true,
+      "antiunitary_negative_rotp_covered": true
+    },
+    "baseline_maxima": {
+      "energy_sequence_hartree_abs": 7.105427357601e-15,
+      "atomic_force_hartree_per_bohr_abs": 1.02405822e-16,
+      "analytical_stress_bar_abs": 2.633403625965e-10,
+      "numerical_virial_hartree_abs": 5.370000000227e-10,
+      "analytical_virial_hartree_abs": 1.800001814267e-11
+    },
+    "finite_difference_sum_hartree_max_abs": 1.893e-9
+  },
+  "artifacts": {
+    "audit": "cp2k_block_helpers/GXTB_SYMMETRY_V2_AUDIT.md",
+    "source_patch": "cp2k_block_helpers/cp2k_worktree.patch",
+    "reference_runtime_harness": "cp2k_block_helpers/reference_runtime_harness",
+    "raw": "../raw/cp2k_block_helpers",
+    "comparison_script": "../scripts/compare_cp2k_block_helpers.py",
+    "derived_json": "../derived/cp2k_block_helpers_comparison.json",
+    "derived_text": "../derived/cp2k_block_helpers_comparison.txt"
+  },
+  "qualification": "passed",
+  "scope_note": "Only the CP2K one-block expansion and weighted-adjoint foldback helpers are qualified. The production streamed exchange module remains implementation_in_progress."
+}
