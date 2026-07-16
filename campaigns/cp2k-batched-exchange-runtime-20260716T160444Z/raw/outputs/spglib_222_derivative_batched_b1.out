@@ -1,0 +1,3242 @@
+ DBCSR| CPU Multiplication driver                                           BLAS (U)
+ DBCSR| Multrec recursion limit                                              512 (U)
+ DBCSR| Multiplication stack size                                           1000 (D)
+ DBCSR| Maximum elements for images                                    UNLIMITED (U)
+ DBCSR| Multiplicative factor virtual images                                   1 (U)
+ DBCSR| Use multiplication densification                                       T (D)
+ DBCSR| Multiplication size stacks                                             3 (U)
+ DBCSR| Use memory pool for CPU allocation                                     F (U)
+ DBCSR| Number of 3D layers                                               SINGLE (U)
+ DBCSR| Use MPI memory allocation                                              F (U)
+ DBCSR| Use RMA algorithm                                                      F (U)
+ DBCSR| Use Communication thread                                               T (U)
+ DBCSR| Communication thread load                                             87 (D)
+ DBCSR| MPI: My process id                                                     0
+ DBCSR| MPI: Number of processes                                               1
+ DBCSR| OMP: Current number of threads                                         1
+ DBCSR| OMP: Max number of threads                                             1
+ DBCSR| Split modifier for TAS multiplication algorithm                  1.0E+00 (U)
+
+
+  **** **** ******  **  PROGRAM STARTED AT               2026-07-16 17:44:14.575
+ ***** ** ***  *** **   PROGRAM STARTED ON        MacBook-Pro-von-Thomas-3.local
+ **    ****   ******    PROGRAM STARTED BY                               tkuehne
+ ***** **    ** ** **   PROGRAM PROCESS ID                                 87711
+  **** **  *******  **  PROGRAM STARTED IN /private/tmp/gxtb_batch_runtime/spgli
+                                           b_deriv_b1
+
+ CP2K| version string:                 CP2K version 2026.1 (Development Version)
+ CP2K| source code revision number:                                   28df9380ab
+ CP2K| cp2kflags: omp parallel scalapack no_statm_access spglib s_dftd3 mctc-lib
+ CP2K|             tblite tblite_gxtb
+ CP2K| is freely available from                            https://www.cp2k.org/
+ CP2K| Program compiled at                                   2026-07-16 17:38:27
+ CP2K| Program compiled on                                                      
+ CP2K| Program compiled for                                                arm64
+ CP2K| Data directory path                            /usr/local/share/cp2k/data
+ CP2K| Input file name        /private/tmp/gxtb-paper-derivatives-20260716T0830-
+
+ GLOBAL| Force Environment number                                              1
+ GLOBAL| Basis set file name                                           BASIS_SET
+ GLOBAL| Potential file name                                           POTENTIAL
+ GLOBAL| MM Potential file name                                     MM_POTENTIAL
+ GLOBAL| Coordinate file name                                      __STD_INPUT__
+ GLOBAL| Method name                                                        CP2K
+ GLOBAL| Project name                        CH4_gxtb_kp_spglib_222_force_stress
+ GLOBAL| Run type                                                          DEBUG
+ GLOBAL| FFT library                                                       FFTW3
+ GLOBAL| Diagonalization library                                       ScaLAPACK
+ GLOBAL| Cholesky decomposition library                                ScaLAPACK
+ GLOBAL| DGEMM library                                                      BLAS
+ GLOBAL| Direct generalized diagonalization requested                          F
+ GLOBAL| Orthonormality check for eigenvectors                          DISABLED
+ GLOBAL| Matrix multiplication library                                 ScaLAPACK
+ GLOBAL| All-to-all communication in single precision                          F
+ GLOBAL| FFTs using library dependent lengths                                  F
+ GLOBAL| Grid backend                                                       AUTO
+ GLOBAL| Global print level                                               MEDIUM
+ GLOBAL| MPI I/O enabled                                                       T
+ GLOBAL| Total number of message passing processes                             1
+ GLOBAL| Number of distributed systems (nodes)                                 1
+ GLOBAL| Number of threads for this process                                    1
+ GLOBAL| This output is from process                                           0
+ GLOBAL| OpenMP stack size per thread (OMP_STACKSIZE)                    default
+ GLOBAL| CPU model name                                                  UNKNOWN
+ GLOBAL| CPUID                                                              2000
+
+ MEMORY| system memory details [Kb]
+ MEMORY|                        rank 0           min           max       average
+ MEMORY| MemTotal                    0             0             0             0
+ MEMORY| MemFree                     0             0             0             0
+ MEMORY| Buffers                     0             0             0             0
+ MEMORY| Cached                      0             0             0             0
+ MEMORY| Slab                        0             0             0             0
+ MEMORY| SReclaimable                0             0             0             0
+ MEMORY| MemLikelyFree               0             0             0             0
+
+
+ *** WARNING in environment.F:1095 :: FFT library FFTW3 is not available. ***
+ *** Trying FFT library FFTSG.                                            ***
+
+
+ *** Fundamental physical constants (SI units) ***
+
+ *** Literature: B. J. Mohr and B. N. Taylor,
+ ***             CODATA recommended values of the fundamental physical
+ ***             constants: 2006, Web Version 5.1
+ ***             http://physics.nist.gov/constants
+
+ Speed of light in vacuum [m/s]                             2.99792458000000E+08
+ Magnetic constant or permeability of vacuum [N/A**2]       1.25663706143592E-06
+ Electric constant or permittivity of vacuum [F/m]          8.85418781762039E-12
+ Planck constant (h) [J*s]                                  6.62606896000000E-34
+ Planck constant (h-bar) [J*s]                              1.05457162825177E-34
+ Elementary charge [C]                                      1.60217648700000E-19
+ Electron mass [kg]                                         9.10938215000000E-31
+ Electron g factor [ ]                                     -2.00231930436220E+00
+ Proton mass [kg]                                           1.67262163700000E-27
+ Fine-structure constant                                    7.29735253760000E-03
+ Rydberg constant [1/m]                                     1.09737315685270E+07
+ Avogadro constant [1/mol]                                  6.02214179000000E+23
+ Boltzmann constant [J/K]                                   1.38065040000000E-23
+ Atomic mass unit [kg]                                      1.66053878200000E-27
+ Bohr radius [m]                                            5.29177208590000E-11
+
+ *** Conversion factors ***
+
+ [u] -> [a.u.]                                              1.82288848426455E+03
+ [Angstrom] -> [Bohr] = [a.u.]                              1.88972613288564E+00
+ [a.u.] = [Bohr] -> [Angstrom]                              5.29177208590000E-01
+ [a.u.] -> [s]                                              2.41888432650478E-17
+ [a.u.] -> [fs]                                             2.41888432650478E-02
+ [a.u.] -> [J]                                              4.35974393937059E-18
+ [a.u.] -> [N]                                              8.23872205491840E-08
+ [a.u.] -> [K]                                              3.15774647902944E+05
+ [a.u.] -> [kJ/mol]                                         2.62549961709828E+03
+ [a.u.] -> [kcal/mol]                                       6.27509468713739E+02
+ [a.u.] -> [Pa]                                             2.94210107994716E+13
+ [a.u.] -> [bar]                                            2.94210107994716E+08
+ [a.u.] -> [atm]                                            2.90362800883016E+08
+ [a.u.] -> [eV]                                             2.72113838565563E+01
+ [a.u.] -> [Hz]                                             6.57968392072181E+15
+ [a.u.] -> [1/cm] (wave numbers)                            2.19474631370540E+05
+ [a.u./Bohr**2] -> [1/cm]                                   5.14048714338585E+03
+ 
+
+ CELL| Volume [angstrom^3]:                                           512.000000
+ CELL| Vector a [angstrom]:       8.000     0.000     0.000   |a| =     8.000000
+ CELL| Vector b [angstrom]:       0.000     8.000     0.000   |b| =     8.000000
+ CELL| Vector c [angstrom]:       0.000     0.000     8.000   |c| =     8.000000
+ CELL| Angle (b,c), alpha [degree]:                                    90.000000
+ CELL| Angle (a,c), beta  [degree]:                                    90.000000
+ CELL| Angle (a,b), gamma [degree]:                                    90.000000
+ CELL| Requested initial symmetry:                                         CUBIC
+ CELL| Numerically orthorhombic:                                             YES
+ CELL| Periodicity                                                           XYZ
+
+ CELL_REF| Volume [angstrom^3]:                                       512.000000
+ CELL_REF| Vector a [angstrom     8.000     0.000     0.000   |a| =     8.000000
+ CELL_REF| Vector b [angstrom     0.000     8.000     0.000   |b| =     8.000000
+ CELL_REF| Vector c [angstrom     0.000     0.000     8.000   |c| =     8.000000
+ CELL_REF| Angle (b,c), alpha [degree]:                                90.000000
+ CELL_REF| Angle (a,c), beta  [degree]:                                90.000000
+ CELL_REF| Angle (a,b), gamma [degree]:                                90.000000
+ CELL_REF| Requested initial symmetry:                                     CUBIC
+ CELL_REF| Numerically orthorhombic:                                         YES
+ CELL_REF| Periodicity                                                       XYZ
+
+ GENERATE|  Preliminary Number of Bonds generated:                             0
+ GENERATE|  Achieved consistency in connectivity generation.
+
+
+                  #####   #####        #     #   #     #       #          
+                 #     # #     #      #    ##### #     #   # #####  ####  
+                 #     # #           #       #   ###   #       #   #    # 
+                 #     #  #####     #        #   #  #  #   #   #   ###### 
+                 #   # #       #   #         #   #   # #   #   #   #      
+                 #    #  #     #  #          #   #  #  # # #   #    #   # 
+                  #### #  #####  #           #   ###   ##  #   #     ###  
+
+                                     g-xTB   
+                                 Version 0.0                       
+                            Johann V. Pototschnig                  
+
+                tblite provider: SAVE
+                tblite source revision: unknown
+                g-xTB support: enabled
+
+ xTB| Parameter file                                             xTB1_parameters
+ xTB| Basis expansion STO-NG                                                   6
+ xTB| Basis expansion STO-NG for Hydrogen                                      4
+ xTB| Repulsive pair potential accuracy                               0.1000E-09
+ xTB| Repulsive enhancement factor                                      0.000000
+ xTB| Halogen interaction potential                                            T
+ xTB| Halogen interaction potential cutoff radius                         20.000
+ xTB| Nonbonded interactions                                                   F
+ xTB| vdW potential type:                                              DFTD3(BJ)
+ xTB| D3 Dispersion: Parameter                                         dftd3.dat
+ xTB| Huckel constants ks kp kd                        1.850     2.250     2.000
+ xTB| Huckel constants ksp k2sh                                  2.080     2.850
+ xTB| Mataga-Nishimoto exponent                                            2.000
+ xTB| Repulsion potential exponent                                         1.500
+ xTB| Coordination number scaling kcn(s) kcn(p) kc     0.006    -0.003    -0.005
+ xTB| Electronegativity scaling                                           -0.007
+ xTB| Halogen potential scaling kxr kx2                          1.300     0.440
+ xTB| SCC mixer:                                                       AUTO
+ xTB| tblite accuracy:                                                 1.000E+00
+ xTB| tblite SCC mixer damping:                                            0.400
+ xTB| tblite SCC mixer iterations:                                           250
+ xTB| tblite SCC mixer memory:                                               250
+ xTB| tblite SCC mixer solver:                                         GVD
+ xTB| tblite SCC mixer omega0:                                         1.000E-02
+ xTB| tblite SCC mixer min weight:                                     1.000E+00
+ xTB| tblite SCC mixer max weight:                                     1.000E+05
+ xTB| tblite SCC mixer weight factor:                                  1.000E-02
+
+
+
+
+ ATOMIC KIND INFORMATION
+
+  1. Atomic kind: C                                     Number of atoms:       1
+
+     Orbital Basis Set                                                 C _STO-6G
+
+       Number of orbital shell sets:                                           2
+       Number of orbital shells:                                               2
+       Number of primitive Cartesian functions:                               12
+       Number of Cartesian basis functions:                                    4
+       Number of spherical basis functions:                                    4
+       Norm type:                                                              3
+
+       Normalised Cartesian orbitals:
+
+                        Set   Shell   Orbital            Exponent    Coefficient
+
+                          1       1    1s                2.208628      -1.157490
+                                                         1.917959       0.886555
+                                                         0.497153       0.232010
+                                                         0.192182       0.116485
+                                                         0.150531      -0.033296
+                                                         0.078189       0.019361
+
+                          2       1    2px              24.597336       0.464082
+                                                         6.488161       0.691437
+                                                         2.226359       0.612655
+                                                         0.776897       0.415112
+                                                         0.283425       0.113030
+                                                         0.098628       0.020433
+                          2       1    2py              24.597336       0.464082
+                                                         6.488161       0.691437
+                                                         2.226359       0.612655
+                                                         0.776897       0.415112
+                                                         0.283425       0.113030
+                                                         0.098628       0.020433
+                          2       1    2pz              24.597336       0.464082
+                                                         6.488161       0.691437
+                                                         2.226359       0.612655
+                                                         0.776897       0.415112
+                                                         0.283425       0.113030
+                                                         0.098628       0.020433
+
+     AE Potential information for                                         Carbon
+
+       Description:                                       Bare Coulomb Potential
+                                                             Valence charge only
+
+       Gaussian exponent of the core charge distribution:               3.373250
+       Electronic configuration (s p d ...):                       2   2   0   0
+
+  2. Atomic kind: H                                     Number of atoms:       4
+
+     Orbital Basis Set                                                 H _STO-8G
+
+       Number of orbital shell sets:                                           1
+       Number of orbital shells:                                               1
+       Number of primitive Cartesian functions:                                8
+       Number of Cartesian basis functions:                                    1
+       Number of spherical basis functions:                                    1
+       Norm type:                                                              3
+
+       Normalised Cartesian orbitals:
+
+                        Set   Shell   Orbital            Exponent    Coefficient
+
+                          1       1    1s              337.005012       0.032613
+                                                        53.310531       0.058991
+                                                        12.208253       0.102844
+                                                         3.418827       0.159923
+                                                         1.108790       0.193518
+                                                         0.478718       0.121328
+                                                         0.212137       0.085046
+                                                         0.069058       0.011171
+
+     AE Potential information for                                       Hydrogen
+
+       Description:                                       Bare Coulomb Potential
+                                                              Full atomic charge
+
+       Gaussian exponent of the core charge distribution:              12.500000
+       Electronic configuration (s p d ...):                       1   0   0   0
+
+
+ MOLECULE KIND INFORMATION
+
+
+ All atoms are their own molecule, skipping detailed information
+
+
+ TOTAL NUMBERS AND MAXIMUM NUMBERS
+
+  Total number of            - Atomic kinds:                                   2
+                             - Atoms:                                          5
+                             - Shell sets:                                     6
+                             - Shells:                                         6
+                             - Primitive Cartesian functions:                 44
+                             - Cartesian basis functions:                      8
+                             - Spherical basis functions:                      8
+
+  Maximum angular momentum of the orbital basis functions:                     1
+
+
+ MODULE QUICKSTEP: ATOMIC COORDINATES IN ANGSTROM
+
+   Atom Kind Element         X             Y             Z       Z(eff)     Mass
+      1    1 C     6      4.000000      4.000000      4.000000   4.0000  12.0107
+      2    2 H     1      4.692820      4.692820      4.692820   1.0000   1.0079
+      3    2 H     1      4.692820      3.307180      3.307180   1.0000   1.0079
+      4    2 H     1      3.307180      4.692820      3.307180   1.0000   1.0079
+      5    2 H     1      3.307180      3.307180      4.692820   1.0000   1.0079
+
+
+
+ SCF PARAMETERS         Density guess:                                     MOPAC
+                        --------------------------------------------------------
+                        max_scf:                                             300
+                        max_scf_history:                                       0
+                        max_diis:                                              4
+                        --------------------------------------------------------
+                        eps_scf:                                        1.00E-10
+                        eps_scf_history:                                0.00E+00
+                        eps_diis:                                       1.00E-01
+                        eps_eigval:                                     1.00E-05
+                        --------------------------------------------------------
+                        level_shift [a.u.]:                             0.000000
+                        added MOs                                         4    0
+                        --------------------------------------------------------
+                        Mixing method:                           DIRECT_P_MIXING
+                        --------------------------------------------------------
+                        Smear method:                                FERMI_DIRAC
+                        Electronic temperature [K]:                        300.0
+                        Electronic temperature [a.u.]:                  9.50E-04
+                        Accuracy threshold:                             1.00E-06
+                        --------------------------------------------------------
+                        No outer SCF
+
+ PW_GRID| Information for grid number                                          1
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          1
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P-43m
+       Point Group Symbol:                                                  -43m
+       Schoenflies Symbol:                                                  Td^1
+       Number of Symmetry Operations:                                         24
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             1
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      8
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -8
+          3  -0.25000   0.25000  -0.25000              1           1         -10
+          4  -0.25000   0.25000   0.25000              1           1          20
+          5   0.25000  -0.25000  -0.25000              1           1         -20
+          6   0.25000  -0.25000   0.25000              1           1          10
+          7   0.25000   0.25000  -0.25000              1           1           8
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    5    2    4
+          Rot=    3     1    5    4    3    2
+          Rot=    4     1    4    2    5    3
+          Rot=    5     1    3    2    5    4
+          Rot=    6     1    2    4    3    5
+          Rot=    7     1    4    5    2    3
+          Rot=    8     1    5    3    4    2
+          Rot=    9     1    2    4    5    3
+          Rot=   10     1    4    3    2    5
+          Rot=   11     1    3    5    4    2
+          Rot=   12     1    5    2    3    4
+          Rot=   13     1    4    2    3    5
+          Rot=   14     1    2    5    4    3
+          Rot=   15     1    5    3    2    4
+          Rot=   16     1    3    4    5    2
+          Rot=   17     1    2    5    3    4
+          Rot=   18     1    5    4    2    3
+          Rot=   19     1    4    3    5    2
+          Rot=   20     1    3    2    4    5
+          Rot=   21     1    5    2    4    3
+          Rot=   22     1    2    3    5    4
+          Rot=   23     1    3    4    2    5
+          Rot=   24     1    4    5    3    2
+
+ *******************************************************************************
+                                    Kpoints
+ *******************************************************************************
+ BRILLOUIN| K-point scheme                                        Monkhorst-Pack
+ BRILLOUIN| K-Point grid                                             2    2    2
+ BRILLOUIN| K-point symmetry accuracy                               0.100000E-07
+ BRILLOUIN| K-Point point group symmetrization                                ON
+ BRILLOUIN| Symmetry backend                                             SPGLIB
+ BRILLOUIN| Symmetry reduction method                                    SPGLIB
+ BRILLOUIN| Wavefunction type                                            COMPLEX
+ BRILLOUIN| List of Kpoints [2 Pi/Bohr]                                        1
+ BRILLOUIN| Number           Weight            X              Y              Z
+ BRILLOUIN|     1           1.00000       -0.25000       -0.25000       -0.25000
+ *******************************************************************************
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P-43m
+       Point Group Symbol:                                                  -43m
+       Schoenflies Symbol:                                                  Td^1
+       Number of Symmetry Operations:                                         24
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             1
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      8
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -8
+          3  -0.25000   0.25000  -0.25000              1           1         -10
+          4  -0.25000   0.25000   0.25000              1           1          20
+          5   0.25000  -0.25000  -0.25000              1           1         -20
+          6   0.25000  -0.25000   0.25000              1           1          10
+          7   0.25000   0.25000  -0.25000              1           1           8
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    5    2    4
+          Rot=    3     1    5    4    3    2
+          Rot=    4     1    4    2    5    3
+          Rot=    5     1    3    2    5    4
+          Rot=    6     1    2    4    3    5
+          Rot=    7     1    4    5    2    3
+          Rot=    8     1    5    3    4    2
+          Rot=    9     1    2    4    5    3
+          Rot=   10     1    4    3    2    5
+          Rot=   11     1    3    5    4    2
+          Rot=   12     1    5    2    3    4
+          Rot=   13     1    4    2    3    5
+          Rot=   14     1    2    5    4    3
+          Rot=   15     1    5    3    2    4
+          Rot=   16     1    3    4    5    2
+          Rot=   17     1    2    5    3    4
+          Rot=   18     1    5    4    2    3
+          Rot=   19     1    4    3    5    2
+          Rot=   20     1    3    2    4    5
+          Rot=   21     1    5    2    4    3
+          Rot=   22     1    2    3    5    4
+          Rot=   23     1    3    4    2    5
+          Rot=   24     1    4    5    3    2
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000781       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000008       -40.4737581592  0.00E+00
+    11 GXTB-FDIIS  0.10E+01    0.1     3.3271E-11       -40.4737581592 -1.42E-14
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743188
+  Repulsive potential energy:                                   0.37448426636228
+  Electrostatic energy:                                         0.01774355862812
+  Self-consistent dispersion energy:                           -0.00112258111387
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273198638282
+
+  Total energy:                                               -40.47375815918123
+  Total energy (extrapolated to T->0):                        -40.47375815918123
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159181230
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P-42m
+       Point Group Symbol:                                                  -42m
+       Schoenflies Symbol:                                                 D2d^1
+       Number of Symmetry Operations:                                          8
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             1
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      8
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -5
+          3  -0.25000   0.25000  -0.25000              1           1          -7
+          4  -0.25000   0.25000   0.25000              1           1           6
+          5   0.25000  -0.25000  -0.25000              1           1          -6
+          6   0.25000  -0.25000   0.25000              1           1           7
+          7   0.25000   0.25000  -0.25000              1           1           5
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    4    5    3    2
+          Rot=    3     1    3    2    5    4
+          Rot=    4     1    5    4    2    3
+          Rot=    5     1    5    4    3    2
+          Rot=    6     1    3    2    4    5
+          Rot=    7     1    4    5    2    3
+          Rot=    8     1    2    3    5    4
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          2
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1702
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          2
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979746       -40.4488090894 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788245       -40.4610419636 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671906549 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524413       -40.4725624650 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381037       -40.4737563094 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193785       -40.4737558906  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101930       -40.4737569894 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737569914 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000780       -40.4737569914 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000008       -40.4737569914  0.00E+00
+    11 GXTB-FDIIS  0.10E+01    0.1     1.8851E-11       -40.4737569914 -7.11E-15
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07153977226047
+  Repulsive potential energy:                                   0.37448025722474
+  Electrostatic energy:                                         0.01774301934627
+  Self-consistent dispersion energy:                           -0.00112258865697
+  Non-self consistent dispersion energy:                        0.00003895138934
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273126822512
+
+  Total energy:                                               -40.47375699143591
+  Total energy (extrapolated to T->0):                        -40.47375699143591
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.285999                     -0.285999
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473756991435913
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P-42m
+       Point Group Symbol:                                                  -42m
+       Schoenflies Symbol:                                                 D2d^1
+       Number of Symmetry Operations:                                          8
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             1
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      8
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -5
+          3  -0.25000   0.25000  -0.25000              1           1          -7
+          4  -0.25000   0.25000   0.25000              1           1           6
+          5   0.25000  -0.25000  -0.25000              1           1          -6
+          6   0.25000  -0.25000   0.25000              1           1           7
+          7   0.25000   0.25000  -0.25000              1           1           5
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    4    5    3    2
+          Rot=    3     1    3    2    5    4
+          Rot=    4     1    5    4    2    3
+          Rot=    5     1    5    4    3    2
+          Rot=    6     1    3    2    4    5
+          Rot=    7     1    4    5    2    3
+          Rot=    8     1    2    3    5    4
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          3
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1245
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          3
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82980019       -40.4488112657 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788268       -40.4610442392 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337900       -40.4671929703 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524385       -40.4725647667 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381055       -40.4737586448 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193801       -40.4737582258  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101941       -40.4737593249 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737593268 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000781       -40.4737593269 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000008       -40.4737593269 -7.11E-15
+    11 GXTB-FDIIS  0.10E+01    0.1     2.5996E-11       -40.4737593269  7.11E-15
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154338260303
+  Repulsive potential energy:                                   0.37448827552308
+  Electrostatic energy:                                         0.01774409791495
+  Self-consistent dispersion energy:                           -0.00112257357070
+  Non-self consistent dispersion energy:                        0.00003895084958
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273072836213
+
+  Total energy:                                               -40.47375932689125
+  Total energy (extrapolated to T->0):                        -40.47375932689125
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286003                     -0.286003
+       2     H          2                 0.928499                      0.071501
+       3     H          2                 0.928499                      0.071501
+       4     H          2                 0.928499                      0.071501
+       5     H          2                 0.928499                      0.071501
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473759326891255
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000   0.25000  -0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -4
+          3  -0.25000   0.25000  -0.25000              3           2           1
+          4  -0.25000   0.25000   0.25000              3           2          -3
+          5   0.25000  -0.25000  -0.25000              3           2           3
+          6   0.25000  -0.25000   0.25000              3           2          -1
+          7   0.25000   0.25000  -0.25000              1           1           4
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    5    4    3    2
+          Rot=    3     1    2    4    3    5
+          Rot=    4     1    5    3    4    2
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          4
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          4
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.2     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.2     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000781       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000008       -40.4737581592  0.00E+00
+    11 GXTB-FDIIS  0.10E+01    0.1     7.8386E-12       -40.4737581592  7.11E-15
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743265
+  Repulsive potential energy:                                   0.37448426637356
+  Electrostatic energy:                                         0.01774355862683
+  Self-consistent dispersion energy:                           -0.00112258111388
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122944240
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928499                      0.071501
+       4     H          2                 0.928499                      0.071501
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168547
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000   0.25000  -0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -3
+          3  -0.25000   0.25000  -0.25000              3           2           1
+          4  -0.25000   0.25000   0.25000              3           2          -4
+          5   0.25000  -0.25000  -0.25000              3           2           4
+          6   0.25000  -0.25000   0.25000              3           2          -1
+          7   0.25000   0.25000  -0.25000              1           1           3
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    5    4    3    2
+          Rot=    3     1    5    3    4    2
+          Rot=    4     1    2    4    3    5
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          5
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          5
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000780       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000009       -40.4737581592 -7.11E-15
+    11 GXTB-FDIIS  0.10E+01    0.1     4.6635E-12       -40.4737581592  0.00E+00
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743276
+  Repulsive potential energy:                                   0.37448426637356
+  Electrostatic energy:                                         0.01774355862698
+  Self-consistent dispersion energy:                           -0.00112258111388
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122944369
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928499                      0.071501
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928499                      0.071501
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168547
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000  -0.25000   0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              2           2           1
+          3  -0.25000   0.25000  -0.25000              1           1          -4
+          4  -0.25000   0.25000   0.25000              2           2          -3
+          5   0.25000  -0.25000  -0.25000              2           2           3
+          6   0.25000  -0.25000   0.25000              1           1           4
+          7   0.25000   0.25000  -0.25000              2           2          -1
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    4    5    2    3
+          Rot=    3     1    2    5    4    3
+          Rot=    4     1    4    3    2    5
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          6
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          6
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000778       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000011       -40.4737581592 -2.13E-14
+    11 GXTB-FDIIS  0.10E+01    0.1     2.1657E-11       -40.4737581592  0.00E+00
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743388
+  Repulsive potential energy:                                   0.37448426637359
+  Electrostatic energy:                                         0.01774355862856
+  Self-consistent dispersion energy:                           -0.00112258111385
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122945654
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928499                      0.071501
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928499                      0.071501
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168554
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000  -0.25000   0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              2           2           1
+          3  -0.25000   0.25000  -0.25000              1           1          -3
+          4  -0.25000   0.25000   0.25000              2           2          -4
+          5   0.25000  -0.25000  -0.25000              2           2           4
+          6   0.25000  -0.25000   0.25000              1           1           3
+          7   0.25000   0.25000  -0.25000              2           2          -1
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    4    5    2    3
+          Rot=    3     1    4    3    2    5
+          Rot=    4     1    2    5    4    3
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          7
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          7
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000776       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000013       -40.4737581592 -2.13E-14
+    11 GXTB-FDIIS  0.10E+01    0.1     2.0813E-11       -40.4737581592  7.11E-15
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743271
+  Repulsive potential energy:                                   0.37448426637356
+  Electrostatic energy:                                         0.01774355862692
+  Self-consistent dispersion energy:                           -0.00112258111388
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122944316
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928499                      0.071501
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928499                      0.071501
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168547
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000   0.25000  -0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -4
+          3  -0.25000   0.25000  -0.25000              3           2           1
+          4  -0.25000   0.25000   0.25000              3           2          -3
+          5   0.25000  -0.25000  -0.25000              3           2           3
+          6   0.25000  -0.25000   0.25000              3           2          -1
+          7   0.25000   0.25000  -0.25000              1           1           4
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    5    4    3    2
+          Rot=    3     1    2    4    3    5
+          Rot=    4     1    5    3    4    2
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          8
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          8
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000778       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000011       -40.4737581592 -1.42E-14
+    11 GXTB-FDIIS  0.10E+01    0.1     4.1278E-12       -40.4737581592  0.00E+00
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743327
+  Repulsive potential energy:                                   0.37448426637357
+  Electrostatic energy:                                         0.01774355862770
+  Self-consistent dispersion energy:                           -0.00112258111386
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122944956
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928499                      0.071501
+       4     H          2                 0.928499                      0.071501
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                     -0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168547
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000   0.25000  -0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -3
+          3  -0.25000   0.25000  -0.25000              3           2           1
+          4  -0.25000   0.25000   0.25000              3           2          -4
+          5   0.25000  -0.25000  -0.25000              3           2           4
+          6   0.25000  -0.25000   0.25000              3           2          -1
+          7   0.25000   0.25000  -0.25000              1           1           3
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    5    4    3    2
+          Rot=    3     1    5    3    4    2
+          Rot=    4     1    2    4    3    5
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          9
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          9
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000780       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000009       -40.4737581592 -7.11E-15
+    11 GXTB-FDIIS  0.10E+01    0.1     3.9105E-11       -40.4737581592  0.00E+00
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743229
+  Repulsive potential energy:                                   0.37448426637355
+  Electrostatic energy:                                         0.01774355862633
+  Self-consistent dispersion energy:                           -0.00112258111389
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122943833
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928499                      0.071501
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928499                      0.071501
+ # Total charge                           8.000000                     -0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168547
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P-42m
+       Point Group Symbol:                                                  -42m
+       Schoenflies Symbol:                                                 D2d^1
+       Number of Symmetry Operations:                                          8
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             1
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      8
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -5
+          3  -0.25000   0.25000  -0.25000              1           1          -6
+          4  -0.25000   0.25000   0.25000              1           1           7
+          5   0.25000  -0.25000  -0.25000              1           1          -7
+          6   0.25000  -0.25000   0.25000              1           1           6
+          7   0.25000   0.25000  -0.25000              1           1           5
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    4    5    2
+          Rot=    3     1    4    5    2    3
+          Rot=    4     1    5    2    3    4
+          Rot=    5     1    5    4    3    2
+          Rot=    6     1    4    3    2    5
+          Rot=    7     1    3    2    5    4
+          Rot=    8     1    2    5    4    3
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         10
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1702
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         10
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979746       -40.4488090894 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788245       -40.4610419636 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671906549 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524413       -40.4725624650 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381037       -40.4737563094 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193785       -40.4737558906  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101930       -40.4737569894 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737569914 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000775       -40.4737569914 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000013       -40.4737569914 -1.42E-14
+    11 GXTB-FDIIS  0.10E+01    0.1     1.0902E-11       -40.4737569914 -7.11E-15
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07153977226104
+  Repulsive potential energy:                                   0.37448025722476
+  Electrostatic energy:                                         0.01774301934707
+  Self-consistent dispersion energy:                           -0.00112258865696
+  Non-self consistent dispersion energy:                        0.00003895138934
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273126823164
+
+  Total energy:                                               -40.47375699143591
+  Total energy (extrapolated to T->0):                        -40.47375699143591
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.285999                     -0.285999
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473756991435913
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P-42m
+       Point Group Symbol:                                                  -42m
+       Schoenflies Symbol:                                                 D2d^1
+       Number of Symmetry Operations:                                          8
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             1
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      8
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -5
+          3  -0.25000   0.25000  -0.25000              1           1          -6
+          4  -0.25000   0.25000   0.25000              1           1           7
+          5   0.25000  -0.25000  -0.25000              1           1          -7
+          6   0.25000  -0.25000   0.25000              1           1           6
+          7   0.25000   0.25000  -0.25000              1           1           5
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    4    5    2
+          Rot=    3     1    4    5    2    3
+          Rot=    4     1    5    2    3    4
+          Rot=    5     1    5    4    3    2
+          Rot=    6     1    4    3    2    5
+          Rot=    7     1    3    2    5    4
+          Rot=    8     1    2    5    4    3
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         11
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1245
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         11
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82980019       -40.4488112657 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788268       -40.4610442392 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337900       -40.4671929703 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524385       -40.4725647667 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381055       -40.4737586448 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193801       -40.4737582258  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101941       -40.4737593249 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737593268 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000780       -40.4737593269 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000009       -40.4737593269 -7.11E-15
+    11 GXTB-FDIIS  0.10E+01    0.1     3.3524E-12       -40.4737593269 -7.11E-15
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154338260279
+  Repulsive potential energy:                                   0.37448827552307
+  Electrostatic energy:                                         0.01774409791461
+  Self-consistent dispersion energy:                           -0.00112257357071
+  Non-self consistent dispersion energy:                        0.00003895084958
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273072835938
+
+  Total energy:                                               -40.47375932689127
+  Total energy (extrapolated to T->0):                        -40.47375932689127
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286003                     -0.286003
+       2     H          2                 0.928499                      0.071501
+       3     H          2                 0.928499                      0.071501
+       4     H          2                 0.928499                      0.071501
+       5     H          2                 0.928499                      0.071501
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473759326891269
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000  -0.25000   0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              2           2           1
+          3  -0.25000   0.25000  -0.25000              2           2           3
+          4  -0.25000   0.25000   0.25000              1           1           4
+          5   0.25000  -0.25000  -0.25000              1           1          -4
+          6   0.25000  -0.25000   0.25000              2           2          -3
+          7   0.25000   0.25000  -0.25000              2           2          -1
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    2    5    4
+          Rot=    3     1    2    3    5    4
+          Rot=    4     1    3    2    4    5
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         12
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         12
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000780       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000009       -40.4737581592  0.00E+00
+    11 GXTB-FDIIS  0.10E+01    0.1     1.4621E-11       -40.4737581592  0.00E+00
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743179
+  Repulsive potential energy:                                   0.37448426637353
+  Electrostatic energy:                                         0.01774355862564
+  Self-consistent dispersion energy:                           -0.00112258111390
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122943270
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928499                      0.071501
+       5     H          2                 0.928499                      0.071501
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168547
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000  -0.25000   0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              2           2           1
+          3  -0.25000   0.25000  -0.25000              2           2           4
+          4  -0.25000   0.25000   0.25000              1           1           3
+          5   0.25000  -0.25000  -0.25000              1           1          -3
+          6   0.25000  -0.25000   0.25000              2           2          -4
+          7   0.25000   0.25000  -0.25000              2           2          -1
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    2    5    4
+          Rot=    3     1    3    2    4    5
+          Rot=    4     1    2    3    5    4
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         13
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         13
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000780       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000009       -40.4737581592  0.00E+00
+    11 GXTB-FDIIS  0.10E+01    0.1     2.4585E-11       -40.4737581592  0.00E+00
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743258
+  Repulsive potential energy:                                   0.37448426637355
+  Electrostatic energy:                                         0.01774355862673
+  Self-consistent dispersion energy:                           -0.00112258111388
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122944163
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928499                      0.071501
+       3     H          2                 0.928499                      0.071501
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168547
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000  -0.25000   0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              2           2           1
+          3  -0.25000   0.25000  -0.25000              1           1          -4
+          4  -0.25000   0.25000   0.25000              2           2          -3
+          5   0.25000  -0.25000  -0.25000              2           2           3
+          6   0.25000  -0.25000   0.25000              1           1           4
+          7   0.25000   0.25000  -0.25000              2           2          -1
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    4    5    2    3
+          Rot=    3     1    2    5    4    3
+          Rot=    4     1    4    3    2    5
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         14
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         14
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000777       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000011       -40.4737581592 -7.11E-15
+    11 GXTB-FDIIS  0.10E+01    0.1     2.5288E-12       -40.4737581592  0.00E+00
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743375
+  Repulsive potential energy:                                   0.37448426637359
+  Electrostatic energy:                                         0.01774355862838
+  Self-consistent dispersion energy:                           -0.00112258111385
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122945510
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928499                      0.071501
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928499                      0.071501
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168547
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000  -0.25000   0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              2           2           1
+          3  -0.25000   0.25000  -0.25000              1           1          -3
+          4  -0.25000   0.25000   0.25000              2           2          -4
+          5   0.25000  -0.25000  -0.25000              2           2           4
+          6   0.25000  -0.25000   0.25000              1           1           3
+          7   0.25000   0.25000  -0.25000              2           2          -1
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    4    5    2    3
+          Rot=    3     1    4    3    2    5
+          Rot=    4     1    2    5    4    3
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         15
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         15
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000781       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000008       -40.4737581592  7.11E-15
+    11 GXTB-FDIIS  0.10E+01    0.1     5.0455E-12       -40.4737581592 -7.11E-15
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743277
+  Repulsive potential energy:                                   0.37448426637356
+  Electrostatic energy:                                         0.01774355862700
+  Self-consistent dispersion energy:                           -0.00112258111387
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122944381
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928499                      0.071501
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928499                      0.071501
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168554
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000  -0.25000   0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              2           2           1
+          3  -0.25000   0.25000  -0.25000              2           2           3
+          4  -0.25000   0.25000   0.25000              1           1           4
+          5   0.25000  -0.25000  -0.25000              1           1          -4
+          6   0.25000  -0.25000   0.25000              2           2          -3
+          7   0.25000   0.25000  -0.25000              2           2          -1
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    2    5    4
+          Rot=    3     1    2    3    5    4
+          Rot=    4     1    3    2    4    5
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         16
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         16
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000777       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000011       -40.4737581592 -2.13E-14
+    11 GXTB-FDIIS  0.10E+01    0.1     1.8078E-11       -40.4737581592  7.11E-15
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743283
+  Repulsive potential energy:                                   0.37448426637356
+  Electrostatic energy:                                         0.01774355862709
+  Self-consistent dispersion energy:                           -0.00112258111387
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122944452
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928499                      0.071501
+       5     H          2                 0.928499                      0.071501
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168547
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                Cmm2
+       Point Group Symbol:                                                   mm2
+       Schoenflies Symbol:                                                C2v^11
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             2
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      4
+          2  -0.25000  -0.25000   0.25000                                      4
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              2           2           1
+          3  -0.25000   0.25000  -0.25000              2           2           4
+          4  -0.25000   0.25000   0.25000              1           1           3
+          5   0.25000  -0.25000  -0.25000              1           1          -3
+          6   0.25000  -0.25000   0.25000              2           2          -4
+          7   0.25000   0.25000  -0.25000              2           2          -1
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    2    5    4
+          Rot=    3     1    3    2    4    5
+          Rot=    4     1    2    3    5    4
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         17
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         17
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000779       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000010       -40.4737581592  0.00E+00
+    11 GXTB-FDIIS  0.10E+01    0.1     2.2591E-11       -40.4737581592 -1.42E-14
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743284
+  Repulsive potential energy:                                   0.37448426637356
+  Electrostatic energy:                                         0.01774355862711
+  Self-consistent dispersion energy:                           -0.00112258111387
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273122944469
+
+  Total energy:                                               -40.47375815916855
+  Total energy (extrapolated to T->0):                        -40.47375815916855
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928499                      0.071501
+       3     H          2                 0.928499                      0.071501
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                     -0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159168554
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P-42m
+       Point Group Symbol:                                                  -42m
+       Schoenflies Symbol:                                                 D2d^1
+       Number of Symmetry Operations:                                          8
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             1
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      8
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -8
+          3  -0.25000   0.25000  -0.25000              1           1          -7
+          4  -0.25000   0.25000   0.25000              1           1           5
+          5   0.25000  -0.25000  -0.25000              1           1          -5
+          6   0.25000  -0.25000   0.25000              1           1           7
+          7   0.25000   0.25000  -0.25000              1           1           8
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    5    2    4
+          Rot=    3     1    5    4    3    2
+          Rot=    4     1    4    2    5    3
+          Rot=    5     1    3    2    5    4
+          Rot=    6     1    2    4    3    5
+          Rot=    7     1    4    5    2    3
+          Rot=    8     1    5    3    4    2
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         18
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1702
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         18
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979746       -40.4488090894 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788245       -40.4610419636 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671906549 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524413       -40.4725624650 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381037       -40.4737563094 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193785       -40.4737558906  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101930       -40.4737569894 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737569914 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000780       -40.4737569914 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000008       -40.4737569914 -1.42E-14
+    11 GXTB-FDIIS  0.10E+01    0.1     3.0984E-11       -40.4737569914  7.11E-15
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07153977226111
+  Repulsive potential energy:                                   0.37448025722476
+  Electrostatic energy:                                         0.01774301934717
+  Self-consistent dispersion energy:                           -0.00112258865696
+  Non-self consistent dispersion energy:                        0.00003895138934
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273126823251
+
+  Total energy:                                               -40.47375699143591
+  Total energy (extrapolated to T->0):                        -40.47375699143591
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.285999                     -0.285999
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473756991435906
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P-42m
+       Point Group Symbol:                                                  -42m
+       Schoenflies Symbol:                                                 D2d^1
+       Number of Symmetry Operations:                                          8
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             1
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      8
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -8
+          3  -0.25000   0.25000  -0.25000              1           1          -7
+          4  -0.25000   0.25000   0.25000              1           1           5
+          5   0.25000  -0.25000  -0.25000              1           1          -5
+          6   0.25000  -0.25000   0.25000              1           1           7
+          7   0.25000   0.25000  -0.25000              1           1           8
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    5    2    4
+          Rot=    3     1    5    4    3    2
+          Rot=    4     1    4    2    5    3
+          Rot=    5     1    3    2    5    4
+          Rot=    6     1    2    4    3    5
+          Rot=    7     1    4    5    2    3
+          Rot=    8     1    5    3    4    2
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         19
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1245
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         19
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82980019       -40.4488112657 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788268       -40.4610442392 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337900       -40.4671929703 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524385       -40.4725647667 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381055       -40.4737586448 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193801       -40.4737582258  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101941       -40.4737593249 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737593268 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000777       -40.4737593269 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000012       -40.4737593269 -1.42E-14
+    11 GXTB-FDIIS  0.10E+01    0.1     3.3542E-11       -40.4737593269  0.00E+00
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154338260244
+  Repulsive potential energy:                                   0.37448827552306
+  Electrostatic energy:                                         0.01774409791412
+  Self-consistent dispersion energy:                           -0.00112257357072
+  Non-self consistent dispersion energy:                        0.00003895084958
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273072835533
+
+  Total energy:                                               -40.47375932689126
+  Total energy (extrapolated to T->0):                        -40.47375932689126
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286003                     -0.286003
+       2     H          2                 0.928499                      0.071501
+       3     H          2                 0.928499                      0.071501
+       4     H          2                 0.928499                      0.071501
+       5     H          2                 0.928499                      0.071501
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473759326891262
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P-43m
+       Point Group Symbol:                                                  -43m
+       Schoenflies Symbol:                                                  Td^1
+       Number of Symmetry Operations:                                         24
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             1
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      8
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -8
+          3  -0.25000   0.25000  -0.25000              1           1         -10
+          4  -0.25000   0.25000   0.25000              1           1          20
+          5   0.25000  -0.25000  -0.25000              1           1         -20
+          6   0.25000  -0.25000   0.25000              1           1          10
+          7   0.25000   0.25000  -0.25000              1           1           8
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    5    2    4
+          Rot=    3     1    5    4    3    2
+          Rot=    4     1    4    2    5    3
+          Rot=    5     1    3    2    5    4
+          Rot=    6     1    2    4    3    5
+          Rot=    7     1    4    5    2    3
+          Rot=    8     1    5    3    4    2
+          Rot=    9     1    2    4    5    3
+          Rot=   10     1    4    3    2    5
+          Rot=   11     1    3    5    4    2
+          Rot=   12     1    5    2    3    4
+          Rot=   13     1    4    2    3    5
+          Rot=   14     1    2    5    4    3
+          Rot=   15     1    5    3    2    4
+          Rot=   16     1    3    4    5    2
+          Rot=   17     1    2    5    3    4
+          Rot=   18     1    5    4    2    3
+          Rot=   19     1    4    3    5    2
+          Rot=   20     1    3    2    4    5
+          Rot=   21     1    5    2    4    3
+          Rot=   22     1    2    3    5    4
+          Rot=   23     1    3    4    2    5
+          Rot=   24     1    4    5    3    2
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         20
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       3                Points:           8
+ PW_GRID|   Bounds   2             -4       3                Points:           8
+ PW_GRID|   Bounds   3             -4       3                Points:           8
+ PW_GRID| Volume element (a.u.^3)   6.748         Volume (a.u.^3)      3455.1473
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         20
+ RS_GRID|   Bounds   1             -4       3                Points:           8
+ RS_GRID|   Bounds   2             -4       3                Points:           8
+ RS_GRID|   Bounds   3             -4       3                Points:           8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000781       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000008       -40.4737581592  0.00E+00
+    11 GXTB-FDIIS  0.10E+01    0.1     3.3271E-11       -40.4737581592 -1.42E-14
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743188
+  Repulsive potential energy:                                   0.37448426636228
+  Electrostatic energy:                                         0.01774355862812
+  Self-consistent dispersion energy:                           -0.00112258111387
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273198638282
+
+  Total energy:                                               -40.47375815918123
+  Total energy (extrapolated to T->0):                        -40.47375815918123
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159181230
+ DEBUG| Numerical pv_virial [a.u.]
+ DEBUG|                  -0.176534839679      0.000000000000      0.000000000000
+ DEBUG|                   0.000000000000     -0.176534840753     -0.000000000269
+ DEBUG|                   0.000000000000     -0.000000000269     -0.176534840753
+
+ DEBUG| Analytical pv_virial [a.u.]
+ DEBUG|                  -0.176534840474      0.000000000000     -0.000000000000
+ DEBUG|                   0.000000000000     -0.176534840474     -0.000000000000
+ DEBUG|                  -0.000000000000     -0.000000000000     -0.176534840474
+
+ DEBUG| Difference pv_virial [a.u.]
+ DEBUG|                   0.000000000795     -0.000000000000      0.000000000000
+ DEBUG|                  -0.000000000000     -0.000000000279     -0.000000000269
+ DEBUG|                   0.000000000000     -0.000000000269     -0.000000000279
+ DEBUG| Sum of differences                                        0.000000001890
+
+ DEBUG| Relative error pv_virial
+ DEBUG| Threshold value for error check [a.u.]                    1.00000000E-05
+ DEBUG|                          -0.00 %                 - %                 - %
+ DEBUG|                              - %              0.00 %                 - %
+ DEBUG|                              - %                 - %              0.00 %
+ DEBUG| Maximum accepted error                                            0.20 %
+
+
+ MODULE DEBUG: ATOMIC COORDINATES IN ANGSTROM
+
+   Atom Kind Element         X             Y             Z       Z(eff)     Mass
+      1    1 C     6      4.000000      4.000000      4.000000   4.0000  12.0107
+      2    2 H     1      4.692820      4.692820      4.692820   1.0000   1.0079
+      3    2 H     1      4.692820      3.307180      3.307180   1.0000   1.0079
+      4    2 H     1      3.307180      4.692820      3.307180   1.0000   1.0079
+      5    2 H     1      3.307180      3.307180      4.692820   1.0000   1.0079
+
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P-43m
+       Point Group Symbol:                                                  -43m
+       Schoenflies Symbol:                                                  Td^1
+       Number of Symmetry Operations:                                         24
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             1
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      8
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              1           1          -8
+          3  -0.25000   0.25000  -0.25000              1           1         -10
+          4  -0.25000   0.25000   0.25000              1           1          20
+          5   0.25000  -0.25000  -0.25000              1           1         -20
+          6   0.25000  -0.25000   0.25000              1           1          10
+          7   0.25000   0.25000  -0.25000              1           1           8
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    3    5    2    4
+          Rot=    3     1    5    4    3    2
+          Rot=    4     1    4    2    5    3
+          Rot=    5     1    3    2    5    4
+          Rot=    6     1    2    4    3    5
+          Rot=    7     1    4    5    2    3
+          Rot=    8     1    5    3    4    2
+          Rot=    9     1    2    4    5    3
+          Rot=   10     1    4    3    2    5
+          Rot=   11     1    3    5    4    2
+          Rot=   12     1    5    2    3    4
+          Rot=   13     1    4    2    3    5
+          Rot=   14     1    2    5    4    3
+          Rot=   15     1    5    3    2    4
+          Rot=   16     1    3    4    5    2
+          Rot=   17     1    2    5    3    4
+          Rot=   18     1    5    4    2    3
+          Rot=   19     1    4    3    5    2
+          Rot=   20     1    3    2    4    5
+          Rot=   21     1    5    2    4    3
+          Rot=   22     1    2    3    5    4
+          Rot=   23     1    3    4    2    5
+          Rot=   24     1    4    5    3    2
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979700       -40.4488101775 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788247       -40.4610431014 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337886       -40.4671918126 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000781       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000008       -40.4737581592  0.00E+00
+    11 GXTB-FDIIS  0.10E+01    0.1     3.3271E-11       -40.4737581592 -1.42E-14
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154157743188
+  Repulsive potential energy:                                   0.37448426636228
+  Electrostatic energy:                                         0.01774355862812
+  Self-consistent dispersion energy:                           -0.00112258111387
+  Non-self consistent dispersion energy:                        0.00003895111946
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21273198638282
+
+  Total energy:                                               -40.47375815918123
+  Total energy (extrapolated to T->0):                        -40.47375815918123
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286001                     -0.286001
+       2     H          2                 0.928500                      0.071500
+       3     H          2                 0.928500                      0.071500
+       4     H          2                 0.928500                      0.071500
+       5     H          2                 0.928500                      0.071500
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473758159181230
+
+
+ MODULE DEBUG: ATOMIC COORDINATES IN ANGSTROM
+
+   Atom Kind Element         X             Y             Z       Z(eff)     Mass
+      1    1 C     6      4.000000      4.000000      4.000000   4.0000  12.0107
+      2    2 H     1      4.692873      4.692820      4.692820   1.0000   1.0079
+      3    2 H     1      4.692820      3.307180      3.307180   1.0000   1.0079
+      4    2 H     1      3.307180      4.692820      3.307180   1.0000   1.0079
+      5    2 H     1      3.307180      3.307180      4.692820   1.0000   1.0079
+
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                  Cm
+       Point Group Symbol:                                                     m
+       Schoenflies Symbol:                                                  Cs^3
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             3
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      2
+          2  -0.25000  -0.25000   0.25000                                      4
+          3  -0.25000   0.25000   0.25000                                      2
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              2           2           1
+          3  -0.25000   0.25000  -0.25000              2           2           2
+          4  -0.25000   0.25000   0.25000              4           3           1
+          5   0.25000  -0.25000  -0.25000              4           3          -1
+          6   0.25000  -0.25000   0.25000              2           2          -2
+          7   0.25000   0.25000  -0.25000              2           2          -1
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    2    3    5    4
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82979833       -40.4488072585 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788236       -40.4610400113 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337884       -40.4671886516 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524501       -40.4725604680 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381011       -40.4737542741 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193770       -40.4737538554  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101920       -40.4737549540 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003682       -40.4737549560 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000778       -40.4737549561 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000010       -40.4737549561 -1.42E-14
+    11 GXTB-FDIIS  0.10E+01    0.1     8.7803E-11       -40.4737549561  1.42E-14
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07153647370982
+  Repulsive potential energy:                                   0.37447269416397
+  Electrostatic energy:                                         0.01774211295903
+  Self-consistent dispersion energy:                           -0.00112260425290
+  Non-self consistent dispersion energy:                        0.00003895194201
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21272884249183
+
+  Total energy:                                               -40.47375495607866
+  Total energy (extrapolated to T->0):                        -40.47375495607866
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.285996                     -0.285996
+       2     H          2                 0.928506                      0.071494
+       3     H          2                 0.928501                      0.071499
+       4     H          2                 0.928499                      0.071501
+       5     H          2                 0.928499                      0.071501
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473754956078665
+
+
+ MODULE DEBUG: ATOMIC COORDINATES IN ANGSTROM
+
+   Atom Kind Element         X             Y             Z       Z(eff)     Mass
+      1    1 C     6      4.000000      4.000000      4.000000   4.0000  12.0107
+      2    2 H     1      4.692767      4.692820      4.692820   1.0000   1.0079
+      3    2 H     1      4.692820      3.307180      3.307180   1.0000   1.0079
+      4    2 H     1      3.307180      4.692820      3.307180   1.0000   1.0079
+      5    2 H     1      3.307180      3.307180      4.692820   1.0000   1.0079
+
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                  Cm
+       Point Group Symbol:                                                     m
+       Schoenflies Symbol:                                                  Cs^3
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             3
+                   Wavevector Basis                                       Weight
+          1  -0.25000  -0.25000  -0.25000                                      2
+          2  -0.25000  -0.25000   0.25000                                      4
+          3  -0.25000   0.25000   0.25000                                      2
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1  -0.25000  -0.25000  -0.25000              1           1           1
+          2  -0.25000  -0.25000   0.25000              2           2           1
+          3  -0.25000   0.25000  -0.25000              2           2           2
+          4  -0.25000   0.25000   0.25000              4           3           1
+          5   0.25000  -0.25000  -0.25000              4           3          -1
+          6   0.25000  -0.25000   0.25000              2           2          -2
+          7   0.25000   0.25000  -0.25000              2           2          -1
+          8   0.25000   0.25000   0.25000              1           1          -1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5
+          Rot=    2     1    2    3    5    4
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 8
+
+ Number of orbital functions:                                                  8
+ Number of independent orbital functions:                                      8
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.1     0.82980623       -40.4488130956 -4.04E+01
+     2 GXTB-Simple 0.20E+00    0.1     0.04788314       -40.4610461906 -1.22E-02
+     3 GXTB-Simple 0.20E+00    0.1     0.03337932       -40.4671949726 -6.15E-03
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524422       -40.4725667628 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381081       -40.4737606791 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193818       -40.4737602600  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101952       -40.4737613593 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737613613 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000779       -40.4737613613 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000010       -40.4737613613 -7.11E-15
+    11 GXTB-FDIIS  0.10E+01    0.1     5.6661E-11       -40.4737613613  0.00E+00
+
+  *** SCF run converged in    11 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.07154668108806
+  Repulsive potential energy:                                   0.37449583931327
+  Electrostatic energy:                                         0.01774500416055
+  Self-consistent dispersion energy:                           -0.00112255797595
+  Non-self consistent dispersion energy:                        0.00003895029687
+  Correction for halogen bonding:                               0.00000000000000
+  Electronic entropic energy:                                  -0.00000000000000
+  Fermi energy:                                                -0.21272238530969
+
+  Total energy:                                               -40.47376136133535
+  Total energy (extrapolated to T->0):                        -40.47376136133535
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     C          1                 4.286006                     -0.286006
+       2     H          2                 0.928494                      0.071506
+       3     H          2                 0.928499                      0.071501
+       4     H          2                 0.928501                      0.071499
+       5     H          2                 0.928501                      0.071499
+ # Total charge                           8.000000                      0.000000
+
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -40.473761361335349
+
+ DEBUG| Atom    E(x + 0.0001)    E(x - 0.0001)     f(numerical)    f(analytical)
+ DEBUG|    2     -40.47375496     -40.47376136      -0.03202628      -0.03202628
+
+ DEBUG| Atom  Coordinate   f(numerical)   f(analytical)   Difference   Error [%]
+ DEBUG|    2      x         -0.03202628     -0.03202628  -0.00000000       -0.00
+
+ DEBUG|======================== BEGIN OF SUMMARY ===============================
+ DEBUG| Atom  Coordinate   f(numerical)   f(analytical)   Difference   Error [%]
+ DEBUG|    2      x         -0.03202628     -0.03202628  -0.00000000       -0.00
+ DEBUG| Sum of differences:                               0.00000000        0.00
+ DEBUG|======================== END OF SUMMARY =================================
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                DBCSR STATISTICS                             -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ COUNTER                                    TOTAL       BLAS       SMM       ACC
+ flops inhomo. stacks                           0       0.0%      0.0%      0.0%
+ flops total                         0.000000E+00       0.0%      0.0%      0.0%
+ flops max/rank                      0.000000E+00       0.0%      0.0%      0.0%
+ matmuls inhomo. stacks                         0       0.0%      0.0%      0.0%
+ matmuls total                                  0       0.0%      0.0%      0.0%
+ number of processed stacks                     0       0.0%      0.0%      0.0%
+ average stack size                                     0.0       0.0       0.0
+ marketing flops                     0.000000E+00
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                      DBCSR MESSAGE PASSING PERFORMANCE                      -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Bcast                1                     12.
+ MP_Allreduce           19                     21.
+ MP_Alltoall         36560                    572.
+ -------------------------------------------------------------------------------
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                          OFFLOAD MEMPOOL STATISTICS                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ Memory consumption                Number of allocations  Used [MiB]  Size [MiB]
+ Host                                                  1           0           0
+ -------------------------------------------------------------------------------
+
+ MEMORY| Estimated peak process memory [MiB]                                   0
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                         MESSAGE PASSING PERFORMANCE                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Group               20
+ MP_Bcast            37789                      7.
+ MP_Allreduce      2634468                     72.
+ MP_Sync                20
+ MP_Wait             31280
+ MP_ISend            43792                     79.
+ MP_IRecv            43792                     79.
+ -------------------------------------------------------------------------------
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                           R E F E R E N C E S                               -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ 
+ CP2K version 2026.1 (Development Version), the CP2K developers group (2026).
+ CP2K is freely available from https://www.cp2k.org/ .
+ 
+ M. Iannuzzi, J. Wilhelm, F. Stein, A. Bussy, H. Elgabarty, D. Golze, A. Hehn, 
+ M. Graml, S. Marek, B. Sertcan Gökmen, C. Schran, H. Forbert, R. Z. 
+ Khaliullin, A. Kozhevnikov, M. Taillefumier, R. Meli, V. V. Rybkin, M. Brehm, 
+ R. Schade, O. Schütt, J. V. Pototschnig, H. Mirhosseini, A. Knüpfer, D. Marx, 
+ M. Krack, J. Hutter, T. D. Kühne.
+ J. Phys. Chem. B 130, 1237-1310 (2026).
+ The CP2K Program Package Made Simple.
+ https://doi.org/10.1021/acs.jpcb.5c05851
+
+ A. Katbashev, M. Stahn, T. Rose, V. Alizadeh, M. Friede, C. Plett, P. 
+ Steinbach, S. Ehlert.
+ J. Phys. Chem. A 129, 2667-2682 (2025).
+ Overview on Building Blocks and Applications of Efficient and Robust Extended 
+ Tight Binding.
+ https://doi.org/10.1021/acs.jpca.4c08263
+
+ T. D. Kühne, M. Iannuzzi, M. Del Ben, V. V. Rybkin, P. Seewald, F. Stein, T. 
+ Laino, R. Z. Khaliullin, O. Schütt, F. Schiffmann, D. Golze, J. Wilhelm, S. 
+ Chulkov, M. H. Bani-Hashemian, V. Weber, U. Borstnik, M. Taillefumier, A. S. 
+ Jakobovits, A. Lazzaro, H. Pabst, T. Müller, R. Schade, M. Guidon, S. 
+ Andermatt, N. Holmberg, G. K. Schenter, A. Hehn, A. Bussy, F. Belleflamme, G. 
+ Tabacchi, A. Glöß, M. Lass, I. Bethune, C. J. Mundy, C. Plessl, M. Watkins, 
+ J. VandeVondele, M. Krack, J. Hutter.
+ J. Chem. Phys. 152, 194103 (2020).
+ CP2K: An electronic structure and molecular dynamics software package - 
+ Quickstep: Efficient and accurate electronic structure calculations.
+ https://doi.org/10.1063/5.0007045
+
+ P. Pracht, E. Caldeweyher, S. Ehlert, S. Grimme.
+ ChemRxiv, (2019).
+ A Robust Non-Self-Consistent Tight-Binding Quantum Chemistry Method for large 
+ Molecules.
+ https://doi.org/10.26434/chemrxiv.8326202.v1
+
+ A. Togo, I. Tanaka.
+ arXiv, 1808.01590 (2018).
+ Spglib : a software library for crystal symmetry search.
+
+ S. Grimme, C. Bannwarth, P. Shushkov.
+ J. Chem. Theory Comput. 13, 1989 (2017).
+ A Robust and Accurate Tight-Binding Quantum Chemical Method for Structures, 
+ Vibrational Frequencies, and Noncovalent Interactions of Large Molecular 
+ Systems Parametrized for All spd-Block Elements (Z = 1-86).
+ https://doi.org/10.1021/acs.jctc.7b00118
+
+ O. Schuett, P. Messmer, J. Hutter, J. VandeVondele.
+ Electronic Structure Calculations on Graphics Processing Units, 173-190 (2016).
+ GPU-Accelerated Sparse Matrix-Matrix Multiplication for Linear Scaling Density 
+ Functional Theory.
+ https://doi.org/10.1002/9781118670712.ch8
+
+ U. Borstnik, J. VandeVondele, V. Weber, J. Hutter.
+ Parallel Comput. 40, 47-58 (2014).
+ Sparse matrix multiplication: The distributed block-compressed sparse row 
+ library.
+ https://doi.org/10.1016/j.parco.2014.03.012
+
+ M. Frigo, S. G. Johnson.
+ Proc. IEEE 93, 216-231 (2005).
+ The design and implementation of FFTW3.
+ https://doi.org/10.1109/JPROC.2004.840301
+
+ N. D. Mermin.
+ Phys. Rev. 137, A1441-A1443 (1965).
+ Thermal Properties of the Inhomogeneous Electron Gas.
+ https://doi.org/10.1103/PhysRev.137.A1441
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                T I M I N G                                  -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ SUBROUTINE                       CALLS  ASD         SELF TIME        TOTAL TIME
+                                MAXIMUM       AVERAGE  MAXIMUM  AVERAGE  MAXIMUM
+ CP2K                                 1  1.0    0.007    0.007   41.344   41.344
+ qs_energies                         23  2.1    0.010    0.010   40.471   40.471
+ scf_env_do_scf                      23  3.1    0.000    0.000   31.423   31.423
+ scf_env_do_scf_inner_loop          253  4.1    2.313    2.313   31.423   31.423
+ rskp_transform                   69763  6.6   21.858   21.858   21.858   21.858
+ qs_ks_update_qs_env                274  4.9    0.001    0.001   16.473   16.473
+ rebuild_ks_matrix                  276  5.9    0.000    0.000   16.294   16.294
+ build_tblite_ks_matrix             276  6.9    3.460    3.460   16.294   16.294
+ build_tblite_matrices               25  4.0    0.775    0.775    7.585    7.585
+ qs_energies_init_hamiltonians       23  3.1    0.002    0.002    7.325    7.325
+ cp_dbcsr_alloc_block_from_nbl   236326  5.0    6.511    6.511    6.936    6.936
+ qs_forces                            2  2.0    0.000    0.000    4.314    4.314
+ dbcsr_iterator_start           2651171  6.8    1.313    1.313    1.664    1.664
+ qs_scf_new_mos_kp                  253  5.1    0.001    0.001    1.535    1.535
+ do_general_diag_kp                 253  6.1    0.048    0.048    1.535    1.535
+ dbcsr_iterator_stop            2651171  6.8    0.971    0.971    1.272    1.272
+ -------------------------------------------------------------------------------
+
+ The number of warnings for this run is : 1
+ 
+ -------------------------------------------------------------------------------
+  **** **** ******  **  PROGRAM ENDED AT                 2026-07-16 17:44:55.980
+ ***** ** ***  *** **   PROGRAM RAN ON            MacBook-Pro-von-Thomas-3.local
+ **    ****   ******    PROGRAM RAN BY                                   tkuehne
+ ***** **    ** ** **   PROGRAM PROCESS ID                                 87711
+  **** **  *******  **  PROGRAM STOPPED IN /private/tmp/gxtb_batch_runtime/spgli
+                                           b_deriv_b1
