@@ -73,21 +73,36 @@ def build_result() -> dict[str, object]:
         ),
     )
     storage = {
-        "reduced_no_full_mesh_assertion_count": test_source.count(
+        "reduced_no_retained_full_k_space_density_overlap_assertion_count": test_source.count(
             "if (cp2k_exchange_stream_has_full_mesh_storage("
         ),
-        "oracle_full_mesh_assertion_count": test_source.count(
+        "oracle_retained_full_k_space_density_overlap_assertion_count": test_source.count(
             "if (.not.cp2k_exchange_stream_has_full_mesh_storage("
         ),
         "query_implementation_present": (
             "has_storage = allocated(stream%density) .or. allocated(stream%overlap)"
             in compat_source
         ),
+        "query_scope": "stream%density and stream%overlap allocations only",
+        "not_measured": [
+            "stream%amat_r",
+            "stream%cmat_r",
+            "stream%vmat_r",
+            "cache%bvk_phase_forward",
+            "cache%bvk_phase_inverse",
+            "total_process memory",
+        ],
     }
     storage["passed"] = (
         runtime_passed
-        and storage["reduced_no_full_mesh_assertion_count"] >= 5
-        and storage["oracle_full_mesh_assertion_count"] >= 1
+        and storage[
+            "reduced_no_retained_full_k_space_density_overlap_assertion_count"
+        ]
+        >= 5
+        and storage[
+            "oracle_retained_full_k_space_density_overlap_assertion_count"
+        ]
+        >= 1
         and storage["query_implementation_present"]
     )
     negative_recovery = {
@@ -129,7 +144,7 @@ def build_result() -> dict[str, object]:
     historical_passed = re.findall(r"\.\.\.\s+(\S+) \[PASSED\]", historical_log)
     return {
         "schema_version": 1,
-        "component": "save-tblite-provider-cache-and-bounded-memory-forward-stream",
+        "component": "save-tblite-provider-cache-and-matrix-lean-forward-stream",
         "oracle": "unchanged-complete-mesh-and-dense-transform-provider-path",
         "focused_runtime": {
             "command": (RAW / "command.txt").read_text().strip(),
@@ -146,15 +161,28 @@ def build_result() -> dict[str, object]:
             "status": "passed" if current_passed else "failed",
             "markers": cache_markers,
         },
-        "bounded_memory_forward_stream": {
+        "matrix_lean_forward_stream": {
             "status": "passed" if current_passed else "failed",
             "observables": ["energy", "shell_potential", "fock"],
+            "classification": (
+                "no retained full-k-space density/overlap arrays; not a "
+                "bounded-memory implementation"
+            ),
             "markers": forward_markers,
-            "storage_query": storage,
+            "k_space_input_storage_query": storage,
             "negative_and_recovery_tests": negative_recovery,
             "order_twist_and_large_mesh": order_and_mesh,
         },
         "not_qualified": {
+            "true_bounded_memory_r_image_batching": {
+                "status": "implementation_in_progress",
+                "evidence": (
+                    "Reduced forward mode still retains three nao x nao x Nk x nspin "
+                    "BvK-image tensors (amat_r, cmat_r, vmat_r) and the cache retains "
+                    "two dense Nk x Nk phase tables. R/image batching and batched or "
+                    "on-demand phases are not implemented."
+                ),
+            },
             "reduced_memory_reverse_stream": {
                 "status": "implementation_in_progress",
                 "evidence": (
@@ -186,8 +214,10 @@ def build_result() -> dict[str, object]:
         },
         "all_scoped_gates_passed": current_passed,
         "scope_note": (
-            "Only the provider cache/planner and bounded-memory forward stream are "
-            "qualified. Reduced-memory reverse and actual CP2K integration remain in "
+            "Only the provider cache/planner and matrix-lean forward stream are "
+            "qualified. The storage query proves only that full-k-space density and "
+            "overlap input arrays are not retained. True bounded-memory R/image "
+            "batching, reduced-memory reverse, and actual CP2K integration remain in "
             "progress."
         ),
     }
@@ -195,20 +225,22 @@ def build_result() -> dict[str, object]:
 
 def render_text(result: dict[str, object]) -> str:
     runtime = result["focused_runtime"]
-    forward = result["bounded_memory_forward_stream"]
-    storage = forward["storage_query"]
+    forward = result["matrix_lean_forward_stream"]
+    storage = forward["k_space_input_storage_query"]
     large = forward["order_twist_and_large_mesh"]
     lines = [
-        "SAVE_TBLITE_PROVIDER_FORWARD_QUALIFICATION",
+        "SAVE_TBLITE_PROVIDER_MATRIX_LEAN_FORWARD_QUALIFICATION",
         f"test\t{runtime['test']}",
         f"returncode\t{runtime['returncode']}",
         f"provider_cache_planner\t{result['provider_cache_planner']['status']}",
-        f"bounded_memory_forward_stream\t{forward['status']}",
-        f"reduced_no_full_mesh_queries\t{storage['reduced_no_full_mesh_assertion_count']}",
-        f"oracle_full_mesh_queries\t{storage['oracle_full_mesh_assertion_count']}",
+        f"matrix_lean_forward_stream\t{forward['status']}",
+        "storage_query_scope\tfull-k-space density/overlap arrays only",
+        f"reduced_no_retained_kspace_input_queries\t{storage['reduced_no_retained_full_k_space_density_overlap_assertion_count']}",
+        f"oracle_retained_kspace_input_queries\t{storage['oracle_retained_full_k_space_density_overlap_assertion_count']}",
         f"large_mesh\t{'x'.join(str(value) for value in large['mesh'])}",
         f"negative_recovery\t{str(forward['negative_and_recovery_tests']['passed']).lower()}",
         f"twist_permutation\t{str(large['passed']).lower()}",
+        "true_bounded_memory_r_image_batching\timplementation_in_progress",
         "reduced_memory_reverse_stream\timplementation_in_progress",
         "cp2k_consumer_integration\timplementation_in_progress",
         f"ALL_SCOPED_GATES_PASSED\t{str(result['all_scoped_gates_passed']).lower()}",

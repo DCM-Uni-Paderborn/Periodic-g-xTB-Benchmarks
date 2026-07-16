@@ -64,6 +64,10 @@ def test_cp2k_block_helper_status_is_scoped_conservatively():
 
     assert modules["cp2k_block_expansion_foldback_helpers"]["status"] == "passed"
     assert modules["streamed_symmetry_stars"]["status"] == "implementation_in_progress"
+    evidence = modules["provider_matrix_lean_forward_stream"]["current_evidence"]
+    assert "not a bounded-memory implementation" in evidence
+    assert "amat_r, cmat_r and vmat_r" in evidence
+    assert "two dense Nk x Nk phase tables" in evidence
     assert "full-array oracle" in modules["cp2k_block_expansion_foldback_helpers"][
         "current_evidence"
     ]
@@ -156,7 +160,11 @@ def test_provider_forward_status_is_scoped_conservatively():
     modules = {entry["id"]: entry for entry in matrix["modules"]}
 
     assert modules["regular_grid_bvk_cache"]["status"] == "passed"
-    assert modules["provider_bounded_memory_forward_stream"]["status"] == "passed"
+    assert modules["provider_matrix_lean_forward_stream"]["status"] == "passed"
+    assert (
+        modules["provider_true_bounded_memory_r_image_batching"]["status"]
+        == "implementation_in_progress"
+    )
     assert (
         modules["provider_reduced_memory_reverse_stream"]["status"]
         == "implementation_in_progress"
@@ -203,15 +211,28 @@ def test_provider_forward_summary_is_reproducible():
     result = json.loads(generated_json)
     assert result["all_scoped_gates_passed"] is True
     assert result["provider_cache_planner"]["status"] == "passed"
-    assert result["bounded_memory_forward_stream"]["status"] == "passed"
+    assert result["matrix_lean_forward_stream"]["status"] == "passed"
     assert (
-        result["bounded_memory_forward_stream"]["storage_query"]
-        ["reduced_no_full_mesh_assertion_count"]
+        result["matrix_lean_forward_stream"]["k_space_input_storage_query"]
+        ["reduced_no_retained_full_k_space_density_overlap_assertion_count"]
         == 6
     )
-    assert result["bounded_memory_forward_stream"]["order_twist_and_large_mesh"][
+    assert result["matrix_lean_forward_stream"]["order_twist_and_large_mesh"][
         "mesh"
     ] == [9, 9, 1]
+    assert result["matrix_lean_forward_stream"]["k_space_input_storage_query"][
+        "query_scope"
+    ] == "stream%density and stream%overlap allocations only"
+    assert "stream%amat_r" in result["matrix_lean_forward_stream"][
+        "k_space_input_storage_query"
+    ]["not_measured"]
+    assert "cache%bvk_phase_inverse" in result["matrix_lean_forward_stream"][
+        "k_space_input_storage_query"
+    ]["not_measured"]
+    assert (
+        result["not_qualified"]["true_bounded_memory_r_image_batching"]["status"]
+        == "implementation_in_progress"
+    )
     assert (
         result["not_qualified"]["reduced_memory_reverse_stream"]["status"]
         == "implementation_in_progress"
@@ -241,6 +262,15 @@ def test_provider_forward_exact_source_and_patch_provenance():
     assert "get_KFock_stream_apply" in patch
     assert "integer, parameter :: nmesh_large(3) = [9, 9, 1]" in patch
     assert "g-xTB exchange stream reverse requires oracle mode" in patch
+    qualification = provenance["qualification"]
+    assert qualification["matrix_lean_forward_stream"] == "passed"
+    assert (
+        qualification["true_bounded_memory_r_image_batching"]
+        == "implementation_in_progress"
+    )
+    query = provenance["runtime"]["k_space_input_storage_query"]
+    assert query["implementation_scope"].endswith("only")
+    assert "total process memory" in query["not_measured"]
 
 
 def test_earlier_terok_record_is_preserved_but_not_qualification_basis():

@@ -1,6 +1,39 @@
 {
   "all_scoped_gates_passed": true,
-  "bounded_memory_forward_stream": {
+  "component": "save-tblite-provider-cache-and-matrix-lean-forward-stream",
+  "focused_runtime": {
+    "array_temporary_warning_count": 42,
+    "command": "/private/tmp/review_save_tblite_exchange_cache_build/test/unit/tblite-tester exchange bvk_exchange_supercell",
+    "passed": true,
+    "returncode": 0,
+    "stderr_sha256": "eecce68fb10ec5dce71858a2324fab0cfc8f23677aff8d11d8d9690e46548230",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "test": "bvk_exchange_supercell"
+  },
+  "historical_terok_record": {
+    "passed_subtests": 30,
+    "preserved": true,
+    "qualification_basis": false,
+    "reason": "The executable at the recorded path was replaced while the test was running, so it is retained as raw history but not used for byte-exact source qualification.",
+    "reported_total": 30
+  },
+  "matrix_lean_forward_stream": {
+    "classification": "no retained full-k-space density/overlap arrays; not a bounded-memory implementation",
+    "k_space_input_storage_query": {
+      "not_measured": [
+        "stream%amat_r",
+        "stream%cmat_r",
+        "stream%vmat_r",
+        "cache%bvk_phase_forward",
+        "cache%bvk_phase_inverse",
+        "total_process memory"
+      ],
+      "oracle_retained_full_k_space_density_overlap_assertion_count": 1,
+      "passed": true,
+      "query_implementation_present": true,
+      "query_scope": "stream%density and stream%overlap allocations only",
+      "reduced_no_retained_full_k_space_density_overlap_assertion_count": 6
+    },
     "markers": {
       "duplicate g-xTB exchange stream block": true,
       "fock_large-fock_large_oracle": true,
@@ -38,30 +71,7 @@
       "passed": true,
       "physical_kpoint_permutation": true
     },
-    "status": "passed",
-    "storage_query": {
-      "oracle_full_mesh_assertion_count": 1,
-      "passed": true,
-      "query_implementation_present": true,
-      "reduced_no_full_mesh_assertion_count": 6
-    }
-  },
-  "component": "save-tblite-provider-cache-and-bounded-memory-forward-stream",
-  "focused_runtime": {
-    "array_temporary_warning_count": 42,
-    "command": "/private/tmp/review_save_tblite_exchange_cache_build/test/unit/tblite-tester exchange bvk_exchange_supercell",
-    "passed": true,
-    "returncode": 0,
-    "stderr_sha256": "eecce68fb10ec5dce71858a2324fab0cfc8f23677aff8d11d8d9690e46548230",
-    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "test": "bvk_exchange_supercell"
-  },
-  "historical_terok_record": {
-    "passed_subtests": 30,
-    "preserved": true,
-    "qualification_basis": false,
-    "reason": "The executable at the recorded path was replaced while the test was running, so it is retained as raw history but not used for byte-exact source qualification.",
-    "reported_total": 30
+    "status": "passed"
   },
   "not_qualified": {
     "cp2k_consumer_integration": {
@@ -71,6 +81,10 @@
     "reduced_memory_reverse_stream": {
       "diagnostic_present": true,
       "evidence": "The tested reduced stream intentionally rejects reverse_apply; only the retained full-mesh oracle supports the reverse API.",
+      "status": "implementation_in_progress"
+    },
+    "true_bounded_memory_r_image_batching": {
+      "evidence": "Reduced forward mode still retains three nao x nao x Nk x nspin BvK-image tensors (amat_r, cmat_r, vmat_r) and the cache retains two dense Nk x Nk phase tables. R/image batching and batched or on-demand phases are not implemented.",
       "status": "implementation_in_progress"
     }
   },
@@ -88,5 +102,5 @@
     "status": "passed"
   },
   "schema_version": 1,
-  "scope_note": "Only the provider cache/planner and bounded-memory forward stream are qualified. Reduced-memory reverse and actual CP2K integration remain in progress."
+  "scope_note": "Only the provider cache/planner and matrix-lean forward stream are qualified. The storage query proves only that full-k-space density and overlap input arrays are not retained. True bounded-memory R/image batching, reduced-memory reverse, and actual CP2K integration remain in progress."
 }

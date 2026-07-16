@@ -33,19 +33,34 @@
       "current_evidence": "The exact-source focused save_tblite BvK test passes through 9x9x1, including twist/order maps, cache hit and invalidation, incomplete/duplicate-grid failures and recovery, and dense-oracle forward/reverse comparisons. The archived 19-case CP2K comparison reproduces the baseline to roundoff for energy, analytical forces, virial and stress; its one nonzero return code is the same post-central-calculation SPGLIB finite-difference failure as in the baseline."
     },
     {
-      "id": "provider_bounded_memory_forward_stream",
+      "id": "provider_matrix_lean_forward_stream",
       "status": "passed",
       "required_observables": [
         "energy",
         "shell_potential",
         "fock",
-        "no_full_mesh_density_overlap_storage",
+        "no_retained_full_k_space_density_overlap_arrays",
         "push_order_permutation",
         "twist_and_physical_kpoint_permutation",
         "negative_recovery_paths",
         "9x9x1_dense_oracle_identity"
       ],
-      "current_evidence": "The exact-source Debug provider test returns zero and passes. Six runtime storage-query assertions reject retained density/overlap full-mesh arrays in reduced mode; duplicate, missing and stale-onsite failures recover; arbitrary arrival order, common twist, physical k-point permutation and a 9x9x1 reduced forward evaluation reproduce the unchanged complete-mesh/dense oracle for energy, shell potential and Fock."
+      "current_evidence": "The exact-source Debug provider test returns zero and passes. Six runtime storage-query assertions show that reduced mode retains neither full-k-space density nor overlap input arrays; the query does not inspect other stream/cache allocations. Duplicate, missing and stale-onsite failures recover; arbitrary arrival order, common twist, physical k-point permutation and a 9x9x1 forward evaluation reproduce the unchanged complete-mesh/dense oracle for energy, shell potential and Fock. This is a matrix-lean forward stream, not a bounded-memory implementation: it retains amat_r, cmat_r and vmat_r, each nao x nao x Nk x nspin, plus two dense Nk x Nk phase tables in the cache."
+    },
+    {
+      "id": "provider_true_bounded_memory_r_image_batching",
+      "status": "implementation_in_progress",
+      "required_observables": [
+        "bounded_peak_memory",
+        "r_image_batching",
+        "batched_or_on_demand_phases",
+        "energy",
+        "shell_potential",
+        "fock",
+        "push_order_permutation",
+        "9x9x1_dense_oracle_identity"
+      ],
+      "current_evidence": "Not implemented. The current matrix-lean forward stream retains three complete nao x nao x Nk x nspin BvK-image tensors and two dense Nk x Nk phase tables. True bounded-memory qualification requires R/image tiling plus batched or on-demand phase generation and measured peak-memory scaling."
     },
     {
       "id": "provider_reduced_memory_reverse_stream",
@@ -55,7 +70,7 @@
         "forces",
         "stress",
         "reverse_pull_permutation",
-        "no_full_mesh_density_overlap_storage",
+        "no_retained_full_k_space_density_overlap_arrays",
         "state_machine_negative_tests"
       ],
       "current_evidence": "The qualified reduced stream intentionally rejects reverse_apply with a checked diagnostic. The existing reverse transaction retains the full-mesh oracle and therefore does not qualify a reduced-memory reverse path."
@@ -104,7 +119,7 @@
         "push_pull_permutation",
         "state_machine_negative_tests"
       ],
-      "current_evidence": "The provider bounded-memory begin/push/apply/get/end forward transaction is qualified in the focused exact-source BvK test, and the CP2K block expansion/foldback helpers are qualified separately. The production CP2K star-stream consumer and reduced-memory reverse force/stress transaction remain under implementation."
+      "current_evidence": "The provider matrix-lean begin/push/apply/get/end forward transaction is qualified in the focused exact-source BvK test, and the CP2K block expansion/foldback helpers are qualified separately. The production CP2K star-stream consumer, true bounded-memory R/image batching and reduced-memory reverse force/stress transaction remain under implementation."
     },
     {
       "id": "regular_mesh_fft",
@@ -170,15 +185,23 @@
       "status": "passed"
     },
     {
-      "id": "provider_bounded_forward_3x1x1_and_9x9x1",
+      "id": "provider_matrix_lean_forward_3x1x1_and_9x9x1",
       "periodicity": "3D",
       "mesh": "3x1x1_and_9x9x1",
       "symmetry": "full_twisted_permuted",
       "modules": [
         "regular_grid_bvk_cache",
-        "provider_bounded_memory_forward_stream"
+        "provider_matrix_lean_forward_stream"
       ],
       "status": "passed"
+    },
+    {
+      "id": "provider_true_bounded_memory_r_image_batching_qualification",
+      "periodicity": "3D",
+      "mesh": "3x1x1_then_9x9x1",
+      "symmetry": "full_twisted_permuted",
+      "modules": ["provider_true_bounded_memory_r_image_batching"],
+      "status": "implementation_in_progress"
     },
     {
       "id": "provider_reduced_reverse",

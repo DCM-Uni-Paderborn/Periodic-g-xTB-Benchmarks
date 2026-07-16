@@ -98,9 +98,9 @@ establishes only the CP2K block operators that the streamed module will call;
 the latter remains `implementation_in_progress` until its full provider and
 CP2K forward/reverse paths pass the complete oracle matrix.
 
-## Qualified save_tblite provider cache and bounded-memory forward stream
+## Qualified save_tblite provider cache and matrix-lean forward stream
 
-The provider cache/planner and bounded-memory forward transaction are now
+The provider cache/planner and matrix-lean forward transaction are now
 qualified as two narrowly scoped components.  An exact-source GNU Fortran
 Debug build (`-O0 -fcheck=all -fbacktrace`) passes the focused
 `bvk_exchange_supercell` test with return code zero.  That single test is a
@@ -115,9 +115,19 @@ potential and every Fock block, arbitrary block arrival order, a common mesh
 twist, physical k-point permutation, duplicate/missing-block recovery and
 charge-dependent onsite-state invalidation/recovery.  The public storage query
 is asserted six times in reduced mode (before and after application, across
-ordered, permuted and `9x9x1` transactions) and confirms that neither density
-nor overlap full-mesh arrays are retained.  A separate assertion confirms that
-the deliberately retained oracle mode does own full-mesh storage.
+ordered, permuted and `9x9x1` transactions) and confirms only that the stream
+does not retain the complete k-space density and overlap input arrays.  A
+separate assertion confirms that the deliberately retained oracle mode does
+own those arrays.
+
+This storage query is deliberately narrow: its implementation tests only
+whether `stream%density` or `stream%overlap` is allocated.  It does not inspect
+the remaining stream or cache allocations and therefore cannot establish
+bounded memory.  The current forward path retains three complete complex
+`nao x nao x Nk x nspin` BvK-image tensors (`amat_r`, `cmat_r`, and `vmat_r`),
+while the provider cache retains two dense `Nk x Nk` phase tables.  Consequently
+the present result is classified as **matrix-lean**, with no claim about total
+peak-memory reduction or asymptotically bounded storage.
 
 The deterministic derivation is
 `scripts/summarize_save_tblite_provider_forward.py`; its JSON and compact text
@@ -130,8 +140,12 @@ qualification basis because its executable path was replaced during that
 long-running test.
 
 This passed status is intentionally limited to the provider cache/planner and
-bounded-memory **forward** stream.  The tested reduced stream rejects the
-reverse call by contract; reduced-memory overlap adjoints, forces and stress
-therefore remain `implementation_in_progress`.  Likewise, separately passing
-provider and CP2K block-helper tests do not yet qualify the production CP2K
-stream consumer, which also remains `implementation_in_progress`.
+matrix-lean **forward** stream, specifically the absence of retained full
+k-space density/overlap input arrays.  True bounded-memory R/image batching,
+including batched or on-demand phase generation and measured peak-memory
+scaling, remains `implementation_in_progress`.  The tested reduced stream also
+rejects the reverse call by contract; reduced-memory overlap adjoints, forces
+and stress therefore remain `implementation_in_progress`.  Likewise,
+separately passing provider and CP2K block-helper tests do not yet qualify the
+production CP2K stream consumer, which also remains
+`implementation_in_progress`.
