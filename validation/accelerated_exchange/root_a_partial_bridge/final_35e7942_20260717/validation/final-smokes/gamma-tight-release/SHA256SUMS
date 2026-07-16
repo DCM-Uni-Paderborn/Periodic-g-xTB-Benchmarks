@@ -1,0 +1,12 @@
+9b832420483ca29ac3adc05bd60316ac4431fb782a7259ac39ac4cdfcb39e75a  /home/kuehne88/work/cp2k_gxtb_partial_root_bridge_35e7942_release_20260716/bin/cp2k.psmp
+20c74bf3272a229e125893956880757bca365c0dc1b54fa8e892bf99a67e7760  /home/kuehne88/work/save_tblite_partial_k_to_r_35e7942_install_release/lib/libtblite.a
+47c9b039b2e0d081f1ac3688f29f5c75ffed9a60acbb490f7bee1ae99593dd5d  /home/kuehne88/work/cp2k_gxtb_partial_root_bridge_clean_20260716/src/tblite_interface.F
+0b9911ac6b197239cc0bc5a5e750d618e0253ecfb93688027b4ffcca20cedec8  /home/kuehne88/work/gxtb-partial-root-final-35e7942-20260716/inputs/ch4_gamma_explicit_real_tight.inp
+d2940b01add91f3e18bb7cd7922031270b0f11ae03a8ef37a732d64ccb6ab5e6  /home/kuehne88/work/gxtb-partial-root-final-35e7942-20260716/inputs/ch4_gamma_implicit_tight.inp
+addb9dd6981a45f194698f08960ff25f141eea49f4082d9ad713988cc6e95a31  /home/kuehne88/work/gxtb-partial-root-final-35e7942-20260716/gamma-tight-release/explicit_real_dense/run.log
+0ad741fe17a9307d004900d2f44555fb769675a63bb202ab3152c176d036eecf  /home/kuehne88/work/gxtb-partial-root-final-35e7942-20260716/gamma-tight-release/explicit_real_mode6/run.log
+5f5b2bb2a221a946e9f07c7ff9ebde91470d38d17e3e74f35837c5d0d8d710b2  /home/kuehne88/work/gxtb-partial-root-final-35e7942-20260716/gamma-tight-release/implicit_real_dense/run.log
+01ff8eda9d74e2ea1aa16e719fb9e080edcf2c1a8049714de0deaa915ea4731c  /home/kuehne88/work/gxtb-partial-root-final-35e7942-20260716/gamma-tight-release/explicit_dense_vs_implicit_dense.tsv
+118373272abe897d8d1e8bd4d52fc0dd2d1a4f9afb13f3028fe7c9c03853fbca  /home/kuehne88/work/gxtb-partial-root-final-35e7942-20260716/gamma-tight-release/mode6_vs_explicit_dense.tsv
+67e0d521719493810c6add80e5a1fca0568c2e2cedd102888a8d3b6fab694fc7  /home/kuehne88/work/gxtb-partial-root-final-35e7942-20260716/gamma-tight-release/mode6_vs_implicit_dense.tsv
+07b18407c65a0140ec5586292a740923a2fbc3a39f529e85aad4574f0575248d  /home/kuehne88/work/gxtb-partial-root-final-35e7942-20260716/gamma-tight-release/status.tsv

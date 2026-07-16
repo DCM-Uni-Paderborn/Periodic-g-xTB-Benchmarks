@@ -1,0 +1,6 @@
+case	selector	np	exit_code	timed_out	diagnostic	pass
+nonleader_failure	NONLEADER_FAILURE	4	1	0	1	1
+antihermitian_reverse	ANTIHERMITIAN_REVERSE	2	1	0	1	1
+nonfinite_forward_result	NONFINITE_FORWARD_RESULT	2	1	0	1	1
+unknown_selector	BOGUS	2	1	0	1	1
+truncated_selector	XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	2	1	0	1	1

@@ -1,0 +1,36 @@
+Classification root:
+/home/kuehne88/work/save_tblite_ctest_classification_20260717_review
+
+Base source:
+git clone --no-hardlinks /home/kuehne88/work/codex-gxtb-post5582-clean-20260714/sources/save_tblite BASE_SRC
+git -C BASE_SRC checkout --detach 257ba442684c39454175e5192c8a2342b4c6380f
+
+Common environment:
+ENVROOT=/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env
+DEPS=/home/kuehne88/work/codex-gxtb-acpfix-20260714/install/save_tblite
+CC=$ENVROOT/bin/x86_64-conda-linux-gnu-cc
+FC=$ENVROOT/bin/x86_64-conda-linux-gnu-gfortran
+CMAKE=$ENVROOT/bin/cmake
+CTEST=$ENVROOT/bin/ctest
+
+Release configure:
+env PATH=$ENVROOT/bin:$PATH CC=$CC FC=$FC $CMAKE -S BASE_SRC -B BASE_BUILD_RELEASE -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=BASE_INSTALL_RELEASE -DCMAKE_PREFIX_PATH="$DEPS;$ENVROOT" -DBUILD_SHARED_LIBS=OFF -DWITH_API=ON -DWITH_DDX=OFF -DWITH_HDF5=OFF -DWITH_OpenMP=ON -DWITH_TESTS=ON -DWITH_TREXIO=OFF
+
+Debug configure:
+env PATH=$ENVROOT/bin:$PATH CC=$CC FC=$FC $CMAKE -S BASE_SRC -B BASE_BUILD_DEBUG -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=BASE_INSTALL_DEBUG -DCMAKE_PREFIX_PATH="$DEPS;$ENVROOT" -DCMAKE_Fortran_FLAGS_DEBUG="-O0 -g -fcheck=all -fbacktrace -ffpe-trap=invalid,zero,overflow" -DBUILD_SHARED_LIBS=OFF -DWITH_API=ON -DWITH_DDX=OFF -DWITH_HDF5=OFF -DWITH_OpenMP=ON -DWITH_TESTS=ON -DWITH_TREXIO=OFF
+
+Builds:
+$CMAKE --build BASE_BUILD_RELEASE -j 24
+$CMAKE --build BASE_BUILD_DEBUG -j 24
+
+Release selected rerun, applied identically to current 35e7942 and base 257ba442:
+env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 BLIS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 $CTEST -V -R '^(C-API|tblite/xtbml)$'
+
+Release diagnostic union, applied identically to current and base:
+env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 BLIS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 $CTEST -V -R '^(C-API|tblite/coulomb-multipole|tblite/gfn1-xtb|tblite/xtb-param|tblite/xtbml)$'
+
+Debug selected rerun, applied identically to current and base:
+env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 BLIS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 $CTEST -V -R '^(C-API|tblite/coulomb-multipole|tblite/gfn1-xtb|tblite/xtb-param|tblite/xtbml)$'
+
+Provenance:
+sha256sum compiler binaries, libopenblas, dependency libraries/configuration files, source manifests, test binaries, CMake caches, and every raw configure/build/CTest log; consolidated in provenance/artifacts.sha256.

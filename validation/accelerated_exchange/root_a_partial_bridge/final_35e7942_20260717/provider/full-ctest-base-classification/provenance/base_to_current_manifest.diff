@@ -1,0 +1,47 @@
+--- /home/kuehne88/work/save_tblite_ctest_classification_20260717_review/provenance/base_source.sha256	2026-07-17 00:35:04.948000000 +0200
++++ /home/kuehne88/work/save_tblite_ctest_classification_20260717_review/provenance/current_source.sha256	2026-07-17 00:35:04.916000000 +0200
+@@ -209,7 +209,7 @@
+ 0e4e6d5c25ab4538f10dc03ee51f6375d076dbca747ddb1fa72a95e95aa5d992  ./src/tblite/coulomb/thirdorder/twobody.f90
+ 7913e55364fe07c692c2b6af3f96bb411d5b4b53d374d50d93d594ddb153f1bc  ./src/tblite/coulomb/thirdorder/type.f90
+ ed6553153ce3810c9e88a2fe70ddc6c7f89d3022caf3997cf4fd4d54d6088e2d  ./src/tblite/coulomb/type.f90
+-08b92e9ddef8ca81abef64aa30a1a7546e9480093bf11cc4a7ef6566907cf640  ./src/tblite/cp2k_compat.f90
++5f1314ca5b35a60880254145b2cad880a7b686ff60d725481cf609bbed5f9739  ./src/tblite/cp2k_compat.f90
+ 8207124afad5dea13b5bdd3914bc6b7e405575be84379b849688c9de5c6b977a  ./src/tblite/cutoff.f90
+ d89f85c4d6e590bcceda935bbfce103acdf9efd404203780610bc3d92715b344  ./src/tblite/data.f90
+ 64b1edda7304b012be000585f1aab90620cdfdf31155e64ae7ab685d3e8b0534  ./src/tblite/data/CMakeLists.txt
+@@ -224,11 +224,12 @@
+ 63d130e7474a7bf4653048f800072187efda0607147a5df5cf9f12ba9915c579  ./src/tblite/disp/meson.build
+ 285c22cfaad1ea5a98251a32b15dc5279ecbd370b50e2dbb118135ac1332aef2  ./src/tblite/disp/type.f90
+ 6f4587236496c248d7ff8f2cde3212fa73f247f3db946a12a8daf155e3012b07  ./src/tblite/double_dictionary.f90
+-8694afc3ad0e247848f580d3752d5ca6ed91125c0f22257380a7e35545594a13  ./src/tblite/exchange.f90
+-4fcf6db42392ea2ec99b372e11ecc1562cd22d6141d68e3f21ef2bbf7e21beb1  ./src/tblite/exchange/CMakeLists.txt
+-f9dd9a3e54d626c8c7702236613e7e4863d741b8f7e6cb8f831f1b9145bc074c  ./src/tblite/exchange/cache.f90
+-63a7f7b7756c0b3926a2e78c37ccdb11f92737fa230d9d21a85c5f3930626213  ./src/tblite/exchange/fock.f90
+-bfc295421f7b925e612e7c3c97d041bd2f11ef28d9b97d22baeac278b8bed77d  ./src/tblite/exchange/meson.build
++388f5a5ba7471c872477ef6e809b6f782584d10c4566736413d5eb3594aeffb7  ./src/tblite/exchange.f90
++b525fde4829acfc67dfaebeca9c80677f147ddf76109168e97928e15124c7ee1  ./src/tblite/exchange/CMakeLists.txt
++579201d1512c4549b8eb96927b3546c8def51a8cee3b6077e9231d64cc416a0d  ./src/tblite/exchange/cache.f90
++17ec6f792419bf060334f04628bfcc151f89520bc73acade6b8682d81ab8a121  ./src/tblite/exchange/fock.f90
++c48fd736fd77913c76b27ec69e7780f6f2da91df4b695bde6c7403e42431523a  ./src/tblite/exchange/meson.build
++1c53d1a54f128f9a23bb6bc4195da016d01b78cb60045309ae6fb0d4bd6f27d8  ./src/tblite/exchange/transform.f90
+ 713bb51cbd96008c1c8a34863a51a0072856f71065ed195e83b7fa3fc364aa30  ./src/tblite/exchange/type.f90
+ 516293fc5df9002c7d72aa901ac4e00966b33fe4304f2ef5969ef961c7fca7d8  ./src/tblite/external/CMakeLists.txt
+ 042670bb2f2a09aded8ed546fe44b537dc0ecf999327494da3d065fb301c2d09  ./src/tblite/external/field.f90
+@@ -518,7 +519,7 @@
+ 6c76f101cd2f177be793453d3159e95a361bcf1c09368ee7f25d3199a370b4c9  ./src/tblite/xtb/coulomb.f90
+ 35ffc413a39e261d30d5997e5a3e20b085921fcf815474075ac54b7039f01ace  ./src/tblite/xtb/gfn1.f90
+ 21fbcca88421f7f768bf7ff72f2d42457edd0b10827ac752ec1bff2f92364afc  ./src/tblite/xtb/gfn2.f90
+-8a88bf61b1e95556ffa712290b9514a1b1e6962654a270439caa909a27c4812d  ./src/tblite/xtb/gxtb.f90
++6f4e76891c9c80f606f713b44162cbcd2e723c3cbfa017c49e5dc3f6ca8e1236  ./src/tblite/xtb/gxtb.f90
+ a919d766a121e98540f3f3a8a01415ac60a1764ec206e4ca89211165f16c4925  ./src/tblite/xtb/h0.f90
+ 5b26a4e5dae5003f32e285db630bfe11fae35aae4baa6796eaaa45de0333e1d0  ./src/tblite/xtb/ipea1.f90
+ 04da02a49a2688d88c4347b8c679aa5c88b513e815aa45200864a77155bf25e8  ./src/tblite/xtb/meson.build
+@@ -651,7 +652,7 @@
+ a621762feb2710082eda94850cd0efcc757f03b4b2fe1f92b9453e73a1fe6fd7  ./test/unit/test_coulomb_thirdorder.f90
+ 063f0d221ac225ed293ac14efa2056fc42a50ecedf6771117e3300a57fb19221  ./test/unit/test_dispersion.f90
+ 7c364804331150279d047ba153f65403ff6c9126b949d25bb11cb6456288445e  ./test/unit/test_double_dictionary.f90
+-043c6cc3f8859ca01fc973db6490af732fbd8c886fb2d82bb5f926679a958bf1  ./test/unit/test_exchange.f90
++498c209b6fabb28373837c38cfc5a98294fea2dc90025251a777df22c23ab948  ./test/unit/test_exchange.f90
+ db197a73f85c4c2ee4ad3c88316f4d41b3e6b42eb50cf2521c90a235c531ce04  ./test/unit/test_fit.f90
+ 30fb007f623b95b4edc99df05380163fd60ff5fd83c2197a2349e5c956134059  ./test/unit/test_gfn1_xtb.f90
+ 03543acbba3732fa02c828f914c5ee3fe39b100a4031d18a48d48995fb48b21c  ./test/unit/test_gfn2_xtb.f90

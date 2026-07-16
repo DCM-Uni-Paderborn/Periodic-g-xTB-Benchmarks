@@ -1,0 +1,7 @@
+case	mode	np	exit_code	timed_out	program_ended	forward_qual	reverse_qual	pass
+k222_mode6_p1	partial	1	0	0	1	1	1	1
+k222_mode6_p2	partial	2	0	0	1	1	1	1
+k222_mode6_p4	partial	4	0	0	1	1	1	1
+gamma_explicit_mode6_p2	partial	2	0	0	1	1	0	1
+gamma_explicit_dense_p2	dense	2	0	0	1	0	0	1
+gamma_implicit_dense_p2	dense	2	0	0	1	0	0	1

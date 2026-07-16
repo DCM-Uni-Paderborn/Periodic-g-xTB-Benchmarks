@@ -1,0 +1,50 @@
+tblite/exchange 1 1.64648
+C-API 0 0
+tblite/acp 1 27.6325
+tblite/ceh 1 0.202506
+tblite/cgto-ortho 1 0.00675809
+tblite/coulomb-charge 1 2.17107
+tblite/coulomb-firstorder 1 0.247799
+tblite/coulomb-fourthorder 1 0.0304016
+tblite/coulomb-multipole 0 0
+tblite/coulomb-thirdorder 1 0.663207
+tblite/dispersion 1 0.0197541
+tblite/double-dictionary 1 0.00758436
+tblite/fit 1 0.016818
+tblite/gfn1-xtb 0 0
+tblite/gfn2-xtb 1 0.265351
+tblite/gxtb 1 29.5336
+tblite/hamiltonian 1 10.5092
+tblite/hdf5 1 0.00767621
+tblite/halogen 1 0.00718511
+tblite/integral-overlap 1 0.211061
+tblite/integral-multipole 1 0.102892
+tblite/integral-trafo 1 0.0118483
+tblite/ipea1-xtb 1 3.97831
+tblite/mixer 1 0.313366
+tblite/molden 1 5.0247
+tblite/npy 1 0.0140423
+tblite/npz 1 0.0101938
+tblite/post-processing 1 0.0116148
+tblite/q-vszp 1 0.280717
+tblite/repulsion 1 0.950908
+tblite/slater-expansion 1 0.0211758
+tblite/spin 1 0.323806
+tblite/solvation-born 1 0.0398473
+tblite/solvation-ddx 1 0.00648327
+tblite/solvation-surface 1 0.360079
+tblite/solvation-cds 1 0.381446
+tblite/solvation-shift 1 0.00775049
+tblite/tagged-io 1 0.00716946
+tblite/trexio 1 0.00542639
+tblite/wavefunction-restart 1 0.0138607
+tblite/wignerseitz 1 0.00534061
+tblite/xtb-param 0 0
+tblite/xtb-external 1 0.631777
+tblite/xtbml 0 0
+---
+C-API
+tblite/coulomb-multipole
+tblite/gfn1-xtb
+tblite/xtb-param
+tblite/xtbml

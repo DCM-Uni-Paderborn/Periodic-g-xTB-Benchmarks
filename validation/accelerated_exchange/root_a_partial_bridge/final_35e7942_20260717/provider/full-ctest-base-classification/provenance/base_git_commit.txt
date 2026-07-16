@@ -1,0 +1,7 @@
+commit 257ba442684c39454175e5192c8a2342b4c6380f
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Tue Jul 14 21:12:59 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Tue Jul 14 21:12:59 2026 +0200
+
+    Complete periodic g-XTB ACP derivatives

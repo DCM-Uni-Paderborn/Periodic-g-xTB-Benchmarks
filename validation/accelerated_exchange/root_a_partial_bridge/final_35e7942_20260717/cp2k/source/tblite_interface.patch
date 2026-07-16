@@ -1,0 +1,1526 @@
+diff --git a/src/tblite_interface.F b/src/tblite_interface.F
+index 8a8689617d..50c681a481 100644
+--- a/src/tblite_interface.F
++++ b/src/tblite_interface.F
+@@ -13,7 +13,7 @@
+ 
+ MODULE tblite_interface
+ 
+-   USE, INTRINSIC :: ieee_arithmetic, ONLY: ieee_is_finite
++   USE, INTRINSIC :: ieee_arithmetic, ONLY: ieee_is_finite, ieee_quiet_nan, ieee_value
+ 
+ #if defined(__TBLITE)
+    USE mctc_env, ONLY: error_type
+@@ -33,6 +33,30 @@ MODULE tblite_interface
+                                  cp2k_build_gamma_h0, &
+                                  cp2k_build_image_h0, cp2k_exchange_kmesh, &
+                                  cp2k_exchange_kmesh_gradient, &
++                                 cp2k_exchange_partial_abi_version, &
++                                 cp2k_exchange_partial_begin, &
++                                 cp2k_exchange_partial_contributor_advance, &
++                                 cp2k_exchange_partial_descriptor_pack, &
++                                 cp2k_exchange_partial_descriptor_size, &
++                                 cp2k_exchange_partial_descriptor_words, &
++                                 cp2k_exchange_partial_descriptor_type, &
++                                 cp2k_exchange_partial_descriptor_unpack, &
++                                 cp2k_exchange_partial_descriptors_match, &
++                                 cp2k_exchange_partial_discard, &
++                                 cp2k_exchange_partial_export_forward, &
++                                 cp2k_exchange_partial_export_reverse, &
++                                 cp2k_exchange_partial_forward_pack, &
++                                 cp2k_exchange_partial_forward_size, &
++                                 cp2k_exchange_partial_forward_type, &
++                                 cp2k_exchange_partial_forward_unpack, &
++                                 cp2k_exchange_partial_import_forward, &
++                                 cp2k_exchange_partial_import_reverse, &
++                                 cp2k_exchange_partial_push, &
++                                 cp2k_exchange_partial_reverse_pack, &
++                                 cp2k_exchange_partial_reverse_push, &
++                                 cp2k_exchange_partial_reverse_size, &
++                                 cp2k_exchange_partial_reverse_type, &
++                                 cp2k_exchange_partial_reverse_unpack, &
+                                  cp2k_exchange_kpoint_gradient, &
+                                  cp2k_exchange_stream_batch_advance, &
+                                  cp2k_exchange_stream_batch_apply, &
+@@ -200,6 +224,16 @@ MODULE tblite_interface
+    ! to scale over k groups until save_tblite exposes a public partial-k-to-R
+    ! accumulator merge/finalize interface.
+    INTEGER, PARAMETER                                 :: tb_gxtb_exchange_stream_kgroup_owner = 5
++   ! Safe first consumer of save_tblite's public partial k-to-R ABI.  K-group
++   ! leaders form additive pre-kernel payloads, while one service leader owns
++   ! the nonlinear apply and every R-to-k response pull.  Thus only k-to-R is
++   ! distributed; the coupled kernel and reverse transform remain root-serial.
++   INTEGER, PARAMETER                                 :: tb_gxtb_exchange_stream_kgroup_partial_root = 6
++   INTEGER, PARAMETER                                 :: tb_gxtb_partial_inject_none = 0
++   INTEGER, PARAMETER                                 :: tb_gxtb_partial_inject_nonleader_failure = 1
++   INTEGER, PARAMETER                                 :: tb_gxtb_partial_inject_antihermitian_reverse = 2
++   INTEGER, PARAMETER                                 :: tb_gxtb_partial_inject_nonfinite_forward_result = 3
++   INTEGER(KIND=int_8), SAVE                          :: tb_gxtb_partial_transaction_serial = 0_int_8
+    INTEGER, PARAMETER                                 :: tb_gxtb_exchange_gradient_dense = 0
+    INTEGER, PARAMETER                                 :: tb_gxtb_exchange_gradient_streamed = 1
+    INTEGER, PARAMETER                                 :: tb_gxtb_exchange_gradient_qualify = 2
+@@ -1767,6 +1801,35 @@ CONTAINS
+ 
+    END FUNCTION tb_find_periodic_kpoint
+ 
++! **************************************************************************************************
++!> \brief Form a three-axis mesh extent without overflowing integer arithmetic.
++!> \param nmesh positive mesh dimensions
++!> \param nfull validated product representable by CP2K's default integer kind
++!> \return true only for a positive product that fits both int64 and default integer
++! **************************************************************************************************
++   LOGICAL FUNCTION tb_gxtb_mesh_size_default(nmesh, nfull) RESULT(valid)
++
++      INTEGER, DIMENSION(3), INTENT(IN)                  :: nmesh
++      INTEGER, INTENT(OUT)                               :: nfull
++
++      INTEGER                                            :: iaxis
++      INTEGER(KIND=int_8)                                :: extent, product_64
++
++      valid = .FALSE.
++      nfull = 0
++      IF (ANY(nmesh < 1)) RETURN
++      product_64 = 1_int_8
++      DO iaxis = 1, 3
++         extent = INT(nmesh(iaxis), KIND=int_8)
++         IF (extent > HUGE(0_int_8)/product_64) RETURN
++         product_64 = product_64*extent
++      END DO
++      IF (product_64 > INT(HUGE(0), KIND=int_8)) RETURN
++      nfull = INT(product_64)
++      valid = .TRUE.
++
++   END FUNCTION tb_gxtb_mesh_size_default
++
+ ! **************************************************************************************************
+ !> \brief Recover a complete uniform Cartesian mesh from explicit GENERAL k-points.
+ !> \param kpoints ...
+@@ -1782,7 +1845,8 @@ CONTAINS
+       TYPE(kpoint_type), POINTER                         :: kpoints
+       INTEGER, DIMENSION(3), INTENT(OUT)                 :: nmesh
+ 
+-      INTEGER                                            :: iaxis, ik, inext, inode, nfull, slot
++      INTEGER                                            :: iaxis, ik, inext, inode, nfull, &
++                                                            nmesh_size, slot
+       INTEGER, ALLOCATABLE, DIMENSION(:)                 :: occupied
+       INTEGER, DIMENSION(3)                              :: node_index
+       REAL(KIND=dp)                                      :: distance, expected_spacing, gap, q, &
+@@ -1845,7 +1909,7 @@ CONTAINS
+                CPABORT("g-XTB GENERAL k-points are not an equally spaced Cartesian mesh")
+          END DO
+       END DO
+-      IF (PRODUCT(nmesh) /= nfull) &
++      IF (.NOT. tb_gxtb_mesh_size_default(nmesh, nmesh_size) .OR. nmesh_size /= nfull) &
+          CPABORT("g-XTB GENERAL k-points do not form a complete Cartesian mesh")
+ 
+       ALLOCATE (occupied(nfull), source=0)
+@@ -1928,8 +1992,8 @@ CONTAINS
+             CPABORT("Descriptorless g-XTB k-point input requires a unit-weight Gamma point")
+          kmap%nmesh = 1
+       END IF
+-      kmap%nfull = PRODUCT(kmap%nmesh)
+-      IF (kmap%nfull < 1) CPABORT("Invalid complete g-xTB k-point mesh")
++      IF (.NOT. tb_gxtb_mesh_size_default(kmap%nmesh, kmap%nfull)) &
++         CPABORT("Invalid or overflowing complete g-xTB k-point mesh")
+       ALLOCATE (kmap%xkp(3, kmap%nfull), kmap%weight(kmap%nfull), &
+                 kmap%source(kmap%nfull), kmap%symop(kmap%nfull), &
+                 kmap%fold_factor(kmap%nfull), kmap%representative(nred), &
+@@ -2107,7 +2171,8 @@ CONTAINS
+       TYPE(kpoint_type), POINTER                         :: kpoints
+       TYPE(tb_gxtb_kmesh_map_type), INTENT(IN)           :: kmap
+ 
+-      INTEGER                                            :: current_ops, ifull, ikred, iop, isym
++      INTEGER                                            :: current_ops, ifull, ikred, iop, isym, &
++                                                            mesh_size
+       LOGICAL                                            :: explicit_general
+       TYPE(kpoint_sym_type), POINTER                     :: kpsym
+ 
+@@ -2115,7 +2180,8 @@ CONTAINS
+       matches = .FALSE.
+       explicit_general = TRIM(kpoints%kp_scheme) == "GENERAL" .AND. &
+                          ASSOCIATED(kpoints%xkp_input) .AND. ASSOCIATED(kpoints%wkp_input)
+-      IF (kmap%nred /= kpoints%nkp .OR. kmap%nfull /= PRODUCT(kmap%nmesh)) RETURN
++      IF (.NOT. tb_gxtb_mesh_size_default(kmap%nmesh, mesh_size)) RETURN
++      IF (kmap%nred /= kpoints%nkp .OR. kmap%nfull /= mesh_size) RETURN
+       IF (kmap%explicit_general .NEQV. explicit_general) RETURN
+       IF (TRIM(kmap%scheme) /= TRIM(kpoints%kp_scheme)) RETURN
+       IF (kmap%full_grid .NEQV. kpoints%full_grid) RETURN
+@@ -3607,6 +3673,9 @@ CONTAINS
+          stream_mode = tb_gxtb_exchange_stream_distributed
+       CASE ("KGROUP_OWNER", "kgroup_owner", "K_GROUP_OWNER", "k_group_owner", "5")
+          stream_mode = tb_gxtb_exchange_stream_kgroup_owner
++      CASE ("KGROUP_PARTIAL_ROOT", "kgroup_partial_root", &
++            "K_GROUP_PARTIAL_ROOT", "k_group_partial_root", "6")
++         stream_mode = tb_gxtb_exchange_stream_kgroup_partial_root
+       CASE DEFAULT
+          CPABORT("Unknown CP2K_GXTB_EXCHANGE_STREAM_MODE value")
+       END SELECT
+@@ -3703,6 +3772,193 @@ CONTAINS
+    END FUNCTION tb_gxtb_exchange_transform_backend
+ 
+ ! **************************************************************************************************
++!> \brief Select a strictly qualification-only partial-bridge fault injection.
++!>
++!> Normal calculations do not inspect the environment variable.  Qualification
++!> runs accept only the explicit whitelist below, so misspelled test selectors
++!> fail closed rather than silently weakening a negative test.
++!> \param enabled ...
++!> \return injection_mode ...
++! **************************************************************************************************
++   INTEGER FUNCTION tb_gxtb_partial_qualification_injection(enabled) RESULT(injection_mode)
++
++      LOGICAL, INTENT(IN)                                :: enabled
++
++      CHARACTER(LEN=64)                                  :: value
++      INTEGER                                            :: status
++
++      injection_mode = tb_gxtb_partial_inject_none
++      IF (.NOT. enabled) RETURN
++      value = ""
++      status = 1
++      CALL GET_ENVIRONMENT_VARIABLE("CP2K_GXTB_PARTIAL_QUALIFY_INJECT", value, STATUS=status)
++      SELECT CASE (status)
++      CASE (1)
++         RETURN
++      CASE (0)
++         IF (LEN_TRIM(value) == 0) RETURN
++      CASE DEFAULT
++         CPABORT("CP2K_GXTB_PARTIAL_QUALIFY_INJECT is truncated or unreadable")
++      END SELECT
++
++      SELECT CASE (TRIM(ADJUSTL(value)))
++      CASE ("NONLEADER_FAILURE", "nonleader_failure")
++         injection_mode = tb_gxtb_partial_inject_nonleader_failure
++      CASE ("ANTIHERMITIAN_REVERSE", "antihermitian_reverse")
++         injection_mode = tb_gxtb_partial_inject_antihermitian_reverse
++      CASE ("NONFINITE_FORWARD_RESULT", "nonfinite_forward_result")
++         injection_mode = tb_gxtb_partial_inject_nonfinite_forward_result
++      CASE DEFAULT
++         CPABORT("Unknown CP2K_GXTB_PARTIAL_QUALIFY_INJECT value")
++      END SELECT
++
++   END FUNCTION tb_gxtb_partial_qualification_injection
++
++! **************************************************************************************************
++!> \brief Propagate a partial-exchange stage failure without stranding ranks in collectives.
++!>
++!> Only k-group leaders participate in the inter-group communicator that owns
++!> the partial transaction.  The resulting status is then broadcast inside
++!> every official CP2K k group so leaders and nonleaders abort at the same
++!> protocol boundary.
++!> \param leader ...
++!> \param para_env_inter_kp ...
++!> \param para_env_kp ...
++!> \param local_failed ...
++!> \param message ...
++! **************************************************************************************************
++   SUBROUTINE tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, message)
++
++      LOGICAL, INTENT(IN)                                :: leader
++      TYPE(mp_para_env_type), POINTER                    :: para_env_inter_kp, para_env_kp
++      LOGICAL, INTENT(IN)                                :: local_failed
++      CHARACTER(LEN=*), INTENT(IN)                       :: message
++
++      INTEGER                                            :: failure_count
++
++      failure_count = MERGE(1, 0, local_failed)
++      CALL para_env_kp%sum(failure_count)
++      IF (leader) CALL para_env_inter_kp%sum(failure_count)
++      CALL para_env_kp%bcast(failure_count)
++      IF (failure_count /= 0) CPABORT(message)
++
++   END SUBROUTINE tb_gxtb_partial_sync_failure
++
++! **************************************************************************************************
++!> \brief Create one fresh host-owned transaction identity and share it among leaders.
++!> \param leader ...
++!> \param service_rank ...
++!> \param para_env_inter_kp ...
++!> \param para_env_kp ...
++!> \param transaction_id ...
++! **************************************************************************************************
++   SUBROUTINE tb_gxtb_partial_next_transaction(leader, service_rank, para_env_inter_kp, &
++                                               para_env_kp, transaction_id)
++
++      LOGICAL, INTENT(IN)                                :: leader, service_rank
++      TYPE(mp_para_env_type), POINTER                    :: para_env_inter_kp, para_env_kp
++      INTEGER(KIND=int_8), DIMENSION(2), INTENT(OUT)     :: transaction_id
++
++      LOGICAL                                            :: local_failed
++
++      transaction_id = 0_int_8
++      local_failed = .FALSE.
++      IF (service_rank) THEN
++         local_failed = tb_gxtb_partial_transaction_serial == HUGE(0_int_8)
++         IF (.NOT. local_failed) &
++            tb_gxtb_partial_transaction_serial = tb_gxtb_partial_transaction_serial + 1_int_8
++      END IF
++      CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                        local_failed, &
++                                        "g-xTB partial transaction identity overflow")
++      IF (leader) THEN
++         IF (service_rank) transaction_id = &
++            [2718281828459045_int_8, tb_gxtb_partial_transaction_serial]
++         CALL para_env_inter_kp%bcast(transaction_id)
++      END IF
++
++   END SUBROUTINE tb_gxtb_partial_next_transaction
++
++! **************************************************************************************************
++!> \brief Compare the complete canonical provider descriptor on every k-group leader.
++!> \param leader ...
++!> \param service_rank ...
++!> \param descriptor ...
++!> \param para_env_inter_kp ...
++!> \param para_env_kp ...
++! **************************************************************************************************
++   SUBROUTINE tb_gxtb_partial_descriptor_consensus(leader, service_rank, descriptor, &
++                                                   para_env_inter_kp, para_env_kp)
++
++      LOGICAL, INTENT(IN)                                :: leader, service_rank
++      TYPE(cp2k_exchange_partial_descriptor_type), &
++         INTENT(IN)                                      :: descriptor
++      TYPE(mp_para_env_type), POINTER                    :: para_env_inter_kp, para_env_kp
++
++      INTEGER(KIND=int_8), ALLOCATABLE, DIMENSION(:)     :: local_words, root_words
++      LOGICAL                                            :: local_failed
++      TYPE(cp2k_exchange_partial_descriptor_type)        :: root_descriptor
++      TYPE(error_type), ALLOCATABLE                      :: error
++
++      local_failed = .FALSE.
++      IF (leader) THEN
++         CALL cp2k_exchange_partial_descriptor_pack(descriptor, local_words, error)
++         local_failed = ALLOCATED(error)
++         IF (.NOT. local_failed) local_failed = &
++            INT(SIZE(local_words), int_8) /= cp2k_exchange_partial_descriptor_size()
++      END IF
++      CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                        local_failed, &
++                                        "save_tblite partial descriptor packing failed")
++
++      IF (leader) THEN
++         ALLOCATE (root_words(SIZE(local_words)), source=0_int_8)
++         IF (service_rank) root_words(:) = local_words
++         CALL para_env_inter_kp%bcast(root_words)
++         CALL cp2k_exchange_partial_descriptor_unpack(root_descriptor, root_words, error)
++         local_failed = ALLOCATED(error)
++         IF (.NOT. local_failed) local_failed = &
++            .NOT. cp2k_exchange_partial_descriptors_match(descriptor, root_descriptor)
++      ELSE
++         local_failed = .FALSE.
++      END IF
++      CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                        local_failed, &
++                                        "save_tblite partial descriptor consensus failed")
++      IF (leader) DEALLOCATE (local_words, root_words)
++
++   END SUBROUTINE tb_gxtb_partial_descriptor_consensus
++
++! **************************************************************************************************
++!> \brief Reduce an arbitrarily long packed complex payload to the service leader.
++!>
++!> CP2K's MPI wrappers intentionally use a default-integer MPI count.  Fixed
++!> chunks keep every call below that bound even though the provider reports
++!> payload sizes with INT64.
++!> \param values ...
++!> \param para_env_inter_kp ...
++! **************************************************************************************************
++   SUBROUTINE tb_gxtb_partial_reduce_complex_root(values, para_env_inter_kp)
++
++      COMPLEX(KIND=dp), CONTIGUOUS, DIMENSION(:), &
++         INTENT(INOUT)                                   :: values
++      TYPE(mp_para_env_type), POINTER                    :: para_env_inter_kp
++
++      INTEGER(KIND=int_8), PARAMETER                     :: chunk_size = 1048576_int_8
++
++      INTEGER(KIND=int_8)                                :: first, last, nelements
++
++      nelements = SIZE(values, KIND=int_8)
++      first = 1_int_8
++      DO WHILE (first <= nelements)
++         last = MIN(nelements, first + chunk_size - 1_int_8)
++         CALL para_env_inter_kp%sum(values(first:last), para_env_inter_kp%source)
++         first = last + 1_int_8
++      END DO
++
++   END SUBROUTINE tb_gxtb_partial_reduce_complex_root
++! **************************************************************************************************
+ !> \brief Exact owner-generated g-xTB exchange bridge using CP2K k-point groups.
+ !> \param qs_env ...
+ !> \param tb ...
+@@ -4069,6 +4325,532 @@ CONTAINS
+ 
+    END SUBROUTINE tb_build_gxtb_kpoint_exchange_kgroup_owner
+ 
++! **************************************************************************************************
++!> \brief K-group-distributed pre-kernel accumulation with one exact provider root.
++!>
++!> Each official k-group leader contributes the complete-mesh star blocks
++!> generated by its irreducible owners.  The public save_tblite partial ABI
++!> turns those disjoint k blocks into additive bounded k-to-R payloads.  A
++!> canonical descriptor consensus precedes every reduction; only the service
++!> leader imports the sum, applies the coupled nonlinear kernel, and pulls all
++!> R-to-k responses.  Consequently this mode distributes k-to-R construction
++!> but deliberately leaves the nonlinear kernel and R-to-k work root-serial.
++!> \param qs_env ...
++!> \param tb ...
++!> \param matrix_s ...
++!> \param run_qualification_oracle ...
++!> \param iter_count ...
++! **************************************************************************************************
++   SUBROUTINE tb_build_gxtb_kpoint_exchange_kgroup_partial_root( &
++      qs_env, tb, matrix_s, run_qualification_oracle, iter_count)
++
++      TYPE(qs_environment_type), POINTER                 :: qs_env
++      TYPE(tblite_type), POINTER                         :: tb
++      TYPE(dbcsr_p_type), DIMENSION(:, :), POINTER       :: matrix_s
++      LOGICAL, INTENT(IN)                                :: run_qualification_oracle
++      INTEGER, INTENT(IN)                                :: iter_count
++
++      COMPLEX(KIND=dp), ALLOCATABLE, DIMENSION(:)        :: packed_payload
++      COMPLEX(KIND=dp), ALLOCATABLE, DIMENSION(:, :)     :: overlap_block, transform_work
++      COMPLEX(KIND=dp), ALLOCATABLE, DIMENSION(:, :, :)  :: density_block, fock_batch
++      COMPLEX(KIND=dp), ALLOCATABLE, &
++         DIMENSION(:, :, :, :)                           :: density_local
++      INTEGER                                            :: actual_batch_size, batch_size, &
++                                                            done_count, group_index, ifull, &
++                                                            injection_mode, iop, ispin, local_source, nao, &
++                                                            nkp_groups, nlocal, nred, nspin, &
++                                                            source
++      INTEGER, ALLOCATABLE, DIMENSION(:)                 :: ao_first, ao_size, &
++                                                            owner_count, owner_sum
++      INTEGER, DIMENSION(2)                              :: kp_range
++      INTEGER, DIMENSION(:, :), POINTER                  :: kp_dist
++      INTEGER, DIMENSION(:, :, :), POINTER               :: cell_to_index
++      INTEGER(KIND=int_8)                                :: local_payload_size, &
++                                                            root_payload_size, transaction_id(2)
++      LOGICAL                                            :: batch_done, contributor_done, &
++                                                            first_batch, leader, local_failed, &
++                                                            owns_source, service_rank, &
++                                                            use_real_wfn, validate_density
++      REAL(KIND=dp)                                      :: density_norm, exchange_energy, &
++                                                            hermitian_error, residual, scale
++      REAL(KIND=dp), ALLOCATABLE, DIMENSION(:)           :: exchange_vsh
++      REAL(KIND=dp), ALLOCATABLE, DIMENSION(:, :)        :: overlap_part
++      TYPE(cp2k_exchange_partial_descriptor_type)        :: descriptor
++      TYPE(cp2k_exchange_partial_forward_type)           :: local_buffer, summed_buffer
++      TYPE(cp2k_exchange_stream_type)                    :: stream
++      TYPE(dbcsr_type), POINTER                          :: cmatrix, rmatrix
++      TYPE(error_type), ALLOCATABLE                      :: error
++      TYPE(kpoint_type), POINTER                         :: kpoints
++      TYPE(mp_para_env_type), POINTER                    :: para_env_global, para_env_inter_kp, &
++                                                            para_env_kp
++      TYPE(neighbor_list_set_p_type), DIMENSION(:), &
++         POINTER                                         :: sab_nl
++      TYPE(tb_gxtb_kmesh_map_type), POINTER              :: kmap
++
++      NULLIFY (cell_to_index, cmatrix, kmap, kp_dist, kpoints, para_env_global, &
++               para_env_inter_kp, para_env_kp, rmatrix, sab_nl)
++      CALL get_qs_env(qs_env, kpoints=kpoints)
++      CPASSERT(ASSOCIATED(kpoints))
++      CALL get_kpoint_info(kpoints, nkp=nred, kp_range=kp_range, nkp_groups=nkp_groups, &
++                           kp_dist=kp_dist, para_env_kp=para_env_kp, &
++                           para_env_inter_kp=para_env_inter_kp, para_env=para_env_global, &
++                           use_real_wfn=use_real_wfn, cell_to_index=cell_to_index, &
++                           sab_nl=sab_nl)
++      IF (.NOT. ASSOCIATED(para_env_global) .OR. .NOT. ASSOCIATED(para_env_kp) .OR. &
++          .NOT. ASSOCIATED(para_env_inter_kp)) &
++         CPABORT("Missing official CP2K communicators for KGROUP_PARTIAL_ROOT")
++      IF (.NOT. ASSOCIATED(kp_dist) .OR. .NOT. ASSOCIATED(cell_to_index) .OR. &
++          .NOT. ASSOCIATED(sab_nl)) &
++         CPABORT("Incomplete ownership or image map for KGROUP_PARTIAL_ROOT")
++      IF (cp2k_exchange_partial_abi_version /= 1 .OR. &
++          cp2k_exchange_partial_descriptor_words /= 30 .OR. &
++          cp2k_exchange_partial_descriptor_size() /= 30_int_8) &
++         CPABORT("Unsupported save_tblite partial-accumulator ABI")
++      IF (nkp_groups /= para_env_inter_kp%num_pe) &
++         CPABORT("Inconsistent CP2K inter-k communicator for KGROUP_PARTIAL_ROOT")
++      group_index = para_env_inter_kp%mepos + 1
++      IF (group_index < 1 .OR. group_index > nkp_groups) &
++         CPABORT("Invalid CP2K k-group index for KGROUP_PARTIAL_ROOT")
++      IF (ANY(kp_range /= kp_dist(:, group_index))) &
++         CPABORT("Official CP2K k-point ownership changed in KGROUP_PARTIAL_ROOT")
++      nlocal = kp_range(2) - kp_range(1) + 1
++      IF (nlocal < 1) CPABORT("KGROUP_PARTIAL_ROOT requires nonempty official k groups")
++      leader = para_env_kp%is_source()
++      service_rank = para_env_global%is_source()
++      IF (service_rank .NEQV. (leader .AND. para_env_inter_kp%is_source())) &
++         CPABORT("CP2K service rank is not the leader-communicator source")
++      injection_mode = &
++         tb_gxtb_partial_qualification_injection(run_qualification_oracle)
++      IF (injection_mode == tb_gxtb_partial_inject_nonleader_failure) THEN
++         done_count = MERGE(0, 1, leader)
++         CALL para_env_global%sum(done_count)
++         IF (done_count == 0) &
++            CPABORT("NONLEADER_FAILURE qualification requires a nonleader rank")
++      END IF
++
++      CPASSERT(ALLOCATED(tb%gxtb_kmesh_map))
++      kmap => tb%gxtb_kmesh_map
++      CPASSERT(kmap%nred == nred)
++      nao = tb%calc%bas%nao
++      nspin = tb%wfn%nspin
++      CALL tb_gxtb_ao_layout(tb, ao_first, ao_size)
++      ALLOCATE (density_local(nao, nao, nspin, nlocal), &
++                density_block(nao, nao, nspin), fock_batch(nao, nao, nspin), &
++                overlap_block(nao, nao), transform_work(nao, nao), &
++                overlap_part(nao, nao), exchange_vsh(tb%calc%bas%nsh))
++      CALL tb_collect_local_kpoint_density(tb, kpoints, density_local)
++      IF (.NOT. ALL(ieee_is_finite(REAL(density_local, KIND=dp))) .OR. &
++          .NOT. ALL(ieee_is_finite(AIMAG(density_local)))) &
++         CPABORT("CP2K supplied a non-finite local density to KGROUP_PARTIAL_ROOT")
++      IF (.NOT. ALL(ieee_is_finite(tb%wfn%qsh))) &
++         CPABORT("CP2K supplied non-finite shell charges to KGROUP_PARTIAL_ROOT")
++
++      density_norm = MAXVAL(ABS(density_local))
++      CALL para_env_global%max(density_norm)
++      validate_density = .NOT. kmap%identity .AND. &
++                         .NOT. tb%gxtb_density_map_validated .AND. &
++                         density_norm > 1.0E-14_dp
++      exchange_energy = 0.0_dp
++      exchange_vsh = 0.0_dp
++      ALLOCATE (tb%exchange_fock_kp(nao, nao, nspin, nred), &
++                source=CMPLX(0.0_dp, 0.0_dp, KIND=dp))
++
++      ALLOCATE (rmatrix, cmatrix)
++      CALL dbcsr_create(rmatrix, template=matrix_s(1, 1)%matrix, &
++                        matrix_type=dbcsr_type_symmetric)
++      CALL dbcsr_create(cmatrix, template=matrix_s(1, 1)%matrix, &
++                        matrix_type=dbcsr_type_antisymmetric)
++      CALL cp_dbcsr_alloc_block_from_nbl(rmatrix, sab_nl)
++      CALL cp_dbcsr_alloc_block_from_nbl(cmatrix, sab_nl)
++
++      batch_size = tb_gxtb_exchange_stream_batch_size()
++      actual_batch_size = MIN(batch_size, kmap%nfull)
++      CALL tb_gxtb_partial_next_transaction(leader, service_rank, para_env_inter_kp, &
++                                            para_env_kp, transaction_id)
++      local_failed = .FALSE.
++      IF (leader) THEN
++         CALL cp2k_exchange_partial_begin(stream, tb%calc, tb%mol, tb%ecache, tb%wfn, &
++                                          kmap%nmesh, kmap%xkp, kmap%weight, batch_size, &
++                                          transaction_id, error)
++         local_failed = ALLOCATED(error)
++      ELSE
++         CALL cp2k_prepare_exchange(tb%calc, tb%mol, tb%ecache, tb%wfn, error)
++         local_failed = ALLOCATED(error)
++      END IF
++      IF (injection_mode == tb_gxtb_partial_inject_nonleader_failure .AND. .NOT. leader) &
++         local_failed = .TRUE.
++      CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                        local_failed, &
++                                        "save_tblite KGROUP_PARTIAL_ROOT initialization failed")
++
++      batch_done = .FALSE.
++      first_batch = .TRUE.
++      DO WHILE (.NOT. batch_done)
++         local_failed = .FALSE.
++         DO ifull = 1, kmap%nfull
++            source = kmap%source(ifull)
++            owns_source = source >= kp_range(1) .AND. source <= kp_range(2)
++            CALL prepare_overlap_block(ifull)
++            IF (leader .AND. owns_source .AND. .NOT. local_failed) THEN
++               local_source = source - kp_range(1) + 1
++               DO ispin = 1, nspin
++                  CALL tb_expand_gxtb_kpoint_block( &
++                     kpoints, kmap, ao_first, ao_size, ifull, &
++                     density_local(:, :, ispin, local_source), &
++                     density_block(:, :, ispin), transform_work)
++                  IF (validate_density .AND. first_batch) THEN
++                     DO iop = 1, kmap%op_count(ifull)
++                        CALL tb_transform_gxtb_kpoint_matrix( &
++                           kpoints, source, kmap%symops(iop, ifull), &
++                           kmap%rotation_slot(iop, ifull), ao_first, ao_size, &
++                           density_local(:, :, ispin, local_source), &
++                           transform_work, .FALSE.)
++                        scale = MAX(1.0_dp, MAXVAL(ABS(density_block(:, :, ispin))))
++                        residual = MAXVAL(ABS(transform_work - density_block(:, :, ispin)))/scale
++                        IF (residual > MAX(1.0E-10_dp, 100.0_dp*kpoints%eps_geo)) &
++                           CPABORT("KGROUP_PARTIAL_ROOT density violates its little group")
++                     END DO
++                  END IF
++               END DO
++               CALL cp2k_exchange_partial_push(stream, ifull, density_block, &
++                                               overlap_block, error)
++               local_failed = ALLOCATED(error)
++            END IF
++         END DO
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT push failed")
++         IF (validate_density .AND. first_batch) tb%gxtb_density_map_validated = .TRUE.
++
++         IF (leader) THEN
++            CALL cp2k_exchange_partial_export_forward(stream, descriptor, owner_count, &
++                                                      local_buffer, error)
++            local_failed = ALLOCATED(error)
++         ELSE
++            local_failed = .FALSE.
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT export failed")
++         CALL tb_gxtb_partial_descriptor_consensus(leader, service_rank, descriptor, &
++                                                   para_env_inter_kp, para_env_kp)
++
++         IF (leader) THEN
++            local_payload_size = cp2k_exchange_partial_forward_size(local_buffer)
++            root_payload_size = MERGE(local_payload_size, 0_int_8, service_rank)
++            CALL para_env_inter_kp%bcast(root_payload_size)
++            local_failed = local_payload_size /= root_payload_size .OR. &
++                           local_payload_size < 0_int_8
++         ELSE
++            local_failed = .FALSE.
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "Inconsistent KGROUP_PARTIAL_ROOT payload size")
++
++         IF (leader) THEN
++            CALL cp2k_exchange_partial_forward_pack(local_buffer, packed_payload, error)
++            local_failed = ALLOCATED(error)
++            IF (.NOT. local_failed) local_failed = &
++               SIZE(packed_payload, KIND=int_8) /= root_payload_size
++         ELSE
++            local_failed = .FALSE.
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT packing failed")
++
++         IF (leader) THEN
++            ALLOCATE (owner_sum, source=owner_count)
++            CALL para_env_inter_kp%sum(owner_sum, para_env_inter_kp%source)
++            CALL tb_gxtb_partial_reduce_complex_root(packed_payload, para_env_inter_kp)
++            local_failed = .FALSE.
++            IF (service_rank) local_failed = ANY(owner_sum /= 1) .OR. &
++                                             .NOT. ALL(ieee_is_finite(REAL(packed_payload, KIND=dp))) .OR. &
++                                             .NOT. ALL(ieee_is_finite(AIMAG(packed_payload)))
++         ELSE
++            local_failed = .FALSE.
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "Invalid KGROUP_PARTIAL_ROOT ownership or payload")
++
++         local_failed = .FALSE.
++         IF (service_rank) THEN
++            CALL cp2k_exchange_partial_forward_unpack(summed_buffer, descriptor, &
++                                                      packed_payload, error)
++            local_failed = ALLOCATED(error)
++            IF (.NOT. local_failed) THEN
++               CALL cp2k_exchange_partial_import_forward(stream, descriptor, owner_sum, &
++                                                         summed_buffer, tb%calc, tb%mol, &
++                                                         tb%ecache, error)
++               local_failed = ALLOCATED(error)
++            END IF
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT import failed")
++
++         local_failed = .FALSE.
++         IF (service_rank) THEN
++            CALL cp2k_exchange_stream_batch_apply(stream, tb%calc, tb%mol, tb%ecache, error)
++            local_failed = ALLOCATED(error)
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT apply failed")
++
++         DO ifull = 1, kmap%nfull
++            source = kmap%source(ifull)
++            owns_source = source >= kp_range(1) .AND. source <= kp_range(2)
++            CALL prepare_overlap_block(ifull)
++            fock_batch = CMPLX(0.0_dp, 0.0_dp, KIND=dp)
++            local_failed = .FALSE.
++            IF (service_rank) THEN
++               CALL cp2k_exchange_stream_batch_pull(stream, ifull, overlap_block, &
++                                                    fock_batch, error)
++               local_failed = ALLOCATED(error)
++               IF (.NOT. local_failed) local_failed = &
++                  .NOT. ALL(ieee_is_finite(REAL(fock_batch, KIND=dp))) .OR. &
++                  .NOT. ALL(ieee_is_finite(AIMAG(fock_batch)))
++            END IF
++            CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                              local_failed, &
++                                              "save_tblite KGROUP_PARTIAL_ROOT pull failed")
++            IF (leader) CALL para_env_inter_kp%bcast(fock_batch)
++            IF (leader .AND. owns_source) THEN
++               DO ispin = 1, nspin
++                  CALL tb_accumulate_gxtb_kpoint_response( &
++                     kpoints, kmap, ao_first, ao_size, ifull, fock_batch(:, :, ispin), &
++                     tb%exchange_fock_kp(:, :, ispin, source), transform_work)
++               END DO
++            END IF
++         END DO
++
++         contributor_done = .FALSE.
++         local_failed = .FALSE.
++         IF (service_rank) THEN
++            CALL cp2k_exchange_stream_batch_advance(stream, contributor_done, error)
++            local_failed = ALLOCATED(error)
++         ELSE IF (leader) THEN
++            CALL cp2k_exchange_partial_contributor_advance(stream, contributor_done, error)
++            local_failed = ALLOCATED(error)
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT advance failed")
++         done_count = 0
++         IF (leader) THEN
++            done_count = MERGE(1, 0, contributor_done)
++            CALL para_env_inter_kp%sum(done_count)
++            local_failed = done_count /= 0 .AND. done_count /= nkp_groups
++         ELSE
++            local_failed = .FALSE.
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "KGROUP_PARTIAL_ROOT generations diverged")
++         CALL para_env_kp%bcast(done_count)
++         batch_done = done_count == nkp_groups
++         first_batch = .FALSE.
++         IF (leader) THEN
++            DEALLOCATE (owner_count, owner_sum, packed_payload)
++         END IF
++      END DO
++
++      local_failed = .FALSE.
++      IF (service_rank) THEN
++         CALL cp2k_exchange_stream_batch_result(stream, tb%calc, tb%mol, tb%ecache, &
++                                                exchange_vsh, exchange_energy, error)
++         local_failed = ALLOCATED(error)
++         IF (injection_mode == tb_gxtb_partial_inject_nonfinite_forward_result) &
++            exchange_energy = ieee_value(exchange_energy, ieee_quiet_nan)
++         IF (.NOT. local_failed) local_failed = &
++            .NOT. ieee_is_finite(exchange_energy) .OR. &
++            .NOT. ALL(ieee_is_finite(exchange_vsh))
++      END IF
++      CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                        local_failed, &
++                                        "save_tblite KGROUP_PARTIAL_ROOT result failed")
++      IF (service_rank) THEN
++         CALL cp2k_exchange_stream_end(stream, error)
++      ELSE IF (leader) THEN
++         CALL cp2k_exchange_partial_discard(stream, error)
++      END IF
++      local_failed = leader .AND. ALLOCATED(error)
++      CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                        local_failed, &
++                                        "save_tblite KGROUP_PARTIAL_ROOT finalization failed")
++
++      IF (leader) THEN
++         CALL para_env_inter_kp%bcast(exchange_energy)
++         CALL para_env_inter_kp%bcast(exchange_vsh)
++         CALL para_env_inter_kp%sum(tb%exchange_fock_kp)
++      END IF
++      CALL para_env_kp%sum(exchange_energy)
++      CALL para_env_kp%sum(exchange_vsh)
++      CALL para_env_kp%sum(tb%exchange_fock_kp)
++      local_failed = .NOT. ALL(ieee_is_finite(REAL(tb%exchange_fock_kp, KIND=dp))) .OR. &
++                     .NOT. ALL(ieee_is_finite(AIMAG(tb%exchange_fock_kp)))
++      CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                        local_failed, &
++                                        "Non-finite folded KGROUP_PARTIAL_ROOT Fock response")
++      DO source = 1, nred
++         DO ispin = 1, nspin
++            hermitian_error = &
++               MAXVAL(ABS(tb%exchange_fock_kp(:, :, ispin, source) - &
++                          CONJG(TRANSPOSE(tb%exchange_fock_kp(:, :, ispin, source)))))
++            IF (hermitian_error > 1.0E-10_dp) &
++               CPABORT("Folded KGROUP_PARTIAL_ROOT Fock matrix is not Hermitian")
++            tb%exchange_fock_kp(:, :, ispin, source) = &
++               0.5_dp*(tb%exchange_fock_kp(:, :, ispin, source) + &
++                       CONJG(TRANSPOSE(tb%exchange_fock_kp(:, :, ispin, source))))
++         END DO
++         IF (use_real_wfn .AND. &
++             MAXVAL(ABS(AIMAG(tb%exchange_fock_kp(:, :, :, source)))) > 1.0E-10_dp) &
++            CPABORT("Complex KGROUP_PARTIAL_ROOT Fock cannot use real wavefunctions")
++      END DO
++
++      tb%e_exchange = 0.0_dp
++      tb%e_exchange(1) = exchange_energy
++      tb%pot%vsh(:, 1) = tb%pot%vsh(:, 1) + exchange_vsh
++      tb%exchange_fock_kp_valid = .TRUE.
++      IF (run_qualification_oracle) CALL qualify_partial_root_oracle()
++      IF (service_rank .AND. iter_count == 1) THEN
++         WRITE (*, '(A,I0,A,I0,A,I0,A,I0,A)') &
++            " GXTB-KGROUP-PARTIAL-ROOT groups=", nkp_groups, ", nred=", nred, &
++            ", nfull=", kmap%nfull, ", batch=", actual_batch_size, &
++            "; only pre-kernel k-to-R is distributed"
++      END IF
++
++      CALL dbcsr_deallocate_matrix(rmatrix)
++      CALL dbcsr_deallocate_matrix(cmatrix)
++      DEALLOCATE (ao_first, ao_size, density_block, density_local, exchange_vsh, &
++                  fock_batch, overlap_block, overlap_part, transform_work)
++
++   CONTAINS
++
++! **************************************************************************************************
++!> \brief ...
++!> \param ifull_local ...
++! **************************************************************************************************
++      SUBROUTINE prepare_overlap_block(ifull_local)
++
++      INTEGER, INTENT(IN)                                :: ifull_local
++
++      REAL(KIND=dp)                                      :: local_hermitian_error
++
++         CALL dbcsr_set(rmatrix, 0.0_dp)
++         CALL dbcsr_set(cmatrix, 0.0_dp)
++         CALL rskp_transform(rmatrix, cmatrix, matrix_s, 1, kmap%xkp(1:3, ifull_local), &
++                             cell_to_index, sab_nl)
++         CALL tb_dbcsr_component_to_dense(tb, rmatrix, overlap_part, para_env_global, .FALSE.)
++         overlap_block(:, :) = CMPLX(overlap_part, 0.0_dp, KIND=dp)
++         CALL tb_dbcsr_component_to_dense(tb, cmatrix, overlap_part, para_env_global, .TRUE.)
++         overlap_block(:, :) = CMPLX(REAL(overlap_block, KIND=dp), overlap_part, KIND=dp)
++         IF (.NOT. ALL(ieee_is_finite(REAL(overlap_block, KIND=dp))) .OR. &
++             .NOT. ALL(ieee_is_finite(AIMAG(overlap_block)))) &
++            CPABORT("CP2K supplied a non-finite KGROUP_PARTIAL_ROOT overlap")
++         local_hermitian_error = &
++            MAXVAL(ABS(overlap_block - CONJG(TRANSPOSE(overlap_block))))
++         IF (local_hermitian_error > 1.0E-10_dp) &
++            CPABORT("CP2K supplied a non-Hermitian KGROUP_PARTIAL_ROOT overlap")
++
++      END SUBROUTINE prepare_overlap_block
++
++! **************************************************************************************************
++!> \brief ...
++! **************************************************************************************************
++      SUBROUTINE qualify_partial_root_oracle()
++
++      COMPLEX(KIND=dp), ALLOCATABLE, DIMENSION(:, :, :)  :: overlap_full
++      COMPLEX(KIND=dp), ALLOCATABLE, &
++         DIMENSION(:, :, :, :)                           :: density_full, fock_full, &
++                                                            fock_reduced_oracle
++      INTEGER                                            :: ifull_local, ispin_local, &
++                                                            local_source_local, source_local
++      REAL(KIND=dp)                                      :: energy_delta, energy_oracle, fock_delta, &
++                                                            vsh_delta
++      REAL(KIND=dp), ALLOCATABLE, DIMENSION(:)           :: vsh_oracle
++
++         IF (service_rank) THEN
++            ALLOCATE (density_full(nao, nao, nspin, kmap%nfull), &
++                      fock_full(nao, nao, nspin, kmap%nfull), &
++                      fock_reduced_oracle(nao, nao, nspin, nred), &
++                      overlap_full(nao, nao, kmap%nfull), &
++                      source=CMPLX(0.0_dp, 0.0_dp, KIND=dp))
++            ALLOCATE (vsh_oracle(SIZE(exchange_vsh)), source=0.0_dp)
++         END IF
++         DO ifull_local = 1, kmap%nfull
++            source_local = kmap%source(ifull_local)
++            owns_source = source_local >= kp_range(1) .AND. source_local <= kp_range(2)
++            density_block = CMPLX(0.0_dp, 0.0_dp, KIND=dp)
++            IF (leader .AND. owns_source) THEN
++               local_source_local = source_local - kp_range(1) + 1
++               DO ispin_local = 1, nspin
++                  CALL tb_expand_gxtb_kpoint_block( &
++                     kpoints, kmap, ao_first, ao_size, ifull_local, &
++                     density_local(:, :, ispin_local, local_source_local), &
++                     density_block(:, :, ispin_local), transform_work)
++               END DO
++            END IF
++            IF (leader) CALL para_env_inter_kp%sum(density_block)
++            CALL para_env_kp%sum(density_block)
++            CALL prepare_overlap_block(ifull_local)
++            IF (service_rank) THEN
++               density_full(:, :, :, ifull_local) = density_block
++               overlap_full(:, :, ifull_local) = overlap_block
++            END IF
++         END DO
++         local_failed = .FALSE.
++         IF (service_rank) THEN
++            CALL cp2k_exchange_kmesh(tb%calc, tb%mol, tb%ecache, tb%wfn, kmap%nmesh, &
++                                     kmap%xkp, kmap%weight, density_full, overlap_full, &
++                                     fock_full, vsh_oracle, energy_oracle, error, &
++                                     transform_backend=cp2k_exchange_transform_dense)
++            local_failed = ALLOCATED(error)
++            IF (.NOT. local_failed) local_failed = &
++               .NOT. ieee_is_finite(energy_oracle) .OR. &
++               .NOT. ALL(ieee_is_finite(vsh_oracle)) .OR. &
++               .NOT. ALL(ieee_is_finite(REAL(fock_full, KIND=dp))) .OR. &
++               .NOT. ALL(ieee_is_finite(AIMAG(fock_full)))
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "KGROUP_PARTIAL_ROOT dense forward oracle failed")
++         local_failed = .FALSE.
++         IF (service_rank) THEN
++            fock_reduced_oracle = CMPLX(0.0_dp, 0.0_dp, KIND=dp)
++            DO ispin_local = 1, nspin
++               CALL tb_fold_gxtb_kpoint_matrix( &
++                  kpoints, kmap, ao_first, ao_size, fock_full(:, :, ispin_local, :), &
++                  fock_reduced_oracle(:, :, ispin_local, :))
++            END DO
++            energy_delta = ABS(exchange_energy - energy_oracle)
++            vsh_delta = MAXVAL(ABS(exchange_vsh - vsh_oracle))
++            fock_delta = MAXVAL(ABS(tb%exchange_fock_kp - fock_reduced_oracle))
++            WRITE (*, '(A,I0,3(A,ES14.6))') &
++               " GXTB-QUALIFICATION_ONLY KGROUP-PARTIAL-ROOT iter=", iter_count, &
++               " dE=", energy_delta, " dVsh=", vsh_delta, " dFfold=", fock_delta
++            local_failed = &
++               .NOT. ALL(ieee_is_finite(REAL(fock_reduced_oracle, KIND=dp))) .OR. &
++               .NOT. ALL(ieee_is_finite(AIMAG(fock_reduced_oracle))) .OR. &
++               .NOT. ieee_is_finite(energy_delta) .OR. &
++               .NOT. ieee_is_finite(vsh_delta) .OR. &
++               .NOT. ieee_is_finite(fock_delta) .OR. &
++               energy_delta > 1.0E-10_dp .OR. vsh_delta > 1.0E-10_dp .OR. &
++               fock_delta > 1.0E-10_dp
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "KGROUP_PARTIAL_ROOT dense oracle exceeded 1.0E-10")
++         IF (service_rank) &
++            DEALLOCATE (density_full, fock_full, fock_reduced_oracle, overlap_full, vsh_oracle)
++
++      END SUBROUTINE qualify_partial_root_oracle
++
++   END SUBROUTINE tb_build_gxtb_kpoint_exchange_kgroup_partial_root
++
+ ! **************************************************************************************************
+ !> \brief Evaluate complete-mesh g-xTB exchange without extra expanded full-star host arrays.
+ !> \param qs_env ...
+@@ -4794,6 +5576,7 @@ CONTAINS
+           stream_mode /= cp2k_exchange_stream_batched .AND. &
+           stream_mode /= tb_gxtb_exchange_stream_distributed .AND. &
+           stream_mode /= tb_gxtb_exchange_stream_kgroup_owner .AND. &
++          stream_mode /= tb_gxtb_exchange_stream_kgroup_partial_root .AND. &
+           .NOT. (stream_mode == 0 .AND. &
+                  transform_backend == cp2k_exchange_transform_separable_dft)) &
+          CPABORT("QUALIFICATION_ONLY identity oracle requires batched, distributed, or separable mode")
+@@ -4806,6 +5589,10 @@ CONTAINS
+          CALL tb_build_gxtb_kpoint_exchange_kgroup_owner( &
+             qs_env, tb, matrix_s, run_qualification_oracle, iter_count)
+          RETURN
++      ELSE IF (stream_mode == tb_gxtb_exchange_stream_kgroup_partial_root) THEN
++         CALL tb_build_gxtb_kpoint_exchange_kgroup_partial_root( &
++            qs_env, tb, matrix_s, run_qualification_oracle, iter_count)
++         RETURN
+       ELSE IF (stream_mode /= 0) THEN
+          CALL tb_build_gxtb_kpoint_exchange_streamed(qs_env, tb, matrix_s, para_env, stream_mode, &
+                                                      run_qualification_oracle, iter_count)
+@@ -5104,16 +5891,27 @@ CONTAINS
+       TYPE(tblite_type), POINTER                         :: tb
+       REAL(KIND=dp), DIMENSION(:, :), INTENT(OUT)        :: gradient, sigma
+ 
+-      INTEGER                                            :: gradient_mode
++      INTEGER                                            :: gradient_mode, stream_mode
+ 
+       gradient_mode = tb_gxtb_exchange_gradient_mode()
++      stream_mode = tb_gxtb_exchange_stream_mode()
+       SELECT CASE (gradient_mode)
+       CASE (tb_gxtb_exchange_gradient_dense)
+          CALL tb_gxtb_kpoint_exchange_gradient_dense(qs_env, tb, gradient, sigma)
+       CASE (tb_gxtb_exchange_gradient_streamed)
+-         CALL tb_gxtb_kpoint_exchange_gradient_streamed(qs_env, tb, gradient, sigma, .FALSE.)
++         IF (stream_mode == tb_gxtb_exchange_stream_kgroup_partial_root) THEN
++            CALL tb_gxtb_kpoint_exchange_gradient_kgroup_partial_root( &
++               qs_env, tb, gradient, sigma, .FALSE.)
++         ELSE
++            CALL tb_gxtb_kpoint_exchange_gradient_streamed(qs_env, tb, gradient, sigma, .FALSE.)
++         END IF
+       CASE (tb_gxtb_exchange_gradient_qualify)
+-         CALL tb_gxtb_kpoint_exchange_gradient_streamed(qs_env, tb, gradient, sigma, .TRUE.)
++         IF (stream_mode == tb_gxtb_exchange_stream_kgroup_partial_root) THEN
++            CALL tb_gxtb_kpoint_exchange_gradient_kgroup_partial_root( &
++               qs_env, tb, gradient, sigma, .TRUE.)
++         ELSE
++            CALL tb_gxtb_kpoint_exchange_gradient_streamed(qs_env, tb, gradient, sigma, .TRUE.)
++         END IF
+       CASE DEFAULT
+          CPABORT("Invalid g-xTB exchange-gradient bridge")
+       END SELECT
+@@ -5814,6 +6612,591 @@ CONTAINS
+ 
+    END SUBROUTINE tb_gxtb_kpoint_exchange_gradient_streamed
+ 
++! **************************************************************************************************
++!> \brief Reverse consumer for the root-imported k-group partial exchange path.
++!>
++!> K-group leaders construct additive reverse sources from their irreducible
++!> owners.  One service leader imports and differentiates the globally reduced
++!> payload and pulls every full-mesh overlap adjoint.  Each pulled block is
++!> broadcast only among leaders and folded by its unique source owner.  Direct
++!> atomic and strain derivatives are accepted from the service leader once.
++!> \param qs_env ...
++!> \param tb ...
++!> \param gradient ...
++!> \param sigma ...
++!> \param qualify ...
++! **************************************************************************************************
++   SUBROUTINE tb_gxtb_kpoint_exchange_gradient_kgroup_partial_root( &
++      qs_env, tb, gradient, sigma, qualify)
++
++      TYPE(qs_environment_type), POINTER                 :: qs_env
++      TYPE(tblite_type), POINTER                         :: tb
++      REAL(KIND=dp), DIMENSION(:, :), INTENT(OUT)        :: gradient, sigma
++      LOGICAL, INTENT(IN)                                :: qualify
++
++      COMPLEX(KIND=dp), ALLOCATABLE, DIMENSION(:)        :: packed_payload
++      COMPLEX(KIND=dp), ALLOCATABLE, &
++         DIMENSION(:, :, :, :)                           :: density_local
++      COMPLEX(KIND=dp), ALLOCATABLE, DIMENSION(:, :, :)  :: density_block, overlap_grad
++      COMPLEX(KIND=dp), ALLOCATABLE, DIMENSION(:, :)     :: overlap_adjoint, overlap_block, &
++                                                            transform_work
++      INTEGER                                            :: actual_batch_size, batch_size, &
++                                                            done_count, group_index, ic, ifull, &
++                                                            ik, ikk, img, injection_mode, ispin, kplocal, &
++                                                            nao, nat, nc, nimg, &
++                                                            nkp_groups, nred, nspin, source
++      INTEGER, ALLOCATABLE, DIMENSION(:)                 :: ao_first, ao_size, &
++                                                            owner_count, owner_sum
++      INTEGER, DIMENSION(2)                              :: kp_range
++      INTEGER, DIMENSION(:, :), POINTER                  :: kp_dist
++      INTEGER, DIMENSION(:, :, :), POINTER               :: cell_to_index
++      INTEGER(KIND=int_8)                                :: local_payload_size, peak_complex, &
++                                                            root_payload_size, transaction_id(2)
++      LOGICAL                                            :: batch_done, contributor_done, &
++                                                            leader, local_failed, owns_source, &
++                                                            service_rank, use_real_wfn
++      REAL(KIND=dp)                                      :: hermitian_error
++      REAL(KIND=dp), ALLOCATABLE, DIMENSION(:, :)        :: k_gradient, k_sigma, overlap_part
++      TYPE(cp_fm_pool_p_type), DIMENSION(:), POINTER     :: ao_ao_fm_pools
++      TYPE(cp_fm_struct_type), POINTER                   :: matrix_struct
++      TYPE(cp_fm_type), ALLOCATABLE, DIMENSION(:)        :: fmwork
++      TYPE(cp_fm_type), ALLOCATABLE, DIMENSION(:, :, :)  :: pmat_ext
++      TYPE(cp2k_exchange_partial_descriptor_type)        :: descriptor
++      TYPE(cp2k_exchange_partial_reverse_type)           :: local_buffer, summed_buffer
++      TYPE(cp2k_exchange_stream_type)                    :: stream
++      TYPE(dbcsr_p_type), DIMENSION(:, :), POINTER       :: exchange_w_rs, matrix_s, matrix_w
++      TYPE(dbcsr_type), POINTER                          :: cmatrix, rmatrix
++      TYPE(error_type), ALLOCATABLE                      :: error
++      TYPE(kpoint_env_type), POINTER                     :: kp
++      TYPE(kpoint_type), POINTER                         :: kpoints
++      TYPE(mp_para_env_type), POINTER                    :: para_env_global, para_env_inter_kp, &
++                                                            para_env_kp
++      TYPE(neighbor_list_set_p_type), DIMENSION(:), &
++         POINTER                                         :: sab_nl
++      TYPE(tb_gxtb_kmesh_map_type), POINTER              :: kmap
++
++      NULLIFY (ao_ao_fm_pools, cell_to_index, cmatrix, exchange_w_rs, kmap, kp, &
++               kp_dist, kpoints, matrix_s, matrix_struct, matrix_w, para_env_global, &
++               para_env_inter_kp, para_env_kp, rmatrix, sab_nl)
++      gradient = 0.0_dp
++      sigma = 0.0_dp
++
++      CALL get_qs_env(qs_env, kpoints=kpoints, matrix_s_kp=matrix_s, matrix_w_kp=matrix_w, &
++                      para_env=para_env_global)
++      IF (.NOT. ASSOCIATED(kpoints) .OR. .NOT. ASSOCIATED(matrix_s) .OR. &
++          .NOT. ASSOCIATED(matrix_w) .OR. .NOT. ASSOCIATED(para_env_global)) &
++         CPABORT("Missing CP2K state for KGROUP_PARTIAL_ROOT reverse exchange")
++      CALL mpools_get(qs_env%mpools, ao_ao_fm_pools=ao_ao_fm_pools)
++      IF (.NOT. ASSOCIATED(ao_ao_fm_pools)) &
++         CPABORT("Missing AO full-matrix pool for KGROUP_PARTIAL_ROOT reverse")
++      IF (SIZE(ao_ao_fm_pools) < 1) &
++         CPABORT("Missing AO full-matrix pool for KGROUP_PARTIAL_ROOT reverse")
++      IF (.NOT. ASSOCIATED(ao_ao_fm_pools(1)%pool)) &
++         CPABORT("Uninitialized AO pool for KGROUP_PARTIAL_ROOT reverse")
++
++      CALL get_kpoint_info(kpoints, nkp=nred, kp_range=kp_range, nkp_groups=nkp_groups, &
++                           kp_dist=kp_dist, para_env_kp=para_env_kp, &
++                           para_env_inter_kp=para_env_inter_kp, use_real_wfn=use_real_wfn, &
++                           cell_to_index=cell_to_index, sab_nl=sab_nl)
++      IF (.NOT. ASSOCIATED(para_env_kp) .OR. .NOT. ASSOCIATED(para_env_inter_kp) .OR. &
++          .NOT. ASSOCIATED(kp_dist) .OR. .NOT. ASSOCIATED(cell_to_index) .OR. &
++          .NOT. ASSOCIATED(sab_nl)) &
++         CPABORT("Incomplete CP2K maps for KGROUP_PARTIAL_ROOT reverse")
++      IF (nkp_groups /= para_env_inter_kp%num_pe) &
++         CPABORT("Inconsistent inter-k communicator for KGROUP_PARTIAL_ROOT reverse")
++      group_index = para_env_inter_kp%mepos + 1
++      IF (group_index < 1 .OR. group_index > nkp_groups .OR. &
++          ANY(kp_range /= kp_dist(:, group_index))) &
++         CPABORT("Invalid official k-group ownership in KGROUP_PARTIAL_ROOT reverse")
++      leader = para_env_kp%is_source()
++      service_rank = para_env_global%is_source()
++      IF (service_rank .NEQV. (leader .AND. para_env_inter_kp%is_source())) &
++         CPABORT("Reverse service rank is not the leader-communicator source")
++      injection_mode = tb_gxtb_partial_qualification_injection(qualify)
++      IF (injection_mode == tb_gxtb_partial_inject_nonleader_failure) THEN
++         done_count = MERGE(0, 1, leader)
++         CALL para_env_global%sum(done_count)
++         IF (done_count == 0) &
++            CPABORT("NONLEADER_FAILURE qualification requires a nonleader rank")
++      END IF
++
++      CALL tb_prepare_gxtb_kmesh_map(tb, kpoints, matrix_s, sab_nl, cell_to_index)
++      kmap => tb%gxtb_kmesh_map
++      ! Preserve CP2K's established one-point symmetry and weight handling.
++      IF (kmap%nfull == 1) THEN
++         IF (injection_mode /= tb_gxtb_partial_inject_none) &
++            CPABORT("Partial-root reverse fault injection requires a multi-k mesh")
++         CALL tb_gxtb_kpoint_exchange_gradient_dense(qs_env, tb, gradient, sigma)
++         RETURN
++      END IF
++      nao = tb%calc%bas%nao
++      nat = tb%mol%nat
++      nspin = tb%wfn%nspin
++      nimg = SIZE(matrix_s, 2)
++      nc = MERGE(1, 2, use_real_wfn)
++      kplocal = kp_range(2) - kp_range(1) + 1
++      IF (kplocal < 1) CPABORT("Empty official k group in KGROUP_PARTIAL_ROOT reverse")
++      CALL tb_gxtb_ao_layout(tb, ao_first, ao_size)
++      CPASSERT(SIZE(gradient, 1) == 3 .AND. SIZE(gradient, 2) == nat)
++      CPASSERT(SIZE(sigma, 1) == 3 .AND. SIZE(sigma, 2) == 3)
++      CPASSERT(SIZE(matrix_w, 1) >= nspin .AND. SIZE(matrix_w, 2) == nimg)
++
++      ALLOCATE (density_local(nao, nao, nspin, kplocal), &
++                density_block(nao, nao, nspin), overlap_adjoint(nao, nao), &
++                overlap_block(nao, nao), overlap_grad(nao, nao, nred), &
++                transform_work(nao, nao), source=CMPLX(0.0_dp, 0.0_dp, KIND=dp))
++      ALLOCATE (overlap_part(nao, nao), k_gradient(3, nat), k_sigma(3, 3), source=0.0_dp)
++      CALL tb_collect_local_kpoint_density(tb, kpoints, density_local)
++      IF (.NOT. ALL(ieee_is_finite(REAL(density_local, KIND=dp))) .OR. &
++          .NOT. ALL(ieee_is_finite(AIMAG(density_local)))) &
++         CPABORT("Non-finite local density in KGROUP_PARTIAL_ROOT reverse")
++
++      ALLOCATE (rmatrix, cmatrix)
++      CALL dbcsr_create(rmatrix, template=matrix_s(1, 1)%matrix, &
++                        matrix_type=dbcsr_type_symmetric)
++      CALL dbcsr_create(cmatrix, template=matrix_s(1, 1)%matrix, &
++                        matrix_type=dbcsr_type_antisymmetric)
++      CALL cp_dbcsr_alloc_block_from_nbl(rmatrix, sab_nl)
++      CALL cp_dbcsr_alloc_block_from_nbl(cmatrix, sab_nl)
++
++      batch_size = tb_gxtb_exchange_stream_batch_size()
++      actual_batch_size = MIN(batch_size, kmap%nfull)
++      CALL tb_gxtb_partial_next_transaction(leader, service_rank, para_env_inter_kp, &
++                                            para_env_kp, transaction_id)
++      local_failed = .FALSE.
++      IF (leader) THEN
++         CALL cp2k_exchange_partial_begin(stream, tb%calc, tb%mol, tb%ecache, tb%wfn, &
++                                          kmap%nmesh, kmap%xkp, kmap%weight, batch_size, &
++                                          transaction_id, error, reverse_only=.TRUE.)
++         local_failed = ALLOCATED(error)
++         IF (.NOT. local_failed) peak_complex = &
++            cp2k_exchange_stream_peak_complex_elements(stream)
++      ELSE
++         CALL cp2k_prepare_exchange(tb%calc, tb%mol, tb%ecache, tb%wfn, error)
++         local_failed = ALLOCATED(error)
++         peak_complex = 0_int_8
++      END IF
++      IF (injection_mode == tb_gxtb_partial_inject_nonleader_failure .AND. .NOT. leader) &
++         local_failed = .TRUE.
++      CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                        local_failed, &
++                                        "save_tblite KGROUP_PARTIAL_ROOT reverse initialization failed")
++
++      batch_done = .FALSE.
++      DO WHILE (.NOT. batch_done)
++         local_failed = .FALSE.
++         DO ifull = 1, kmap%nfull
++            source = kmap%source(ifull)
++            owns_source = source >= kp_range(1) .AND. source <= kp_range(2)
++            CALL prepare_reverse_block(ifull, .FALSE.)
++            IF (leader .AND. owns_source .AND. .NOT. local_failed) THEN
++               CALL cp2k_exchange_partial_reverse_push(stream, ifull, density_block, &
++                                                       overlap_block, error)
++               local_failed = ALLOCATED(error)
++            END IF
++         END DO
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT reverse push failed")
++
++         IF (leader) THEN
++            CALL cp2k_exchange_partial_export_reverse(stream, descriptor, owner_count, &
++                                                      local_buffer, error)
++            local_failed = ALLOCATED(error)
++         ELSE
++            local_failed = .FALSE.
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT reverse export failed")
++         CALL tb_gxtb_partial_descriptor_consensus(leader, service_rank, descriptor, &
++                                                   para_env_inter_kp, para_env_kp)
++
++         IF (leader) THEN
++            local_payload_size = cp2k_exchange_partial_reverse_size(local_buffer)
++            root_payload_size = MERGE(local_payload_size, 0_int_8, service_rank)
++            CALL para_env_inter_kp%bcast(root_payload_size)
++            local_failed = local_payload_size /= root_payload_size .OR. &
++                           local_payload_size < 0_int_8
++         ELSE
++            local_failed = .FALSE.
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "Inconsistent KGROUP_PARTIAL_ROOT reverse payload size")
++         IF (leader) THEN
++            CALL cp2k_exchange_partial_reverse_pack(local_buffer, packed_payload, error)
++            local_failed = ALLOCATED(error)
++            IF (.NOT. local_failed) local_failed = &
++               SIZE(packed_payload, KIND=int_8) /= root_payload_size
++         ELSE
++            local_failed = .FALSE.
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT reverse packing failed")
++
++         IF (leader) THEN
++            ALLOCATE (owner_sum, source=owner_count)
++            CALL para_env_inter_kp%sum(owner_sum, para_env_inter_kp%source)
++            CALL tb_gxtb_partial_reduce_complex_root(packed_payload, para_env_inter_kp)
++            local_failed = .FALSE.
++            IF (service_rank) local_failed = ANY(owner_sum /= 1) .OR. &
++                                             .NOT. ALL(ieee_is_finite(REAL(packed_payload, KIND=dp))) .OR. &
++                                             .NOT. ALL(ieee_is_finite(AIMAG(packed_payload)))
++         ELSE
++            local_failed = .FALSE.
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "Invalid KGROUP_PARTIAL_ROOT reverse ownership or payload")
++
++         local_failed = .FALSE.
++         IF (service_rank) THEN
++            CALL cp2k_exchange_partial_reverse_unpack(summed_buffer, descriptor, &
++                                                      packed_payload, error)
++            local_failed = ALLOCATED(error)
++            IF (.NOT. local_failed) THEN
++               CALL cp2k_exchange_partial_import_reverse(stream, descriptor, owner_sum, &
++                                                         summed_buffer, tb%calc, tb%mol, &
++                                                         tb%ecache, error)
++               local_failed = ALLOCATED(error)
++            END IF
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT reverse import failed")
++         local_failed = .FALSE.
++         IF (service_rank) THEN
++            CALL cp2k_exchange_stream_reverse_batch_apply(stream, tb%calc, tb%mol, &
++                                                          tb%ecache, error)
++            local_failed = ALLOCATED(error)
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT reverse apply failed")
++
++         DO ifull = 1, kmap%nfull
++            source = kmap%source(ifull)
++            owns_source = source >= kp_range(1) .AND. source <= kp_range(2)
++            CALL prepare_reverse_block(ifull, .TRUE.)
++            overlap_adjoint = CMPLX(0.0_dp, 0.0_dp, KIND=dp)
++            local_failed = .FALSE.
++            IF (service_rank) THEN
++               CALL cp2k_exchange_stream_reverse_batch_pull( &
++                  stream, ifull, density_block, overlap_block, overlap_adjoint, error)
++               local_failed = ALLOCATED(error)
++               IF (.NOT. local_failed) local_failed = &
++                  .NOT. ALL(ieee_is_finite(REAL(overlap_adjoint, KIND=dp))) .OR. &
++                  .NOT. ALL(ieee_is_finite(AIMAG(overlap_adjoint)))
++            END IF
++            CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                              local_failed, &
++                                              "save_tblite KGROUP_PARTIAL_ROOT reverse pull failed")
++            IF (leader) CALL para_env_inter_kp%bcast(overlap_adjoint)
++            IF (leader .AND. owns_source) THEN
++               CALL tb_accumulate_gxtb_kpoint_response( &
++                  kpoints, kmap, ao_first, ao_size, ifull, overlap_adjoint, &
++                  overlap_grad(:, :, source), transform_work)
++            END IF
++         END DO
++
++         contributor_done = .FALSE.
++         local_failed = .FALSE.
++         IF (service_rank) THEN
++            CALL cp2k_exchange_stream_reverse_batch_advance(stream, contributor_done, error)
++            local_failed = ALLOCATED(error)
++         ELSE IF (leader) THEN
++            CALL cp2k_exchange_partial_contributor_advance(stream, contributor_done, error)
++            local_failed = ALLOCATED(error)
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "save_tblite KGROUP_PARTIAL_ROOT reverse advance failed")
++         done_count = 0
++         IF (leader) THEN
++            done_count = MERGE(1, 0, contributor_done)
++            CALL para_env_inter_kp%sum(done_count)
++            local_failed = done_count /= 0 .AND. done_count /= nkp_groups
++         ELSE
++            local_failed = .FALSE.
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "KGROUP_PARTIAL_ROOT reverse generations diverged")
++         CALL para_env_kp%bcast(done_count)
++         batch_done = done_count == nkp_groups
++         IF (leader) DEALLOCATE (owner_count, owner_sum, packed_payload)
++      END DO
++
++      local_failed = .FALSE.
++      IF (service_rank) THEN
++         CALL cp2k_exchange_stream_reverse_result(stream, tb%calc, tb%mol, tb%ecache, &
++                                                  k_gradient, k_sigma, error)
++         local_failed = ALLOCATED(error)
++         IF (.NOT. local_failed) local_failed = &
++            .NOT. ALL(ieee_is_finite(k_gradient)) .OR. &
++            .NOT. ALL(ieee_is_finite(k_sigma))
++      END IF
++      CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                        local_failed, &
++                                        "save_tblite KGROUP_PARTIAL_ROOT reverse result failed")
++      IF (service_rank) THEN
++         CALL cp2k_exchange_stream_end(stream, error)
++      ELSE IF (leader) THEN
++         CALL cp2k_exchange_partial_discard(stream, error)
++      END IF
++      local_failed = leader .AND. ALLOCATED(error)
++      CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                        local_failed, &
++                                        "save_tblite KGROUP_PARTIAL_ROOT reverse finalization failed")
++
++      IF (leader) THEN
++         CALL para_env_inter_kp%bcast(k_gradient)
++         CALL para_env_inter_kp%bcast(k_sigma)
++         CALL para_env_inter_kp%sum(overlap_grad)
++      END IF
++      CALL para_env_kp%sum(k_gradient)
++      CALL para_env_kp%sum(k_sigma)
++      CALL para_env_kp%sum(overlap_grad)
++      gradient = k_gradient
++      sigma = k_sigma
++      IF (injection_mode == tb_gxtb_partial_inject_antihermitian_reverse) THEN
++         IF (nao < 2 .OR. nred < 1) &
++            CPABORT("ANTIHERMITIAN_REVERSE qualification requires at least two AOs")
++         overlap_grad(1, 2, 1) = overlap_grad(1, 2, 1) + &
++                                 CMPLX(1.0E-6_dp, 0.0_dp, KIND=dp)
++      END IF
++      DO ik = 1, nred
++         IF (.NOT. ALL(ieee_is_finite(REAL(overlap_grad(:, :, ik), KIND=dp))) .OR. &
++             .NOT. ALL(ieee_is_finite(AIMAG(overlap_grad(:, :, ik))))) &
++            CPABORT("Non-finite KGROUP_PARTIAL_ROOT overlap adjoint")
++         hermitian_error = MAXVAL(ABS(overlap_grad(:, :, ik) - &
++                                      CONJG(TRANSPOSE(overlap_grad(:, :, ik)))))
++         IF (hermitian_error > 1.0E-10_dp) &
++            CPABORT("Folded KGROUP_PARTIAL_ROOT overlap adjoint is not Hermitian")
++         IF (use_real_wfn .AND. MAXVAL(ABS(AIMAG(overlap_grad(:, :, ik)))) > 1.0E-10_dp) &
++            CPABORT("Complex KGROUP_PARTIAL_ROOT overlap adjoint cannot use real wavefunctions")
++         overlap_grad(:, :, ik) = 0.5_dp*(overlap_grad(:, :, ik) + &
++                                          CONJG(TRANSPOSE(overlap_grad(:, :, ik))))
++      END DO
++      IF (.NOT. ALL(ieee_is_finite(gradient)) .OR. .NOT. ALL(ieee_is_finite(sigma))) &
++         CPABORT("Non-finite KGROUP_PARTIAL_ROOT direct exchange derivative")
++
++      IF (qualify) CALL qualify_partial_root_reverse()
++      IF (service_rank) THEN
++         WRITE (*, '(A,I0,A,I0,A,I0,A,I0,A)') &
++            " GXTB KGROUP-PARTIAL-ROOT-REVERSE nfull=", kmap%nfull, &
++            ", groups=", nkp_groups, ", batch=", actual_batch_size, &
++            ", provider_peak_complex=", peak_complex, "; R-to-k remains root-serial"
++      END IF
++
++      ALLOCATE (pmat_ext(kplocal, nc, nspin))
++      DO ikk = 1, kplocal
++         kp => kpoints%kp_env(ikk)%kpoint_env
++         CPASSERT(ASSOCIATED(kp))
++         DO ispin = 1, nspin
++            DO ic = 1, nc
++               CALL cp_fm_get_info(kp%pmat(ic, ispin), matrix_struct=matrix_struct)
++               CPASSERT(ASSOCIATED(matrix_struct))
++               CALL cp_fm_create(pmat_ext(ikk, ic, ispin), matrix_struct, set_zero=.TRUE.)
++            END DO
++         END DO
++      END DO
++      DO ik = kp_range(1), kp_range(2)
++         ikk = ik - kp_range(1) + 1
++         CALL tb_dense_to_fm(REAL(overlap_grad(:, :, ik), KIND=dp), pmat_ext(ikk, 1, 1))
++         IF (.NOT. use_real_wfn) &
++            CALL tb_dense_to_fm(AIMAG(overlap_grad(:, :, ik)), pmat_ext(ikk, 2, 1))
++      END DO
++
++      CALL dbcsr_allocate_matrix_set(exchange_w_rs, nspin, nimg)
++      DO ispin = 1, nspin
++         DO img = 1, nimg
++            ALLOCATE (exchange_w_rs(ispin, img)%matrix)
++            CALL dbcsr_create(exchange_w_rs(ispin, img)%matrix, &
++                              template=matrix_s(1, 1)%matrix, &
++                              name="KGROUP PARTIAL ROOT g-XTB EXCHANGE RESPONSE", &
++                              matrix_type=dbcsr_type_symmetric)
++            CALL cp_dbcsr_alloc_block_from_nbl(exchange_w_rs(ispin, img)%matrix, sab_nl)
++            CALL dbcsr_set(exchange_w_rs(ispin, img)%matrix, 0.0_dp)
++         END DO
++      END DO
++      ALLOCATE (fmwork(nc))
++      DO ic = 1, nc
++         CALL fm_pool_create_fm(ao_ao_fm_pools(1)%pool, fmwork(ic))
++      END DO
++      CALL kpoint_density_transform(kpoints, exchange_w_rs, .TRUE., &
++                                    matrix_s(1, 1)%matrix, sab_nl, fmwork, &
++                                    pmat_ext=pmat_ext, overlap_rs=matrix_s)
++      DO ic = 1, nc
++         CALL fm_pool_give_back_fm(ao_ao_fm_pools(1)%pool, fmwork(ic))
++      END DO
++      DEALLOCATE (fmwork)
++      DO img = 1, nimg
++         CALL dbcsr_add(matrix_w(1, img)%matrix, exchange_w_rs(1, img)%matrix, &
++                        alpha_scalar=1.0_dp, beta_scalar=-1.0_dp)
++      END DO
++
++      CALL dbcsr_deallocate_matrix_set(exchange_w_rs)
++      DO ispin = 1, nspin
++         DO ic = 1, nc
++            DO ikk = 1, kplocal
++               CALL cp_fm_release(pmat_ext(ikk, ic, ispin))
++            END DO
++         END DO
++      END DO
++      CALL dbcsr_deallocate_matrix(rmatrix)
++      CALL dbcsr_deallocate_matrix(cmatrix)
++      DEALLOCATE (ao_first, ao_size, density_block, density_local, k_gradient, k_sigma, &
++                  overlap_adjoint, overlap_block, overlap_grad, overlap_part, pmat_ext, &
++                  transform_work)
++
++   CONTAINS
++
++! **************************************************************************************************
++!> \brief ...
++!> \param ifull_local ...
++!> \param reduce_to_root ...
++! **************************************************************************************************
++      SUBROUTINE prepare_reverse_block(ifull_local, reduce_to_root)
++
++      INTEGER, INTENT(IN)                                :: ifull_local
++      LOGICAL, INTENT(IN)                                :: reduce_to_root
++
++      INTEGER                                            :: ispin_local, local_source_local, &
++                                                            source_local
++      REAL(KIND=dp)                                      :: local_hermitian_error
++
++         density_block = CMPLX(0.0_dp, 0.0_dp, KIND=dp)
++         source_local = kmap%source(ifull_local)
++         IF (leader .AND. source_local >= kp_range(1) .AND. source_local <= kp_range(2)) THEN
++            local_source_local = source_local - kp_range(1) + 1
++            DO ispin_local = 1, nspin
++               CALL tb_expand_gxtb_kpoint_block( &
++                  kpoints, kmap, ao_first, ao_size, ifull_local, &
++                  density_local(:, :, ispin_local, local_source_local), &
++                  density_block(:, :, ispin_local), transform_work)
++               local_hermitian_error = &
++                  MAXVAL(ABS(density_block(:, :, ispin_local) - &
++                             CONJG(TRANSPOSE(density_block(:, :, ispin_local)))))
++               IF (local_hermitian_error > 1.0E-10_dp) &
++                  CPABORT("KGROUP_PARTIAL_ROOT reverse density is not Hermitian")
++            END DO
++         END IF
++
++         CALL dbcsr_set(rmatrix, 0.0_dp)
++         CALL dbcsr_set(cmatrix, 0.0_dp)
++         CALL rskp_transform(rmatrix, cmatrix, matrix_s, 1, kmap%xkp(1:3, ifull_local), &
++                             cell_to_index, sab_nl)
++         CALL tb_dbcsr_component_to_dense(tb, rmatrix, overlap_part, para_env_global, .FALSE.)
++         overlap_block(:, :) = CMPLX(overlap_part, 0.0_dp, KIND=dp)
++         CALL tb_dbcsr_component_to_dense(tb, cmatrix, overlap_part, para_env_global, .TRUE.)
++         overlap_block(:, :) = CMPLX(REAL(overlap_block, KIND=dp), overlap_part, KIND=dp)
++         IF (.NOT. ALL(ieee_is_finite(REAL(overlap_block, KIND=dp))) .OR. &
++             .NOT. ALL(ieee_is_finite(AIMAG(overlap_block)))) &
++            CPABORT("Non-finite KGROUP_PARTIAL_ROOT reverse overlap")
++         local_hermitian_error = &
++            MAXVAL(ABS(overlap_block - CONJG(TRANSPOSE(overlap_block))))
++         IF (local_hermitian_error > 1.0E-10_dp) &
++            CPABORT("KGROUP_PARTIAL_ROOT reverse overlap is not Hermitian")
++         IF (reduce_to_root .AND. leader) THEN
++            DO ispin_local = 1, nspin
++               CALL para_env_inter_kp%sum(density_block(:, :, ispin_local), &
++                                          para_env_inter_kp%source)
++            END DO
++         END IF
++
++      END SUBROUTINE prepare_reverse_block
++
++! **************************************************************************************************
++!> \brief ...
++! **************************************************************************************************
++      SUBROUTINE qualify_partial_root_reverse()
++
++      COMPLEX(KIND=dp), ALLOCATABLE, DIMENSION(:, :, :)  :: overlap_full, overlap_grad_full, &
++                                                            overlap_grad_oracle
++      COMPLEX(KIND=dp), ALLOCATABLE, &
++         DIMENSION(:, :, :, :)                           :: density_full
++      INTEGER                                            :: ifull_local
++      REAL(KIND=dp)                                      :: force_residual, response_residual, &
++                                                            response_scale, stress_residual
++      REAL(KIND=dp), ALLOCATABLE, DIMENSION(:, :)        :: gradient_oracle, sigma_oracle
++
++         IF (service_rank) THEN
++            ALLOCATE (density_full(nao, nao, nspin, kmap%nfull), &
++                      overlap_full(nao, nao, kmap%nfull), &
++                      overlap_grad_full(nao, nao, kmap%nfull), &
++                      overlap_grad_oracle(nao, nao, nred), &
++                      source=CMPLX(0.0_dp, 0.0_dp, KIND=dp))
++            ALLOCATE (gradient_oracle(3, nat), sigma_oracle(3, 3), source=0.0_dp)
++         END IF
++         DO ifull_local = 1, kmap%nfull
++            CALL prepare_reverse_block(ifull_local, .TRUE.)
++            IF (service_rank) THEN
++               density_full(:, :, :, ifull_local) = density_block
++               overlap_full(:, :, ifull_local) = overlap_block
++            END IF
++         END DO
++         local_failed = .FALSE.
++         IF (service_rank) THEN
++            CALL cp2k_exchange_kmesh_gradient( &
++               tb%calc, tb%mol, tb%ecache, kmap%nmesh, kmap%xkp, kmap%weight, &
++               density_full, overlap_full, overlap_grad_full, gradient_oracle, &
++               sigma_oracle, error, transform_backend=cp2k_exchange_transform_dense)
++            local_failed = ALLOCATED(error)
++            IF (.NOT. local_failed) local_failed = &
++               .NOT. ALL(ieee_is_finite(REAL(overlap_grad_full, KIND=dp))) .OR. &
++               .NOT. ALL(ieee_is_finite(AIMAG(overlap_grad_full))) .OR. &
++               .NOT. ALL(ieee_is_finite(gradient_oracle)) .OR. &
++               .NOT. ALL(ieee_is_finite(sigma_oracle))
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "KGROUP_PARTIAL_ROOT dense reverse oracle failed")
++         local_failed = .FALSE.
++         IF (service_rank) THEN
++            IF (.NOT. kmap%identity) &
++               CALL tb_validate_gxtb_full_response(kpoints, kmap, ao_first, ao_size, &
++                                                   overlap_grad_full, &
++                                                   "partial-root reverse oracle")
++            CALL tb_fold_gxtb_kpoint_matrix(kpoints, kmap, ao_first, ao_size, &
++                                            overlap_grad_full, overlap_grad_oracle)
++            local_failed = &
++               .NOT. ALL(ieee_is_finite(REAL(overlap_grad_oracle, KIND=dp))) .OR. &
++               .NOT. ALL(ieee_is_finite(AIMAG(overlap_grad_oracle)))
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "KGROUP_PARTIAL_ROOT reverse oracle fold is non-finite")
++         local_failed = .FALSE.
++         IF (service_rank) THEN
++            response_scale = MAX(1.0_dp, MAXVAL(ABS(overlap_grad_oracle)))
++            response_residual = MAXVAL(ABS(overlap_grad - overlap_grad_oracle))/response_scale
++            force_residual = MAXVAL(ABS(gradient - gradient_oracle))
++            stress_residual = MAXVAL(ABS(sigma - sigma_oracle))
++            WRITE (*, '(A,3(A,ES22.14))') &
++               " GXTB-QUALIFICATION_ONLY KGROUP-PARTIAL-ROOT-REVERSE", &
++               " dOverlap=", response_residual, " dForce=", force_residual, &
++               " dStress=", stress_residual
++            local_failed = .NOT. ieee_is_finite(response_residual) .OR. &
++                           .NOT. ieee_is_finite(force_residual) .OR. &
++                           .NOT. ieee_is_finite(stress_residual) .OR. &
++                           response_residual > 1.0E-10_dp .OR. &
++                           force_residual > 1.0E-10_dp .OR. &
++                           stress_residual > 1.0E-10_dp
++         END IF
++         CALL tb_gxtb_partial_sync_failure(leader, para_env_inter_kp, para_env_kp, &
++                                           local_failed, &
++                                           "KGROUP_PARTIAL_ROOT reverse oracle exceeded 1.0E-10")
++         IF (service_rank) &
++            DEALLOCATE (density_full, gradient_oracle, overlap_full, overlap_grad_full, &
++                        overlap_grad_oracle, sigma_oracle)
++
++      END SUBROUTINE qualify_partial_root_reverse
++
++   END SUBROUTINE tb_gxtb_kpoint_exchange_gradient_kgroup_partial_root
++
+ ! **************************************************************************************************
+ !> \brief ...
+ !> \param qs_env ...

@@ -1,0 +1,47 @@
+FINAL BUILD/LINK EVIDENCE
+=========================
+
+Remote SHA-256 verification on terok
+------------------------------------
+47c9b039b2e0d081f1ac3688f29f5c75ffed9a60acbb490f7bee1ae99593dd5d  CP2K src/tblite_interface.F
+2535519767302bc851c30512852e4ca031fadc0f97d0ece860e983effedbfd28  save_tblite source tar
+20c74bf3272a229e125893956880757bca365c0dc1b54fa8e892bf99a67e7760  Release libtblite.a
+cf6aaf4b9174e9759ec7d6ec9ac91b0d660643318270c2229a9cd27fc6bc05df  Debug libtblite.a
+9b832420483ca29ac3adc05bd60316ac4431fb782a7259ac39ac4cdfcb39e75a  Release cp2k.psmp
+b0b619a4b758b1baf35d417afbd9792703335c4a0177476dbab5adbc068b2818  Release libcp2k.so.2026.2
+5c1074e41989b4b76ff348939a03b9b39ebe1796f01ed5ac988e00afd1dea42f  Debug cp2k.pdbg
+f4fe80c2dcacf20d58546497bb04201765b03f615dcd7cda21662811c15bdf9a  Debug libcp2k.so.2026.2
+
+Configuration proof retained in this bundle
+-------------------------------------------
+cp2k/build/release/CMakeCache.txt:31       CMAKE_BUILD_TYPE=Release
+cp2k/build/release/CMakeCache.txt:231      Release provider prefix
+cp2k/build/release/CMakeCache.txt:363      CP2K_TBLITE_PROVIDER=SAVE
+cp2k/build/release/CMakeCache.txt:711      exact Release tblite_DIR
+cp2k/build/release/build.ninja:23342       cp2k.psmp link edge names exact Release libtblite.a
+
+cp2k/build/debug/CMakeCache.txt:31         CMAKE_BUILD_TYPE=Debug
+cp2k/build/debug/CMakeCache.txt:231        Debug provider prefix
+cp2k/build/debug/CMakeCache.txt:363        CP2K_TBLITE_PROVIDER=SAVE
+cp2k/build/debug/CMakeCache.txt:711        exact Debug tblite_DIR
+cp2k/build/debug/build.ninja:26127         cp2k.pdbg link edge names exact Debug libtblite.a
+
+provider/build/release/CMakeCache.txt:45   BUILD_SHARED_LIBS=OFF
+provider/build/release/CMakeCache.txt:55   CMAKE_BUILD_TYPE=Release
+provider/build/release/CMakeCache.txt:173  exact Release install prefix
+provider/build/release/CMakeCache.txt:342  WITH_DDX=OFF
+provider/build/debug/CMakeCache.txt:45     BUILD_SHARED_LIBS=OFF
+provider/build/debug/CMakeCache.txt:55     CMAKE_BUILD_TYPE=Debug
+provider/build/debug/CMakeCache.txt:173    exact Debug install prefix
+provider/build/debug/CMakeCache.txt:342    WITH_DDX=OFF
+
+The Release and Debug CP2K build logs both finish at [4159/4159] after linking
+cp2k.psmp and cp2k.pdbg, respectively.  On terok, `nm -D` of each final
+libcp2k.so reports a defined text symbol:
+
+Release: 0000000003767780 T __tblite_cp2k_compat_MOD_cp2k_exchange_partial_begin
+Debug:   000000000371a8b9 T __tblite_cp2k_compat_MOD_cp2k_exchange_partial_begin
+
+Because libtblite is a static archive, it is intentionally absent from ldd;
+the exact archive on the executable link edge plus the provider symbol in the
+final shared CP2K library constitute the link proof.

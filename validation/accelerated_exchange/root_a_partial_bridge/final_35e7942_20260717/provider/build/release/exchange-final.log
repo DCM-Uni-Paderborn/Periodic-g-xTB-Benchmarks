@@ -1,0 +1,89 @@
+UpdateCTestConfiguration  from :/home/kuehne88/work/save_tblite_partial_k_to_r_35e7942_build_release/DartConfiguration.tcl
+Test project /home/kuehne88/work/save_tblite_partial_k_to_r_35e7942_build_release
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 12
+    Start 12: tblite/exchange
+
+12: Test command: /home/kuehne88/work/save_tblite_partial_k_to_r_35e7942_build_release/test/unit/tblite-tester "exchange"
+12: Working Directory: /home/kuehne88/work/save_tblite_partial_k_to_r_35e7942_build_release/test/unit
+12: Test timeout computed to be: 10000000
+12: # Testing: exchange
+12:   Starting gamma_fock_h2 ... (1/31)
+12:        ... gamma_fock_h2 [PASSED]
+12:   Starting gamma_fock_lih ... (2/31)
+12:        ... gamma_fock_lih [PASSED]
+12:   Starting gamma_fock_no ... (3/31)
+12:        ... gamma_fock_no [PASSED]
+12:   Starting gamma_fock_s2 ... (4/31)
+12:        ... gamma_fock_s2 [PASSED]
+12:   Starting gamma_fock_cecl3 ... (5/31)
+12:        ... gamma_fock_cecl3 [PASSED]
+12:   Starting energy_fock_h2 ... (6/31)
+12:        ... energy_fock_h2 [PASSED]
+12:   Starting energy_fock_lih ... (7/31)
+12:        ... energy_fock_lih [PASSED]
+12:   Starting energy_fock_no ... (8/31)
+12:        ... energy_fock_no [PASSED]
+12:   Starting energy_fock_n2 ... (9/31)
+12:        ... energy_fock_n2 [PASSED]
+12:   Starting energy_fock_h2o ... (10/31)
+12:        ... energy_fock_h2o [PASSED]
+12:   Starting energy_fock_s2 ... (11/31)
+12:        ... energy_fock_s2 [PASSED]
+12:   Starting energy_fock_sih4 ... (12/31)
+12:        ... energy_fock_sih4 [PASSED]
+12:   Starting energy_fock_cecl3 ... (13/31)
+12:        ... energy_fock_cecl3 [PASSED]
+12:   Starting energy_fock_ce2 ... (14/31)
+12:        ... energy_fock_ce2 [PASSED]
+12:   Starting potential_fock_h2 ... (15/31)
+12:        ... potential_fock_h2 [PASSED]
+12:   Starting potential_fock_lih ... (16/31)
+12:        ... potential_fock_lih [PASSED]
+12:   Starting potential_fock_no ... (17/31)
+12:        ... potential_fock_no [PASSED]
+12:   Starting potential_fock_s2 ... (18/31)
+12:        ... potential_fock_s2 [PASSED]
+12:   Starting potential_fock_cecl3 ... (19/31)
+12:        ... potential_fock_cecl3 [PASSED]
+12:   Starting potential_fock_ce2 ... (20/31)
+12:        ... potential_fock_ce2 [PASSED]
+12:   Starting gradient_op_fock_h2 ... (21/31)
+12:        ... gradient_op_fock_h2 [PASSED]
+12:   Starting gradient_op_fock_lih ... (22/31)
+12:        ... gradient_op_fock_lih [PASSED]
+12:   Starting gradient_op_fock_no ... (23/31)
+12:        ... gradient_op_fock_no [PASSED]
+12:   Starting gradient_op_fock_s2 ... (24/31)
+12:        ... gradient_op_fock_s2 [PASSED]
+12:   Starting gradient_op_fock_cecl3 ... (25/31)
+12:        ... gradient_op_fock_cecl3 [PASSED]
+12:   Starting gradient_op_fock_pyrazine ... (26/31)
+12:        ... gradient_op_fock_pyrazine [PASSED]
+12:   Starting gradient_op_fock_oxacb ... (27/31)
+12:        ... gradient_op_fock_oxacb [PASSED]
+12:   Starting gradient_op_fock_co2 ... (28/31)
+12:        ... gradient_op_fock_co2 [PASSED]
+12:   Starting bvk_exchange_supercell ... (29/31)
+12:  STREAM_REVERSE_RKS_3X1X1_RESID   1.3877787807814457E-017   0.0000000000000000        0.0000000000000000                       113
+12:  STREAM_REVERSE_UKS_BATCH_RESID   5.5511151231257827E-017   0.0000000000000000        6.7762635780344027E-021                  585
+12:  STREAM_REVERSE_3D_RESID   2.7755575615628914E-017   0.0000000000000000        0.0000000000000000                       144
+12:  PARTIAL_K_TO_R_MAX_RESID   1.2490009027033011E-016
+12:        ... bvk_exchange_supercell [PASSED]
+12:   Starting kpoint_fock_complex ... (30/31)
+12:        ... kpoint_fock_complex [PASSED]
+12:   Starting regular_separable_dft ... (31/31)
+12:        ... regular_separable_dft [PASSED]
+1/1 Test #12: tblite/exchange ..................   Passed    1.05 sec
+
+The following tests passed:
+	tblite/exchange
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.06 sec

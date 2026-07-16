@@ -1,0 +1,53 @@
+{
+  "batch_size": 3,
+  "case": "h2_tr",
+  "child_maxrss_kb_campaign_highwater": 176964,
+  "child_system_seconds_delta": 2.3569470000000017,
+  "child_user_seconds_delta": 15.707211000000001,
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpiexec",
+    "-np",
+    "4",
+    "taskset",
+    "-c",
+    "128-143",
+    "/home/kuehne88/work/cp2k_gxtb_partial_root_bridge_35e7942_release_20260716/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/gxtb_partial_root_oracle_35e7942_20260717/inputs/h2_k311_tr_energy_force_print.inp"
+  ],
+  "cp2k": "/home/kuehne88/work/cp2k_gxtb_partial_root_bridge_35e7942_release_20260716/bin/cp2k.psmp",
+  "cp2k_sha256": "9b832420483ca29ac3adc05bd60316ac4431fb782a7259ac39ac4cdfcb39e75a",
+  "environment": {
+    "BLIS_NUM_THREADS": "1",
+    "CP2K_GXTB_EXCHANGE_GRADIENT_MODE": "QUALIFY",
+    "CP2K_GXTB_EXCHANGE_IMAGE_BATCH_SIZE": "3",
+    "CP2K_GXTB_EXCHANGE_STREAM_MODE": "KGROUP_PARTIAL_ROOT",
+    "CP2K_GXTB_QUALIFICATION_FULLMESH_ORACLE_ITERATION": "1",
+    "GOTO_NUM_THREADS": "1",
+    "MKL_DYNAMIC": "FALSE",
+    "MKL_NUM_THREADS": "1",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "expected_nfull": 3,
+  "features": [
+    "RKS",
+    "TIME_REVERSAL",
+    "3D",
+    "P_GT_NRED"
+  ],
+  "finished_unix": 1784241803.157668,
+  "input": "h2_k311_tr_energy_force_print.inp",
+  "input_sha256": "e0e6db55c0864aec3497e644737a11012c2a7995d97d5d31fabec87dcd04eef5",
+  "output_sha256": "4121564f7b380344f18212f627d47075f6d368292971640fc7ec98c107b8c997",
+  "ranks": 4,
+  "returncode": 0,
+  "run_id": "h2_tr_p4_partial_root",
+  "schema": 1,
+  "started_unix": 1784241797.01214,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "variant": "PARTIAL_ROOT",
+  "wall_seconds": 6.1454036263749
+}

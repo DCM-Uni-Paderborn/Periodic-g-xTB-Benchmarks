@@ -1,0 +1,27 @@
+BLAS_openblas_LIBRARY:FILEPATH=/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/lib/libopenblas.so
+BUILD_SHARED_LIBS:BOOL=OFF
+CMAKE_BUILD_TYPE:STRING=Debug
+CMAKE_C_COMPILER:FILEPATH=/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/x86_64-conda-linux-gnu-cc
+CMAKE_C_FLAGS:STRING=
+CMAKE_C_FLAGS_DEBUG:STRING=-g
+CMAKE_C_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
+CMAKE_EXE_LINKER_FLAGS:STRING=
+CMAKE_Fortran_COMPILER:FILEPATH=/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/x86_64-conda-linux-gnu-gfortran
+CMAKE_Fortran_FLAGS:STRING=
+CMAKE_Fortran_FLAGS_DEBUG:STRING=-O0 -g -fcheck=all -fbacktrace -ffpe-trap=invalid,zero,overflow
+CMAKE_Fortran_FLAGS_RELEASE:STRING=-O3
+CMAKE_PREFIX_PATH:UNINITIALIZED=/home/kuehne88/work/codex-gxtb-acpfix-20260714/install/save_tblite;/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env
+OpenMP_C_FLAGS:STRING=-fopenmp
+OpenMP_Fortran_FLAGS:STRING=-fopenmp
+WITH_API:BOOL=ON
+WITH_DDX:BOOL=OFF
+WITH_HDF5:BOOL=OFF
+WITH_OpenMP:BOOL=ON
+WITH_TESTS:BOOL=ON
+WITH_TREXIO:BOOL=OFF
+dftd4_DIR:PATH=/home/kuehne88/work/codex-gxtb-acpfix-20260714/install/save_tblite/lib/cmake/dftd4
+mctc-lib_DIR:PATH=/home/kuehne88/work/codex-gxtb-acpfix-20260714/install/save_tblite/lib/cmake/mctc-lib
+mstore_DIR:PATH=/home/kuehne88/work/codex-gxtb-acpfix-20260714/install/save_tblite/lib/cmake/mstore
+multicharge_DIR:PATH=/home/kuehne88/work/codex-gxtb-acpfix-20260714/install/save_tblite/lib/cmake/multicharge
+s-dftd3_DIR:PATH=/home/kuehne88/work/codex-gxtb-acpfix-20260714/install/save_tblite/lib/cmake/s-dftd3
+toml-f_DIR:PATH=/home/kuehne88/work/codex-gxtb-acpfix-20260714/install/save_tblite/lib/cmake/toml-f

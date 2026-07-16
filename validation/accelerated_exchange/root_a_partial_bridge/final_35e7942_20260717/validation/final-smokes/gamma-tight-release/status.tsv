@@ -1,0 +1,4 @@
+case	mode	exit_code	timed_out	program_ended	forward_qual	reverse_qual	pass
+explicit_real_mode6	partial	0	0	1	1	0	1
+explicit_real_dense	dense	0	0	1	0	0	1
+implicit_real_dense	dense	0	0	1	0	0	1
