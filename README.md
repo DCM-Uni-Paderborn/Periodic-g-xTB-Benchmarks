@@ -25,7 +25,13 @@ in this repository.
 - `validation/`: molecular, primitive-cell/supercell, symmetry, force, and
   stress regression inputs for the CP2K/save_tblite bridge. The canonical
   artifact digests removed from the manuscript and Supplementary Material are
-  stored in `validation/paper_artifact_sha256.json`.
+  stored in `validation/paper_artifact_sha256.json`. The complete post-#5582
+  analytical-force/stress qualification, including raw outputs and its
+  discarded CPU-affinity diagnostic, is frozen in
+  `validation/gxtb_derivative_regtests_post5582_20260716/`. The corresponding
+  full-grid/K290/SPGLIB, force, and periodic-virial gates for representative
+  one- and two-dimensional PBC are in
+  `validation/gxtb_partial_pbc_post5582_20260716/`.
 - `patches/`: local CP2K and tblite patches used for the final benchmark
   revision.
 - `scripts/`: helper scripts used for the final k-point, cell-optimization,
@@ -40,24 +46,27 @@ in this repository.
 - `FINAL_RESULTS.md`, `CODE_PATCHES.md`, and `paper_revision_numbers.csv`:
   compact provenance for the current paper revision.
 
-Generated CP2K working directories, raw standard-output files, and optional
-diagnostic plots are not tracked. They can be recreated from the versioned
-inputs and scripts; the curated CSV, JSON, plotting data, and manuscript figure
-files are the benchmark data used in the paper.
+Routine generated CP2K working directories, raw standard-output files, and
+optional diagnostic plots are not tracked. Explicitly named immutable
+qualification archives are the exception: they retain the raw evidence needed
+to reproduce a paper table or diagnose an invalidated launch. All other runs
+can be recreated from the versioned inputs and scripts.
 
 ## Current g-xTB campaign
 
 The active campaign is deliberately fail-closed: provisional numbers are not
 promoted to paper summaries until the stored build identity, raw artifacts,
 k-point convergence, symmetry, force/stress, and cross-build gates pass.
-Current production calculations use CP2K source revision
-`18d37c946413...` with save_tblite revision `1449febde312...`; the direct
-ACP k-space successor build is still in qualification. See
-`campaigns/gxtb-pbc-v1-20260714/` for the complete machine-readable identity.
+Current production calculations use post-#5582 CP2K source revision
+`28df9380abb3...` with save_tblite revision `257ba442684c...`. See
+`campaigns/gxtb-pbc-v1-post5582-20260714/` for the complete machine-readable
+identity and the frozen energy, ACP, partial-periodicity, force, and stress
+qualification gates.
 
-The current g-xTB DMC-ICE13 and LC10 values are therefore explicitly
-provisional, and X23b has no g-xTB accuracy result yet. The publication
-finalizers refuse incomplete or unhashed data.
+DMC-ICE13 has completed its phase-wise convergence protocol. LC10 remains
+provisional until the independently fitted LiF endpoint passes, and X23b is
+paused outside the present paper scope. The publication finalizers refuse
+incomplete or unhashed data.
 
 After the DMC-ICE13, X23b, and LC12 finalizers have all succeeded, create the
 single manuscript-facing bundle with
