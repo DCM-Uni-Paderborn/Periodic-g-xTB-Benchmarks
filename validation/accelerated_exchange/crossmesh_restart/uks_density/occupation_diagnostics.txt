@@ -1,0 +1,13 @@
+restart=uks_density/HE_UKS_SOURCE_3-RESTART.kp
+mokp=uks_density/HE_UKS_TARGET_RESTART_4-1_0.mokp
+nspin=2 target_irreducible_kpoints=4 occupation_upper_bound=1.0
+hermiticity_relative_max=5.42101086242752217e-20
+overlap_eigenvalue_min=7.07153754241802268e-01
+spin=1 trace_before=1.00000000778806064e+00 expected=1.00000000000000000e+00 normalization_factor=9.99999992211939470e-01
+spin=2 trace_before=1.00000000778806064e+00 expected=1.00000000000000000e+00 normalization_factor=9.99999992211939470e-01
+metric_density_raw_min=-4.88570897021721165e-07
+metric_density_raw_max=1.00005067590820240e+00
+metric_density_normalized_min=-4.88570893216701465e-07
+metric_density_normalized_max=1.00005066811974719e+00
+lower_bound_violation=4.88570893216701465e-07
+upper_bound_violation=5.06681197471881006e-05

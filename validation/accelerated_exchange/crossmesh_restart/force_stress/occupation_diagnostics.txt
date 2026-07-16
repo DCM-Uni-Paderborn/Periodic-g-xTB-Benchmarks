@@ -1,0 +1,12 @@
+restart=force_stress/HE2_FS_SOURCE_3-RESTART.kp
+mokp=force_stress/HE2_FS_TARGET_RESTART_4-1_0.mokp
+nspin=1 target_irreducible_kpoints=32 occupation_upper_bound=2.0
+hermiticity_relative_max=6.96013765246945788e-18
+overlap_eigenvalue_min=2.98269538009886703e-01
+spin=1 trace_before=3.99999961380415314e+00 expected=4.00000000000000000e+00 normalization_factor=1.00000009654897104e+00
+metric_density_raw_min=-1.10938395956331403e-05
+metric_density_raw_max=2.00095903556183430e+00
+metric_density_normalized_min=-1.10938406667319384e-05
+metric_density_normalized_max=2.00095922875237031e+00
+lower_bound_violation=1.10938406667319384e-05
+upper_bound_violation=9.59228752370311355e-04
