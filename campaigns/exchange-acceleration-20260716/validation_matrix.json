@@ -33,6 +33,23 @@
       "current_evidence": "Focused save_tblite tests through 9x9x1 pass. The archived 19-case CP2K comparison reproduces the baseline to roundoff for energy, analytical forces, virial and stress; its one nonzero return code is the same post-central-calculation SPGLIB finite-difference failure as in the baseline."
     },
     {
+      "id": "cp2k_block_expansion_foldback_helpers",
+      "status": "passed",
+      "required_observables": [
+        "physical_overlap_expansion",
+        "complex_hermitian_probe_expansion",
+        "weighted_real_adjoint",
+        "blockwise_fold_full_array_identity",
+        "time_reversal",
+        "K290",
+        "SPGLIB",
+        "energy",
+        "forces",
+        "stress"
+      ],
+      "current_evidence": "The once-per-map helper qualification enforces physical-overlap expansion, a deterministic complex-Hermitian per-star weighted real-adjoint identity including negative rotp, and blockwise fold identity against the unchanged full-array oracle. Five current/baseline pairs (ten zero-returncode runs) cover K290 and SPGLIB 2x2x2 plus 3x1x1 time reversal, including analytical and finite-difference derivatives."
+    },
+    {
       "id": "streamed_symmetry_stars",
       "status": "implementation_in_progress",
       "required_observables": [
@@ -107,6 +124,22 @@
       "mesh": [9, 9, 1],
       "symmetry": "full",
       "modules": ["regular_grid_bvk_cache"],
+      "status": "passed"
+    },
+    {
+      "id": "cp2k_block_helpers_observables",
+      "periodicity": "3D",
+      "mesh": "2x2x2_and_3x1x1",
+      "symmetry": "K290_SPGLIB_time_reversal",
+      "modules": ["cp2k_block_expansion_foldback_helpers"],
+      "status": "passed"
+    },
+    {
+      "id": "cp2k_block_helpers_derivatives",
+      "periodicity": "3D",
+      "mesh": "2x2x2_and_3x1x1",
+      "symmetry": "K290_and_time_reversal",
+      "modules": ["cp2k_block_expansion_foldback_helpers"],
       "status": "passed"
     },
     {

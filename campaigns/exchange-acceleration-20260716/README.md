@@ -65,3 +65,35 @@ storage, ordering, transformation and distribution are changed.
 No raw result is overwritten.  A rerun receives a new timestamped directory
 and an independent checksum manifest.
 
+## Qualified CP2K block helpers
+
+The CP2K one-block expansion and weighted real-adjoint foldback helpers are now
+qualified as a separately bounded component.  Their once-per-map runtime check
+uses deterministic complex-Hermitian probes and enforces the following gates:
+
+- physical overlap expansion versus the unchanged full-array path at
+  `max(1e-6, 100*eps_geo)` relative residual;
+- the weighted variational adjoint identity for every star member at `1e-10`,
+  including antiunitary negative-`rotp` operations;
+- the accumulated blockwise fold versus the unchanged full-array oracle at
+  `1e-12` relative residual.
+
+Five current/baseline run pairs cover K290 and SPGLIB `2x2x2` reductions and a
+`3x1x1` time-reversal reduction.  All ten launchers returned zero and reached
+`PROGRAM ENDED`.  The maximum current/baseline differences are
+`7.105e-15 Ha` over all printed energy evaluations,
+`1.024e-16 Ha/bohr` for analytical force components,
+`2.633e-10 bar` for printed analytical stress, and `5.370e-10 Ha` for the
+finite-difference numerical virial.  The largest current finite-difference
+sum is `1.893e-9 Ha`, well inside the campaign derivative gate.
+
+The deterministic derivation is
+`scripts/compare_cp2k_block_helpers.py`; its JSON and compact text products are
+under `derived/`.  Unedited outputs, input/output manifests, the exact source
+patch, build logs, launchers, audit, and reference runtime harness are preserved
+under `raw/cp2k_block_helpers/` and `provenance/cp2k_block_helpers/`.
+
+This result does **not** qualify the production streamed exchange module.  It
+establishes only the CP2K block operators that the streamed module will call;
+the latter remains `implementation_in_progress` until its full provider and
+CP2K forward/reverse paths pass the complete oracle matrix.

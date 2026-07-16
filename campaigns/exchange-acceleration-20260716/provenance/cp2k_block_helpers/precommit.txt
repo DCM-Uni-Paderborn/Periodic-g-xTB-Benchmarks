@@ -1,0 +1,11 @@
+Command: python3 tools/precommit/precommit.py src/tblite_interface.F src/tblite_types.F
+Working tree: /private/tmp/cp2k_gxtb_symmetry_v2
+Date: 2026-07-16
+
+Running precommit checks using 16 workers and server: https://precommit.cp2k.org (server wait timeout: 10 seconds)
+[============================================================] 2 / 2 files processed
+Summary: Found 2, skipped 2, checked 0, and failed 0 files.
+Status: OK
+
+The full audit file in this directory independently records the prior non-skipped formatting,
+precommit, diff-check, and isolated compilation qualification for the same two source files.
