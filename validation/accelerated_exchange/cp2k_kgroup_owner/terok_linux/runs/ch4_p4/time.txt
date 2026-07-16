@@ -1,0 +1,5 @@
+wall_seconds=4.550459665
+child_user_seconds=9.225097000
+child_system_seconds=2.264079000
+child_maxrss_kb=222112
+returncode=0

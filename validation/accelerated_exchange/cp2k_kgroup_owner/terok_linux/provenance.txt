@@ -1,0 +1,33 @@
+HOST
+terok
+Linux terok 6.12.88+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.88-1 (2026-05-15) x86_64 GNU/Linux
+
+HASHES
+0d8c3257280cc27b09c08d5f2b3da7080ef68587996813a1871f728cffd27f90  cp2k-kgroups-final/bin/cp2k.psmp
+be2dc79a785758fb712df108a75f6e750682dacfb7664919409e81b554ff58b5  cp2k/src/tblite_interface.F
+30eeafbebd5e79554c23e3019ff70655b1b6e79c22a7c4d593e8699c4997283b  save_tblite/libtblite.a
+d3791e769816e28c70b8091b501a187fb3a59083c80588aa2603ff7b86e25a8f  save_tblite/src/tblite/cp2k_compat.f90
+265deac3a4ee0572ce46fd676f86c27a92a1943b2fabc334631564a52174f0ac  ch4_full_kgroups_final.inp
+
+CP2K CMAKE CACHE
+CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_CXX_COMPILER:STRING=/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpicxx
+CMAKE_C_COMPILER:STRING=/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpicc
+CMAKE_Fortran_COMPILER:STRING=/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpifort
+CP2K_TBLITE_PROVIDER:STRING=SAVE
+CP2K_USE_MPI:BOOL=ON
+CP2K_USE_SPGLIB:BOOL=ON
+CP2K_USE_TBLITE:BOOL=ON
+ddx_DIR:UNINITIALIZED=/home/kuehne88/work/codex-save-tblite-batched-kgroups-install-20260716/lib/ddX
+tblite_DIR:UNINITIALIZED=/home/kuehne88/work/codex-save-tblite-batched-kgroups-install-20260716/lib/cmake/tblite
+
+KEY LDD RESOLUTION
+libcp2k.so.2026.1 => /home/kuehne88/work/codex-gxtb-symmetry-v2-runtime-20260716/build/cp2k-kgroups-final/src/libcp2k.so.2026.1
+libddx.so => /home/kuehne88/work/codex-save-tblite-batched-kgroups-install-20260716/lib/libddx.so
+libdbcsr.so.2.9 => /home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/lib/libdbcsr.so.2.9
+libmpi.so.40 => /home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/lib/libmpi.so.40
+libopenblas.so.0 => /home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/lib/libopenblas.so.0
+libscalapack.so => /home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/lib/libscalapack.so
+libsymspg.so.2 => /home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/lib/libsymspg.so.2
+libgfortran.so.5 => /home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/lib/libgfortran.so.5
+ldd missing-library check: empty (PASS)

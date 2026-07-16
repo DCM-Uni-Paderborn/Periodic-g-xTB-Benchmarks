@@ -1,0 +1,4 @@
+# runs are executed in the same order as in this file
+"he_kpoint_restart_5.inp" = [{matcher="E_total", tol=1e-8, ref=-2.95145344085994}]
+"he_kpoint_restart_6.inp" = [{matcher="E_total", tol=1e-8, ref=-2.95145344002764},
+                             {matcher="KPOINT_RESTART_VALIDATED_TRANSFER"}]
