@@ -1,9 +1,10 @@
 # Final CP2K Root-A partial-k-to-R bridge evidence
 
-This is a read-only staging bundle for the final `KGROUP_PARTIAL_ROOT` bridge
-between CP2K and `save_tblite`.  It was assembled without changing an existing
-benchmark branch or archive.  Nothing in this directory has been committed or
-pushed.
+This is the immutable evidence bundle for the final `KGROUP_PARTIAL_ROOT`
+bridge between CP2K and `save_tblite`.  It was assembled without changing any
+pre-existing raw archive, verified recursively, published first on its named
+evidence branch, and then fast-forwarded into the private benchmark
+repository's default branch.
 
 ## Qualified source identities
 

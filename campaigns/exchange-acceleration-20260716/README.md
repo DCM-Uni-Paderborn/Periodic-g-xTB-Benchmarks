@@ -22,13 +22,16 @@ the oracle before timing or memory data may enter the paper.
    immediately with the weighted real adjoint.  Time reversal must use the
    existing anti-linear CP2K transformation; scalar star weights are not a
    replacement for transformed matrices.
-3. **Regular-grid FFT.**  Replace dense k-to-R and R-to-k transformations only
-   after the grid planner has established a complete product mesh and its
-   common twist.  Keep the dense transform selectable as the oracle and as the
-   fallback for irregular inputs.
-4. **MPI k-point groups.**  Distribute star, real-space, or AO-pair tiles with
-   explicit ownership and reductions for energy, irreducible Fock blocks,
-   overlap adjoints, forces, and stress.
+3. **Regular-grid transforms.**  Use the qualified separable direct DFT after
+   the grid planner has established a complete product mesh and common twist.
+   Keep the dense transform selectable as the oracle and fallback.  A genuine
+   FFT backend remains a distinct, unimplemented follow-on and is never
+   conflated with the separable direct transform.
+4. **MPI k-point groups and partial accumulators.**  Distribute star and
+   pre-kernel k-to-R work with explicit ownership and reductions for energy,
+   irreducible Fock blocks, overlap adjoints, forces, and stress.  The qualified
+   root-applied partial accumulator is a correctness baseline; its nonlinear
+   kernel and R-to-k pulls remain root-serial.
 5. **Validated cross-mesh restart.**  Transfer the density through a common
    real-space representation, restore symmetry, Hermiticity and electron
    number, reject incompatible metadata, and fall back to a cold start when
@@ -65,6 +68,25 @@ storage, ordering, transformation and distribution are changed.
 No raw result is overwritten.  A rerun receives a new timestamped directory
 and an independent checksum manifest.
 
+## Current audited status
+
+The schema-2 `validation_matrix.json` is the current status authority.  The
+production CP2K streamed forward/reverse consumer, bounded provider AO-image
+workspace, official k-group owner path, separable **direct** transform,
+root-applied partial accumulator, and opt-in validated cross-mesh restart have
+passed their stated numerical gates.  The root-applied path passed 20/20
+dense-reference pairs over RKS/UKS, full-grid, time reversal, K290, SPGLIB,
+shifted meshes, 0D--3D coverage, MPI P=1/2/4, energy, Fock response, forces,
+and stress.
+
+These are correctness and bounded-workspace results, not evidence for a
+distributed nonlinear-kernel speedup.  Replicated disjoint R-to-k importers
+are under qualification.  A genuinely distributed nonlinear kernel, an FFT
+backend, streamed ACP support-plan elimination, and strong/weak scaling remain
+open modules.  The detailed, immutable records are under
+`validation/accelerated_exchange/`; the final root-applied bundle is under
+`validation/accelerated_exchange/root_a_partial_bridge/`.
+
 ## Qualified CP2K block helpers
 
 The CP2K one-block expansion and weighted real-adjoint foldback helpers are now
@@ -93,10 +115,11 @@ under `derived/`.  Unedited outputs, input/output manifests, the exact source
 patch, build logs, launchers, audit, and reference runtime harness are preserved
 under `raw/cp2k_block_helpers/` and `provenance/cp2k_block_helpers/`.
 
-This result does **not** qualify the production streamed exchange module.  It
-establishes only the CP2K block operators that the streamed module will call;
-the latter remains `implementation_in_progress` until its full provider and
-CP2K forward/reverse paths pass the complete oracle matrix.
+This historical component result established only the CP2K block operators.
+The subsequently completed production forward/reverse qualification is
+archived separately under
+`validation/accelerated_exchange/cp2k_streamed_reverse_consumer/` and is the
+current authority for the integrated streamed path.
 
 ## Qualified save_tblite provider cache and matrix-lean forward stream
 
@@ -139,16 +162,12 @@ terok 30/30 record is preserved separately as historical raw data but is not a
 qualification basis because its executable path was replaced during that
 long-running test.
 
-This passed status is intentionally limited to the provider cache/planner and
-matrix-lean **forward** stream, specifically the absence of retained full
-k-space density/overlap input arrays.  True bounded-memory R/image batching,
-including batched or on-demand phase generation and measured peak-memory
-scaling, remains `implementation_in_progress`.  The tested reduced stream also
-rejects the reverse call by contract; reduced-memory overlap adjoints, forces
-and stress therefore remain `implementation_in_progress`.  Likewise,
-separately passing provider and CP2K block-helper tests do not yet qualify the
-production CP2K stream consumer, which also remains
-`implementation_in_progress`.
+This historical result is intentionally limited to the provider cache/planner
+and matrix-lean **forward** stream.  Subsequent evidence under
+`validation/accelerated_exchange/cp2k_streamed_reverse_consumer/` qualifies
+fixed-batch provider AO-image workspace and the CP2K forward/reverse consumer,
+including overlap adjoints, forces, and stress.  It still does not establish
+k-independent total-process memory or distributed nonlinear-kernel scaling.
 
 Repository-level archive validation is reported only for this acceleration
 campaign: all 13 campaign tests pass.

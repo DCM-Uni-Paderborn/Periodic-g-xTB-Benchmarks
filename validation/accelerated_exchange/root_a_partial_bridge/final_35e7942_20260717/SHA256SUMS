@@ -1,4 +1,4 @@
-b98402056661384a3f7f523011d48598cfb4cb1ba1ebdab42de41cff09a50ee8  ./README.md
+883509d6e867cb23c91f24a62f037dfe3bd95101012917d81bca0f9fd5626a1e  ./README.md
 0e08e9ead50a60a139af498da1fbc205dcc495ecacecf068431df50346f94a99  ./cp2k/build/debug/CMakeCache.txt
 9803c92a6eda7e6d7c91a05690eeb5059683d988645d5b9c202cd2c8497760aa  ./cp2k/build/debug/build.ninja
 6713364241ec8204ef2e3c8b4dbf28d06dfebfc8da4be1b2bde93155b07a10a4  ./cp2k/build/debug/cp2k_gxtb_partial_root_bridge_35e7942_debug_20260716.build.log

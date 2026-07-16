@@ -1,12 +1,12 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "campaign": "exchange-acceleration-20260716",
+  "last_audited": "2026-07-17",
   "paper": "main_jcp_II_v1.tex",
   "oracle": "explicit-expanded-full-mesh",
   "status_vocabulary": [
     "pending",
     "implementation_in_progress",
-    "provider_passed_cp2k_pending",
     "passed",
     "failed"
   ],
@@ -15,179 +15,106 @@
     "fock_max_abs": 1e-10,
     "overlap_adjoint_max_abs": 1e-10,
     "force_hartree_per_bohr_max_abs": 1e-6,
+    "stress_bar_max_abs": 1e-4,
     "strain_derivative_hartree_max_abs": 1e-6
   },
   "modules": [
     {
       "id": "regular_grid_bvk_cache",
       "status": "passed",
-      "required_observables": [
-        "energy",
-        "fock",
-        "overlap_adjoint",
-        "forces",
-        "stress",
-        "cold_warm_identity",
-        "invalidation"
-      ],
-      "current_evidence": "The exact-source focused save_tblite BvK test passes through 9x9x1, including twist/order maps, cache hit and invalidation, incomplete/duplicate-grid failures and recovery, and dense-oracle forward/reverse comparisons. The archived 19-case CP2K comparison reproduces the baseline to roundoff for energy, analytical forces, virial and stress; its one nonzero return code is the same post-central-calculation SPGLIB finite-difference failure as in the baseline."
+      "evidence": "campaigns/exchange-acceleration-20260716 and validation/accelerated_exchange/cp2k_streamed_reverse_consumer",
+      "scope": "Canonical regular-grid planning, exact order and twist maps, provider Born-von Karman cache hits and fail-closed invalidation passed forward and reverse dense-oracle checks. CP2K still recalibrates symmetry phases during each map preparation, so this is not a claim of a fully persistent CP2K phase cache."
     },
     {
       "id": "provider_matrix_lean_forward_stream",
       "status": "passed",
-      "required_observables": [
-        "energy",
-        "shell_potential",
-        "fock",
-        "no_retained_full_k_space_density_overlap_arrays",
-        "push_order_permutation",
-        "twist_and_physical_kpoint_permutation",
-        "negative_recovery_paths",
-        "9x9x1_dense_oracle_identity"
-      ],
-      "current_evidence": "The exact-source Debug provider test returns zero and passes. Six runtime storage-query assertions show that reduced mode retains neither full-k-space density nor overlap input arrays; the query does not inspect other stream/cache allocations. Duplicate, missing and stale-onsite failures recover; arbitrary arrival order, common twist, physical k-point permutation and a 9x9x1 forward evaluation reproduce the unchanged complete-mesh/dense oracle for energy, shell potential and Fock. This is a matrix-lean forward stream, not a bounded-memory implementation: it retains amat_r, cmat_r and vmat_r, each nao x nao x Nk x nspin, plus two dense Nk x Nk phase tables in the cache."
+      "evidence": "campaigns/exchange-acceleration-20260716",
+      "scope": "The reduced forward transaction does not retain full-k density or overlap input arrays and reproduces the dense oracle through 9x9x1, including permutations and negative recovery paths."
     },
     {
-      "id": "provider_true_bounded_memory_r_image_batching",
-      "status": "implementation_in_progress",
-      "required_observables": [
-        "bounded_peak_memory",
-        "r_image_batching",
-        "batched_or_on_demand_phases",
-        "energy",
-        "shell_potential",
-        "fock",
-        "push_order_permutation",
-        "9x9x1_dense_oracle_identity"
-      ],
-      "current_evidence": "Not implemented. The current matrix-lean forward stream retains three complete nao x nao x Nk x nspin BvK-image tensors and two dense Nk x Nk phase tables. True bounded-memory qualification requires R/image tiling plus batched or on-demand phase generation and measured peak-memory scaling."
+      "id": "provider_bounded_ao_image_batching",
+      "status": "passed",
+      "evidence": "validation/accelerated_exchange/cp2k_streamed_reverse_consumer",
+      "scope": "The provider complex AO-image workspace obeys the checked fixed-batch high-water formula in 39 derivative evaluations. This does not imply k-independent total CP2K memory because irreducible CP2K matrices and immutable metadata remain resident."
     },
     {
-      "id": "provider_reduced_memory_reverse_stream",
-      "status": "implementation_in_progress",
-      "required_observables": [
-        "overlap_adjoint",
-        "forces",
-        "stress",
-        "reverse_pull_permutation",
-        "no_retained_full_k_space_density_overlap_arrays",
-        "state_machine_negative_tests"
-      ],
-      "current_evidence": "The qualified reduced stream intentionally rejects reverse_apply with a checked diagnostic. The existing reverse transaction retains the full-mesh oracle and therefore does not qualify a reduced-memory reverse path."
+      "id": "provider_streamed_reverse",
+      "status": "passed",
+      "evidence": "validation/accelerated_exchange/cp2k_streamed_reverse_consumer",
+      "scope": "Streamed overlap adjoints, direct force derivatives, and direct stress derivatives passed the dense oracle for RKS, UKS, 1D, 2D, 3D, full, time-reversal, K290, SPGLIB, and shifted meshes at MPI P=1,2,4."
     },
     {
-      "id": "cp2k_stream_consumer_integration",
-      "status": "implementation_in_progress",
-      "required_observables": [
-        "irreducible_to_star_block_expansion",
-        "provider_stream_push_pull",
-        "weighted_real_adjoint_foldback",
-        "energy",
-        "fock",
-        "overlap_adjoint",
-        "forces",
-        "stress"
-      ],
-      "current_evidence": "Provider and CP2K block-helper components are separately qualified, but the production CP2K consumer has not yet invoked and validated the complete streamed forward/reverse transaction."
+      "id": "cp2k_streamed_star_consumer",
+      "status": "passed",
+      "evidence": "validation/accelerated_exchange/cp2k_streamed_reverse_consumer",
+      "scope": "Selectable forward and reverse consumers expand one star block transiently and fold each response immediately. Qualification modes retain the complete-mesh oracle by design."
     },
     {
       "id": "cp2k_block_expansion_foldback_helpers",
       "status": "passed",
-      "required_observables": [
-        "physical_overlap_expansion",
-        "complex_hermitian_probe_expansion",
-        "weighted_real_adjoint",
-        "blockwise_fold_full_array_identity",
-        "time_reversal",
-        "K290",
-        "SPGLIB",
-        "energy",
-        "forces",
-        "stress"
-      ],
-      "current_evidence": "The once-per-map helper qualification enforces physical-overlap expansion, a deterministic complex-Hermitian per-star weighted real-adjoint identity including negative rotp, and blockwise fold identity against the unchanged full-array oracle. Five current/baseline pairs (ten zero-returncode runs) cover K290 and SPGLIB 2x2x2 plus 3x1x1 time reversal, including analytical and finite-difference derivatives."
+      "evidence": "campaigns/exchange-acceleration-20260716 and validation/accelerated_exchange/cp2k_kgroup_owner",
+      "scope": "Physical overlap expansion, anti-linear time reversal, K290/SPGLIB rotation, and weighted real-adjoint foldback reproduce full-array operators and final energy, force, and stress observables."
     },
     {
-      "id": "streamed_symmetry_stars",
-      "status": "implementation_in_progress",
-      "required_observables": [
-        "energy",
-        "fock",
-        "overlap_adjoint",
-        "forces",
-        "stress",
-        "push_pull_permutation",
-        "state_machine_negative_tests"
-      ],
-      "current_evidence": "The provider matrix-lean begin/push/apply/get/end forward transaction is qualified in the focused exact-source BvK test, and the CP2K block expansion/foldback helpers are qualified separately. The production CP2K star-stream consumer, true bounded-memory R/image batching and reduced-memory reverse force/stress transaction remain under implementation."
+      "id": "separable_direct_regular_mesh_transform",
+      "status": "passed",
+      "evidence": "validation/accelerated_exchange/integrated_release_mpi_reference",
+      "scope": "The factorized direct DFT backend is selectable and matches the dense transform for energy, Fock response, forces, and stress. It is not an FFT and retains direct-transform arithmetic."
     },
     {
       "id": "regular_mesh_fft",
       "status": "pending",
-      "required_observables": [
-        "forward_dense_identity",
-        "inverse_dense_identity",
-        "weighted_adjoint",
-        "energy",
-        "fock",
-        "forces",
-        "stress"
-      ],
-      "current_evidence": "Dense transform remains the oracle."
+      "evidence": null,
+      "scope": "No FFT backend exists. Dense and separable direct transforms remain the oracle and optimized direct paths."
     },
     {
-      "id": "mpi_k_groups",
+      "id": "cp2k_kgroup_owner",
+      "status": "passed",
+      "evidence": "validation/accelerated_exchange/cp2k_kgroup_owner",
+      "scope": "Official CP2K k-point-group ownership, exact star coverage, and reduced-result foldback pass the full oracle including P greater than nred. The nonlinear provider kernel remains single-state in this precursor."
+    },
+    {
+      "id": "partial_root_accumulator",
+      "status": "passed",
+      "evidence": "validation/accelerated_exchange/root_a_partial_bridge/final_35e7942_20260717",
+      "scope": "Distributed pre-kernel k-to-R source formation with root application passed 20 dense-versus-partial pairs and five fail-closed fault hooks. Kernel execution and R-to-k pulls remain root-serial."
+    },
+    {
+      "id": "replicated_importer_disjoint_pull",
+      "status": "implementation_in_progress",
+      "evidence": "Provider API and provider-only tests are archived; CP2K integration is under qualification.",
+      "scope": "The planned intermediate path replicates the nonlinear kernel but assigns disjoint full-k R-to-k pulls, including empty importer ownership when P exceeds Nk. It is not distributed-kernel scaling."
+    },
+    {
+      "id": "distributed_nonlinear_exchange_kernel",
       "status": "pending",
-      "required_observables": [
-        "one_group_identity",
-        "multi_group_identity",
-        "forces",
-        "stress",
-        "wall_time",
-        "max_rss_per_rank",
-        "aggregate_rss",
-        "load_imbalance"
-      ],
-      "current_evidence": "Communicator ownership and reduction contract not yet implemented."
+      "evidence": null,
+      "scope": "A genuinely distributed nonlinear exchange kernel and strong/weak scaling evidence do not yet exist."
     },
     {
       "id": "cross_mesh_restart",
+      "status": "passed",
+      "evidence": "validation/accelerated_exchange/crossmesh_restart",
+      "scope": "The opt-in VALIDATED_BVK_TRANSFER initial guess is transactionally fail-closed and passed RKS, UKS, MPI, force, and stress tests. It is not the default and does not guarantee positivity or N-representability."
+    },
+    {
+      "id": "acp_full_mesh_elimination",
       "status": "pending",
-      "required_observables": [
-        "electron_number",
-        "hermiticity",
-        "symmetry_covariance",
-        "cold_warm_endpoint_identity",
-        "forces",
-        "stress",
-        "clean_fallback",
-        "iteration_count",
-        "wall_time"
-      ],
-      "current_evidence": "No production claim; incompatible meshes must never be copied by k-point index."
+      "evidence": null,
+      "scope": "ACP forward and gradient paths still materialize complete-mesh projector or density arrays and require a separate streamed support-plan implementation."
+    },
+    {
+      "id": "streamed_symmetry_covariance_check",
+      "status": "implementation_in_progress",
+      "evidence": null,
+      "scope": "The remaining mixer covariance qualifier allocates a complete Fock mesh; a streamed selector with the dense qualifier retained as oracle is under implementation."
     }
   ],
   "cases": [
     {
-      "id": "cp2k_cache_runtime_r3_19_case_matrix",
-      "periodicity": "0D_1D_2D_3D",
-      "mesh": "Gamma_to_shifted_2x2x2",
-      "symmetry": "full_time_reversal_K290_SPGLIB",
-      "modules": ["regular_grid_bvk_cache"],
-      "status": "passed"
-    },
-    {
       "id": "provider_regular_9x9x1",
       "periodicity": "2D",
       "mesh": [9, 9, 1],
-      "symmetry": "full",
-      "modules": ["regular_grid_bvk_cache"],
-      "status": "passed"
-    },
-    {
-      "id": "provider_matrix_lean_forward_3x1x1_and_9x9x1",
-      "periodicity": "3D",
-      "mesh": "3x1x1_and_9x9x1",
       "symmetry": "full_twisted_permuted",
       "modules": [
         "regular_grid_bvk_cache",
@@ -196,79 +123,113 @@
       "status": "passed"
     },
     {
-      "id": "provider_true_bounded_memory_r_image_batching_qualification",
-      "periodicity": "3D",
-      "mesh": "3x1x1_then_9x9x1",
-      "symmetry": "full_twisted_permuted",
-      "modules": ["provider_true_bounded_memory_r_image_batching"],
-      "status": "implementation_in_progress"
-    },
-    {
-      "id": "provider_reduced_reverse",
-      "periodicity": "3D",
-      "mesh": "3x1x1_then_9x9x1",
-      "symmetry": "full",
-      "modules": ["provider_reduced_memory_reverse_stream"],
-      "status": "implementation_in_progress"
-    },
-    {
-      "id": "cp2k_production_stream_consumer",
-      "periodicity": "0D_1D_2D_3D",
-      "mesh": "Gamma_to_regular_shifted_meshes",
-      "symmetry": "time_reversal_K290_SPGLIB",
+      "id": "cp2k_streamed_forward_reverse_matrix",
+      "periodicity": "1D_2D_3D",
+      "mesh": "Gamma_to_shifted_regular_meshes",
+      "symmetry": "full_time_reversal_K290_SPGLIB",
+      "mpi": [1, 2, 4],
       "modules": [
-        "cp2k_stream_consumer_integration",
-        "streamed_symmetry_stars"
+        "provider_bounded_ao_image_batching",
+        "provider_streamed_reverse",
+        "cp2k_streamed_star_consumer"
+      ],
+      "runs": 21,
+      "status": "passed"
+    },
+    {
+      "id": "cp2k_kgroup_owner_matrix",
+      "periodicity": "0D_1D_2D_3D",
+      "mesh": "Gamma_to_shifted_2x2x2",
+      "symmetry": "full_time_reversal_K290_SPGLIB",
+      "mpi": "P=1,2,4 and P>nred",
+      "modules": [
+        "cp2k_block_expansion_foldback_helpers",
+        "cp2k_kgroup_owner"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "cp2k_partial_root_oracle_matrix",
+      "periodicity": "0D_1D_2D_3D",
+      "mesh": "Gamma_to_shifted_2x2x2",
+      "symmetry": "full_time_reversal_K290_SPGLIB",
+      "mpi": [1, 2, 4],
+      "modules": [
+        "partial_root_accumulator"
+      ],
+      "pairs": 20,
+      "maximum_external_residuals": {
+        "energy_hartree": 1.4210854715202004e-14,
+        "force_hartree_per_bohr": 4.708131016e-16,
+        "stress_bar": 3.999999535e-6
+      },
+      "status": "passed"
+    },
+    {
+      "id": "integrated_release_reference",
+      "periodicity": "3D",
+      "mesh": [2, 2, 2],
+      "symmetry": "shifted_full_grid",
+      "mpi": [1, 2, 4],
+      "modules": [
+        "cp2k_streamed_star_consumer",
+        "separable_direct_regular_mesh_transform",
+        "cp2k_kgroup_owner"
+      ],
+      "runs": 51,
+      "status": "passed"
+    },
+    {
+      "id": "validated_cross_mesh_restart",
+      "periodicity": "3D",
+      "mesh": "3x3x3_to_4x4x4_and_5x5x5_to_6x6x6",
+      "symmetry": "K290",
+      "mpi": [1, 2],
+      "modules": [
+        "cross_mesh_restart"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "replicated_importer_cp2k_matrix",
+      "periodicity": "0D_1D_2D_3D",
+      "mesh": "Gamma_to_shifted_regular_meshes",
+      "symmetry": "full_time_reversal_K290_SPGLIB",
+      "mpi": "P=1,2,4 and P>Nk",
+      "modules": [
+        "replicated_importer_disjoint_pull"
       ],
       "status": "implementation_in_progress"
     },
     {
-      "id": "cp2k_block_helpers_observables",
-      "periodicity": "3D",
-      "mesh": "2x2x2_and_3x1x1",
-      "symmetry": "K290_SPGLIB_time_reversal",
-      "modules": ["cp2k_block_expansion_foldback_helpers"],
-      "status": "passed"
-    },
-    {
-      "id": "cp2k_block_helpers_derivatives",
-      "periodicity": "3D",
-      "mesh": "2x2x2_and_3x1x1",
-      "symmetry": "K290_and_time_reversal",
-      "modules": ["cp2k_block_expansion_foldback_helpers"],
-      "status": "passed"
-    },
-    {
-      "id": "cp2k_h2_3x1x1_full_vs_time_reversal",
-      "periodicity": "3D",
-      "mesh": [3, 1, 1],
-      "symmetry": "time_reversal",
-      "modules": ["regular_grid_bvk_cache", "streamed_symmetry_stars"],
+      "id": "streamed_symmetry_covariance_matrix",
+      "periodicity": "0D_1D_2D_3D",
+      "mesh": "Gamma_to_regular_meshes",
+      "symmetry": "full_time_reversal_K290_SPGLIB",
+      "modules": [
+        "streamed_symmetry_covariance_check"
+      ],
       "status": "implementation_in_progress"
     },
     {
-      "id": "cp2k_argon_chain_4x1x1",
-      "periodicity": "1D",
-      "mesh": [4, 1, 1],
-      "symmetry": "K290_and_SPGLIB",
-      "modules": ["regular_grid_bvk_cache", "streamed_symmetry_stars", "regular_mesh_fft"],
-      "status": "implementation_in_progress"
+      "id": "regular_mesh_fft_oracle_matrix",
+      "periodicity": "1D_2D_3D",
+      "mesh": "regular_shifted_and_unshifted",
+      "symmetry": "full_time_reversal_K290_SPGLIB",
+      "modules": [
+        "regular_mesh_fft"
+      ],
+      "status": "pending"
     },
     {
-      "id": "cp2k_argon_layer_3x3x1",
-      "periodicity": "2D",
-      "mesh": [3, 3, 1],
-      "symmetry": "K290_and_SPGLIB",
-      "modules": ["regular_grid_bvk_cache", "streamed_symmetry_stars", "regular_mesh_fft"],
-      "status": "implementation_in_progress"
-    },
-    {
-      "id": "cp2k_si_shifted_2x2x2",
+      "id": "distributed_kernel_scaling",
       "periodicity": "3D",
-      "mesh": [2, 2, 2],
-      "symmetry": "SPGLIB",
-      "modules": ["regular_grid_bvk_cache", "streamed_symmetry_stars", "regular_mesh_fft", "mpi_k_groups"],
-      "status": "implementation_in_progress"
+      "mesh": "large_regular_meshes",
+      "symmetry": "full_and_reduced",
+      "modules": [
+        "distributed_nonlinear_exchange_kernel"
+      ],
+      "status": "pending"
     }
   ]
 }
