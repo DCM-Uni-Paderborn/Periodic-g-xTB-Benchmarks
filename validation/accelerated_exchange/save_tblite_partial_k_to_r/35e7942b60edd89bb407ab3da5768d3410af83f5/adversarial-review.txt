@@ -1,0 +1,26 @@
+Qualified commit: 35e7942b60edd89bb407ab3da5768d3410af83f5
+Base revision: 257ba442684c39454175e5192c8a2342b4c6380f
+
+PASS: descriptor field completeness and exact field comparison
+PASS: descriptor structural validation, canonical int64 packing, and corruption rejection
+PASS: mandatory nonzero 128-bit host transaction identity and phase/generation separation
+PASS: live geometry, plan generation, model, kernel, compact phase, and onsite-state revalidation
+PASS: exact-one global k-point owner-count validation, including empty contributors
+PASS: distributed forward/reverse pull ownership and unique scalar/direct-result owner behavior
+PASS: designated-root behavior when distributed ownership is not configured
+PASS: absent pull-mask access is guarded without relying on Fortran short-circuit evaluation
+PASS: finite forward/reverse payload validation at export, unpack, and import
+PASS: checked int64 payload extents capped at huge(default integer)
+PASS: checked int64 public regular-mesh validation before internal default-index arithmetic
+PASS: overflow-safe modular phase products and batch/image-range arithmetic
+PASS: dense-oracle equivalence for energy, Fock response, overlap adjoint, force, and stress
+
+Provider/host boundary retained intentionally:
+- CP2K must generate a fresh transaction identity for each logical transaction.
+- CP2K must allgather/unpack/compare every descriptor field before reduction.
+- CP2K must broadcast one common pull-owner map and result-owner rank.
+- Raw payload values must never be rebound to a descriptor from another transaction.
+- Storage-bit fingerprints detect accidental state changes; they are not cryptographic authentication.
+
+No unresolved provider defect was found after the two review hardening commits.
+
