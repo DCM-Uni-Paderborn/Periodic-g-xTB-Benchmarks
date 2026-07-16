@@ -1,0 +1,79 @@
+Start testing: Jul 16 14:01 CEST
+----------------------------------------------------------
+12/44 Testing: tblite/exchange
+12/44 Test: tblite/exchange
+Command: "/home/kuehne88/work/codex-gxtb-exchange-cache-20260716/build/test/unit/tblite-tester" "exchange"
+Directory: /home/kuehne88/work/codex-gxtb-exchange-cache-20260716/build/test/unit
+"tblite/exchange" start time: Jul 16 14:01 CEST
+Output:
+----------------------------------------------------------
+# Testing: exchange
+  Starting gamma_fock_h2 ... (1/30)
+       ... gamma_fock_h2 [PASSED]
+  Starting gamma_fock_lih ... (2/30)
+       ... gamma_fock_lih [PASSED]
+  Starting gamma_fock_no ... (3/30)
+       ... gamma_fock_no [PASSED]
+  Starting gamma_fock_s2 ... (4/30)
+       ... gamma_fock_s2 [PASSED]
+  Starting gamma_fock_cecl3 ... (5/30)
+       ... gamma_fock_cecl3 [PASSED]
+  Starting energy_fock_h2 ... (6/30)
+       ... energy_fock_h2 [PASSED]
+  Starting energy_fock_lih ... (7/30)
+       ... energy_fock_lih [PASSED]
+  Starting energy_fock_no ... (8/30)
+       ... energy_fock_no [PASSED]
+  Starting energy_fock_n2 ... (9/30)
+       ... energy_fock_n2 [PASSED]
+  Starting energy_fock_h2o ... (10/30)
+       ... energy_fock_h2o [PASSED]
+  Starting energy_fock_s2 ... (11/30)
+       ... energy_fock_s2 [PASSED]
+  Starting energy_fock_sih4 ... (12/30)
+       ... energy_fock_sih4 [PASSED]
+  Starting energy_fock_cecl3 ... (13/30)
+       ... energy_fock_cecl3 [PASSED]
+  Starting energy_fock_ce2 ... (14/30)
+       ... energy_fock_ce2 [PASSED]
+  Starting potential_fock_h2 ... (15/30)
+       ... potential_fock_h2 [PASSED]
+  Starting potential_fock_lih ... (16/30)
+       ... potential_fock_lih [PASSED]
+  Starting potential_fock_no ... (17/30)
+       ... potential_fock_no [PASSED]
+  Starting potential_fock_s2 ... (18/30)
+       ... potential_fock_s2 [PASSED]
+  Starting potential_fock_cecl3 ... (19/30)
+       ... potential_fock_cecl3 [PASSED]
+  Starting potential_fock_ce2 ... (20/30)
+       ... potential_fock_ce2 [PASSED]
+  Starting gradient_op_fock_h2 ... (21/30)
+       ... gradient_op_fock_h2 [PASSED]
+  Starting gradient_op_fock_lih ... (22/30)
+       ... gradient_op_fock_lih [PASSED]
+  Starting gradient_op_fock_no ... (23/30)
+       ... gradient_op_fock_no [PASSED]
+  Starting gradient_op_fock_s2 ... (24/30)
+       ... gradient_op_fock_s2 [PASSED]
+  Starting gradient_op_fock_cecl3 ... (25/30)
+       ... gradient_op_fock_cecl3 [PASSED]
+  Starting gradient_op_fock_pyrazine ... (26/30)
+       ... gradient_op_fock_pyrazine [PASSED]
+  Starting gradient_op_fock_oxacb ... (27/30)
+       ... gradient_op_fock_oxacb [PASSED]
+  Starting gradient_op_fock_co2 ... (28/30)
+       ... gradient_op_fock_co2 [PASSED]
+  Starting bvk_exchange_supercell ... (29/30)
+       ... bvk_exchange_supercell [PASSED]
+  Starting kpoint_fock_complex ... (30/30)
+       ... kpoint_fock_complex [PASSED]
+<end of output>
+Test time = 1171.13 sec
+----------------------------------------------------------
+Test Passed.
+"tblite/exchange" end time: Jul 16 14:20 CEST
+"tblite/exchange" time elapsed: 00:19:31
+----------------------------------------------------------
+
+End testing: Jul 16 14:20 CEST

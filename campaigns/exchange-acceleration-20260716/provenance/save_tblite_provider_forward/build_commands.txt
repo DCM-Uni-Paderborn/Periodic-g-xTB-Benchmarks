@@ -1,0 +1,13 @@
+Compiler: /opt/homebrew/bin/gfortran
+Compiler version: GNU Fortran (Homebrew GCC 16.1.0) 16.1.0
+CMake version: 4.3.4
+
+Configure:
+cmake -S /private/tmp/save_tblite_exchange_cache_20260716 -B /private/tmp/review_save_tblite_exchange_cache_build -DCMAKE_BUILD_TYPE=Debug '-DCMAKE_Fortran_FLAGS_DEBUG=-g -O0 -fcheck=all -fbacktrace' -DWITH_API=OFF -DWITH_OpenMP=OFF -DWITH_DDX=OFF -DFETCHCONTENT_FULLY_DISCONNECTED=ON -DFETCHCONTENT_SOURCE_DIR_MCTC-LIB=/private/tmp/save_tblite_kmesh_memory/_build-memory/_deps/mctc-lib-src -DFETCHCONTENT_SOURCE_DIR_MSTORE=/private/tmp/save_tblite_kmesh_memory/_build-memory/_deps/mstore-src -DFETCHCONTENT_SOURCE_DIR_MULTICHARGE=/private/tmp/save_tblite_kmesh_memory/_build-memory/_deps/multicharge-src -DFETCHCONTENT_SOURCE_DIR_S-DFTD3=/private/tmp/save_tblite_kmesh_memory/_build-memory/_deps/s-dftd3-src -DFETCHCONTENT_SOURCE_DIR_DFTD4=/private/tmp/save_tblite_kmesh_memory/_build-memory/_deps/dftd4-src -DFETCHCONTENT_SOURCE_DIR_TEST-DRIVE=/private/tmp/save_tblite_kmesh_memory/_build-memory/_deps/test-drive-src -DFETCHCONTENT_SOURCE_DIR_TOML-F=/private/tmp/save_tblite_kmesh_memory/_build-memory/_deps/toml-f-src
+
+Build:
+cmake --build /private/tmp/review_save_tblite_exchange_cache_build --target tblite-tester -j 8
+
+Test:
+cd /private/tmp/save_tblite_exchange_cache_20260716
+/private/tmp/review_save_tblite_exchange_cache_build/test/unit/tblite-tester exchange bvk_exchange_supercell

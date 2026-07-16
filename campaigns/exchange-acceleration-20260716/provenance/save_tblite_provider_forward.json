@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "campaign_component": "save-tblite-provider-cache-and-matrix-lean-forward-stream",
+  "execution_host": "local macOS build",
+  "execution_date": "2026-07-16",
+  "save_tblite": {
+    "repository": "DCM-Uni-Paderborn/save_tblite",
+    "base_source_revision": "257ba442684c39454175e5192c8a2342b4c6380f",
+    "stable_patch_id": "b80f13f55e86b556632e7318da1f6ff09bc51f44",
+    "worktree_patch_sha256": "a4068e1c877fdf702b4025c7c9e7746b6f28b0816c03d19225aac7e038a56bfa",
+    "patch_applies_cleanly_to_base": true,
+    "git_diff_check": "passed",
+    "source_file_sha256": {
+      "src/tblite/cp2k_compat.f90": "866cf4e8e6c972a8ecdfdf9d71ccaf72f7cee1b7d81359919cade1950803506e",
+      "src/tblite/exchange.f90": "388f5a5ba7471c872477ef6e809b6f782584d10c4566736413d5eb3594aeffb7",
+      "src/tblite/exchange/cache.f90": "705056818f94bab2c036dffeb69a0f88ea85ac1be4595e60720bdad65ba84fd3",
+      "src/tblite/exchange/fock.f90": "fab2d30f0c856e6a58a2281d0e2f37fd6b1eb2e1dd2a42bfa511c34d16903cc0",
+      "test/unit/test_exchange.f90": "5deb97a9b7552409c84139f4ef9085089a8efb71396b5158e4f832b8136db53e"
+    }
+  },
+  "build": {
+    "compiler": "/opt/homebrew/bin/gfortran",
+    "compiler_version": "GNU Fortran (Homebrew GCC 16.1.0) 16.1.0",
+    "cmake_version": "4.3.4",
+    "build_type": "Debug",
+    "fortran_debug_flags": "-g -O0 -fcheck=all -fbacktrace",
+    "openmp": false,
+    "ddx": false,
+    "api": false,
+    "fully_disconnected_dependencies": true,
+    "tester_binary_sha256": "27c9998ebcf6f60af3fa3a15a10654ad2122adaac85f7c9bb4487378336c16a3",
+    "cmake_cache_sha256": "1c478d579f0381e9bf8a645859c851c6b572fd3337f1ffc1925c70861b51775e",
+    "commands": "save_tblite_provider_forward/build_commands.txt"
+  },
+  "runtime": {
+    "suite": "exchange",
+    "focused_test": "bvk_exchange_supercell",
+    "returncode": 0,
+    "status": "passed",
+    "known_array_temporary_warnings": 42,
+    "k_space_input_storage_query": {
+      "reduced_no_retained_full_k_space_density_overlap_assertions": 6,
+      "oracle_retained_full_k_space_density_overlap_assertions": 1,
+      "implementation_scope": "allocated(stream%density) or allocated(stream%overlap) only",
+      "not_measured": [
+        "stream%amat_r",
+        "stream%cmat_r",
+        "stream%vmat_r",
+        "cache%bvk_phase_forward",
+        "cache%bvk_phase_inverse",
+        "total process memory"
+      ],
+      "status": "passed"
+    },
+    "covered": [
+      "provider cache hit and exact invalidation",
+      "linear regular-grid planner beyond the dense phase oracle",
+      "complete and duplicate grid negative/recovery paths",
+      "matrix-lean forward energy, shell potential and Fock",
+      "no retained full-k-space density/overlap input arrays",
+      "duplicate and missing stream push recovery",
+      "charge-dependent onsite stale-state rejection and recovery",
+      "arbitrary block arrival order",
+      "common twist and physical k-point permutation",
+      "9x9x1 reduced forward versus dense full-mesh oracle"
+    ],
+    "not_covered": [
+      "two-spin-channel stream",
+      "even regular mesh",
+      "parallel stream push or race behavior",
+      "complete begin/end/get boundary-state matrix",
+      "actual production CP2K consumer integration",
+      "true bounded-memory R/image batching",
+      "batched or on-demand phase generation",
+      "total-process memory accounting"
+    ]
+  },
+  "qualification": {
+    "provider_cache_planner": "passed",
+    "matrix_lean_forward_stream": "passed",
+    "no_retained_full_k_space_density_overlap_arrays": "passed",
+    "true_bounded_memory_r_image_batching": "implementation_in_progress",
+    "reduced_memory_reverse_stream": "implementation_in_progress",
+    "cp2k_consumer_integration": "implementation_in_progress"
+  },
+  "artifacts": {
+    "raw": "../raw/save_tblite_provider_forward",
+    "historical_raw_not_used_for_qualification": "../raw/save_tblite_provider_cache_terok_earlier",
+    "source_patch": "save_tblite_provider_forward/save_tblite_tested.patch",
+    "source_snapshot": "save_tblite_provider_forward/source_snapshot",
+    "source_checks": "save_tblite_provider_forward/source_checks.txt",
+    "cmake_cache": "save_tblite_provider_forward/CMakeCache.txt",
+    "summary_script": "../scripts/summarize_save_tblite_provider_forward.py",
+    "derived_json": "../derived/save_tblite_provider_forward_summary.json",
+    "derived_text": "../derived/save_tblite_provider_forward_summary.txt"
+  },
+  "scope_note": "Only the provider cache/planner and matrix-lean forward stream are qualified. The storage query covers only retained full-k-space density/overlap input arrays. Three complete BvK-image tensors and two dense phase tables remain allocated; true bounded-memory R/image batching, reduced-memory reverse and production CP2K integration remain implementation_in_progress."
+}

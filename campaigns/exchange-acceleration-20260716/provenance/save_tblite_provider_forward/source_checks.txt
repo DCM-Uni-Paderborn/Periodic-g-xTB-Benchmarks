@@ -1,0 +1,5 @@
+save_tblite base revision: 257ba442684c39454175e5192c8a2342b4c6380f
+git diff --check (five modified provider/test files): PASS
+git apply --check save_tblite_tested.patch against the base revision: PASS
+stable patch id: b80f13f55e86b556632e7318da1f6ff09bc51f44
+focused Debug tester SHA-256: 27c9998ebcf6f60af3fa3a15a10654ad2122adaac85f7c9bb4487378336c16a3

@@ -149,3 +149,151 @@ def test_cp2k_block_helper_provenance_is_self_verifying():
     retry = (provenance_dir / "terok_build_and_launch" / "build_helpers_retry.log").read_text()
     assert "Error: Line truncated" in first_build
     assert "[ 99%] Built target cp2k-bin" in retry
+
+
+def test_provider_forward_status_is_scoped_conservatively():
+    matrix = load_json("validation_matrix.json")
+    modules = {entry["id"]: entry for entry in matrix["modules"]}
+
+    assert modules["regular_grid_bvk_cache"]["status"] == "passed"
+    assert modules["provider_matrix_lean_forward_stream"]["status"] == "passed"
+    assert (
+        modules["provider_true_bounded_memory_r_image_batching"]["status"]
+        == "implementation_in_progress"
+    )
+    assert (
+        modules["provider_reduced_memory_reverse_stream"]["status"]
+        == "implementation_in_progress"
+    )
+    assert (
+        modules["cp2k_stream_consumer_integration"]["status"]
+        == "implementation_in_progress"
+    )
+    assert modules["streamed_symmetry_stars"]["status"] == "implementation_in_progress"
+    evidence = modules["provider_matrix_lean_forward_stream"]["current_evidence"]
+    assert "not a bounded-memory implementation" in evidence
+    assert "amat_r, cmat_r and vmat_r" in evidence
+    assert "two dense Nk x Nk phase tables" in evidence
+
+
+def test_provider_forward_focused_raw_record():
+    raw = CAMPAIGN / "raw" / "save_tblite_provider_forward"
+    stdout = (raw / "focused_exchange.stdout").read_text(errors="replace")
+    stderr = (raw / "focused_exchange.stderr").read_text(errors="replace")
+
+    assert (raw / "returncode.txt").read_text().strip() == "0"
+    assert stdout == ""
+    assert "bvk_exchange_supercell [PASSED]" in stderr
+    assert "[FAILED]" not in stderr
+    assert stderr.count("Fortran runtime warning: An array temporary was created") == 42
+
+
+def test_provider_forward_summary_is_reproducible():
+    script = CAMPAIGN / "scripts" / "summarize_save_tblite_provider_forward.py"
+    derived_json = CAMPAIGN / "derived" / "save_tblite_provider_forward_summary.json"
+    derived_text = CAMPAIGN / "derived" / "save_tblite_provider_forward_summary.txt"
+
+    generated_json = subprocess.run(
+        [sys.executable, str(script), "--format", "json"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    generated_text = subprocess.run(
+        [sys.executable, str(script), "--format", "text"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+
+    assert generated_json == derived_json.read_text()
+    assert generated_text == derived_text.read_text()
+    result = json.loads(generated_json)
+    assert result["all_scoped_gates_passed"] is True
+    assert result["provider_cache_planner"]["status"] == "passed"
+    assert result["matrix_lean_forward_stream"]["status"] == "passed"
+    assert (
+        result["matrix_lean_forward_stream"]["k_space_input_storage_query"]
+        ["reduced_no_retained_full_k_space_density_overlap_assertion_count"]
+        == 6
+    )
+    assert result["matrix_lean_forward_stream"]["order_twist_and_large_mesh"][
+        "mesh"
+    ] == [9, 9, 1]
+    assert result["matrix_lean_forward_stream"]["k_space_input_storage_query"][
+        "query_scope"
+    ] == "stream%density and stream%overlap allocations only"
+    assert "stream%amat_r" in result["matrix_lean_forward_stream"][
+        "k_space_input_storage_query"
+    ]["not_measured"]
+    assert "cache%bvk_phase_inverse" in result["matrix_lean_forward_stream"][
+        "k_space_input_storage_query"
+    ]["not_measured"]
+    assert (
+        result["not_qualified"]["true_bounded_memory_r_image_batching"]["status"]
+        == "implementation_in_progress"
+    )
+    assert (
+        result["not_qualified"]["reduced_memory_reverse_stream"]["status"]
+        == "implementation_in_progress"
+    )
+    assert (
+        result["not_qualified"]["cp2k_consumer_integration"]["status"]
+        == "implementation_in_progress"
+    )
+
+
+def test_provider_forward_exact_source_and_patch_provenance():
+    provenance = load_json("provenance/save_tblite_provider_forward.json")
+    directory = CAMPAIGN / "provenance" / "save_tblite_provider_forward"
+    snapshot = directory / "source_snapshot"
+
+    assert digest(directory / "save_tblite_tested.patch") == provenance[
+        "save_tblite"
+    ]["worktree_patch_sha256"]
+    for relative, expected in provenance["save_tblite"]["source_file_sha256"].items():
+        assert digest(snapshot / relative) == expected
+    assert digest(directory / "CMakeCache.txt") == provenance["build"][
+        "cmake_cache_sha256"
+    ]
+
+    patch = (directory / "save_tblite_tested.patch").read_text()
+    assert "cp2k_exchange_stream_has_full_mesh_storage" in patch
+    assert "get_KFock_stream_apply" in patch
+    assert "integer, parameter :: nmesh_large(3) = [9, 9, 1]" in patch
+    assert "g-xTB exchange stream reverse requires oracle mode" in patch
+    qualification = provenance["qualification"]
+    assert qualification["matrix_lean_forward_stream"] == "passed"
+    assert (
+        qualification["true_bounded_memory_r_image_batching"]
+        == "implementation_in_progress"
+    )
+    query = provenance["runtime"]["k_space_input_storage_query"]
+    assert query["implementation_scope"].endswith("only")
+    assert "total process memory" in query["not_measured"]
+
+
+def test_earlier_terok_record_is_preserved_but_not_qualification_basis():
+    raw = CAMPAIGN / "raw" / "save_tblite_provider_cache_terok_earlier"
+    log = (raw / "CTest-LastTest.log").read_text(errors="replace")
+    summary = load_json("derived/save_tblite_provider_forward_summary.json")
+
+    assert log.count("[PASSED]") == 30
+    assert "Test Passed." in log
+    assert summary["historical_terok_record"]["preserved"] is True
+    assert summary["historical_terok_record"]["qualification_basis"] is False
+
+
+def test_provider_forward_archive_manifest_is_self_verifying():
+    manifest = (
+        CAMPAIGN
+        / "provenance"
+        / "save_tblite_provider_forward"
+        / "SHA256SUMS"
+    )
+    entries = manifest.read_text().splitlines()
+
+    assert len(entries) == 21
+    for line in entries:
+        expected, relative = line.split(maxsplit=1)
+        assert digest(CAMPAIGN / relative) == expected

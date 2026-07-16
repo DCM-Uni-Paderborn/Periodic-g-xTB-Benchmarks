@@ -1,0 +1,16 @@
+SAVE_TBLITE_PROVIDER_MATRIX_LEAN_FORWARD_QUALIFICATION
+test	bvk_exchange_supercell
+returncode	0
+provider_cache_planner	passed
+matrix_lean_forward_stream	passed
+storage_query_scope	full-k-space density/overlap arrays only
+reduced_no_retained_kspace_input_queries	6
+oracle_retained_kspace_input_queries	1
+large_mesh	9x9x1
+negative_recovery	true
+twist_permutation	true
+true_bounded_memory_r_image_batching	implementation_in_progress
+reduced_memory_reverse_stream	implementation_in_progress
+cp2k_consumer_integration	implementation_in_progress
+ALL_SCOPED_GATES_PASSED	true
+SCOPE	Only the provider cache/planner and matrix-lean forward stream are qualified. The storage query proves only that full-k-space density and overlap input arrays are not retained. True bounded-memory R/image batching, reduced-memory reverse, and actual CP2K integration remain in progress.
