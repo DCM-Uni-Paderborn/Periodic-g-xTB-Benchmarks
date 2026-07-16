@@ -1,0 +1,2304 @@
+diff --git a/src/tblite/cp2k_compat.f90 b/src/tblite/cp2k_compat.f90
+index 05e4b42..e8fd5d4 100644
+--- a/src/tblite/cp2k_compat.f90
++++ b/src/tblite/cp2k_compat.f90
+@@ -19,7 +19,7 @@ module tblite_cp2k_compat
+    use tblite_container_cache, only : container_cache
+    use tblite_cutoff, only : get_lattice_points
+    use tblite_exchange_cache, only : exchange_cache
+-   use tblite_exchange_fock, only : exchange_bvk_kernel, exchange_fock
++   use tblite_exchange_fock, only : exchange_fock
+    use tblite_integral_multipole, only : multipole_cgto, multipole_grad_cgto
+    use tblite_integral_type, only : integral_type, new_integral
+    use tblite_scf_potential, only : potential_type, add_pot_to_h1
+@@ -47,11 +47,19 @@ module tblite_cp2k_compat
+    public :: cp2k_prepare_exchange, cp2k_exchange_kpoint, cp2k_exchange_kmesh, &
+       & cp2k_exchange_kmesh_gradient, cp2k_exchange_kpoint_gradient, &
+       & cp2k_gamma_gradient
++   public :: cp2k_exchange_stream_type, cp2k_exchange_stream_begin, &
++      & cp2k_exchange_stream_push, cp2k_exchange_stream_apply, &
++      & cp2k_exchange_stream_get, cp2k_exchange_stream_reverse_apply, &
++      & cp2k_exchange_stream_reverse_get, cp2k_exchange_stream_end, &
++      & cp2k_exchange_stream_has_full_mesh_storage
+    public :: cp2k_image_h0_gradient
+    public :: cp2k_acp_image_gradient, cp2k_acp_kmesh, &
+       & cp2k_acp_kmesh_gradient, cp2k_apply_basis_gradient
+    public :: acp_image_type, hamiltonian_image_type
+ 
++   integer, parameter, public :: cp2k_exchange_stream_reduced = 1
++   integer, parameter, public :: cp2k_exchange_stream_oracle = 2
++
+    !> CP2K-facing wrapper for g-xTB's native potential mixer.
+    !>
+    !> CP2K owns the packing of all real Fock degrees of freedom into one flat
+@@ -75,6 +83,35 @@ module tblite_cp2k_compat
+       procedure, public :: get_error => cp2k_potential_mixer_get_error
+    end type cp2k_potential_mixer_type
+ 
++   !> Stateful collector for Brillouin-zone-coupled exchange.
++   !>
++   !> The default reduced mode retains only three weighted k-to-R
++   !> intermediates per spin and reconstructs requested Fock blocks on demand.
++   !> The separately selectable oracle mode retains all Bloch blocks and
++   !> dispatches the unchanged complete-mesh evaluator, including reverse mode.
++   type, public :: cp2k_exchange_stream_type
++      private
++      logical :: active = .false.
++      logical :: applied = .false.
++      logical :: reverse_applied = .false.
++      integer :: nk = 0
++      integer :: nao = 0
++      integer :: nspin = 0
++      integer :: nsh = 0
++      integer :: mode = 0
++      integer :: nmesh(3) = 0
++      integer, allocatable :: reps(:, :)
++      logical, allocatable :: seen(:), reverse_pulled(:)
++      real(wp), allocatable :: kfrac(:, :), weights(:), vsh(:)
++      real(wp), allocatable :: g_onsfx(:, :, :), g_onsri(:, :), &
++         & dgdq_onsfx(:, :, :), dgdq_onsri(:, :)
++      complex(wp), allocatable :: density(:, :, :, :), overlap(:, :, :), &
++         & fock(:, :, :, :), overlap_adjoint(:, :, :)
++      complex(wp), allocatable :: amat_r(:, :, :, :), cmat_r(:, :, :, :), &
++         & vmat_r(:, :, :, :), gdiagP(:, :), gdiagSP(:, :), gdiagSPS(:, :)
++      real(wp) :: energy = 0.0_wp
++   end type cp2k_exchange_stream_type
++
+ contains
+ 
+ !> Return a real-space cutoff that covers both the valence basis and the
+@@ -634,6 +671,120 @@ subroutine cp2k_exchange_kpoint(calc, mol, ecache, density, overlap, &
+    end select
+ end subroutine cp2k_exchange_kpoint
+ 
++!> Build or reuse the geometry- and mesh-static BvK kernel/Fourier plan.
++subroutine prepare_bvk_plan(exchange, mol, cache, nmesh, kfrac, weights, error)
++   type(exchange_fock), intent(in) :: exchange
++   type(structure_type), intent(in) :: mol
++   type(exchange_cache), intent(inout) :: cache
++   integer, intent(in) :: nmesh(3)
++   real(wp), intent(in) :: kfrac(:, :), weights(:)
++   type(error_type), allocatable, intent(out) :: error
++
++   integer :: grid(3), icell, idim, igrid, ik, jcell, nearest, nk
++   logical, allocatable :: seen(:)
++   real(wp) :: angle, scaled, target
++   real(wp), allocatable :: kred(:, :)
++   complex(wp) :: orthogonality, phase
++
++   nk = size(weights)
++   if (cache%bvk_matches(mol, nmesh, kfrac, weights) &
++      & .and. exchange%bvk_model_matches(cache)) then
++      if (any(shape(cache%bvk_kernel%g_mulliken_r) /= &
++         & [exchange%nsh, exchange%nsh, nk])) then
++         cache%bvk_plan_valid = .false.
++      else
++         return
++      end if
++   end if
++   cache%bvk_plan_valid = .false.
++
++   if (allocated(cache%bvk_input_to_grid)) &
++      & deallocate(cache%bvk_input_to_grid)
++   if (allocated(cache%bvk_grid_to_input)) &
++      & deallocate(cache%bvk_grid_to_input)
++   allocate(cache%bvk_input_to_grid(nk), cache%bvk_grid_to_input(nk), source=0)
++   allocate(seen(nk), source=.false.)
++   allocate(kred(3, nk))
++   kred = modulo(kfrac, 1.0_wp)
++   do idim = 1, 3
++      cache%bvk_twist(idim) = kred(idim, 1) &
++         & -real(floor(kred(idim, 1)*real(nmesh(idim), wp)), wp) &
++         & /real(nmesh(idim), wp)
++   end do
++   do ik = 1, nk
++      do idim = 1, 3
++         scaled = (kred(idim, ik)-cache%bvk_twist(idim)) &
++            & *real(nmesh(idim), wp)
++         nearest = nint(scaled)
++         if (abs(scaled-real(nearest, wp)) > 1.0e-10_wp) then
++            call fatal_error(error, &
++               & "g-xTB k points do not share a regular-grid twist")
++            return
++         end if
++         grid(idim) = modulo(nearest, nmesh(idim))
++      end do
++      igrid = 1 + grid(1) + nmesh(1)*(grid(2)+nmesh(2)*grid(3))
++      if (seen(igrid)) then
++         call fatal_error(error, "g-xTB k-point mesh contains a duplicate grid point")
++         return
++      end if
++      seen(igrid) = .true.
++      cache%bvk_input_to_grid(ik) = igrid
++      cache%bvk_grid_to_input(igrid) = ik
++   end do
++   if (.not.all(seen)) then
++      call fatal_error(error, "g-xTB k-point mesh is incomplete")
++      return
++   end if
++
++   ! Construct the expensive image kernel only after the O(Nk) mesh proof.
++   call exchange%get_bvk_Kmatrix(mol, nmesh, cache%bvk_kernel)
++   if (any(shape(cache%bvk_kernel%reps) /= [3, nk]) &
++      & .or. any(shape(cache%bvk_kernel%g_mulliken_r) /= &
++      & [exchange%nsh, exchange%nsh, nk]) &
++      & .or. any(shape(cache%bvk_kernel%g_bocorr_r) /= &
++      & [mol%nat, mol%nat, nk])) then
++      call fatal_error(error, "g-xTB BvK kernel has inconsistent dimensions")
++      return
++   end if
++
++   if (allocated(cache%bvk_phase_forward)) &
++      & deallocate(cache%bvk_phase_forward)
++   if (allocated(cache%bvk_phase_inverse)) &
++      & deallocate(cache%bvk_phase_inverse)
++   allocate(cache%bvk_phase_forward(size(cache%bvk_kernel%reps, 2), nk), &
++      & cache%bvk_phase_inverse(nk, size(cache%bvk_kernel%reps, 2)))
++   do ik = 1, nk
++      do icell = 1, size(cache%bvk_kernel%reps, 2)
++         angle = 2.0_wp*pi*dot_product(kred(:, ik), &
++            & real(cache%bvk_kernel%reps(:, icell), wp))
++         phase = exp(cmplx(0.0_wp, angle, wp))
++         cache%bvk_phase_forward(icell, ik) = phase
++         cache%bvk_phase_inverse(ik, icell) = weights(ik)*conjg(phase)
++      end do
++   end do
++
++   ! Keep a dense phase-orthogonality oracle for small meshes.  The unique
++   ! integer-grid map above is the O(Nk) production proof for larger meshes
++   ! and is also the ordering descriptor required by a future FFT backend.
++   if (nk <= 64) then
++      do icell = 1, nk
++         do jcell = 1, nk
++            orthogonality = sum(cache%bvk_phase_forward(icell, :) &
++               & *cache%bvk_phase_inverse(:, jcell))
++            target = merge(1.0_wp, 0.0_wp, icell == jcell)
++            if (abs(orthogonality-target) > 1.0e-10_wp) then
++               call fatal_error(error, &
++                  & "g-xTB k points are not a complete Fourier mesh")
++               return
++            end if
++         end do
++      end do
++   end if
++   call exchange%set_bvk_model_signature(cache)
++   call cache%set_bvk_signature(mol, nmesh, kfrac, weights)
++end subroutine prepare_bvk_plan
++
+ !> Evaluate BvK-supercell-equivalent exchange on a complete regular k mesh.
+ !>
+ !> Density, overlap, and Fock contain unweighted Bloch blocks.  Energy and
+@@ -652,10 +803,7 @@ subroutine cp2k_exchange_kmesh(calc, mol, ecache, wfn, nmesh, kfrac, weights, &
+    real(wp), intent(out) :: vsh(:), energy
+    type(error_type), allocatable, intent(out) :: error
+ 
+-   integer :: icell, idim, jcell, nk
+-   real(wp) :: target
+-   complex(wp) :: orthogonality
+-   type(exchange_bvk_kernel) :: kernel
++   integer :: idim, nk
+ 
+    nk = size(weights)
+    if (any(nmesh < 1) .or. product(nmesh) /= nk) then
+@@ -706,24 +854,10 @@ subroutine cp2k_exchange_kmesh(calc, mol, ecache, wfn, nmesh, kfrac, weights, &
+                & "inconsistent g-xTB whole-mesh AO, spin, or shell dimensions")
+             return
+          end if
+-         call exchange%get_bvk_Kmatrix(mol, nmesh, kernel)
+-         ! The actual fractional k points include any common MP twist.  Their
+-         ! phase matrix must nevertheless be unitary on the BvK representatives.
+-         do icell = 1, nk
+-            do jcell = 1, nk
+-               orthogonality = sum(weights*exp(cmplx(0.0_wp, 2.0_wp*pi* &
+-                  & matmul(transpose(kfrac), real(kernel%reps(:, icell) &
+-                  & -kernel%reps(:, jcell), wp)), wp)))
+-               target = merge(1.0_wp, 0.0_wp, icell == jcell)
+-               if (abs(orthogonality-target) > 1.0e-10_wp) then
+-                  call fatal_error(error, &
+-                     & "g-xTB k points are not a complete Fourier mesh")
+-                  return
+-               end if
+-            end do
+-         end do
+-         call exchange%get_KFock_kmesh(mol, cache, kernel, kfrac, weights, &
+-            & density, overlap, fock, vsh, energy)
++         call prepare_bvk_plan(exchange, mol, cache, nmesh, kfrac, weights, error)
++         if (allocated(error)) return
++         call exchange%get_KFock_kmesh(mol, cache, cache%bvk_kernel, &
++            & kfrac, weights, density, overlap, fock, vsh, energy)
+       class default
+          call fatal_error(error, &
+             & "whole-mesh exchange requires the exchange_fock implementation")
+@@ -735,6 +869,465 @@ subroutine cp2k_exchange_kmesh(calc, mol, ecache, wfn, nmesh, kfrac, weights, &
+ end subroutine cp2k_exchange_kmesh
+ 
+ 
++!> Release all storage owned by a Brillouin-zone exchange stream.
++subroutine clear_exchange_stream(stream)
++   type(cp2k_exchange_stream_type), intent(inout) :: stream
++
++   if (allocated(stream%seen)) deallocate(stream%seen)
++   if (allocated(stream%reverse_pulled)) deallocate(stream%reverse_pulled)
++   if (allocated(stream%reps)) deallocate(stream%reps)
++   if (allocated(stream%kfrac)) deallocate(stream%kfrac)
++   if (allocated(stream%weights)) deallocate(stream%weights)
++   if (allocated(stream%vsh)) deallocate(stream%vsh)
++   if (allocated(stream%g_onsfx)) deallocate(stream%g_onsfx)
++   if (allocated(stream%g_onsri)) deallocate(stream%g_onsri)
++   if (allocated(stream%dgdq_onsfx)) deallocate(stream%dgdq_onsfx)
++   if (allocated(stream%dgdq_onsri)) deallocate(stream%dgdq_onsri)
++   if (allocated(stream%density)) deallocate(stream%density)
++   if (allocated(stream%overlap)) deallocate(stream%overlap)
++   if (allocated(stream%fock)) deallocate(stream%fock)
++   if (allocated(stream%overlap_adjoint)) deallocate(stream%overlap_adjoint)
++   if (allocated(stream%amat_r)) deallocate(stream%amat_r)
++   if (allocated(stream%cmat_r)) deallocate(stream%cmat_r)
++   if (allocated(stream%vmat_r)) deallocate(stream%vmat_r)
++   if (allocated(stream%gdiagP)) deallocate(stream%gdiagP)
++   if (allocated(stream%gdiagSP)) deallocate(stream%gdiagSP)
++   if (allocated(stream%gdiagSPS)) deallocate(stream%gdiagSPS)
++   stream%active = .false.
++   stream%applied = .false.
++   stream%reverse_applied = .false.
++   stream%nk = 0
++   stream%nao = 0
++   stream%nspin = 0
++   stream%nsh = 0
++   stream%mode = 0
++   stream%nmesh = 0
++   stream%energy = 0.0_wp
++end subroutine clear_exchange_stream
++
++
++!> Report whether a stream owns complete density or overlap k-mesh storage.
++logical function cp2k_exchange_stream_has_full_mesh_storage(stream) &
++   & result(has_storage)
++   type(cp2k_exchange_stream_type), intent(in) :: stream
++
++   has_storage = allocated(stream%density) .or. allocated(stream%overlap)
++end function cp2k_exchange_stream_has_full_mesh_storage
++
++
++!> Check the exact charge-dependent onsite state captured by `begin`.
++logical function exchange_stream_onsite_matches(stream, cache) result(matches)
++   type(cp2k_exchange_stream_type), intent(in) :: stream
++   type(exchange_cache), intent(in) :: cache
++
++   matches = .false.
++   if (.not.allocated(stream%g_onsfx) &
++      & .or. .not.allocated(stream%g_onsri) &
++      & .or. .not.allocated(stream%dgdq_onsfx) &
++      & .or. .not.allocated(stream%dgdq_onsri) &
++      & .or. .not.allocated(cache%g_onsfx) &
++      & .or. .not.allocated(cache%g_onsri) &
++      & .or. .not.allocated(cache%dgdq_onsfx) &
++      & .or. .not.allocated(cache%dgdq_onsri)) return
++   if (any(shape(stream%g_onsfx) /= shape(cache%g_onsfx)) &
++      & .or. any(shape(stream%g_onsri) /= shape(cache%g_onsri)) &
++      & .or. any(shape(stream%dgdq_onsfx) /= shape(cache%dgdq_onsfx)) &
++      & .or. any(shape(stream%dgdq_onsri) /= shape(cache%dgdq_onsri))) return
++   if (any(stream%g_onsfx /= cache%g_onsfx) &
++      & .or. any(stream%g_onsri /= cache%g_onsri) &
++      & .or. any(stream%dgdq_onsfx /= cache%dgdq_onsfx) &
++      & .or. any(stream%dgdq_onsri /= cache%dgdq_onsri)) return
++   matches = .true.
++end function exchange_stream_onsite_matches
++
++
++!> Begin collecting the unweighted Bloch blocks of one complete regular mesh.
++!>
++!> Only one transaction may be active in a stream object.  The expensive BvK
++!> plan is prepared here, before blocks are accepted, so that `apply` can also
++!> detect an intervening geometry, mesh, or model change.  The optional mode
++!> selects the memory-reduced production path or the full-mesh oracle; reduced
++!> mode is the default.
++subroutine cp2k_exchange_stream_begin(stream, calc, mol, ecache, wfn, nmesh, &
++   & kfrac, weights, error, mode)
++   type(cp2k_exchange_stream_type), intent(inout) :: stream
++   type(xtb_calculator), intent(inout) :: calc
++   type(structure_type), intent(in) :: mol
++   type(container_cache), intent(inout) :: ecache
++   type(wavefunction_type), intent(in) :: wfn
++   integer, intent(in) :: nmesh(3)
++   real(wp), intent(in) :: kfrac(:, :), weights(:)
++   type(error_type), allocatable, intent(out) :: error
++   integer, intent(in), optional :: mode
++
++   integer :: idim, nk, selected_mode
++
++   if (stream%active) then
++      call fatal_error(error, "g-xTB exchange stream is already active")
++      return
++   end if
++
++   selected_mode = cp2k_exchange_stream_reduced
++   if (present(mode)) selected_mode = mode
++   if (selected_mode /= cp2k_exchange_stream_reduced &
++      & .and. selected_mode /= cp2k_exchange_stream_oracle) then
++      call fatal_error(error, "unknown g-xTB exchange stream mode")
++      return
++   end if
++
++   nk = size(weights)
++   if (any(nmesh < 1) .or. product(nmesh) /= nk) then
++      call fatal_error(error, &
++         & "g-xTB exchange stream requires a complete regular k mesh")
++      return
++   end if
++   do idim = 1, 3
++      if (.not.mol%periodic(idim) .and. nmesh(idim) /= 1) then
++         call fatal_error(error, &
++            & "nonperiodic directions cannot be replicated by the g-xTB k mesh")
++         return
++      end if
++   end do
++   if (size(kfrac, 1) /= 3 .or. size(kfrac, 2) /= nk) then
++      call fatal_error(error, &
++         & "inconsistent g-xTB exchange stream mesh dimensions")
++      return
++   end if
++   if (.not.all(ieee_is_finite(kfrac))) then
++      call fatal_error(error, "g-xTB exchange stream k points must be finite")
++      return
++   end if
++   if (.not.all(ieee_is_finite(weights)) .or. &
++      & abs(sum(weights)-1.0_wp) > 1.0e-12_wp &
++      & .or. maxval(abs(weights-1.0_wp/real(nk, wp))) > 1.0e-12_wp) then
++      call fatal_error(error, &
++         & "g-xTB exchange stream requires uniform k-point weights")
++      return
++   end if
++
++   call cp2k_prepare_exchange(calc, mol, ecache, wfn, error)
++   if (allocated(error)) return
++   select type (cache => ecache%raw)
++   type is (exchange_cache)
++      select type (exchange => calc%exchange)
++      type is (exchange_fock)
++         if (wfn%nspin /= 1 .and. wfn%nspin /= 2) then
++            call fatal_error(error, &
++               & "g-xTB exchange stream requires one or two spin channels")
++            return
++         end if
++         call prepare_bvk_plan(exchange, mol, cache, nmesh, kfrac, weights, error)
++         if (allocated(error)) return
++         if (.not.allocated(cache%g_onsfx) &
++            & .or. .not.allocated(cache%g_onsri) &
++            & .or. .not.allocated(cache%dgdq_onsfx) &
++            & .or. .not.allocated(cache%dgdq_onsri)) then
++            call fatal_error(error, &
++               & "g-xTB exchange stream onsite state is not prepared")
++            return
++         end if
++
++         call clear_exchange_stream(stream)
++         stream%nk = nk
++         stream%nao = exchange%nao
++         stream%nspin = wfn%nspin
++         stream%nsh = exchange%nsh
++         stream%mode = selected_mode
++         stream%nmesh = nmesh
++         allocate(stream%seen(nk), source=.false.)
++         allocate(stream%reverse_pulled(nk), source=.false.)
++         allocate(stream%reps, source=cache%bvk_kernel%reps)
++         allocate(stream%kfrac(3, nk), source=kfrac)
++         allocate(stream%weights(nk), source=weights)
++         allocate(stream%g_onsfx, source=cache%g_onsfx)
++         allocate(stream%g_onsri, source=cache%g_onsri)
++         allocate(stream%dgdq_onsfx, source=cache%dgdq_onsfx)
++         allocate(stream%dgdq_onsri, source=cache%dgdq_onsri)
++         if (selected_mode == cp2k_exchange_stream_oracle) then
++            allocate(stream%density(exchange%nao, exchange%nao, wfn%nspin, nk), &
++               & stream%overlap(exchange%nao, exchange%nao, nk), &
++               & stream%fock(exchange%nao, exchange%nao, wfn%nspin, nk), &
++               & source=(0.0_wp, 0.0_wp))
++            allocate(stream%overlap_adjoint(exchange%nao, exchange%nao, nk), &
++               & source=(0.0_wp, 0.0_wp))
++         else
++            allocate(stream%amat_r(exchange%nao, exchange%nao, nk, wfn%nspin), &
++               & stream%cmat_r(exchange%nao, exchange%nao, nk, wfn%nspin), &
++               & stream%vmat_r(exchange%nao, exchange%nao, nk, wfn%nspin), &
++               & source=(0.0_wp, 0.0_wp))
++            allocate(stream%gdiagP(exchange%nao, wfn%nspin), &
++               & stream%gdiagSP(exchange%nao, wfn%nspin), &
++               & stream%gdiagSPS(exchange%nao, wfn%nspin), &
++               & source=(0.0_wp, 0.0_wp))
++         end if
++         allocate(stream%vsh(exchange%nsh), source=0.0_wp)
++         stream%energy = 0.0_wp
++         stream%active = .true.
++      class default
++         call fatal_error(error, &
++            & "exchange stream requires the exchange_fock implementation")
++      end select
++   class default
++      call fatal_error(error, "unexpected g-xTB exchange cache type")
++   end select
++end subroutine cp2k_exchange_stream_begin
++
++
++!> Push one unweighted density/overlap Bloch block into an active stream.
++subroutine cp2k_exchange_stream_push(stream, ik, density, overlap, error)
++   type(cp2k_exchange_stream_type), intent(inout) :: stream
++   integer, intent(in) :: ik
++   complex(wp), intent(in) :: density(:, :, :), overlap(:, :)
++   type(error_type), allocatable, intent(out) :: error
++
++   integer :: icell, spin
++   real(wp) :: angle
++   complex(wp) :: phase
++   complex(wp), allocatable :: amat(:, :), cmat(:, :)
++
++   if (.not.stream%active) then
++      call fatal_error(error, "g-xTB exchange stream is not active")
++      return
++   end if
++   if (stream%applied) then
++      call fatal_error(error, "g-xTB exchange stream was already applied")
++      return
++   end if
++   if (ik < 1 .or. ik > stream%nk) then
++      call fatal_error(error, "g-xTB exchange stream block index is out of range")
++      return
++   end if
++   if (stream%seen(ik)) then
++      call fatal_error(error, "duplicate g-xTB exchange stream block")
++      return
++   end if
++   if (size(density, 1) /= stream%nao &
++      & .or. size(density, 2) /= stream%nao &
++      & .or. size(density, 3) /= stream%nspin &
++      & .or. size(overlap, 1) /= stream%nao &
++      & .or. size(overlap, 2) /= stream%nao) then
++      call fatal_error(error, &
++         & "inconsistent g-xTB exchange stream block dimensions")
++      return
++   end if
++
++   if (stream%mode == cp2k_exchange_stream_oracle) then
++      stream%density(:, :, :, ik) = density
++      stream%overlap(:, :, ik) = overlap
++   else
++      allocate(amat(stream%nao, stream%nao), cmat(stream%nao, stream%nao))
++      do spin = 1, stream%nspin
++         amat = matmul(overlap, density(:, :, spin))
++         cmat = 0.5_wp*matmul(amat, overlap)
++         do icell = 1, stream%nk
++            angle = 2.0_wp*pi*dot_product(stream%kfrac(:, ik), &
++               & real(stream%reps(:, icell), wp))
++            phase = stream%weights(ik)*exp(cmplx(0.0_wp, -angle, wp))
++            stream%amat_r(:, :, icell, spin) = &
++               & stream%amat_r(:, :, icell, spin) + phase*amat
++            stream%cmat_r(:, :, icell, spin) = &
++               & stream%cmat_r(:, :, icell, spin) + phase*cmat
++            stream%vmat_r(:, :, icell, spin) = &
++               & stream%vmat_r(:, :, icell, spin) + phase*density(:, :, spin)
++         end do
++      end do
++   end if
++   stream%seen(ik) = .true.
++end subroutine cp2k_exchange_stream_push
++
++
++!> Apply exchange after all blocks have been collected.
++!>
++!> Reduced mode applies the kernels directly to the accumulated BvK images;
++!> oracle mode dispatches the unchanged complete-mesh evaluator.
++subroutine cp2k_exchange_stream_apply(stream, calc, mol, ecache, vsh, energy, &
++   & error)
++   type(cp2k_exchange_stream_type), intent(inout) :: stream
++   type(xtb_calculator), intent(in) :: calc
++   type(structure_type), intent(in) :: mol
++   type(container_cache), intent(inout) :: ecache
++   real(wp), intent(out) :: vsh(:), energy
++   type(error_type), allocatable, intent(out) :: error
++
++   if (.not.stream%active) then
++      call fatal_error(error, "g-xTB exchange stream is not active")
++      return
++   end if
++   if (stream%applied) then
++      call fatal_error(error, "g-xTB exchange stream was already applied")
++      return
++   end if
++   if (.not.all(stream%seen)) then
++      call fatal_error(error, "g-xTB exchange stream has missing blocks")
++      return
++   end if
++   if (size(vsh) /= stream%nsh) then
++      call fatal_error(error, &
++         & "inconsistent g-xTB exchange stream shell-potential dimensions")
++      return
++   end if
++   if (.not.allocated(calc%exchange) .or. .not.allocated(ecache%raw)) then
++      call fatal_error(error, &
++         & "g-xTB exchange stream state was invalidated before apply")
++      return
++   end if
++
++   select type (cache => ecache%raw)
++   type is (exchange_cache)
++      select type (exchange => calc%exchange)
++      type is (exchange_fock)
++         if (exchange%nao /= stream%nao .or. exchange%nsh /= stream%nsh &
++            & .or. .not.cache%bvk_matches(mol, stream%nmesh, &
++            & stream%kfrac, stream%weights) &
++            & .or. .not.exchange%bvk_model_matches(cache) &
++            & .or. .not.exchange_stream_onsite_matches(stream, cache)) then
++            call fatal_error(error, &
++               & "g-xTB exchange stream state was invalidated before apply")
++            return
++         end if
++         if (stream%mode == cp2k_exchange_stream_oracle) then
++            call exchange%get_KFock_kmesh(mol, cache, cache%bvk_kernel, &
++               & stream%kfrac, stream%weights, stream%density, stream%overlap, &
++               & stream%fock, stream%vsh, stream%energy)
++         else
++            call exchange%get_KFock_stream_apply(mol, cache, &
++               & cache%bvk_kernel, cache%bvk_phase_forward, stream%weights, &
++               & stream%amat_r, stream%cmat_r, stream%vmat_r, &
++               & stream%gdiagP, stream%gdiagSP, stream%gdiagSPS, &
++               & stream%vsh, stream%energy)
++         end if
++         vsh = stream%vsh
++         energy = stream%energy
++         stream%applied = .true.
++      class default
++         call fatal_error(error, &
++            & "exchange stream requires the exchange_fock implementation")
++      end select
++   class default
++      call fatal_error(error, "unexpected g-xTB exchange cache type")
++   end select
++end subroutine cp2k_exchange_stream_apply
++
++
++!> Retrieve one unweighted Fock block after a successful stream application.
++!>
++!> Reduced mode requires the corresponding overlap block again and
++!> reconstructs only this requested k point.  Oracle mode reads the retained
++!> complete-mesh result and does not require the optional overlap argument.
++subroutine cp2k_exchange_stream_get(stream, ik, fock, error, overlap)
++   type(cp2k_exchange_stream_type), intent(in) :: stream
++   integer, intent(in) :: ik
++   complex(wp), intent(out) :: fock(:, :, :)
++   type(error_type), allocatable, intent(out) :: error
++   complex(wp), intent(in), optional :: overlap(:, :)
++
++   integer :: iao, icell, ii, jj, spin
++   real(wp) :: angle, spin_factor
++   complex(wp) :: phase, tmp
++   complex(wp), allocatable :: amat(:, :), cmat(:, :), vmat(:, :), work(:, :)
++
++   if (.not.stream%active) then
++      call fatal_error(error, "g-xTB exchange stream is not active")
++      return
++   end if
++   if (.not.stream%applied) then
++      call fatal_error(error, "g-xTB exchange stream was not applied")
++      return
++   end if
++   if (ik < 1 .or. ik > stream%nk) then
++      call fatal_error(error, "g-xTB exchange stream block index is out of range")
++      return
++   end if
++   if (size(fock, 1) /= stream%nao .or. size(fock, 2) /= stream%nao &
++      & .or. size(fock, 3) /= stream%nspin) then
++      call fatal_error(error, &
++         & "inconsistent g-xTB exchange stream Fock dimensions")
++      return
++   end if
++
++   if (stream%mode == cp2k_exchange_stream_oracle) then
++      fock = stream%fock(:, :, :, ik)
++      return
++   end if
++   if (.not.present(overlap)) then
++      call fatal_error(error, &
++         & "memory-reduced g-xTB exchange stream get requires overlap block")
++      return
++   end if
++   if (size(overlap, 1) /= stream%nao .or. size(overlap, 2) /= stream%nao) then
++      call fatal_error(error, &
++         & "inconsistent g-xTB exchange stream get overlap dimensions")
++      return
++   end if
++
++   allocate(amat(stream%nao, stream%nao), cmat(stream%nao, stream%nao), &
++      & vmat(stream%nao, stream%nao), work(stream%nao, stream%nao))
++   spin_factor = 0.5_wp
++   if (stream%nspin > 1) spin_factor = 1.0_wp
++   do spin = 1, stream%nspin
++      amat = (0.0_wp, 0.0_wp)
++      cmat = (0.0_wp, 0.0_wp)
++      vmat = (0.0_wp, 0.0_wp)
++      do icell = 1, stream%nk
++         angle = 2.0_wp*pi*dot_product(stream%kfrac(:, ik), &
++            & real(stream%reps(:, icell), wp))
++         phase = exp(cmplx(0.0_wp, angle, wp))
++         amat = amat + phase*stream%amat_r(:, :, icell, spin)
++         cmat = cmat + phase*stream%cmat_r(:, :, icell, spin)
++         vmat = vmat + phase*stream%vmat_r(:, :, icell, spin)
++      end do
++      work = amat
++      do iao = 1, stream%nao
++         work(:, iao) = work(:, iao) &
++            & +0.25_wp*stream%gdiagP(iao, spin)*overlap(:, iao)
++      end do
++      work = work + 0.5_wp*matmul(overlap, vmat)
++      fock(:, :, spin) = cmat + matmul(work, overlap)
++      do iao = 1, stream%nao
++         fock(:, iao, spin) = fock(:, iao, spin) &
++            & +0.5_wp*stream%gdiagSP(iao, spin)*overlap(:, iao)
++         fock(iao, iao, spin) = fock(iao, iao, spin) &
++            & +0.25_wp*stream%gdiagSPS(iao, spin)
++      end do
++      do ii = 1, stream%nao
++         fock(ii, ii, spin) = cmplx(-0.5_wp*spin_factor &
++            & *real(fock(ii, ii, spin), wp), 0.0_wp, wp)
++         do jj = 1, ii-1
++            tmp = -0.25_wp*spin_factor*(fock(jj, ii, spin) &
++               & +conjg(fock(ii, jj, spin)))
++            fock(jj, ii, spin) = tmp
++            fock(ii, jj, spin) = conjg(tmp)
++         end do
++      end do
++   end do
++end subroutine cp2k_exchange_stream_get
++
++
++!> Close a successfully applied exchange stream and release all storage.
++subroutine cp2k_exchange_stream_end(stream, error)
++   type(cp2k_exchange_stream_type), intent(inout) :: stream
++   type(error_type), allocatable, intent(out) :: error
++
++   if (.not.stream%active) then
++      call fatal_error(error, "g-xTB exchange stream is not active")
++      return
++   end if
++   if (.not.stream%applied) then
++      call clear_exchange_stream(stream)
++      call fatal_error(error, &
++         & "g-xTB exchange stream ended before successful apply")
++      return
++   end if
++   if (stream%reverse_applied .and. .not.all(stream%reverse_pulled)) then
++      call clear_exchange_stream(stream)
++      call fatal_error(error, &
++         & "g-xTB exchange stream ended with missing reverse pulls")
++      return
++   end if
++   call clear_exchange_stream(stream)
++end subroutine cp2k_exchange_stream_end
++
++
+ !> Differentiate BvK-supercell-equivalent exchange on a complete k mesh.
+ !>
+ !> The overlap response is spin-summed, Hermitian, and unweighted:
+@@ -746,7 +1339,7 @@ subroutine cp2k_exchange_kmesh_gradient(calc, mol, ecache, nmesh, kfrac, &
+    & weights, density, overlap, overlap_grad, gradient, sigma, error)
+    type(xtb_calculator), intent(in) :: calc
+    type(structure_type), intent(in) :: mol
+-   type(container_cache), intent(in) :: ecache
++   type(container_cache), intent(inout) :: ecache
+    integer, intent(in) :: nmesh(3)
+    real(wp), intent(in) :: kfrac(:, :), weights(:)
+    complex(wp), intent(in) :: density(:, :, :, :), overlap(:, :, :)
+@@ -754,12 +1347,9 @@ subroutine cp2k_exchange_kmesh_gradient(calc, mol, ecache, nmesh, kfrac, &
+    real(wp), intent(out) :: gradient(:, :), sigma(:, :)
+    type(error_type), allocatable, intent(out) :: error
+ 
+-   integer :: icell, idim, jcell, nk
+-   real(wp) :: target
+-   complex(wp) :: orthogonality
++   integer :: idim, nk
+    real(wp), allocatable :: bocorr_grad_r(:, :, :), &
+       & mulliken_grad_r(:, :, :)
+-   type(exchange_bvk_kernel) :: kernel
+ 
+    gradient = 0.0_wp
+    sigma = 0.0_wp
+@@ -823,26 +1413,16 @@ subroutine cp2k_exchange_kmesh_gradient(calc, mol, ecache, nmesh, kfrac, &
+             return
+          end if
+ 
+-         call exchange%get_bvk_Kmatrix(mol, nmesh, kernel)
+-         do icell = 1, nk
+-            do jcell = 1, nk
+-               orthogonality = sum(weights*exp(cmplx(0.0_wp, 2.0_wp*pi* &
+-                  & matmul(transpose(kfrac), real(kernel%reps(:, icell) &
+-                  & -kernel%reps(:, jcell), wp)), wp)))
+-               target = merge(1.0_wp, 0.0_wp, icell == jcell)
+-               if (abs(orthogonality-target) > 1.0e-10_wp) then
+-                  call fatal_error(error, &
+-                     & "g-xTB k points are not a complete Fourier mesh")
+-                  return
+-               end if
+-            end do
+-         end do
++         call prepare_bvk_plan(exchange, mol, cache, nmesh, kfrac, weights, error)
++         if (allocated(error)) return
+ 
+          allocate(mulliken_grad_r(exchange%nao, exchange%nao, nk), &
+             & bocorr_grad_r(exchange%nao, exchange%nao, nk))
+-         call exchange%get_KGrad_kmesh(mol, cache, kernel, kfrac, weights, &
+-            & density, overlap, overlap_grad, mulliken_grad_r, bocorr_grad_r)
+-         call exchange%get_bvk_Kmatrix_derivs(mol, kernel, mulliken_grad_r, &
++         call exchange%get_KGrad_kmesh(mol, cache, cache%bvk_kernel, &
++            & kfrac, weights, density, overlap, overlap_grad, &
++            & mulliken_grad_r, bocorr_grad_r)
++         call exchange%get_bvk_Kmatrix_derivs(mol, cache%bvk_kernel, &
++            & mulliken_grad_r, &
+             & bocorr_grad_r, gradient, sigma)
+       class default
+          call fatal_error(error, &
+@@ -855,6 +1435,119 @@ subroutine cp2k_exchange_kmesh_gradient(calc, mol, ecache, nmesh, kfrac, &
+ end subroutine cp2k_exchange_kmesh_gradient
+ 
+ 
++!> Apply the exact complete-mesh reverse exchange evaluator once.
++!>
++!> This transition is legal only after the forward stream was applied.  The
++!> complete primitive-cell atomic and positive-strain derivatives are returned
++!> directly exactly once.  The unweighted overlap adjoints remain in the
++!> stream and must subsequently be pulled blockwise with `reverse_get`.
++subroutine cp2k_exchange_stream_reverse_apply(stream, calc, mol, ecache, &
++   & gradient, sigma, error)
++   type(cp2k_exchange_stream_type), intent(inout) :: stream
++   type(xtb_calculator), intent(in) :: calc
++   type(structure_type), intent(in) :: mol
++   type(container_cache), intent(inout) :: ecache
++   real(wp), intent(out) :: gradient(:, :), sigma(:, :)
++   type(error_type), allocatable, intent(out) :: error
++
++   if (.not.stream%active) then
++      call fatal_error(error, "g-xTB exchange stream is not active")
++      return
++   end if
++   if (.not.stream%applied) then
++      call fatal_error(error, &
++         & "g-xTB exchange stream reverse requires forward apply")
++      return
++   end if
++   if (stream%mode /= cp2k_exchange_stream_oracle) then
++      call fatal_error(error, &
++         & "g-xTB exchange stream reverse requires oracle mode")
++      return
++   end if
++   if (stream%reverse_applied) then
++      call fatal_error(error, "g-xTB exchange stream reverse was already applied")
++      return
++   end if
++   if (size(gradient, 1) /= 3 .or. size(gradient, 2) /= mol%nat &
++      & .or. size(sigma, 1) /= 3 .or. size(sigma, 2) /= 3) then
++      call fatal_error(error, &
++         & "inconsistent g-xTB exchange stream reverse dimensions")
++      return
++   end if
++   if (.not.allocated(calc%exchange) .or. .not.allocated(ecache%raw)) then
++      call fatal_error(error, &
++         & "g-xTB exchange stream state was invalidated before reverse apply")
++      return
++   end if
++
++   select type (cache => ecache%raw)
++   type is (exchange_cache)
++      select type (exchange => calc%exchange)
++      type is (exchange_fock)
++         if (exchange%nao /= stream%nao .or. exchange%nsh /= stream%nsh &
++            & .or. .not.cache%bvk_matches(mol, stream%nmesh, &
++            & stream%kfrac, stream%weights) &
++            & .or. .not.exchange%bvk_model_matches(cache) &
++            & .or. .not.exchange_stream_onsite_matches(stream, cache)) then
++            call fatal_error(error, &
++               & "g-xTB exchange stream state was invalidated before reverse apply")
++            return
++         end if
++      class default
++         call fatal_error(error, &
++            & "exchange stream reverse requires the exchange_fock implementation")
++         return
++      end select
++   class default
++      call fatal_error(error, "unexpected g-xTB exchange cache type")
++      return
++   end select
++
++   call cp2k_exchange_kmesh_gradient(calc, mol, ecache, stream%nmesh, &
++      & stream%kfrac, stream%weights, stream%density, stream%overlap, &
++      & stream%overlap_adjoint, gradient, sigma, error)
++   if (allocated(error)) return
++   stream%reverse_pulled = .false.
++   stream%reverse_applied = .true.
++end subroutine cp2k_exchange_stream_reverse_apply
++
++
++!> Pull one unweighted overlap-adjoint block from the reverse stream.
++subroutine cp2k_exchange_stream_reverse_get(stream, ik, overlap_adjoint, error)
++   type(cp2k_exchange_stream_type), intent(inout) :: stream
++   integer, intent(in) :: ik
++   complex(wp), intent(out) :: overlap_adjoint(:, :)
++   type(error_type), allocatable, intent(out) :: error
++
++   if (.not.stream%active) then
++      call fatal_error(error, "g-xTB exchange stream is not active")
++      return
++   end if
++   if (.not.stream%reverse_applied) then
++      call fatal_error(error, "g-xTB exchange stream reverse was not applied")
++      return
++   end if
++   if (ik < 1 .or. ik > stream%nk) then
++      call fatal_error(error, &
++         & "g-xTB exchange stream reverse block index is out of range")
++      return
++   end if
++   if (stream%reverse_pulled(ik)) then
++      call fatal_error(error, "duplicate g-xTB exchange stream reverse pull")
++      return
++   end if
++   if (size(overlap_adjoint, 1) /= stream%nao &
++      & .or. size(overlap_adjoint, 2) /= stream%nao) then
++      call fatal_error(error, &
++         & "inconsistent g-xTB exchange stream overlap-adjoint dimensions")
++      return
++   end if
++
++   overlap_adjoint = stream%overlap_adjoint(:, :, ik)
++   stream%reverse_pulled(ik) = .true.
++end subroutine cp2k_exchange_stream_reverse_get
++
++
+ !> Differentiate the g-xTB exchange functional for one complex k-point block.
+ !>
+ !> All returned quantities are unweighted.  For a reduced mesh the external
+diff --git a/src/tblite/exchange.f90 b/src/tblite/exchange.f90
+index 0549566..ce9c3fe 100644
+--- a/src/tblite/exchange.f90
++++ b/src/tblite/exchange.f90
+@@ -22,10 +22,9 @@
+ 
+ !> Proxy module for reexporting exchange-type interactions
+ module tblite_exchange
+-   use tblite_exchange_cache, only : exchange_cache
++   use tblite_exchange_cache, only : exchange_bvk_kernel, exchange_cache
+    use tblite_exchange_type, only : exchange_type
+-   use tblite_exchange_fock, only : exchange_fock, exchange_bvk_kernel, &
+-      & new_exchange_fock
++   use tblite_exchange_fock, only : exchange_fock, new_exchange_fock
+    implicit none
+    private
+ 
+diff --git a/src/tblite/exchange/cache.f90 b/src/tblite/exchange/cache.f90
+index 17ff4f0..4483ec6 100644
+--- a/src/tblite/exchange/cache.f90
++++ b/src/tblite/exchange/cache.f90
+@@ -26,7 +26,18 @@ module tblite_exchange_cache
+    implicit none
+    private
+ 
+-   public :: exchange_cache
++   public :: exchange_bvk_kernel, exchange_cache
++
++   !> Image-resolved exchange kernels for a regular Born-von Karman mesh.
++   !>
++   !> This neutral cache representation is shared by the exchange evaluator
++   !> and the CP2K compatibility plan without introducing module-global state.
++   type :: exchange_bvk_kernel
++      integer :: nmesh(3) = 1
++      integer, allocatable :: reps(:, :)
++      real(wp), allocatable :: g_mulliken_r(:, :, :)
++      real(wp), allocatable :: g_bocorr_r(:, :, :)
++   end type exchange_bvk_kernel
+ 
+    type :: exchange_cache
+       !> Wigner-Seitz cell for periodic calculations
+@@ -49,8 +60,43 @@ module tblite_exchange_cache
+       real(wp), allocatable :: prev_F(:, :, :)
+       !> Previously calculated shell potential contribution
+       real(wp), allocatable :: prev_vsh(:, :)
++
++      !> Geometry- and mesh-static BvK kernel and Fourier plan
++      logical :: bvk_plan_valid = .false.
++      !> Number of successfully constructed BvK plans (diagnostic/test oracle)
++      integer :: bvk_plan_builds = 0
++      !> Exact exchange-model signature associated with the cached kernel
++      logical :: bvk_model_valid = .false.
++      integer :: bvk_model_nao = 0, bvk_model_nsh = 0, bvk_model_maxsh = 0
++      integer, allocatable :: bvk_model_nsh_id(:), bvk_model_nao_sh(:)
++      integer, allocatable :: bvk_model_ish_at(:), bvk_model_iao_sh(:)
++      real(wp) :: bvk_model_frscale = 0.0_wp
++      real(wp) :: bvk_model_omega = 0.0_wp
++      real(wp) :: bvk_model_lrscale = 0.0_wp
++      real(wp) :: bvk_model_ondiag_scale = 0.0_wp
++      real(wp) :: bvk_model_hubbard_exp = 0.0_wp
++      real(wp) :: bvk_model_hubbard_exp_r0 = 0.0_wp
++      real(wp) :: bvk_model_gexp = 0.0_wp
++      real(wp) :: bvk_model_corr_exp = 0.0_wp
++      real(wp), allocatable :: bvk_model_hubbard(:, :, :, :)
++      real(wp), allocatable :: bvk_model_offdiag_scale(:, :, :, :)
++      real(wp), allocatable :: bvk_model_rad(:, :)
++      real(wp), allocatable :: bvk_model_corr_scale(:, :)
++      real(wp), allocatable :: bvk_model_corr_rad(:, :)
++      logical :: bvk_periodic(3) = .false.
++      integer :: bvk_nmesh(3) = 0
++      integer, allocatable :: bvk_id(:)
++      real(wp), allocatable :: bvk_xyz(:, :), bvk_lattice(:, :)
++      real(wp), allocatable :: bvk_kfrac(:, :), bvk_weights(:)
++      real(wp) :: bvk_twist(3) = 0.0_wp
++      integer, allocatable :: bvk_input_to_grid(:), bvk_grid_to_input(:)
++      complex(wp), allocatable :: bvk_phase_forward(:, :)
++      complex(wp), allocatable :: bvk_phase_inverse(:, :)
++      type(exchange_bvk_kernel) :: bvk_kernel
+    contains
+       procedure :: update
++      procedure :: bvk_matches
++      procedure :: set_bvk_signature
+    end type exchange_cache
+ 
+ 
+@@ -69,4 +115,88 @@ subroutine update(self, mol)
+ 
+ end subroutine update
+ 
++
++!> Check whether the persistent BvK plan belongs to this exact geometry and mesh.
++logical function bvk_matches(self, mol, nmesh, kfrac, weights) result(matches)
++   class(exchange_cache), intent(in) :: self
++   type(structure_type), intent(in) :: mol
++   integer, intent(in) :: nmesh(3)
++   real(wp), intent(in) :: kfrac(:, :), weights(:)
++
++   integer :: ik, nk
++
++   matches = .false.
++   if (.not.self%bvk_plan_valid) return
++   if (.not.self%bvk_model_valid) return
++   nk = size(weights)
++   if (any(self%bvk_nmesh /= nmesh)) return
++   if (any(self%bvk_periodic .neqv. mol%periodic)) return
++   if (.not.allocated(self%bvk_id) .or. .not.allocated(self%bvk_xyz) &
++      & .or. .not.allocated(self%bvk_lattice) &
++      & .or. .not.allocated(self%bvk_kfrac) &
++      & .or. .not.allocated(self%bvk_weights) &
++      & .or. .not.allocated(self%bvk_input_to_grid) &
++      & .or. .not.allocated(self%bvk_grid_to_input) &
++      & .or. .not.allocated(self%bvk_phase_forward) &
++      & .or. .not.allocated(self%bvk_phase_inverse) &
++      & .or. .not.allocated(self%bvk_kernel%reps) &
++      & .or. .not.allocated(self%bvk_kernel%g_mulliken_r) &
++      & .or. .not.allocated(self%bvk_kernel%g_bocorr_r)) return
++   if (size(self%bvk_id) /= size(mol%id)) return
++   if (any(shape(self%bvk_xyz) /= shape(mol%xyz))) return
++   if (any(shape(self%bvk_lattice) /= shape(mol%lattice))) return
++   if (any(shape(self%bvk_kfrac) /= shape(kfrac))) return
++   if (size(self%bvk_weights) /= size(weights)) return
++   if (size(self%bvk_input_to_grid) /= nk) return
++   if (size(self%bvk_grid_to_input) /= nk) return
++   if (any(self%bvk_kernel%nmesh /= nmesh)) return
++   if (any(shape(self%bvk_kernel%reps) /= [3, nk])) return
++   if (size(self%bvk_kernel%g_mulliken_r, 1) /= &
++      & size(self%bvk_kernel%g_mulliken_r, 2)) return
++   if (size(self%bvk_kernel%g_mulliken_r, 3) /= nk) return
++   if (any(shape(self%bvk_kernel%g_bocorr_r) /= [mol%nat, mol%nat, nk])) return
++   if (any(shape(self%bvk_phase_forward) /= &
++      & [nk, nk])) return
++   if (any(shape(self%bvk_phase_inverse) /= &
++      & [nk, nk])) return
++   if (any(self%bvk_input_to_grid < 1) &
++      & .or. any(self%bvk_input_to_grid > nk)) return
++   if (any(self%bvk_grid_to_input < 1) &
++      & .or. any(self%bvk_grid_to_input > nk)) return
++   do ik = 1, nk
++      if (self%bvk_grid_to_input(self%bvk_input_to_grid(ik)) /= ik) return
++   end do
++   if (any(self%bvk_id /= mol%id)) return
++   if (any(self%bvk_xyz /= mol%xyz)) return
++   if (any(self%bvk_lattice /= mol%lattice)) return
++   if (any(self%bvk_kfrac /= kfrac)) return
++   if (any(self%bvk_weights /= weights)) return
++   matches = .true.
++end function bvk_matches
++
++
++!> Record the exact fingerprint after a BvK kernel and Fourier plan were validated.
++subroutine set_bvk_signature(self, mol, nmesh, kfrac, weights)
++   class(exchange_cache), intent(inout) :: self
++   type(structure_type), intent(in) :: mol
++   integer, intent(in) :: nmesh(3)
++   real(wp), intent(in) :: kfrac(:, :), weights(:)
++
++   self%bvk_plan_valid = .false.
++   self%bvk_nmesh = nmesh
++   self%bvk_periodic = mol%periodic
++   if (allocated(self%bvk_id)) deallocate(self%bvk_id)
++   if (allocated(self%bvk_xyz)) deallocate(self%bvk_xyz)
++   if (allocated(self%bvk_lattice)) deallocate(self%bvk_lattice)
++   if (allocated(self%bvk_kfrac)) deallocate(self%bvk_kfrac)
++   if (allocated(self%bvk_weights)) deallocate(self%bvk_weights)
++   allocate(self%bvk_id, source=mol%id)
++   allocate(self%bvk_xyz, source=mol%xyz)
++   allocate(self%bvk_lattice, source=mol%lattice)
++   allocate(self%bvk_kfrac, source=kfrac)
++   allocate(self%bvk_weights, source=weights)
++   self%bvk_plan_builds = self%bvk_plan_builds + 1
++   self%bvk_plan_valid = .true.
++end subroutine set_bvk_signature
++
+ end module tblite_exchange_cache
+diff --git a/src/tblite/exchange/fock.f90 b/src/tblite/exchange/fock.f90
+index 19ab575..f29a0c4 100644
+--- a/src/tblite/exchange/fock.f90
++++ b/src/tblite/exchange/fock.f90
+@@ -26,7 +26,7 @@ module tblite_exchange_fock
+    use tblite_basis_type, only : basis_type
+    use tblite_container_cache, only : container_cache
+    use tblite_cutoff, only : get_lattice_points
+-   use tblite_exchange_cache, only : exchange_cache
++   use tblite_exchange_cache, only : exchange_bvk_kernel, exchange_cache
+    use tblite_exchange_type, only : exchange_type
+    use tblite_utils_average, only : average_type
+    use tblite_wavefunction_type, only : wavefunction_type
+@@ -37,17 +37,7 @@ module tblite_exchange_fock
+ 
+    public :: new_exchange_fock
+ 
+-   !> Image-resolved exchange kernels for a regular Born-von Karman mesh.
+-   !>
+-   !> The image convention is home-row/translated-column:
+-   !> ``g_*_r(:, :, icell)`` is the block with its row in the home cell and
+-   !> its column in ``reps(:, icell)``.  Thus ``G(k) = sum_R exp(+i k.R) G_R``.
+-   type, public :: exchange_bvk_kernel
+-      integer :: nmesh(3) = 1
+-      integer, allocatable :: reps(:, :)
+-      real(wp), allocatable :: g_mulliken_r(:, :, :)
+-      real(wp), allocatable :: g_bocorr_r(:, :, :)
+-   end type exchange_bvk_kernel
++   public :: exchange_bvk_kernel
+ 
+    type, public, extends(exchange_type) :: exchange_fock
+       !> Averaged Hubbard parameter for each shell and species
+@@ -83,6 +73,11 @@ module tblite_exchange_fock
+       procedure :: get_bocorr_Kmatrix
+       !> Evaluate image-resolved exchange kernels on a regular BvK mesh
+       procedure :: get_bvk_Kmatrix
++      !> Check/set the exact model signature of a persistent BvK plan
++      procedure :: bvk_model_matches
++      procedure :: set_bvk_model_signature
++      !> Check a complete cached plan, including kernel representative order
++      procedure :: bvk_plan_matches
+       !> Contract image-resolved kernel responses with geometry derivatives
+       procedure :: get_bvk_Kmatrix_derivs
+       !> Evaluate the gradient of the Mulliken exchange energy
+@@ -99,6 +94,9 @@ module tblite_exchange_fock
+       procedure :: get_KFock_kpoint
+       !> Calculate exchange contribution for a complete regular k-point mesh
+       procedure :: get_KFock_kmesh
++      !> Apply/reconstruct the memory-reduced BvK streaming forward path
++      procedure :: get_KFock_stream_apply
++      procedure :: get_KFock_stream_block
+       !> Calculate exchange response for a complex Hermitian k-point block
+       procedure :: get_KGrad_kpoint
+       !> Calculate exchange response for a complete regular k-point mesh
+@@ -255,6 +253,118 @@ subroutine new_exchange_fock(self, mol, bas, hubbard, hubbard_average, &
+ end subroutine new_exchange_fock
+ 
+ 
++!> Check whether a persistent BvK plan belongs to this exact exchange model.
++logical function bvk_model_matches(self, cache) result(matches)
++   class(exchange_fock), intent(in) :: self
++   type(exchange_cache), intent(in) :: cache
++
++   matches = .false.
++   if (.not.cache%bvk_model_valid) return
++   if (.not.allocated(cache%bvk_model_nsh_id) &
++      & .or. .not.allocated(cache%bvk_model_nao_sh) &
++      & .or. .not.allocated(cache%bvk_model_ish_at) &
++      & .or. .not.allocated(cache%bvk_model_iao_sh) &
++      & .or. .not.allocated(cache%bvk_model_hubbard) &
++      & .or. .not.allocated(cache%bvk_model_offdiag_scale) &
++      & .or. .not.allocated(cache%bvk_model_rad) &
++      & .or. .not.allocated(cache%bvk_model_corr_scale) &
++      & .or. .not.allocated(cache%bvk_model_corr_rad)) return
++   if (cache%bvk_model_nao /= self%nao &
++      & .or. cache%bvk_model_nsh /= self%nsh &
++      & .or. cache%bvk_model_maxsh /= self%maxsh) return
++   if (size(cache%bvk_model_nsh_id) /= size(self%nsh_id) &
++      & .or. size(cache%bvk_model_nao_sh) /= size(self%nao_sh) &
++      & .or. size(cache%bvk_model_ish_at) /= size(self%ish_at) &
++      & .or. size(cache%bvk_model_iao_sh) /= size(self%iao_sh)) return
++   if (any(shape(cache%bvk_model_hubbard) /= shape(self%hubbard)) &
++      & .or. any(shape(cache%bvk_model_offdiag_scale) /= &
++      & shape(self%offdiag_scale)) &
++      & .or. any(shape(cache%bvk_model_rad) /= shape(self%rad)) &
++      & .or. any(shape(cache%bvk_model_corr_scale) /= &
++      & shape(self%corr_scale)) &
++      & .or. any(shape(cache%bvk_model_corr_rad) /= &
++      & shape(self%corr_rad))) return
++   if (any(cache%bvk_model_nsh_id /= self%nsh_id) &
++      & .or. any(cache%bvk_model_nao_sh /= self%nao_sh) &
++      & .or. any(cache%bvk_model_ish_at /= self%ish_at) &
++      & .or. any(cache%bvk_model_iao_sh /= self%iao_sh)) return
++   if (cache%bvk_model_frscale /= self%frscale &
++      & .or. cache%bvk_model_omega /= self%omega &
++      & .or. cache%bvk_model_lrscale /= self%lrscale &
++      & .or. cache%bvk_model_ondiag_scale /= self%ondiag_scale &
++      & .or. cache%bvk_model_hubbard_exp /= self%hubbard_exp &
++      & .or. cache%bvk_model_hubbard_exp_r0 /= self%hubbard_exp_r0 &
++      & .or. cache%bvk_model_gexp /= self%gexp &
++      & .or. cache%bvk_model_corr_exp /= self%corr_exp) return
++   if (any(cache%bvk_model_hubbard /= self%hubbard) &
++      & .or. any(cache%bvk_model_offdiag_scale /= self%offdiag_scale) &
++      & .or. any(cache%bvk_model_rad /= self%rad) &
++      & .or. any(cache%bvk_model_corr_scale /= self%corr_scale) &
++      & .or. any(cache%bvk_model_corr_rad /= self%corr_rad)) return
++   matches = .true.
++end function bvk_model_matches
++
++
++!> Store the exact static exchange-model inputs used by a BvK kernel.
++subroutine set_bvk_model_signature(self, cache)
++   class(exchange_fock), intent(in) :: self
++   type(exchange_cache), intent(inout) :: cache
++
++   cache%bvk_model_valid = .false.
++   cache%bvk_model_nao = self%nao
++   cache%bvk_model_nsh = self%nsh
++   cache%bvk_model_maxsh = self%maxsh
++   cache%bvk_model_frscale = self%frscale
++   cache%bvk_model_omega = self%omega
++   cache%bvk_model_lrscale = self%lrscale
++   cache%bvk_model_ondiag_scale = self%ondiag_scale
++   cache%bvk_model_hubbard_exp = self%hubbard_exp
++   cache%bvk_model_hubbard_exp_r0 = self%hubbard_exp_r0
++   cache%bvk_model_gexp = self%gexp
++   cache%bvk_model_corr_exp = self%corr_exp
++   if (allocated(cache%bvk_model_nsh_id)) deallocate(cache%bvk_model_nsh_id)
++   if (allocated(cache%bvk_model_nao_sh)) deallocate(cache%bvk_model_nao_sh)
++   if (allocated(cache%bvk_model_ish_at)) deallocate(cache%bvk_model_ish_at)
++   if (allocated(cache%bvk_model_iao_sh)) deallocate(cache%bvk_model_iao_sh)
++   if (allocated(cache%bvk_model_hubbard)) deallocate(cache%bvk_model_hubbard)
++   if (allocated(cache%bvk_model_offdiag_scale)) &
++      & deallocate(cache%bvk_model_offdiag_scale)
++   if (allocated(cache%bvk_model_rad)) deallocate(cache%bvk_model_rad)
++   if (allocated(cache%bvk_model_corr_scale)) &
++      & deallocate(cache%bvk_model_corr_scale)
++   if (allocated(cache%bvk_model_corr_rad)) deallocate(cache%bvk_model_corr_rad)
++   allocate(cache%bvk_model_nsh_id, source=self%nsh_id)
++   allocate(cache%bvk_model_nao_sh, source=self%nao_sh)
++   allocate(cache%bvk_model_ish_at, source=self%ish_at)
++   allocate(cache%bvk_model_iao_sh, source=self%iao_sh)
++   allocate(cache%bvk_model_hubbard, source=self%hubbard)
++   allocate(cache%bvk_model_offdiag_scale, source=self%offdiag_scale)
++   allocate(cache%bvk_model_rad, source=self%rad)
++   allocate(cache%bvk_model_corr_scale, source=self%corr_scale)
++   allocate(cache%bvk_model_corr_rad, source=self%corr_rad)
++   cache%bvk_model_valid = .true.
++end subroutine set_bvk_model_signature
++
++
++!> Check the model, mesh signature, and representative ordering of a plan.
++logical function bvk_plan_matches(self, mol, cache, kernel, kfrac, weights) &
++   & result(matches)
++   class(exchange_fock), intent(in) :: self
++   type(structure_type), intent(in) :: mol
++   type(exchange_cache), intent(in) :: cache
++   type(exchange_bvk_kernel), intent(in) :: kernel
++   real(wp), intent(in) :: kfrac(:, :), weights(:)
++
++   matches = .false.
++   if (.not.cache%bvk_matches(mol, kernel%nmesh, kfrac, weights)) return
++   if (.not.self%bvk_model_matches(cache)) return
++   if (.not.allocated(kernel%reps)) return
++   if (any(shape(kernel%reps) /= shape(cache%bvk_kernel%reps))) return
++   if (any(kernel%reps /= cache%bvk_kernel%reps)) return
++   matches = .true.
++end function bvk_plan_matches
++
++
+ !> Build image-resolved exchange kernels for a regular Born-von Karman mesh
+ !>
+ !> This routine evaluates the Wigner-Seitz kernels of the corresponding BvK
+@@ -761,8 +871,14 @@ subroutine get_KFock_kmesh(self, mol, cache, kernel, kfrac, weights, &
+ 
+    integer :: spin, ik
+ 
+-   call build_KFock_kmesh(self, mol, density, overlap, kfrac, weights, &
+-      & kernel, cache%g_onsfx, cache%g_onsri, fock, .true.)
++   if (self%bvk_plan_matches(mol, cache, kernel, kfrac, weights)) then
++      call build_KFock_kmesh(self, mol, density, overlap, kfrac, weights, &
++         & kernel, cache%g_onsfx, cache%g_onsri, fock, .true., &
++         & cache%bvk_phase_forward, cache%bvk_phase_inverse)
++   else
++      call build_KFock_kmesh(self, mol, density, overlap, kfrac, weights, &
++         & kernel, cache%g_onsfx, cache%g_onsri, fock, .true.)
++   end if
+ 
+    energy = 0.0_wp
+    do ik = 1, size(weights)
+@@ -901,7 +1017,8 @@ end subroutine get_KFock_kmesh_vsh
+ 
+ !> Build the whole-mesh exchange Fock matrix for fixed exchange kernels.
+ subroutine build_KFock_kmesh(self, mol, density, overlap, kfrac, weights, &
+-   & kernel, g_onsfx, g_onsri, fock, use_bvk_kernel)
++   & kernel, g_onsfx, g_onsri, fock, use_bvk_kernel, &
++   & phase_forward_cached, phase_inverse_cached)
+    class(exchange_fock), intent(in) :: self
+    type(structure_type), intent(in) :: mol
+    complex(wp), intent(in) :: density(:, :, :, :), overlap(:, :, :)
+@@ -910,8 +1027,11 @@ subroutine build_KFock_kmesh(self, mol, density, overlap, kfrac, weights, &
+    real(wp), intent(in) :: g_onsfx(:, :, :), g_onsri(:, :)
+    complex(wp), intent(out) :: fock(:, :, :, :)
+    logical, intent(in) :: use_bvk_kernel
++   complex(wp), contiguous, optional, target, intent(in) :: phase_forward_cached(:, :)
++   complex(wp), contiguous, optional, target, intent(in) :: phase_inverse_cached(:, :)
+ 
+    integer :: iao, icell, ii, jj, ik, spin
++   logical :: use_cached_phases
+    real(wp) :: angle, spin_factor
+    complex(wp) :: phase, tmp
+    complex(wp), allocatable, target :: amat(:, :, :), cmat(:, :, :)
+@@ -920,7 +1040,8 @@ subroutine build_KFock_kmesh(self, mol, density, overlap, kfrac, weights, &
+    complex(wp), allocatable, target :: vmat(:, :, :)
+    complex(wp), allocatable, target :: source_r(:, :, :), result_r(:, :, :)
+    complex(wp), allocatable :: work(:, :)
+-   complex(wp), allocatable :: phase_forward(:, :), phase_inverse(:, :)
++   complex(wp), allocatable, target :: phase_forward_local(:, :), phase_inverse_local(:, :)
++   complex(wp), contiguous, pointer :: phase_forward(:, :), phase_inverse(:, :)
+ 
+    allocate(amat(self%nao, self%nao, size(weights)), &
+       & cmat(self%nao, self%nao, size(weights)), &
+@@ -930,22 +1051,34 @@ subroutine build_KFock_kmesh(self, mol, density, overlap, kfrac, weights, &
+       & work(self%nao, self%nao), diagP(self%nao), diagSP(self%nao), &
+       & diagSPS(self%nao), gdiagP(self%nao), gdiagSP(self%nao), &
+       & gdiagSPS(self%nao))
+-   allocate(phase_forward(size(kernel%reps, 2), size(weights)), &
+-      & phase_inverse(size(weights), size(kernel%reps, 2)))
++   use_cached_phases = .false.
++   if (present(phase_forward_cached) .and. present(phase_inverse_cached)) then
++      use_cached_phases = all(shape(phase_forward_cached) == &
++         & [size(kernel%reps, 2), size(weights)]) .and. &
++         & all(shape(phase_inverse_cached) == &
++         & [size(weights), size(kernel%reps, 2)])
++   end if
++   if (use_cached_phases) then
++      phase_forward => phase_forward_cached
++      phase_inverse => phase_inverse_cached
++   else
++      allocate(phase_forward_local(size(kernel%reps, 2), size(weights)), &
++         & phase_inverse_local(size(weights), size(kernel%reps, 2)))
++      phase_forward => phase_forward_local
++      phase_inverse => phase_inverse_local
+ 
+-   ! The complete-mesh Fock build applies the same two Fourier transforms to
+-   ! three intermediates for every spin.  Build the phases once here.  No
+-   ! ordering of the k points is assumed, and a common Monkhorst-Pack twist
+-   ! is retained explicitly in every phase.
+-   do ik = 1, size(weights)
+-      do icell = 1, size(kernel%reps, 2)
+-         angle = 2.0_wp*pi*dot_product(kfrac(:, ik), &
+-            & real(kernel%reps(:, icell), wp))
+-         phase = exp(cmplx(0.0_wp, angle, wp))
+-         phase_forward(icell, ik) = phase
+-         phase_inverse(ik, icell) = weights(ik)*conjg(phase)
++      ! No ordering of the k points is assumed, and a common
++      ! Monkhorst-Pack twist is retained explicitly in every phase.
++      do ik = 1, size(weights)
++         do icell = 1, size(kernel%reps, 2)
++            angle = 2.0_wp*pi*dot_product(kfrac(:, ik), &
++               & real(kernel%reps(:, icell), wp))
++            phase = exp(cmplx(0.0_wp, angle, wp))
++            phase_forward(icell, ik) = phase
++            phase_inverse(ik, icell) = weights(ik)*conjg(phase)
++         end do
+       end do
+-   end do
++   end if
+ 
+    spin_factor = 0.5_wp
+    if (size(density, 3) > 1) spin_factor = 1.0_wp
+@@ -1022,6 +1155,267 @@ subroutine build_KFock_kmesh(self, mol, density, overlap, kfrac, weights, &
+ end subroutine build_KFock_kmesh
+ 
+ 
++!> Apply one exchange kernel directly to already transformed BvK images.
++subroutine apply_bvk_Kkernel_realspace(self, mol, kernel, source_r, result_r, &
++   & g_onsfx, g_onsri, mulliken_scale, bocorr_scale, onsite_fx_scale, &
++   & onsite_ri_scale, use_bvk_kernel, adjoint_src)
++   class(exchange_fock), intent(in) :: self
++   type(structure_type), intent(in) :: mol
++   type(exchange_bvk_kernel), intent(in) :: kernel
++   complex(wp), intent(in) :: source_r(:, :, :)
++   complex(wp), intent(out) :: result_r(:, :, :)
++   real(wp), intent(in) :: g_onsfx(:, :, :), g_onsri(:, :)
++   real(wp), intent(in) :: mulliken_scale, bocorr_scale
++   real(wp), intent(in) :: onsite_fx_scale, onsite_ri_scale
++   logical, intent(in) :: use_bvk_kernel, adjoint_src
++
++   integer :: icell, origin
++
++   result_r = (0.0_wp, 0.0_wp)
++   origin = 0
++   do icell = 1, size(kernel%reps, 2)
++      if (all(kernel%reps(:, icell) == 0)) origin = icell
++      if (use_bvk_kernel) then
++         if (mulliken_scale /= 0.0_wp) &
++            call shell_hadamard_add_complex(self%nsh, self%nao_sh, &
++               & self%iao_sh, kernel%g_mulliken_r(:, :, icell), &
++               & source_r(:, :, icell), mulliken_scale, &
++               & result_r(:, :, icell))
++         if (bocorr_scale /= 0.0_wp) &
++            call atom_hadamard_add_complex(mol%nat, mol%id, self%nsh_id, &
++               & self%nao_sh, self%ish_at, self%iao_sh, &
++               & kernel%g_bocorr_r(:, :, icell), source_r(:, :, icell), &
++               & bocorr_scale, result_r(:, :, icell))
++      end if
++   end do
++
++   if (origin > 0) then
++      if (onsite_fx_scale /= 0.0_wp) &
++         call onsite_fx_hadamard_add_complex(mol%nat, mol%id, self%nsh_id, &
++            & self%nao_sh, self%ish_at, self%iao_sh, g_onsfx, &
++            & source_r(:, :, origin), onsite_fx_scale, &
++            & result_r(:, :, origin), adjoint_src=adjoint_src)
++      if (onsite_ri_scale /= 0.0_wp) &
++         call onsite_ri_hadamard_add_complex(mol%nat, mol%id, self%nsh_id, &
++            & self%nao_sh, self%ish_at, self%iao_sh, g_onsri, &
++            & source_r(:, :, origin), onsite_ri_scale, &
++            & result_r(:, :, origin))
++   end if
++end subroutine apply_bvk_Kkernel_realspace
++
++
++!> Apply the forward exchange map to memory-reduced BvK image accumulators.
++!>
++!> On entry `amat_r`, `cmat_r`, and `vmat_r` contain the weighted inverse
++!> transforms of S*P, 1/2*S*P*S, and P.  They are overwritten by their
++!> kernel-applied image matrices.  No complete density, overlap, or Fock mesh
++!> is materialized.  Energy and the charge-dependent shell potential are
++!> contracted before the source images are overwritten.
++subroutine get_KFock_stream_apply(self, mol, cache, kernel, phase_forward, &
++   & weights, amat_r, cmat_r, vmat_r, gdiagP, gdiagSP, gdiagSPS, vsh, energy)
++   class(exchange_fock), intent(in) :: self
++   type(structure_type), intent(in) :: mol
++   type(exchange_cache), intent(in) :: cache
++   type(exchange_bvk_kernel), intent(in) :: kernel
++   complex(wp), intent(in) :: phase_forward(:, :)
++   real(wp), intent(in) :: weights(:)
++   complex(wp), intent(inout) :: amat_r(:, :, :, :), cmat_r(:, :, :, :), &
++      & vmat_r(:, :, :, :)
++   complex(wp), intent(out) :: gdiagP(:, :), gdiagSP(:, :), gdiagSPS(:, :)
++   real(wp), intent(out) :: vsh(:), energy
++
++   integer :: iao, iat, icell, iq, is, ish, izp, jcell, origin, spin
++   real(wp) :: spin_factor
++   complex(wp) :: coeff, energy_raw
++   real(wp), allocatable :: grad_onsfx(:, :, :), grad_onsri(:, :)
++   complex(wp), allocatable :: bgp(:), bgsp(:), bgsps(:), bmat(:, :), &
++      & bt0(:, :), bu0(:, :), bv0(:, :), diag2d(:), diagp(:), diagx(:), &
++      & result_r(:, :, :), result2_r(:, :, :)
++
++   origin = 0
++   do icell = 1, size(kernel%reps, 2)
++      if (all(kernel%reps(:, icell) == 0)) origin = icell
++   end do
++
++   allocate(grad_onsfx(self%maxsh, self%maxsh, mol%nat), &
++      & grad_onsri(self%maxsh, mol%nat), source=0.0_wp)
++   allocate(bgp(self%nao), bgsp(self%nao), bgsps(self%nao), &
++      & bmat(self%nao, self%nao), bt0(self%nao, self%nao), &
++      & bu0(self%nao, self%nao), bv0(self%nao, self%nao), &
++      & diag2d(self%nao), diagp(self%nao), diagx(self%nao), &
++      & result_r(self%nao, self%nao, size(kernel%reps, 2)), &
++      & result2_r(self%nao, self%nao, size(kernel%reps, 2)), &
++      & source=(0.0_wp, 0.0_wp))
++
++   energy = 0.0_wp
++   vsh = 0.0_wp
++   spin_factor = 0.5_wp
++   if (size(amat_r, 4) > 1) spin_factor = 1.0_wp
++
++   do spin = 1, size(amat_r, 4)
++      do iao = 1, self%nao
++         diagp(iao) = vmat_r(iao, iao, origin, spin)
++         diagx(iao) = amat_r(iao, iao, origin, spin)
++         diag2d(iao) = 2.0_wp*cmat_r(iao, iao, origin, spin)
++      end do
++      call onsite_fx_symv_complex(mol%nat, mol%id, self%nsh_id, &
++         & self%nao_sh, self%ish_at, self%iao_sh, cache%g_onsfx, &
++         & diagp, gdiagP(:, spin))
++      call onsite_fx_symv_complex(mol%nat, mol%id, self%nsh_id, &
++         & self%nao_sh, self%ish_at, self%iao_sh, cache%g_onsfx, &
++         & diagx, gdiagSP(:, spin))
++      call onsite_fx_symv_complex(mol%nat, mol%id, self%nsh_id, &
++         & self%nao_sh, self%ish_at, self%iao_sh, cache%g_onsfx, &
++         & diag2d, gdiagSPS(:, spin))
++
++      bt0 = -0.25_wp*spin_factor*conjg( &
++         & transpose(amat_r(:, :, origin, spin)))
++      bu0 = -0.25_wp*spin_factor*vmat_r(:, :, origin, spin)
++      bv0 = -0.25_wp*spin_factor*cmat_r(:, :, origin, spin)
++      do iao = 1, self%nao
++         bgp(iao) = -0.125_wp*spin_factor &
++            & *cmat_r(iao, iao, origin, spin)
++         bgsp(iao) = -0.125_wp*spin_factor &
++            & *amat_r(iao, iao, origin, spin)
++         bgsps(iao) = -0.0625_wp*spin_factor &
++            & *vmat_r(iao, iao, origin, spin)
++      end do
++
++      call onsite_fx_parameter_gradient_complex(mol%nat, mol%id, &
++         & self%nsh_id, self%nao_sh, self%ish_at, self%iao_sh, bt0, &
++         & amat_r(:, :, origin, spin), 0.5_wp, grad_onsfx, &
++         & adjoint_src=.true.)
++      call onsite_fx_parameter_gradient_complex(mol%nat, mol%id, &
++         & self%nsh_id, self%nao_sh, self%ish_at, self%iao_sh, bu0, &
++         & cmat_r(:, :, origin, spin), 0.5_wp, grad_onsfx)
++      call onsite_fx_parameter_gradient_complex(mol%nat, mol%id, &
++         & self%nsh_id, self%nao_sh, self%ish_at, self%iao_sh, bv0, &
++         & vmat_r(:, :, origin, spin), 0.5_wp, grad_onsfx)
++      call onsite_ri_parameter_gradient_complex(mol%nat, mol%id, &
++         & self%nsh_id, self%nao_sh, self%ish_at, self%iao_sh, bt0, &
++         & amat_r(:, :, origin, spin), -2.0_wp, grad_onsri)
++      call onsite_ri_parameter_gradient_complex(mol%nat, mol%id, &
++         & self%nsh_id, self%nao_sh, self%ish_at, self%iao_sh, bu0, &
++         & cmat_r(:, :, origin, spin), -2.0_wp, grad_onsri)
++      call onsite_ri_parameter_gradient_complex(mol%nat, mol%id, &
++         & self%nsh_id, self%nao_sh, self%ish_at, self%iao_sh, bv0, &
++         & vmat_r(:, :, origin, spin), -2.0_wp, grad_onsri)
++      call onsite_fx_symv_parameter_gradient_complex(mol%nat, mol%id, &
++         & self%nsh_id, self%nao_sh, self%ish_at, self%iao_sh, bgp, &
++         & diagp, grad_onsfx)
++      call onsite_fx_symv_parameter_gradient_complex(mol%nat, mol%id, &
++         & self%nsh_id, self%nao_sh, self%ish_at, self%iao_sh, bgsp, &
++         & diagx, grad_onsfx)
++      call onsite_fx_symv_parameter_gradient_complex(mol%nat, mol%id, &
++         & self%nsh_id, self%nao_sh, self%ish_at, self%iao_sh, bgsps, &
++         & diag2d, grad_onsfx)
++
++      energy_raw = (0.0_wp, 0.0_wp)
++      do iao = 1, self%nao
++         energy_raw = energy_raw &
++            & +0.5_wp*cmat_r(iao, iao, origin, spin)*gdiagP(iao, spin) &
++            & +0.5_wp*conjg(amat_r(iao, iao, origin, spin)) &
++            & *gdiagSP(iao, spin) &
++            & +0.25_wp*vmat_r(iao, iao, origin, spin)*gdiagSPS(iao, spin)
++      end do
++
++      call apply_bvk_Kkernel_realspace(self, mol, kernel, &
++         & amat_r(:, :, :, spin), result_r, cache%g_onsfx, cache%g_onsri, &
++         & 1.0_wp, -4.0_wp, 0.5_wp, -2.0_wp, .true., .true.)
++      do icell = 1, size(kernel%reps, 2)
++         bmat = (0.0_wp, 0.0_wp)
++         do jcell = 1, size(kernel%reps, 2)
++            coeff = sum(weights*conjg(phase_forward(icell, :) &
++               & *phase_forward(jcell, :)))
++            bmat = bmat + coeff*conjg( &
++               & transpose(amat_r(:, :, jcell, spin)))
++         end do
++         energy_raw = energy_raw + sum(conjg(bmat)*result_r(:, :, icell))
++      end do
++      amat_r(:, :, :, spin) = result_r
++
++      call apply_bvk_Kkernel_realspace(self, mol, kernel, &
++         & cmat_r(:, :, :, spin), result_r, cache%g_onsfx, cache%g_onsri, &
++         & 1.0_wp, 0.0_wp, 0.5_wp, -2.0_wp, .true., .false.)
++      energy_raw = energy_raw + sum(conjg(vmat_r(:, :, :, spin))*result_r)
++
++      call apply_bvk_Kkernel_realspace(self, mol, kernel, &
++         & vmat_r(:, :, :, spin), result2_r, cache%g_onsfx, &
++         & cache%g_onsri, 1.0_wp, 0.0_wp, 0.5_wp, -2.0_wp, .true., .false.)
++      energy_raw = energy_raw + sum(conjg(cmat_r(:, :, :, spin)) &
++         & *result2_r)
++      vmat_r(:, :, :, spin) = result2_r
++      cmat_r(:, :, :, spin) = result_r
++      energy = energy - 0.25_wp*spin_factor*real(energy_raw, wp)
++   end do
++
++   do iat = 1, mol%nat
++      izp = mol%id(iat)
++      is = self%ish_at(iat)
++      do ish = 1, self%nsh_id(izp)
++         iq = is + ish
++         vsh(iq) = sum(grad_onsfx(:, :, iat) &
++            & *cache%dgdq_onsfx(:, :, iq)) + sum(grad_onsri(:, iat) &
++            & *cache%dgdq_onsri(:, iq))
++      end do
++   end do
++end subroutine get_KFock_stream_apply
++
++
++!> Reconstruct one unweighted Fock block from kernel-applied BvK images.
++subroutine get_KFock_stream_block(self, overlap, phase_forward, amat_r, cmat_r, &
++   & vmat_r, gdiagP, gdiagSP, gdiagSPS, fock)
++   class(exchange_fock), intent(in) :: self
++   complex(wp), intent(in) :: overlap(:, :), phase_forward(:)
++   complex(wp), intent(in) :: amat_r(:, :, :, :), cmat_r(:, :, :, :), &
++      & vmat_r(:, :, :, :), gdiagP(:, :), gdiagSP(:, :), gdiagSPS(:, :)
++   complex(wp), intent(out) :: fock(:, :, :)
++
++   integer :: iao, icell, ii, jj, spin
++   real(wp) :: spin_factor
++   complex(wp) :: tmp
++   complex(wp), allocatable :: amat(:, :), cmat(:, :), vmat(:, :), work(:, :)
++
++   allocate(amat(self%nao, self%nao), cmat(self%nao, self%nao), &
++      & vmat(self%nao, self%nao), work(self%nao, self%nao))
++   spin_factor = 0.5_wp
++   if (size(fock, 3) > 1) spin_factor = 1.0_wp
++   do spin = 1, size(fock, 3)
++      amat = (0.0_wp, 0.0_wp)
++      cmat = (0.0_wp, 0.0_wp)
++      vmat = (0.0_wp, 0.0_wp)
++      do icell = 1, size(phase_forward)
++         amat = amat + phase_forward(icell)*amat_r(:, :, icell, spin)
++         cmat = cmat + phase_forward(icell)*cmat_r(:, :, icell, spin)
++         vmat = vmat + phase_forward(icell)*vmat_r(:, :, icell, spin)
++      end do
++      work = amat
++      do iao = 1, self%nao
++         work(:, iao) = work(:, iao) &
++            & + 0.25_wp*gdiagP(iao, spin)*overlap(:, iao)
++      end do
++      work = work + 0.5_wp*matmul(overlap, vmat)
++      fock(:, :, spin) = cmat + matmul(work, overlap)
++      do iao = 1, self%nao
++         fock(:, iao, spin) = fock(:, iao, spin) &
++            & + 0.5_wp*gdiagSP(iao, spin)*overlap(:, iao)
++         fock(iao, iao, spin) = fock(iao, iao, spin) &
++            & + 0.25_wp*gdiagSPS(iao, spin)
++      end do
++      do ii = 1, self%nao
++         fock(ii, ii, spin) = cmplx(-0.5_wp*spin_factor &
++            & *real(fock(ii, ii, spin), wp), 0.0_wp, wp)
++         do jj = 1, ii-1
++            tmp = -0.25_wp*spin_factor*(fock(jj, ii, spin) &
++               & +conjg(fock(ii, jj, spin)))
++            fock(jj, ii, spin) = tmp
++            fock(ii, jj, spin) = conjg(tmp)
++         end do
++      end do
++   end do
++end subroutine get_KFock_stream_block
++
++
+ !> Apply image-resolved and onsite Hadamard exchange kernels to a k-mesh.
+ subroutine apply_bvk_Kkernel_inplace(self, mol, kernel, phase_inverse, phase_forward, &
+    & mesh_k, source_r, result_r, g_onsfx, g_onsri, mulliken_scale, &
+@@ -1241,7 +1635,7 @@ subroutine get_KGrad_kmesh(self, mol, cache, kernel, kfrac, weights, density, &
+    & overlap, overlap_grad, mulliken_grad_r, bocorr_grad_r)
+    class(exchange_fock), intent(in) :: self
+    type(structure_type), intent(in) :: mol
+-   type(exchange_cache), intent(in) :: cache
++   type(exchange_cache), target, intent(in) :: cache
+    type(exchange_bvk_kernel), intent(in) :: kernel
+    real(wp), intent(in) :: kfrac(:, :), weights(:)
+    complex(wp), intent(in) :: density(:, :, :, :), overlap(:, :, :)
+@@ -1249,6 +1643,7 @@ subroutine get_KGrad_kmesh(self, mol, cache, kernel, kfrac, weights, density, &
+    real(wp), intent(out) :: mulliken_grad_r(:, :, :), bocorr_grad_r(:, :, :)
+ 
+    integer :: iao, icell, ik, spin
++   logical :: use_cached_phases
+    real(wp) :: angle, spin_factor
+    complex(wp) :: phase
+    complex(wp), allocatable :: amat(:, :, :), &
+@@ -1256,7 +1651,8 @@ subroutine get_KGrad_kmesh(self, mol, cache, kernel, kfrac, weights, density, &
+       & btmp(:, :, :), dmat(:, :, :), ddensity(:, :, :), &
+       & gdiag_p(:), gdiag_sp(:), gdiag_sps(:), tmat(:, :, :), &
+       & umat(:, :, :), vmat(:, :, :), work(:, :, :), xmat(:, :, :)
+-   complex(wp), allocatable :: phase_forward(:, :), phase_inverse(:, :)
++   complex(wp), allocatable, target :: phase_forward_local(:, :), phase_inverse_local(:, :)
++   complex(wp), contiguous, pointer :: phase_forward(:, :), phase_inverse(:, :)
+ 
+    allocate(amat(self%nao, self%nao, size(weights)), &
+       & btmp(self%nao, self%nao, size(weights)), &
+@@ -1270,18 +1666,25 @@ subroutine get_KGrad_kmesh(self, mol, cache, kernel, kfrac, weights, density, &
+       & bdiag(self%nao), bdiag_p(self%nao), bdiag_sp(self%nao), &
+       & bdiag_sps(self%nao), gdiag_p(self%nao), gdiag_sp(self%nao), &
+       & gdiag_sps(self%nao), source=(0.0_wp, 0.0_wp))
+-   allocate(phase_forward(size(kernel%reps, 2), size(weights)), &
+-      & phase_inverse(size(weights), size(kernel%reps, 2)))
+-
+-   do ik = 1, size(weights)
+-      do icell = 1, size(kernel%reps, 2)
+-         angle = 2.0_wp*pi*dot_product(kfrac(:, ik), &
+-            & real(kernel%reps(:, icell), wp))
+-         phase = exp(cmplx(0.0_wp, angle, wp))
+-         phase_forward(icell, ik) = phase
+-         phase_inverse(ik, icell) = weights(ik)*conjg(phase)
++   use_cached_phases = self%bvk_plan_matches(mol, cache, kernel, kfrac, weights)
++   if (use_cached_phases) then
++      phase_forward => cache%bvk_phase_forward
++      phase_inverse => cache%bvk_phase_inverse
++   else
++      allocate(phase_forward_local(size(kernel%reps, 2), size(weights)), &
++         & phase_inverse_local(size(weights), size(kernel%reps, 2)))
++      phase_forward => phase_forward_local
++      phase_inverse => phase_inverse_local
++      do ik = 1, size(weights)
++         do icell = 1, size(kernel%reps, 2)
++            angle = 2.0_wp*pi*dot_product(kfrac(:, ik), &
++               & real(kernel%reps(:, icell), wp))
++            phase = exp(cmplx(0.0_wp, angle, wp))
++            phase_forward(icell, ik) = phase
++            phase_inverse(ik, icell) = weights(ik)*conjg(phase)
++         end do
+       end do
+-   end do
++   end if
+ 
+    spin_factor = 0.5_wp
+    if (size(density, 3) > 1) spin_factor = 1.0_wp
+diff --git a/test/unit/test_exchange.f90 b/test/unit/test_exchange.f90
+index 4b44795..9081088 100644
+--- a/test/unit/test_exchange.f90
++++ b/test/unit/test_exchange.f90
+@@ -31,8 +31,15 @@ module test_exchange
+    use tblite_basis_type, only : basis_type, cgto_container, cgto_type
+    use tblite_blas, only : gemv
+    use tblite_container_cache, only : container_cache
+-   use tblite_cp2k_compat, only : cp2k_exchange_kmesh_gradient, &
+-      & cp2k_exchange_kpoint_gradient, cp2k_prepare_exchange
++   use tblite_cp2k_compat, only : cp2k_exchange_kmesh, &
++      & cp2k_exchange_kmesh_gradient, cp2k_exchange_kpoint_gradient, &
++      & cp2k_prepare_exchange, cp2k_exchange_stream_type, &
++      & cp2k_exchange_stream_begin, cp2k_exchange_stream_push, &
++      & cp2k_exchange_stream_apply, cp2k_exchange_stream_get, &
++      & cp2k_exchange_stream_reverse_apply, &
++      & cp2k_exchange_stream_reverse_get, &
++      & cp2k_exchange_stream_end, cp2k_exchange_stream_has_full_mesh_storage, &
++      & cp2k_exchange_stream_reduced, cp2k_exchange_stream_oracle
+    use tblite_cutoff, only : get_lattice_points
+    use tblite_data_onecxints, only : get_onecxints
+    use tblite_exchange, only : exchange_type, new_exchange_fock, exchange_fock, &
+@@ -9639,6 +9646,7 @@ subroutine test_bvk_exchange_kernel(error)
+    integer, parameter :: num(2) = [1, 1]
+    integer, parameter :: num_sc(6) = [1, 1, 1, 1, 1, 1]
+    integer, parameter :: nmesh(3) = [3, 1, 1]
++   integer, parameter :: nmesh_large(3) = [9, 9, 1]
+    real(wp), parameter :: xyz(3, 2) = reshape([ &
+       & 0.40_wp, 0.30_wp, 0.20_wp, &
+       & 1.35_wp, 0.35_wp, 0.25_wp], [3, 2])/autoaa
+@@ -9648,43 +9656,61 @@ subroutine test_bvk_exchange_kernel(error)
+       & 0.05_wp, 0.10_wp, 21.0_wp], [3, 3])/autoaa
+    logical, parameter :: periodic(3) = [.true., .true., .true.]
+ 
+-   type(structure_type) :: mol, mol_sc
++   type(structure_type) :: mol, mol_probe, mol_sc
+    class(qvszp_basis_type), allocatable :: qbas, qbas_sc
+    class(basis_type), allocatable :: bas, bas_sc
+    class(exchange_type), allocatable :: exchange, exchange_sc
+    type(basis_cache) :: bcache, bcache_sc
+-   type(container_cache) :: cache, cache_sc
+-   type(exchange_cache), pointer :: ptr, ptr_sc
+-   type(exchange_bvk_kernel) :: kernel, kernel_one
++   type(container_cache) :: cache, cache_cp2k, cache_sc
++   type(exchange_cache), pointer :: ptr, ptr_cp2k, ptr_sc
++   type(exchange_bvk_kernel) :: kernel, kernel_large, kernel_one
++   type(cp2k_exchange_stream_type) :: stream, stream_large, stream_order, &
++      & stream_permuted, stream_reverse, stream_reverse_missing
++   type(xtb_calculator) :: calc_cp2k
+    type(wavefunction_type) :: wfn, wfn_aux, wfn_sc, wfn_aux_sc
+    integer, parameter :: korder(3) = [3, 1, 2]
+-   integer :: acell, bcell, i, iat, icell, ik, ir, ish, j, jat, jsh
++   integer :: acell, bcell, bvk_builds, i, iat, icell, ik, ir, ish, j, jat, jsh
+    integer :: first, ii, izp, jao, jj, jzp, last, nao, ncell, ni, nj, nsh
+-   real(wp) :: angle, deriv_fd, deriv_ref, energy_mesh, energy_m, energy_p, &
+-      & energy_order, energy_twist, order_err
+-   real(wp) :: energy_sc, err, kfrac(3, 3), kfrac_order(3, 3), &
++   real(wp) :: angle, deriv_fd, deriv_ref, energy_large, &
++      & energy_large_oracle, energy_mesh, energy_m, energy_p, energy_order, &
++      & energy_stream, energy_stream_order, energy_twist, onsite_probe, order_err
++   real(wp) :: energy_sc, err, kfrac(3, 3), kfrac_bad(3, 3), kfrac_order(3, 3), &
+       & kfrac_twist(3, 3), lattice_sc(3, 3), step
+-   real(wp) :: weights(3), weights_order(3), xyz_sc(3, 6), shift(3)
++   real(wp) :: weights(3), weights_bad(3), weights_order(3), xyz_sc(3, 6), shift(3)
+    real(wp) :: coord_direction(3, 2), identity(3, 3), lattice0(3, 3), &
+       & strain_direction(3, 3), transform(3, 3), xyz0(3, 2)
+    complex(wp) :: phase
+    real(wp), allocatable :: density_sc(:, :, :), overlap_sc(:, :)
+    real(wp), allocatable :: ao_grad_sc(:, :), bocorr_grad_r(:, :, :), &
+-      & bocorr_grad_sc(:, :), gradient_mesh(:, :), gradient_sc(:, :), &
++      & bocorr_grad_large(:, :, :), bocorr_grad_sc(:, :), &
++      & gradient_cp2k(:, :), gradient_large(:, :), gradient_large_oracle(:, :), &
++      & gradient_mesh(:, :), gradient_sc(:, :), gradient_stream_probe(:, :), &
++      & gradient_stream_reverse(:, :), &
+       & kernel_bocorr_backup(:, :, :), kernel_bocorr_direction(:, :, :), &
+       & kernel_mulliken_backup(:, :, :), &
+-      & kernel_mulliken_direction(:, :, :), mulliken_grad_r(:, :, :), &
++      & kernel_mulliken_direction(:, :, :), kfrac_large(:, :), &
++      & mulliken_grad_large(:, :, :), mulliken_grad_r(:, :, :), &
+       & mulliken_grad_sc(:, :), p_r(:, :, :), s_r(:, :, :), &
+-      & sigma_mesh(:, :), sigma_sc(:, :), vsh_mesh(:), vsh_order(:), &
+-      & vsh_ref(:), vsh_twist(:)
++      & sigma_cp2k(:, :), sigma_large(:, :), sigma_large_oracle(:, :), &
++      & sigma_mesh(:, :), sigma_sc(:, :), sigma_stream_probe(:, :), &
++      & sigma_stream_reverse(:, :), vsh_cp2k(:), vsh_large(:), &
++      & vsh_large_oracle(:), vsh_mesh(:), vsh_order(:), vsh_ref(:), &
++      & vsh_stream(:), vsh_stream_order(:), vsh_twist(:), weights_large(:)
+    complex(wp), allocatable :: density_mesh(:, :, :, :), &
+       & density_m(:, :, :, :), density_p(:, :, :, :), &
+-      & density_order(:, :, :, :), direction(:, :, :, :), &
+-      & fock_mesh(:, :, :, :), fock_order(:, :, :, :), &
++      & density_large(:, :, :, :), density_order(:, :, :, :), &
++      & direction(:, :, :, :), fock_cp2k(:, :, :, :), &
++      & fock_large(:, :, :, :), fock_large_oracle(:, :, :, :), &
++      & fock_mesh(:, :, :, :), &
++      & fock_stream(:, :, :, :), fock_stream_order(:, :, :, :), &
++      & fock_order(:, :, :, :), &
+       & fock_m(:, :, :, :), fock_p(:, :, :, :), fock_ref(:, :, :, :), &
+       & fock_twist(:, :, :, :), overlap_direction(:, :, :), &
+-      & overlap_grad_mesh(:, :, :), overlap_m(:, :, :), &
+-      & overlap_mesh(:, :, :), overlap_order(:, :, :), overlap_p(:, :, :)
++      & overlap_grad_cp2k(:, :, :), overlap_grad_large(:, :, :), &
++      & overlap_grad_large_oracle(:, :, :), overlap_grad_mesh(:, :, :), &
++      & overlap_grad_stream_probe(:, :), overlap_grad_stream_reverse(:, :, :), &
++      & overlap_large(:, :, :), overlap_m(:, :, :), overlap_mesh(:, :, :), &
++      & overlap_order(:, :, :), overlap_p(:, :, :)
+ 
+    call new(mol, num, xyz, lattice=lattice, periodic=periodic)
+    allocate(qbas)
+@@ -10148,6 +10174,543 @@ subroutine test_bvk_exchange_kernel(error)
+    err = max(err, abs(deriv_fd-deriv_ref), abs(energy_order-energy_twist), &
+       & maxval(abs(vsh_order-vsh_twist)), order_err)
+ 
++   ! Exercise the public CP2K whole-mesh path and use its persistent plan as
++   ! the cache-hit/invalidation oracle.  The first call builds the plan, an
++   ! identical second call must reuse it, and a reordered mesh must rebuild
++   ! the ordering descriptor without changing the physical result.
++   allocate(calc_cp2k%exchange, source=exchange)
++   allocate(fock_cp2k(nao, nao, 1, ncell), vsh_cp2k(nsh))
++   call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, nmesh, &
++      & kfrac, weights, density_mesh, overlap_mesh, fock_cp2k, &
++      & vsh_cp2k, energy_mesh, error)
++   if (allocated(error)) return
++   call view(cache_cp2k, ptr_cp2k)
++   if (.not.ptr_cp2k%bvk_matches(mol, nmesh, kfrac, weights)) &
++      & err = max(err, 1.0_wp)
++   if (any(ptr_cp2k%bvk_input_to_grid /= [1, 2, 3])) &
++      & err = max(err, 1.0_wp)
++   if (any(ptr_cp2k%bvk_grid_to_input /= [1, 2, 3])) &
++      & err = max(err, 1.0_wp)
++   err = max(err, maxval(abs(fock_cp2k-fock_ref)), &
++      & maxval(abs(vsh_cp2k-vsh_ref)), abs(energy_mesh-energy_sc))
++
++   ! The memory-reduced stream must reject duplicate and missing input
++   ! blocks without corrupting its transaction.  Completing that transaction
++   ! afterwards must reproduce the unchanged whole-mesh oracle exactly.
++   allocate(fock_stream(nao, nao, 1, ncell), &
++      & fock_stream_order(nao, nao, 1, ncell), &
++      & vsh_stream(nsh), vsh_stream_order(nsh), &
++      & gradient_stream_probe(3, mol%nat), sigma_stream_probe(3, 3))
++   call cp2k_exchange_stream_begin(stream, calc_cp2k, mol, cache_cp2k, wfn, &
++      & nmesh, kfrac, weights, error)
++   if (allocated(error)) return
++   if (cp2k_exchange_stream_has_full_mesh_storage(stream)) &
++      & err = max(err, 1.0_wp)
++   call cp2k_exchange_stream_push(stream, 1, density_mesh(:, :, :, 1), &
++      & overlap_mesh(:, :, 1), error)
++   if (allocated(error)) return
++   call cp2k_exchange_stream_push(stream, 1, density_mesh(:, :, :, 1), &
++      & overlap_mesh(:, :, 1), error)
++   if (allocated(error)) then
++      if (trim(error%message) /= "duplicate g-xTB exchange stream block") then
++         deallocate(error)
++         call test_failed(error, "Unexpected duplicate stream-block diagnostic")
++         return
++      end if
++      deallocate(error)
++   else
++      call test_failed(error, "Duplicate exchange stream block was accepted")
++      return
++   end if
++   call cp2k_exchange_stream_push(stream, 2, density_mesh(:, :, :, 2), &
++      & overlap_mesh(:, :, 2), error)
++   if (allocated(error)) return
++   call cp2k_exchange_stream_apply(stream, calc_cp2k, mol, cache_cp2k, &
++      & vsh_stream, energy_stream, error)
++   if (allocated(error)) then
++      if (trim(error%message) /= "g-xTB exchange stream has missing blocks") then
++         deallocate(error)
++         call test_failed(error, "Unexpected missing stream-block diagnostic")
++         return
++      end if
++      deallocate(error)
++   else
++      call test_failed(error, "Incomplete exchange stream was applied")
++      return
++   end if
++   call cp2k_exchange_stream_push(stream, 3, density_mesh(:, :, :, 3), &
++      & overlap_mesh(:, :, 3), error)
++   if (allocated(error)) return
++   onsite_probe = ptr_cp2k%g_onsfx(1, 1, 1)
++   ptr_cp2k%g_onsfx(1, 1, 1) = onsite_probe + 1.0e-8_wp
++   call cp2k_exchange_stream_apply(stream, calc_cp2k, mol, cache_cp2k, &
++      & vsh_stream, energy_stream, error)
++   if (allocated(error)) then
++      if (trim(error%message) /= &
++         & "g-xTB exchange stream state was invalidated before apply") then
++         deallocate(error)
++         call test_failed(error, "Unexpected invalidated stream diagnostic")
++         return
++      end if
++      deallocate(error)
++   else
++      call test_failed(error, "Invalidated exchange stream was applied")
++      return
++   end if
++   ptr_cp2k%g_onsfx(1, 1, 1) = onsite_probe
++   call cp2k_exchange_stream_apply(stream, calc_cp2k, mol, cache_cp2k, &
++      & vsh_stream, energy_stream, error)
++   if (allocated(error)) return
++   if (cp2k_exchange_stream_has_full_mesh_storage(stream)) &
++      & err = max(err, 1.0_wp)
++   do ik = 1, ncell
++      call cp2k_exchange_stream_get(stream, ik, &
++         & fock_stream(:, :, :, ik), error, overlap_mesh(:, :, ik))
++      if (allocated(error)) return
++   end do
++   call cp2k_exchange_stream_end(stream, error)
++   if (allocated(error)) return
++   err = max(err, maxval(abs(fock_stream-fock_cp2k)), &
++      & maxval(abs(vsh_stream-vsh_cp2k)), abs(energy_stream-energy_mesh))
++
++   ! Arrival order is independent of the physical k-point ordering.  Push the
++   ! same indexed blocks in a nontrivial order and compare the full response.
++   call cp2k_exchange_stream_begin(stream_order, calc_cp2k, mol, cache_cp2k, &
++      & wfn, nmesh, kfrac, weights, error)
++   if (allocated(error)) return
++   if (cp2k_exchange_stream_has_full_mesh_storage(stream_order)) &
++      & err = max(err, 1.0_wp)
++   do j = 1, ncell
++      ik = korder(j)
++      call cp2k_exchange_stream_push(stream_order, ik, &
++         & density_mesh(:, :, :, ik), overlap_mesh(:, :, ik), error)
++      if (allocated(error)) return
++   end do
++   call cp2k_exchange_stream_apply(stream_order, calc_cp2k, mol, cache_cp2k, &
++      & vsh_stream_order, energy_stream_order, error)
++   if (allocated(error)) return
++   call cp2k_exchange_stream_reverse_apply(stream_order, calc_cp2k, mol, &
++      & cache_cp2k, gradient_stream_probe, sigma_stream_probe, error)
++   if (allocated(error)) then
++      if (trim(error%message) /= &
++         & "g-xTB exchange stream reverse requires oracle mode") then
++         deallocate(error)
++         call test_failed(error, "Unexpected reduced reverse diagnostic")
++         return
++      end if
++      deallocate(error)
++   else
++      call test_failed(error, "Reduced exchange stream accepted reverse apply")
++      return
++   end if
++   do ik = 1, ncell
++      call cp2k_exchange_stream_get(stream_order, ik, &
++         & fock_stream_order(:, :, :, ik), error, overlap_mesh(:, :, ik))
++      if (allocated(error)) return
++   end do
++   call cp2k_exchange_stream_end(stream_order, error)
++   if (allocated(error)) return
++   err = max(err, maxval(abs(fock_stream_order-fock_stream)), &
++      & maxval(abs(vsh_stream_order-vsh_stream)), &
++      & abs(energy_stream_order-energy_stream))
++
++   ! A common twist and a permutation of the physical k-point list must use
++   ! the cached representatives without changing the reduced-stream result.
++   call cp2k_exchange_stream_begin(stream_permuted, calc_cp2k, mol, &
++      & cache_cp2k, wfn, nmesh, kfrac_order, weights_order, error, &
++      & mode=cp2k_exchange_stream_reduced)
++   if (allocated(error)) return
++   if (cp2k_exchange_stream_has_full_mesh_storage(stream_permuted)) &
++      & err = max(err, 1.0_wp)
++   do ik = 1, ncell
++      call cp2k_exchange_stream_push(stream_permuted, ik, &
++         & density_order(:, :, :, ik), overlap_order(:, :, ik), error)
++      if (allocated(error)) return
++   end do
++   call cp2k_exchange_stream_apply(stream_permuted, calc_cp2k, mol, &
++      & cache_cp2k, vsh_stream_order, energy_stream_order, error)
++   if (allocated(error)) return
++   do ik = 1, ncell
++      call cp2k_exchange_stream_get(stream_permuted, ik, &
++         & fock_stream_order(:, :, :, ik), error, overlap_order(:, :, ik))
++      if (allocated(error)) return
++   end do
++   call cp2k_exchange_stream_end(stream_permuted, error)
++   if (allocated(error)) return
++   err = max(err, maxval(abs(fock_stream_order-fock_order)), &
++      & maxval(abs(vsh_stream_order-vsh_order)), &
++      & abs(energy_stream_order-energy_order))
++
++   ! The cached reverse path must reproduce the independently evaluated
++   ! overlap response, atomic forces, and homogeneous-strain derivative.
++   allocate(overlap_grad_cp2k(nao, nao, ncell), &
++      & gradient_cp2k(3, mol%nat), sigma_cp2k(3, 3))
++   call cp2k_exchange_kmesh_gradient(calc_cp2k, mol, cache_cp2k, nmesh, &
++      & kfrac, weights, density_mesh, overlap_mesh, overlap_grad_cp2k, &
++      & gradient_cp2k, sigma_cp2k, error)
++   if (allocated(error)) return
++   err = max(err, maxval(abs(overlap_grad_cp2k-overlap_grad_mesh)), &
++      & maxval(abs(gradient_cp2k-gradient_mesh)), &
++      & maxval(abs(sigma_cp2k-sigma_mesh)))
++
++   ! Exercise the separate reverse-stream phase without changing the forward
++   ! transaction tests above.  A stale onsite state must be rejected before
++   ! the unchanged whole-mesh gradient oracle is entered.
++   allocate(overlap_grad_stream_reverse(nao, nao, ncell), &
++      & overlap_grad_stream_probe(nao, nao), &
++      & gradient_stream_reverse(3, mol%nat), &
++      & sigma_stream_reverse(3, 3))
++   call cp2k_exchange_stream_begin(stream_reverse, calc_cp2k, mol, &
++      & cache_cp2k, wfn, nmesh, kfrac, weights, error, &
++      & mode=cp2k_exchange_stream_oracle)
++   if (allocated(error)) return
++   if (.not.cp2k_exchange_stream_has_full_mesh_storage(stream_reverse)) &
++      & err = max(err, 1.0_wp)
++   do ik = 1, ncell
++      call cp2k_exchange_stream_push(stream_reverse, ik, &
++         & density_mesh(:, :, :, ik), overlap_mesh(:, :, ik), error)
++      if (allocated(error)) return
++   end do
++   call cp2k_exchange_stream_apply(stream_reverse, calc_cp2k, mol, &
++      & cache_cp2k, vsh_stream, energy_stream, error)
++   if (allocated(error)) return
++   do ik = 1, ncell
++      call cp2k_exchange_stream_get(stream_reverse, ik, &
++         & fock_stream_order(:, :, :, ik), error)
++      if (allocated(error)) return
++   end do
++   err = max(err, maxval(abs(fock_stream_order-fock_cp2k)), &
++      & maxval(abs(vsh_stream-vsh_cp2k)), abs(energy_stream-energy_mesh))
++
++   onsite_probe = ptr_cp2k%g_onsfx(1, 1, 1)
++   ptr_cp2k%g_onsfx(1, 1, 1) = onsite_probe + 1.0e-8_wp
++   call cp2k_exchange_stream_reverse_apply(stream_reverse, calc_cp2k, mol, &
++      & cache_cp2k, gradient_stream_probe, sigma_stream_probe, error)
++   if (allocated(error)) then
++      if (trim(error%message) /= &
++         & "g-xTB exchange stream state was invalidated before reverse apply") then
++         deallocate(error)
++         call test_failed(error, "Unexpected stale reverse-stream diagnostic")
++         return
++      end if
++      deallocate(error)
++   else
++      call test_failed(error, "Stale exchange reverse stream was applied")
++      return
++   end if
++   ptr_cp2k%g_onsfx(1, 1, 1) = onsite_probe
++
++   call cp2k_exchange_stream_reverse_apply(stream_reverse, calc_cp2k, mol, &
++      & cache_cp2k, gradient_stream_reverse, sigma_stream_reverse, error)
++   if (allocated(error)) return
++   call cp2k_exchange_stream_reverse_apply(stream_reverse, calc_cp2k, mol, &
++      & cache_cp2k, gradient_stream_probe, sigma_stream_probe, error)
++   if (allocated(error)) then
++      if (trim(error%message) /= &
++         & "g-xTB exchange stream reverse was already applied") then
++         deallocate(error)
++         call test_failed(error, "Unexpected repeated reverse-apply diagnostic")
++         return
++      end if
++      deallocate(error)
++   else
++      call test_failed(error, "Exchange reverse stream was applied twice")
++      return
++   end if
++
++   call cp2k_exchange_stream_reverse_get(stream_reverse, 1, &
++      & overlap_grad_stream_reverse(:, :, 1), error)
++   if (allocated(error)) return
++   call cp2k_exchange_stream_reverse_get(stream_reverse, 1, &
++      & overlap_grad_stream_probe, error)
++   if (allocated(error)) then
++      if (trim(error%message) /= &
++         & "duplicate g-xTB exchange stream reverse pull") then
++         deallocate(error)
++         call test_failed(error, "Unexpected duplicate reverse-pull diagnostic")
++         return
++      end if
++      deallocate(error)
++   else
++      call test_failed(error, "Exchange overlap adjoint was pulled twice")
++      return
++   end if
++   do ik = 2, ncell
++      call cp2k_exchange_stream_reverse_get(stream_reverse, ik, &
++         & overlap_grad_stream_reverse(:, :, ik), error)
++      if (allocated(error)) return
++   end do
++   call cp2k_exchange_stream_end(stream_reverse, error)
++   if (allocated(error)) return
++   err = max(err, &
++      & maxval(abs(overlap_grad_stream_reverse-overlap_grad_cp2k)), &
++      & maxval(abs(overlap_grad_stream_reverse-overlap_grad_mesh)), &
++      & maxval(abs(gradient_stream_reverse-gradient_cp2k)), &
++      & maxval(abs(gradient_stream_reverse-gradient_mesh)), &
++      & maxval(abs(sigma_stream_reverse-sigma_cp2k)), &
++      & maxval(abs(sigma_stream_reverse-sigma_mesh)))
++
++   ! Once reverse evaluation was requested, closing the stream is legal only
++   ! after every overlap-adjoint block was pulled exactly once.
++   call cp2k_exchange_stream_begin(stream_reverse_missing, calc_cp2k, mol, &
++      & cache_cp2k, wfn, nmesh, kfrac, weights, error, &
++      & mode=cp2k_exchange_stream_oracle)
++   if (allocated(error)) return
++   do j = 1, ncell
++      ik = korder(j)
++      call cp2k_exchange_stream_push(stream_reverse_missing, ik, &
++         & density_mesh(:, :, :, ik), overlap_mesh(:, :, ik), error)
++      if (allocated(error)) return
++   end do
++   call cp2k_exchange_stream_apply(stream_reverse_missing, calc_cp2k, mol, &
++      & cache_cp2k, vsh_stream, energy_stream, error)
++   if (allocated(error)) return
++   call cp2k_exchange_stream_reverse_apply(stream_reverse_missing, calc_cp2k, &
++      & mol, cache_cp2k, gradient_stream_probe, sigma_stream_probe, error)
++   if (allocated(error)) return
++   call cp2k_exchange_stream_reverse_get(stream_reverse_missing, 1, &
++      & overlap_grad_stream_probe, error)
++   if (allocated(error)) return
++   call cp2k_exchange_stream_end(stream_reverse_missing, error)
++   if (allocated(error)) then
++      if (trim(error%message) /= &
++         & "g-xTB exchange stream ended with missing reverse pulls") then
++         deallocate(error)
++         call test_failed(error, "Unexpected missing reverse-pull diagnostic")
++         return
++      end if
++      deallocate(error)
++   else
++      call test_failed(error, "Exchange stream with missing reverse pulls ended")
++      return
++   end if
++
++   bvk_builds = ptr_cp2k%bvk_plan_builds
++   call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, nmesh, &
++      & kfrac, weights, density_mesh, overlap_mesh, fock_cp2k, &
++      & vsh_cp2k, energy_mesh, error)
++   if (allocated(error)) return
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds) err = max(err, 1.0_wp)
++
++   call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, nmesh, &
++      & kfrac_twist, weights, density_mesh, overlap_mesh, fock_cp2k, &
++      & vsh_cp2k, energy_mesh, error)
++   if (allocated(error)) return
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds+1) err = max(err, 1.0_wp)
++   err = max(err, maxval(abs(fock_cp2k-fock_twist)), &
++      & maxval(abs(vsh_cp2k-vsh_twist)), abs(energy_mesh-energy_twist))
++
++   bvk_builds = ptr_cp2k%bvk_plan_builds
++   call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, nmesh, &
++      & kfrac_order, weights_order, density_order, overlap_order, fock_cp2k, &
++      & vsh_cp2k, energy_mesh, error)
++   if (allocated(error)) return
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds+1) err = max(err, 1.0_wp)
++   if (any(ptr_cp2k%bvk_input_to_grid /= korder)) err = max(err, 1.0_wp)
++   if (any(ptr_cp2k%bvk_grid_to_input /= [2, 3, 1])) &
++      & err = max(err, 1.0_wp)
++   err = max(err, maxval(abs(fock_cp2k-fock_order)), &
++      & maxval(abs(vsh_cp2k-vsh_order)), abs(energy_mesh-energy_order))
++
++   ! Every geometry, cell, mesh, and model dependency must trigger an actual
++   ! rebuild.  The AO inputs can remain fixed here because this test probes
++   ! plan ownership and invalidation rather than a self-consistent state.
++   bvk_builds = ptr_cp2k%bvk_plan_builds
++   mol_probe = mol
++   mol_probe%xyz(1, 1) = mol_probe%xyz(1, 1) + 1.0e-4_wp
++   call cp2k_exchange_kmesh(calc_cp2k, mol_probe, cache_cp2k, wfn, nmesh, &
++      & kfrac_order, weights_order, density_order, overlap_order, fock_cp2k, &
++      & vsh_cp2k, energy_mesh, error)
++   if (allocated(error)) return
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds+1) err = max(err, 1.0_wp)
++   bvk_builds = ptr_cp2k%bvk_plan_builds
++   mol_probe = mol
++   mol_probe%lattice(1, 1) = mol_probe%lattice(1, 1) + 1.0e-4_wp
++   call cp2k_exchange_kmesh(calc_cp2k, mol_probe, cache_cp2k, wfn, nmesh, &
++      & kfrac_order, weights_order, density_order, overlap_order, fock_cp2k, &
++      & vsh_cp2k, energy_mesh, error)
++   if (allocated(error)) return
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds+1) err = max(err, 1.0_wp)
++
++   bvk_builds = ptr_cp2k%bvk_plan_builds
++   kfrac_bad = 0.0_wp
++   do ik = 1, ncell
++      kfrac_bad(2, ik) = real(ik-1, wp)/real(ncell, wp)
++   end do
++   call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, [1, 3, 1], &
++      & kfrac_bad, weights, density_mesh, overlap_mesh, fock_cp2k, &
++      & vsh_cp2k, energy_mesh, error)
++   if (allocated(error)) return
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds+1 &
++      & .or. any(ptr_cp2k%bvk_kernel%nmesh /= [1, 3, 1])) &
++      & err = max(err, 1.0_wp)
++
++   bvk_builds = ptr_cp2k%bvk_plan_builds
++   select type (fock_cp2k_model => calc_cp2k%exchange)
++   type is (exchange_fock)
++      fock_cp2k_model%corr_exp = fock_cp2k_model%corr_exp + 1.0e-6_wp
++   end select
++   call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, nmesh, &
++      & kfrac_order, weights_order, density_order, overlap_order, fock_cp2k, &
++      & vsh_cp2k, energy_mesh, error)
++   if (allocated(error)) return
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds+1) err = max(err, 1.0_wp)
++   select type (fock_cp2k_model => calc_cp2k%exchange)
++   type is (exchange_fock)
++      fock_cp2k_model%corr_exp = fock_cp2k_model%corr_exp - 1.0e-6_wp
++   end select
++
++   ! Reject incomplete and duplicate grids.  A boundary rejection leaves a
++   ! valid plan untouched; failed internal construction invalidates it, and
++   ! the next valid call must recover without incrementing on the failures.
++   bvk_builds = ptr_cp2k%bvk_plan_builds
++   call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, [4, 1, 1], &
++      & kfrac_order, weights_order, density_order, overlap_order, fock_cp2k, &
++      & vsh_cp2k, energy_mesh, error)
++   if (allocated(error)) then
++      if (trim(error%message) /= &
++         & "g-xTB exchange requires a complete regular k mesh") then
++         deallocate(error)
++         call test_failed(error, "Unexpected incomplete-grid diagnostic")
++         return
++      end if
++      deallocate(error)
++   else
++      call test_failed(error, "Incomplete whole-mesh exchange grid was accepted")
++      return
++   end if
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds &
++      & .or. .not.ptr_cp2k%bvk_plan_valid) err = max(err, 1.0_wp)
++
++   kfrac_bad = kfrac_order
++   kfrac_bad(:, 2) = kfrac_bad(:, 1)
++   call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, nmesh, &
++      & kfrac_bad, weights_order, density_order, overlap_order, fock_cp2k, &
++      & vsh_cp2k, energy_mesh, error)
++   if (allocated(error)) then
++      if (trim(error%message) /= &
++         & "g-xTB k-point mesh contains a duplicate grid point") then
++         deallocate(error)
++         call test_failed(error, "Unexpected duplicate-grid diagnostic")
++         return
++      end if
++      deallocate(error)
++   else
++      call test_failed(error, "Duplicate whole-mesh exchange grid point was accepted")
++      return
++   end if
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds &
++      & .or. ptr_cp2k%bvk_plan_valid) err = max(err, 1.0_wp)
++   call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, nmesh, &
++      & kfrac_order, weights_order, density_order, overlap_order, fock_cp2k, &
++      & vsh_cp2k, energy_mesh, error)
++   if (allocated(error)) return
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds+1 &
++      & .or. .not.ptr_cp2k%bvk_plan_valid) err = max(err, 1.0_wp)
++
++   ! Exercise the production O(Nk) grid proof beyond the small-mesh dense
++   ! orthogonality oracle.  The cached 9x9x1 forward and reverse paths are
++   ! compared with the unchanged dense-transform implementation.
++   allocate(kfrac_large(3, product(nmesh_large)), &
++      & weights_large(product(nmesh_large)))
++   kfrac_large = 0.0_wp
++   weights_large = 1.0_wp/real(product(nmesh_large), wp)
++   do ik = 1, product(nmesh_large)
++      kfrac_large(1, ik) = real(modulo(ik-1, nmesh_large(1)), wp) &
++         & /real(nmesh_large(1), wp)
++      kfrac_large(2, ik) = real((ik-1)/nmesh_large(1), wp) &
++         & /real(nmesh_large(2), wp)
++   end do
++   allocate(density_large(nao, nao, 1, product(nmesh_large)), &
++      & overlap_large(nao, nao, product(nmesh_large)), &
++      & fock_large(nao, nao, 1, product(nmesh_large)), &
++      & fock_large_oracle(nao, nao, 1, product(nmesh_large)), &
++      & vsh_large(nsh), vsh_large_oracle(nsh))
++   do ik = 1, product(nmesh_large)
++      density_large(:, :, :, ik) = density_mesh(:, :, :, 1)
++      overlap_large(:, :, ik) = overlap_mesh(:, :, 1)
++   end do
++   bvk_builds = ptr_cp2k%bvk_plan_builds
++   call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, nmesh_large, &
++      & kfrac_large, weights_large, density_large, overlap_large, fock_large, &
++      & vsh_large, energy_large, error)
++   if (allocated(error)) return
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds+1) err = max(err, 1.0_wp)
++   kernel_large = ptr_cp2k%bvk_kernel
++   select type (fock => exchange)
++   type is (exchange_fock)
++      call fock%get_KFock_kmesh(mol, ptr, kernel_large, kfrac_large, &
++         & weights_large, density_large, overlap_large, fock_large_oracle, &
++         & vsh_large_oracle, energy_large_oracle)
++   end select
++   err = max(err, maxval(abs(fock_large-fock_large_oracle)), &
++      & maxval(abs(vsh_large-vsh_large_oracle)), &
++      & abs(energy_large-energy_large_oracle))
++
++   ! The production grid proof and reduced image accumulation are also tested
++   ! beyond the small-mesh dense phase oracle, with reverse arrival order.
++   call cp2k_exchange_stream_begin(stream_large, calc_cp2k, mol, cache_cp2k, &
++      & wfn, nmesh_large, kfrac_large, weights_large, error)
++   if (allocated(error)) return
++   if (cp2k_exchange_stream_has_full_mesh_storage(stream_large)) &
++      & err = max(err, 1.0_wp)
++   do j = 1, product(nmesh_large)
++      ik = product(nmesh_large)-j+1
++      call cp2k_exchange_stream_push(stream_large, ik, &
++         & density_large(:, :, :, ik), overlap_large(:, :, ik), error)
++      if (allocated(error)) return
++   end do
++   call cp2k_exchange_stream_apply(stream_large, calc_cp2k, mol, cache_cp2k, &
++      & vsh_large, energy_large, error)
++   if (allocated(error)) return
++   if (cp2k_exchange_stream_has_full_mesh_storage(stream_large)) &
++      & err = max(err, 1.0_wp)
++   do ik = 1, product(nmesh_large)
++      call cp2k_exchange_stream_get(stream_large, ik, &
++         & fock_large(:, :, :, ik), error, overlap_large(:, :, ik))
++      if (allocated(error)) return
++   end do
++   call cp2k_exchange_stream_end(stream_large, error)
++   if (allocated(error)) return
++   err = max(err, maxval(abs(fock_large-fock_large_oracle)), &
++      & maxval(abs(vsh_large-vsh_large_oracle)), &
++      & abs(energy_large-energy_large_oracle))
++
++   allocate(overlap_grad_large(nao, nao, product(nmesh_large)), &
++      & overlap_grad_large_oracle(nao, nao, product(nmesh_large)), &
++      & mulliken_grad_large(nao, nao, product(nmesh_large)), &
++      & bocorr_grad_large(nao, nao, product(nmesh_large)), &
++      & gradient_large(3, mol%nat), gradient_large_oracle(3, mol%nat), &
++      & sigma_large(3, 3), sigma_large_oracle(3, 3))
++   select type (fock => exchange)
++   type is (exchange_fock)
++      call fock%get_KGrad_kmesh(mol, ptr, kernel_large, kfrac_large, &
++         & weights_large, density_large, overlap_large, &
++         & overlap_grad_large_oracle, mulliken_grad_large, bocorr_grad_large)
++      gradient_large_oracle = 0.0_wp
++      sigma_large_oracle = 0.0_wp
++      call fock%get_bvk_Kmatrix_derivs(mol, kernel_large, &
++         & mulliken_grad_large, bocorr_grad_large, gradient_large_oracle, &
++         & sigma_large_oracle)
++   end select
++   call cp2k_exchange_kmesh_gradient(calc_cp2k, mol, cache_cp2k, &
++      & nmesh_large, kfrac_large, weights_large, density_large, &
++      & overlap_large, overlap_grad_large, gradient_large, sigma_large, error)
++   if (allocated(error)) return
++   err = max(err, maxval(abs(overlap_grad_large-overlap_grad_large_oracle)), &
++      & maxval(abs(gradient_large-gradient_large_oracle)), &
++      & maxval(abs(sigma_large-sigma_large_oracle)))
++
++   bvk_builds = ptr_cp2k%bvk_plan_builds
++   call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, nmesh_large, &
++      & kfrac_large, weights_large, density_large, overlap_large, fock_large, &
++      & vsh_large, energy_large, error)
++   if (allocated(error)) return
++   if (ptr_cp2k%bvk_plan_builds /= bvk_builds) err = max(err, 1.0_wp)
++   err = max(err, maxval(abs(fock_large-fock_large_oracle)), &
++      & maxval(abs(vsh_large-vsh_large_oracle)), &
++      & abs(energy_large-energy_large_oracle))
++
+    call check(error, err, 0.0_wp, thr=1.0e-9_wp)
+    if (allocated(error)) then
+       call test_failed(error, &

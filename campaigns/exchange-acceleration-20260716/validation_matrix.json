@@ -30,7 +30,50 @@
         "cold_warm_identity",
         "invalidation"
       ],
-      "current_evidence": "Focused save_tblite tests through 9x9x1 pass. The archived 19-case CP2K comparison reproduces the baseline to roundoff for energy, analytical forces, virial and stress; its one nonzero return code is the same post-central-calculation SPGLIB finite-difference failure as in the baseline."
+      "current_evidence": "The exact-source focused save_tblite BvK test passes through 9x9x1, including twist/order maps, cache hit and invalidation, incomplete/duplicate-grid failures and recovery, and dense-oracle forward/reverse comparisons. The archived 19-case CP2K comparison reproduces the baseline to roundoff for energy, analytical forces, virial and stress; its one nonzero return code is the same post-central-calculation SPGLIB finite-difference failure as in the baseline."
+    },
+    {
+      "id": "provider_bounded_memory_forward_stream",
+      "status": "passed",
+      "required_observables": [
+        "energy",
+        "shell_potential",
+        "fock",
+        "no_full_mesh_density_overlap_storage",
+        "push_order_permutation",
+        "twist_and_physical_kpoint_permutation",
+        "negative_recovery_paths",
+        "9x9x1_dense_oracle_identity"
+      ],
+      "current_evidence": "The exact-source Debug provider test returns zero and passes. Six runtime storage-query assertions reject retained density/overlap full-mesh arrays in reduced mode; duplicate, missing and stale-onsite failures recover; arbitrary arrival order, common twist, physical k-point permutation and a 9x9x1 reduced forward evaluation reproduce the unchanged complete-mesh/dense oracle for energy, shell potential and Fock."
+    },
+    {
+      "id": "provider_reduced_memory_reverse_stream",
+      "status": "implementation_in_progress",
+      "required_observables": [
+        "overlap_adjoint",
+        "forces",
+        "stress",
+        "reverse_pull_permutation",
+        "no_full_mesh_density_overlap_storage",
+        "state_machine_negative_tests"
+      ],
+      "current_evidence": "The qualified reduced stream intentionally rejects reverse_apply with a checked diagnostic. The existing reverse transaction retains the full-mesh oracle and therefore does not qualify a reduced-memory reverse path."
+    },
+    {
+      "id": "cp2k_stream_consumer_integration",
+      "status": "implementation_in_progress",
+      "required_observables": [
+        "irreducible_to_star_block_expansion",
+        "provider_stream_push_pull",
+        "weighted_real_adjoint_foldback",
+        "energy",
+        "fock",
+        "overlap_adjoint",
+        "forces",
+        "stress"
+      ],
+      "current_evidence": "Provider and CP2K block-helper components are separately qualified, but the production CP2K consumer has not yet invoked and validated the complete streamed forward/reverse transaction."
     },
     {
       "id": "cp2k_block_expansion_foldback_helpers",
@@ -61,7 +104,7 @@
         "push_pull_permutation",
         "state_machine_negative_tests"
       ],
-      "current_evidence": "The exact provider begin/push/apply/get/end forward transaction passes the complete 30-case exchange suite, including arbitrary push order, duplicate/missing-block recovery, stale-onsite rejection, energy, shell potential and Fock identity. CP2K integration and the reverse force/stress transaction remain under implementation."
+      "current_evidence": "The provider bounded-memory begin/push/apply/get/end forward transaction is qualified in the focused exact-source BvK test, and the CP2K block expansion/foldback helpers are qualified separately. The production CP2K star-stream consumer and reduced-memory reverse force/stress transaction remain under implementation."
     },
     {
       "id": "regular_mesh_fft",
@@ -125,6 +168,36 @@
       "symmetry": "full",
       "modules": ["regular_grid_bvk_cache"],
       "status": "passed"
+    },
+    {
+      "id": "provider_bounded_forward_3x1x1_and_9x9x1",
+      "periodicity": "3D",
+      "mesh": "3x1x1_and_9x9x1",
+      "symmetry": "full_twisted_permuted",
+      "modules": [
+        "regular_grid_bvk_cache",
+        "provider_bounded_memory_forward_stream"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "provider_reduced_reverse",
+      "periodicity": "3D",
+      "mesh": "3x1x1_then_9x9x1",
+      "symmetry": "full",
+      "modules": ["provider_reduced_memory_reverse_stream"],
+      "status": "implementation_in_progress"
+    },
+    {
+      "id": "cp2k_production_stream_consumer",
+      "periodicity": "0D_1D_2D_3D",
+      "mesh": "Gamma_to_regular_shifted_meshes",
+      "symmetry": "time_reversal_K290_SPGLIB",
+      "modules": [
+        "cp2k_stream_consumer_integration",
+        "streamed_symmetry_stars"
+      ],
+      "status": "implementation_in_progress"
     },
     {
       "id": "cp2k_block_helpers_observables",

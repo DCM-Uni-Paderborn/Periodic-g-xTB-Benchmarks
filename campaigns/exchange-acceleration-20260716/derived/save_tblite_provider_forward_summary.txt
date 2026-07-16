@@ -1,0 +1,14 @@
+SAVE_TBLITE_PROVIDER_FORWARD_QUALIFICATION
+test	bvk_exchange_supercell
+returncode	0
+provider_cache_planner	passed
+bounded_memory_forward_stream	passed
+reduced_no_full_mesh_queries	6
+oracle_full_mesh_queries	1
+large_mesh	9x9x1
+negative_recovery	true
+twist_permutation	true
+reduced_memory_reverse_stream	implementation_in_progress
+cp2k_consumer_integration	implementation_in_progress
+ALL_SCOPED_GATES_PASSED	true
+SCOPE	Only the provider cache/planner and bounded-memory forward stream are qualified. Reduced-memory reverse and actual CP2K integration remain in progress.

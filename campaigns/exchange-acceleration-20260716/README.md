@@ -97,3 +97,41 @@ This result does **not** qualify the production streamed exchange module.  It
 establishes only the CP2K block operators that the streamed module will call;
 the latter remains `implementation_in_progress` until its full provider and
 CP2K forward/reverse paths pass the complete oracle matrix.
+
+## Qualified save_tblite provider cache and bounded-memory forward stream
+
+The provider cache/planner and bounded-memory forward transaction are now
+qualified as two narrowly scoped components.  An exact-source GNU Fortran
+Debug build (`-O0 -fcheck=all -fbacktrace`) passes the focused
+`bvk_exchange_supercell` test with return code zero.  That single test is a
+deliberately dense functional qualification rather than a smoke test: it
+compares the BvK provider path with the explicit supercell and unchanged dense
+full-mesh oracles, exercises cache hits and exact invalidation, rejects and
+recovers from incomplete and duplicate grids, and checks a regular `9x9x1`
+mesh beyond the small dense phase-orthogonality oracle.
+
+For the reduced forward stream the same passing test verifies energy, shell
+potential and every Fock block, arbitrary block arrival order, a common mesh
+twist, physical k-point permutation, duplicate/missing-block recovery and
+charge-dependent onsite-state invalidation/recovery.  The public storage query
+is asserted six times in reduced mode (before and after application, across
+ordered, permuted and `9x9x1` transactions) and confirms that neither density
+nor overlap full-mesh arrays are retained.  A separate assertion confirms that
+the deliberately retained oracle mode does own full-mesh storage.
+
+The deterministic derivation is
+`scripts/summarize_save_tblite_provider_forward.py`; its JSON and compact text
+products are under `derived/`.  Unedited stdout/stderr, return code and command
+are under `raw/save_tblite_provider_forward/`; the cleanly applicable exact
+patch, complete modified-source snapshot, CMake cache, build commands and
+checksums are under `provenance/save_tblite_provider_forward/`.  An earlier
+terok 30/30 record is preserved separately as historical raw data but is not a
+qualification basis because its executable path was replaced during that
+long-running test.
+
+This passed status is intentionally limited to the provider cache/planner and
+bounded-memory **forward** stream.  The tested reduced stream rejects the
+reverse call by contract; reduced-memory overlap adjoints, forces and stress
+therefore remain `implementation_in_progress`.  Likewise, separately passing
+provider and CP2K block-helper tests do not yet qualify the production CP2K
+stream consumer, which also remains `implementation_in_progress`.
