@@ -1,0 +1,2 @@
+## codex/partial-k-to-r-accumulator
+e57095e15e88a3cf5cecb70cf1379f68ff05867c
