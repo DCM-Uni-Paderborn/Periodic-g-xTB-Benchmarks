@@ -1,0 +1,135 @@
+[
+  {
+    "affinity_proof": [
+      {
+        "cpus_allowed": [
+          192,
+          193,
+          194,
+          195
+        ],
+        "cpus_allowed_list": "192-195",
+        "pid": 2942760,
+        "processor": 195
+      }
+    ],
+    "command": [
+      "taskset",
+      "-c",
+      "192-195",
+      "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+      "--bind-to",
+      "none",
+      "-np",
+      "1",
+      "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_release_v2_20260717/bin/cp2k.psmp",
+      "-i",
+      "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ch4_k290_energy_force.inp"
+    ],
+    "cp2k": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_release_v2_20260717/bin/cp2k.psmp",
+    "cp2k_lib": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_release_v2_20260717/src/libcp2k.so.2026.2",
+    "cp2k_lib_sha256": "f22762b82b1c6be6adf4f4fde8aa476a1d350d1283112ad9507e360d0f8ff861",
+    "cp2k_sha256": "16c4b8905943cb30b11425b56b10b98af62e538a93776e817d6ae230eeceeef2",
+    "expected_message": null,
+    "input": "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ch4_k290_energy_force.inp",
+    "input_sha256": "9b911d4f4cab06f1d95763f3095fe75947980c129fa7131d5818c59468a944a9",
+    "name": "default_dense",
+    "observable_deltas": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "output_sha256": "1fa9c4e1a76fd8d4e9bfe2e236ea741abcfbd33a707d61bdbd146b08c08f25c5",
+    "returncode": 0,
+    "schema": 1,
+    "selector": null,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "wall_seconds": 4.685322523117065
+  },
+  {
+    "affinity_proof": [
+      {
+        "cpus_allowed": [
+          192,
+          193,
+          194,
+          195
+        ],
+        "cpus_allowed_list": "192-195",
+        "pid": 2942885,
+        "processor": 195
+      }
+    ],
+    "command": [
+      "taskset",
+      "-c",
+      "192-195",
+      "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+      "--bind-to",
+      "none",
+      "-np",
+      "1",
+      "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_release_v2_20260717/bin/cp2k.psmp",
+      "-i",
+      "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ch4_k290_energy_force.inp"
+    ],
+    "cp2k": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_release_v2_20260717/bin/cp2k.psmp",
+    "cp2k_lib": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_release_v2_20260717/src/libcp2k.so.2026.2",
+    "cp2k_lib_sha256": "f22762b82b1c6be6adf4f4fde8aa476a1d350d1283112ad9507e360d0f8ff861",
+    "cp2k_sha256": "16c4b8905943cb30b11425b56b10b98af62e538a93776e817d6ae230eeceeef2",
+    "expected_message": "Unknown CP2K_GXTB_SYMMETRY_STAR_CONTRACTION value",
+    "input": "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ch4_k290_energy_force.inp",
+    "input_sha256": "9b911d4f4cab06f1d95763f3095fe75947980c129fa7131d5818c59468a944a9",
+    "name": "unknown_value",
+    "observable_deltas": null,
+    "output_sha256": "c4e82628c88691c5be4eacd1eb20da3b383aa8c8e60eaad1b88e3dc66089f8fe",
+    "returncode": 1,
+    "schema": 1,
+    "selector": "BOGUS",
+    "stderr_sha256": "606e373466f967da234df0cb3c7c1f1b4ce80041fe77eb2cad4e8192c63d8e00",
+    "wall_seconds": 2.937934637069702
+  },
+  {
+    "affinity_proof": [
+      {
+        "cpus_allowed": [
+          192,
+          193,
+          194,
+          195
+        ],
+        "cpus_allowed_list": "192-195",
+        "pid": 2942972,
+        "processor": 195
+      }
+    ],
+    "command": [
+      "taskset",
+      "-c",
+      "192-195",
+      "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+      "--bind-to",
+      "none",
+      "-np",
+      "1",
+      "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_release_v2_20260717/bin/cp2k.psmp",
+      "-i",
+      "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ch4_k290_energy_force.inp"
+    ],
+    "cp2k": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_release_v2_20260717/bin/cp2k.psmp",
+    "cp2k_lib": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_release_v2_20260717/src/libcp2k.so.2026.2",
+    "cp2k_lib_sha256": "f22762b82b1c6be6adf4f4fde8aa476a1d350d1283112ad9507e360d0f8ff861",
+    "cp2k_sha256": "16c4b8905943cb30b11425b56b10b98af62e538a93776e817d6ae230eeceeef2",
+    "expected_message": "Invalid or overlong CP2K_GXTB_SYMMETRY_STAR_CONTRACTION value",
+    "input": "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ch4_k290_energy_force.inp",
+    "input_sha256": "9b911d4f4cab06f1d95763f3095fe75947980c129fa7131d5818c59468a944a9",
+    "name": "overlong_value",
+    "observable_deltas": null,
+    "output_sha256": "30cdd70ae75be7104b966705f6a3715abf955c92651a90c911ee4232d7058446",
+    "returncode": 1,
+    "schema": 1,
+    "selector": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "stderr_sha256": "1ff7342a63568917407d2b5c792b1fe351030e6f08c4a83efa6e7f0658f18aff",
+    "wall_seconds": 3.067791700363159
+  }
+]

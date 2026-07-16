@@ -1,0 +1,296 @@
+[
+  {
+    "affinity_proof": [
+      {
+        "cpus_allowed": [
+          192,
+          193,
+          194,
+          195
+        ],
+        "cpus_allowed_list": "192-195",
+        "pid": 2943305,
+        "processor": 195
+      },
+      {
+        "cpus_allowed": [
+          192,
+          193,
+          194,
+          195
+        ],
+        "cpus_allowed_list": "192-195",
+        "pid": 2943308,
+        "processor": 193
+      }
+    ],
+    "command": [
+      "taskset",
+      "-c",
+      "192-195",
+      "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+      "--bind-to",
+      "none",
+      "-np",
+      "2",
+      "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/bin/cp2k.pdbg",
+      "-i",
+      "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ch4_k290_energy_force.inp"
+    ],
+    "covariance_delta": 0.0,
+    "cp2k": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/bin/cp2k.pdbg",
+    "cp2k_lib": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/src/libcp2k.so.2026.2",
+    "cp2k_lib_sha256": "2d3acc1d47427a0df7ef4b689b885baa427b044424a14538101cbf2884c6fb10",
+    "cp2k_sha256": "9d983212849417543180ca6b560607c1abe9f2b8d8fc021ac01160208a31d92b",
+    "cpu_set": "192-195",
+    "dense_covariance": 5.551115e-17,
+    "input": "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ch4_k290_energy_force.inp",
+    "input_sha256": "9b911d4f4cab06f1d95763f3095fe75947980c129fa7131d5818c59468a944a9",
+    "name": "ch4_k290_p2",
+    "output_sha256": "88ed048ec4c0d7b3a0df9577a99c391ed4d5391f7d380c8977c138b6159bd4e9",
+    "ranks": 2,
+    "returncode": 0,
+    "schema": 1,
+    "stderr_sha256": "b161531ac00b85d643c62aebd93e9a2950be29fb0d5f545ab1bca02057fe9135",
+    "stream_covariance": 5.551115e-17,
+    "stream_roundtrip": 7.771561e-16,
+    "wall_seconds": 6.846579313278198
+  },
+  {
+    "affinity_proof": [
+      {
+        "cpus_allowed": [
+          196,
+          197,
+          198,
+          199
+        ],
+        "cpus_allowed_list": "196-199",
+        "pid": 2943303,
+        "processor": 197
+      },
+      {
+        "cpus_allowed": [
+          196,
+          197,
+          198,
+          199
+        ],
+        "cpus_allowed_list": "196-199",
+        "pid": 2943304,
+        "processor": 198
+      },
+      {
+        "cpus_allowed": [
+          196,
+          197,
+          198,
+          199
+        ],
+        "cpus_allowed_list": "196-199",
+        "pid": 2943307,
+        "processor": 199
+      },
+      {
+        "cpus_allowed": [
+          196,
+          197,
+          198,
+          199
+        ],
+        "cpus_allowed_list": "196-199",
+        "pid": 2943311,
+        "processor": 196
+      }
+    ],
+    "command": [
+      "taskset",
+      "-c",
+      "196-199",
+      "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+      "--bind-to",
+      "none",
+      "-np",
+      "4",
+      "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/bin/cp2k.pdbg",
+      "-i",
+      "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/o2_uks_k311_tr_energy_force.inp"
+    ],
+    "covariance_delta": 0.0,
+    "cp2k": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/bin/cp2k.pdbg",
+    "cp2k_lib": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/src/libcp2k.so.2026.2",
+    "cp2k_lib_sha256": "2d3acc1d47427a0df7ef4b689b885baa427b044424a14538101cbf2884c6fb10",
+    "cp2k_sha256": "9d983212849417543180ca6b560607c1abe9f2b8d8fc021ac01160208a31d92b",
+    "cpu_set": "196-199",
+    "dense_covariance": 0.0,
+    "input": "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/o2_uks_k311_tr_energy_force.inp",
+    "input_sha256": "99d739e0d2164d928d7a1663f1fe1b6cc785c54a3b39434d1b5d069a7bf225c7",
+    "name": "o2_uks_tr_p4",
+    "output_sha256": "bbdac9206999343dae4bcd177cea726827d17c985ea319544eac39225133bb0b",
+    "ranks": 4,
+    "returncode": 0,
+    "schema": 1,
+    "stderr_sha256": "07aec8df7dac244c0ee23831a7bf1b9f7820d19cb6c2f7a667d9fd53da09c5ed",
+    "stream_covariance": 0.0,
+    "stream_roundtrip": 0.0,
+    "wall_seconds": 4.35158634185791
+  },
+  {
+    "affinity_proof": [
+      {
+        "cpus_allowed": [
+          200,
+          201,
+          202,
+          203
+        ],
+        "cpus_allowed_list": "200-203",
+        "pid": 2943309,
+        "processor": 203
+      },
+      {
+        "cpus_allowed": [
+          200,
+          201,
+          202,
+          203
+        ],
+        "cpus_allowed_list": "200-203",
+        "pid": 2943312,
+        "processor": 201
+      },
+      {
+        "cpus_allowed": [
+          200,
+          201,
+          202,
+          203
+        ],
+        "cpus_allowed_list": "200-203",
+        "pid": 2943315,
+        "processor": 202
+      },
+      {
+        "cpus_allowed": [
+          200,
+          201,
+          202,
+          203
+        ],
+        "cpus_allowed_list": "200-203",
+        "pid": 2943316,
+        "processor": 200
+      }
+    ],
+    "command": [
+      "taskset",
+      "-c",
+      "200-203",
+      "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+      "--bind-to",
+      "none",
+      "-np",
+      "4",
+      "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/bin/cp2k.pdbg",
+      "-i",
+      "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ar2_1d_energy_force_print.inp"
+    ],
+    "covariance_delta": 0.0,
+    "cp2k": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/bin/cp2k.pdbg",
+    "cp2k_lib": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/src/libcp2k.so.2026.2",
+    "cp2k_lib_sha256": "2d3acc1d47427a0df7ef4b689b885baa427b044424a14538101cbf2884c6fb10",
+    "cp2k_sha256": "9d983212849417543180ca6b560607c1abe9f2b8d8fc021ac01160208a31d92b",
+    "cpu_set": "200-203",
+    "dense_covariance": 0.0,
+    "input": "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ar2_1d_energy_force_print.inp",
+    "input_sha256": "839a1b2539eafed8b31d7c7898a2b7dd7e31b73549ee7b989f4a923e12770be5",
+    "name": "ar2_1d_tr_p4",
+    "output_sha256": "5baa06376c7b04a396f6e5a5432b5ca22d8c5c53ebaff0b5d4d77faed15981d8",
+    "ranks": 4,
+    "returncode": 0,
+    "schema": 1,
+    "stderr_sha256": "d9f45d98b19e2905af3799c168805b9befe27610f01fea372073ab674359a176",
+    "stream_covariance": 0.0,
+    "stream_roundtrip": 0.0,
+    "wall_seconds": 2.748363494873047
+  },
+  {
+    "affinity_proof": [
+      {
+        "cpus_allowed": [
+          204,
+          205,
+          206,
+          207
+        ],
+        "cpus_allowed_list": "204-207",
+        "pid": 2943306,
+        "processor": 205
+      },
+      {
+        "cpus_allowed": [
+          204,
+          205,
+          206,
+          207
+        ],
+        "cpus_allowed_list": "204-207",
+        "pid": 2943310,
+        "processor": 207
+      },
+      {
+        "cpus_allowed": [
+          204,
+          205,
+          206,
+          207
+        ],
+        "cpus_allowed_list": "204-207",
+        "pid": 2943313,
+        "processor": 206
+      },
+      {
+        "cpus_allowed": [
+          204,
+          205,
+          206,
+          207
+        ],
+        "cpus_allowed_list": "204-207",
+        "pid": 2943314,
+        "processor": 204
+      }
+    ],
+    "command": [
+      "taskset",
+      "-c",
+      "204-207",
+      "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+      "--bind-to",
+      "none",
+      "-np",
+      "4",
+      "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/bin/cp2k.pdbg",
+      "-i",
+      "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ar4_2d_energy_force_print.inp"
+    ],
+    "covariance_delta": 0.0,
+    "cp2k": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/bin/cp2k.pdbg",
+    "cp2k_lib": "/home/kuehne88/work/cp2k_gxtb_streamed_star_memory_debug_v2_20260717/src/libcp2k.so.2026.2",
+    "cp2k_lib_sha256": "2d3acc1d47427a0df7ef4b689b885baa427b044424a14538101cbf2884c6fb10",
+    "cp2k_sha256": "9d983212849417543180ca6b560607c1abe9f2b8d8fc021ac01160208a31d92b",
+    "cpu_set": "204-207",
+    "dense_covariance": 0.0,
+    "input": "/home/kuehne88/work/gxtb_streamed_star_memory_qualification_v4_20260717/inputs/ar4_2d_energy_force_print.inp",
+    "input_sha256": "0f3e894a7a1efb5d59035a938d850619617fc92e9235b2b60bff62da5bd15d65",
+    "name": "ar4_2d_tr_p4",
+    "output_sha256": "6812905c9400d4748cbb9ca4d6d7747fd34a1423ffcbfcbea375de1ec5e136f8",
+    "ranks": 4,
+    "returncode": 0,
+    "schema": 1,
+    "stderr_sha256": "d9f45d98b19e2905af3799c168805b9befe27610f01fea372073ab674359a176",
+    "stream_covariance": 0.0,
+    "stream_roundtrip": 0.0,
+    "wall_seconds": 4.500158071517944
+  }
+]
