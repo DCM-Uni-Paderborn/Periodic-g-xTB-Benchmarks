@@ -64,10 +64,6 @@ def test_cp2k_block_helper_status_is_scoped_conservatively():
 
     assert modules["cp2k_block_expansion_foldback_helpers"]["status"] == "passed"
     assert modules["streamed_symmetry_stars"]["status"] == "implementation_in_progress"
-    evidence = modules["provider_matrix_lean_forward_stream"]["current_evidence"]
-    assert "not a bounded-memory implementation" in evidence
-    assert "amat_r, cmat_r and vmat_r" in evidence
-    assert "two dense Nk x Nk phase tables" in evidence
     assert "full-array oracle" in modules["cp2k_block_expansion_foldback_helpers"][
         "current_evidence"
     ]
@@ -174,6 +170,10 @@ def test_provider_forward_status_is_scoped_conservatively():
         == "implementation_in_progress"
     )
     assert modules["streamed_symmetry_stars"]["status"] == "implementation_in_progress"
+    evidence = modules["provider_matrix_lean_forward_stream"]["current_evidence"]
+    assert "not a bounded-memory implementation" in evidence
+    assert "amat_r, cmat_r and vmat_r" in evidence
+    assert "two dense Nk x Nk phase tables" in evidence
 
 
 def test_provider_forward_focused_raw_record():
