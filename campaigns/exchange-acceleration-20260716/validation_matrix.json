@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "campaign": "exchange-acceleration-20260716",
+  "paper": "main_jcp_II_v1.tex",
+  "oracle": "explicit-expanded-full-mesh",
+  "status_vocabulary": [
+    "pending",
+    "implementation_in_progress",
+    "provider_passed_cp2k_pending",
+    "passed",
+    "failed"
+  ],
+  "default_gates": {
+    "energy_hartree_abs": 1e-10,
+    "fock_max_abs": 1e-10,
+    "overlap_adjoint_max_abs": 1e-10,
+    "force_hartree_per_bohr_max_abs": 1e-6,
+    "strain_derivative_hartree_max_abs": 1e-6
+  },
+  "modules": [
+    {
+      "id": "regular_grid_bvk_cache",
+      "status": "passed",
+      "required_observables": [
+        "energy",
+        "fock",
+        "overlap_adjoint",
+        "forces",
+        "stress",
+        "cold_warm_identity",
+        "invalidation"
+      ],
+      "current_evidence": "Focused save_tblite tests through 9x9x1 pass. The archived 19-case CP2K comparison reproduces the baseline to roundoff for energy, analytical forces, virial and stress; its one nonzero return code is the same post-central-calculation SPGLIB finite-difference failure as in the baseline."
+    },
+    {
+      "id": "streamed_symmetry_stars",
+      "status": "implementation_in_progress",
+      "required_observables": [
+        "energy",
+        "fock",
+        "overlap_adjoint",
+        "forces",
+        "stress",
+        "push_pull_permutation",
+        "state_machine_negative_tests"
+      ],
+      "current_evidence": "The exact provider begin/push/apply/get/end forward transaction passes the complete 30-case exchange suite, including arbitrary push order, duplicate/missing-block recovery, stale-onsite rejection, energy, shell potential and Fock identity. CP2K integration and the reverse force/stress transaction remain under implementation."
+    },
+    {
+      "id": "regular_mesh_fft",
+      "status": "pending",
+      "required_observables": [
+        "forward_dense_identity",
+        "inverse_dense_identity",
+        "weighted_adjoint",
+        "energy",
+        "fock",
+        "forces",
+        "stress"
+      ],
+      "current_evidence": "Dense transform remains the oracle."
+    },
+    {
+      "id": "mpi_k_groups",
+      "status": "pending",
+      "required_observables": [
+        "one_group_identity",
+        "multi_group_identity",
+        "forces",
+        "stress",
+        "wall_time",
+        "max_rss_per_rank",
+        "aggregate_rss",
+        "load_imbalance"
+      ],
+      "current_evidence": "Communicator ownership and reduction contract not yet implemented."
+    },
+    {
+      "id": "cross_mesh_restart",
+      "status": "pending",
+      "required_observables": [
+        "electron_number",
+        "hermiticity",
+        "symmetry_covariance",
+        "cold_warm_endpoint_identity",
+        "forces",
+        "stress",
+        "clean_fallback",
+        "iteration_count",
+        "wall_time"
+      ],
+      "current_evidence": "No production claim; incompatible meshes must never be copied by k-point index."
+    }
+  ],
+  "cases": [
+    {
+      "id": "cp2k_cache_runtime_r3_19_case_matrix",
+      "periodicity": "0D_1D_2D_3D",
+      "mesh": "Gamma_to_shifted_2x2x2",
+      "symmetry": "full_time_reversal_K290_SPGLIB",
+      "modules": ["regular_grid_bvk_cache"],
+      "status": "passed"
+    },
+    {
+      "id": "provider_regular_9x9x1",
+      "periodicity": "2D",
+      "mesh": [9, 9, 1],
+      "symmetry": "full",
+      "modules": ["regular_grid_bvk_cache"],
+      "status": "passed"
+    },
+    {
+      "id": "cp2k_h2_3x1x1_full_vs_time_reversal",
+      "periodicity": "3D",
+      "mesh": [3, 1, 1],
+      "symmetry": "time_reversal",
+      "modules": ["regular_grid_bvk_cache", "streamed_symmetry_stars"],
+      "status": "implementation_in_progress"
+    },
+    {
+      "id": "cp2k_argon_chain_4x1x1",
+      "periodicity": "1D",
+      "mesh": [4, 1, 1],
+      "symmetry": "K290_and_SPGLIB",
+      "modules": ["regular_grid_bvk_cache", "streamed_symmetry_stars", "regular_mesh_fft"],
+      "status": "implementation_in_progress"
+    },
+    {
+      "id": "cp2k_argon_layer_3x3x1",
+      "periodicity": "2D",
+      "mesh": [3, 3, 1],
+      "symmetry": "K290_and_SPGLIB",
+      "modules": ["regular_grid_bvk_cache", "streamed_symmetry_stars", "regular_mesh_fft"],
+      "status": "implementation_in_progress"
+    },
+    {
+      "id": "cp2k_si_shifted_2x2x2",
+      "periodicity": "3D",
+      "mesh": [2, 2, 2],
+      "symmetry": "SPGLIB",
+      "modules": ["regular_grid_bvk_cache", "streamed_symmetry_stars", "regular_mesh_fft", "mpi_k_groups"],
+      "status": "implementation_in_progress"
+    }
+  ]
+}

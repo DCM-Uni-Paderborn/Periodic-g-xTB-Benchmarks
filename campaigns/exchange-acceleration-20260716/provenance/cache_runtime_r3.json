@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "campaign_component": "canonical-grid-bvk-and-symmetry-map-cache",
+  "execution_host": "terok.casus.science",
+  "cp2k": {
+    "source_revision": "28df9380abb327d56bbf216d2469a1fd8c953fc0",
+    "binary_sha256": "44f7d651f88272272dde73b8fb59c9f0c0b37850256fd3ed165c9e1cbcab8129",
+    "required_features": ["spglib", "tblite", "tblite_gxtb"]
+  },
+  "save_tblite": {
+    "source_revision": "257ba442684c39454175e5192c8a2342b4c6380f"
+  },
+  "raw_tree_sha256": "d532ddc32a56a81c613e943f83d5a10496aa762c1f6beba3ea9e8ee91a61e967",
+  "launcher_count": 19,
+  "returncodes": {
+    "zero": 18,
+    "nonzero": 1
+  },
+  "nonzero_classification": "The shifted-Si SPGLIB central calculation converged and matched the oracle; the subsequent DEBUG finite-difference geometry reproduced the pre-existing baseline SPGLIB failure.",
+  "sha256_manifests": {
+    "initial_verified": 19,
+    "final_verified": 19
+  },
+  "baseline_maxima": {
+    "central_energy_hartree_abs": 7.105e-15,
+    "all_debug_energies_hartree_abs": 4.547e-13,
+    "central_analytical_force_hartree_per_bohr_abs": 3.131e-16,
+    "analytical_virial_hartree_abs": 1.0e-12,
+    "printed_analytical_stress_bar_abs": 2.175e-11
+  },
+  "metadata_identity": {
+    "kpoint_grids": true,
+    "irreducible_kpoint_counts": true
+  },
+  "comparison_script": "../scripts/compare_cache_runtime.py",
+  "derived_output": "../derived/cache_runtime_r3_comparison.txt"
+}

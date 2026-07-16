@@ -1,0 +1,100 @@
+BASELINE_COMPARISON
+case	rc	grid	nirr	dE_Ha	dForcePrint	dForceDebug	dStressPrint	dVirial	counts
+ch4_full_debug	0	(2, 2, 2)	8	7.105e-15	3.131e-16	0.000e+00	1.000e+01	5.380e-10	E:23/23,FP:58/58,FD:17/17,SP:88/88,PV:28/28
+ch4_spglib_debug	0	(2, 2, 2)	1	7.105e-15	1.836e-16	0.000e+00	1.000e+00	5.370e-10	E:23/23,FP:58/58,FD:17/17,SP:88/88,PV:28/28
+ch4_spglib_oracle_iter2	0	(2, 2, 2)	1	7.105e-15	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:1/1,FP:0/0,FD:0/0,SP:0/0,PV:0/0
+gxtb_1d_native_gamma_centered_k211	0	(2, 1, 1)	2	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:1/1,FP:0/0,FD:0/0,SP:0/0,PV:0/0
+gxtb_1d_native_k211	0	(2, 1, 1)	2	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:1/1,FP:0/0,FD:0/0,SP:0/0,PV:0/0
+gxtb_1d_supercell_k111	0	(1, 1, 1)	1	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:1/1,FP:0/0,FD:0/0,SP:0/0,PV:0/0
+gxtb_1d_x_k211_force_stress	0	(2, 1, 1)	1	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:21/21,FP:0/0,FD:88/88,SP:0/0,PV:29/29
+gxtb_1d_x_k211_force_stress_full	0	(2, 1, 1)	2	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:21/21,FP:0/0,FD:88/88,SP:0/0,PV:29/29
+gxtb_1d_x_k211_force_stress_spglib	0	(2, 1, 1)	1	2.274e-13	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:21/21,FP:0/0,FD:88/88,SP:0/0,PV:29/29
+gxtb_2d_native_gamma_centered_k212	0	(2, 1, 2)	4	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:1/1,FP:0/0,FD:0/0,SP:0/0,PV:0/0
+gxtb_2d_native_k212	0	(2, 1, 2)	4	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:1/1,FP:0/0,FD:0/0,SP:0/0,PV:0/0
+gxtb_2d_supercell_k111	0	(1, 1, 1)	1	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:1/1,FP:0/0,FD:0/0,SP:0/0,PV:0/0
+gxtb_2d_xz_k212_force_stress	0	(2, 1, 2)	2	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:45/45,FP:0/0,FD:182/182,SP:0/0,PV:29/29
+gxtb_2d_xz_k212_force_stress_full	0	(2, 1, 2)	4	4.547e-13	0.000e+00	0.000e+00	0.000e+00	2.260e-08	E:45/45,FP:0/0,FD:182/182,SP:0/0,PV:29/29
+gxtb_2d_xz_k212_force_stress_spglib	0	(2, 1, 2)	2	4.547e-13	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:45/45,FP:0/0,FD:182/182,SP:0/0,PV:29/29
+h2_full_force_stress	0	(3, 1, 1)	3	1.110e-15	0.000e+00	0.000e+00	0.000e+00	1.000e-11	E:33/33,FP:0/0,FD:92/92,SP:0/0,PV:28/28
+h2_time_reversal_force_stress	0	(3, 1, 1)	2	1.110e-15	0.000e+00	0.000e+00	0.000e+00	2.900e-11	E:33/33,FP:0/0,FD:92/92,SP:0/0,PV:28/28
+si_shifted_full_energy	0	(2, 2, 2)	8	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:23/23,FP:28/28,FD:15/15,SP:88/88,PV:28/28
+si_shifted_spglib_energy	1	(2, 2, 2)	3	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	E:7/7,FP:14/14,FD:0/0,SP:60/60,PV:0/0
+
+SYMMETRY_PAIRS
+reference	reduced	grid	nk_ref/nk_red	dE0_Ha	dF_print	dStress_print	stress_debug_sum_red	force_debug_sum_red
+ch4_full_debug	ch4_spglib_debug	(2, 2, 2)	8/1	7.105e-15	1.777e-16	3.400e+02	1.921e-09	nan
+h2_full_force_stress	h2_time_reversal_force_stress	(3, 1, 1)	3/2	0.000e+00	0.000e+00	0.000e+00	1.840e-10	nan
+gxtb_1d_x_k211_force_stress_full	gxtb_1d_x_k211_force_stress	(2, 1, 1)	2/1	0.000e+00	0.000e+00	0.000e+00	5.479e-08	8.763e-09
+gxtb_1d_x_k211_force_stress_full	gxtb_1d_x_k211_force_stress_spglib	(2, 1, 1)	2/1	0.000e+00	0.000e+00	0.000e+00	5.479e-08	8.763e-09
+gxtb_2d_xz_k212_force_stress_full	gxtb_2d_xz_k212_force_stress	(2, 1, 2)	4/2	0.000e+00	0.000e+00	0.000e+00	1.306e-07	4.155e-08
+gxtb_2d_xz_k212_force_stress_full	gxtb_2d_xz_k212_force_stress_spglib	(2, 1, 2)	4/2	0.000e+00	0.000e+00	0.000e+00	1.306e-07	4.155e-08
+si_shifted_full_energy	si_shifted_spglib_energy	(2, 2, 2)	8/3	0.000e+00	9.326e-17	2.426e-10	nan	nan
+
+DERIVATIVE_SUMMARIES
+case	stress_sum_Ha	periodic_stress_sum_Ha	force_sum_HaBohr
+ch4_full_debug	2.977000000000e-09	nan	0.000000000000e+00
+ch4_spglib_debug	1.921000000000e-09	nan	0.000000000000e+00
+gxtb_1d_x_k211_force_stress	5.478600000000e-08	8.763000000000e-09	0.000000000000e+00
+gxtb_1d_x_k211_force_stress_full	4.750700000000e-08	2.538000000000e-09	0.000000000000e+00
+gxtb_1d_x_k211_force_stress_spglib	5.478600000000e-08	8.763000000000e-09	0.000000000000e+00
+gxtb_2d_xz_k212_force_stress	1.306180000000e-07	4.155100000000e-08	2.000000000000e-08
+gxtb_2d_xz_k212_force_stress_full	2.379500000000e-07	6.943800000000e-08	2.000000000000e-08
+gxtb_2d_xz_k212_force_stress_spglib	1.306180000000e-07	4.155100000000e-08	2.000000000000e-08
+h2_full_force_stress	1.900000000000e-10	nan	0.000000000000e+00
+h2_time_reversal_force_stress	1.840000000000e-10	nan	0.000000000000e+00
+si_shifted_full_energy	9.491000000000e-09	nan	0.000000000000e+00
+
+BASELINE_PHYSICAL_COMPONENTS
+case	dE0_Ha	dFcentral_HaBohr	dFnum_HaBohr	dFana_HaBohr	dVirNum_Ha	dVirAna_Ha	dStressTensor_bar
+ch4_full_debug	7.105e-15	3.131e-16	0.000e+00	0.000e+00	5.370e-10	0.000e+00	1.260e-11
+ch4_spglib_debug	7.105e-15	1.038e-16	0.000e+00	0.000e+00	5.370e-10	0.000e+00	2.175e-11
+ch4_spglib_oracle_iter2	7.105e-15	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_1d_native_gamma_centered_k211	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_1d_native_k211	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_1d_supercell_k111	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_1d_x_k211_force_stress	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_1d_x_k211_force_stress_full	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_1d_x_k211_force_stress_spglib	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_2d_native_gamma_centered_k212	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_2d_native_k212	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_2d_supercell_k111	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_2d_xz_k212_force_stress	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_2d_xz_k212_force_stress_full	0.000e+00	0.000e+00	0.000e+00	0.000e+00	1.130e-08	0.000e+00	0.000e+00
+gxtb_2d_xz_k212_force_stress_spglib	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+h2_full_force_stress	0.000e+00	0.000e+00	0.000e+00	0.000e+00	1.000e-11	1.000e-12	0.000e+00
+h2_time_reversal_force_stress	0.000e+00	0.000e+00	0.000e+00	0.000e+00	2.800e-11	1.000e-12	0.000e+00
+si_shifted_full_energy	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+si_shifted_spglib_energy	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+
+SYMMETRY_PHYSICAL_COMPONENTS
+reference	reduced	dE0_Ha	dFcentral_HaBohr	dFana_HaBohr	dVirAna_Ha	dStressTensor_bar
+ch4_full_debug	ch4_spglib_debug	7.105e-15	1.777e-16	0.000e+00	6.000e-12	5.000e-07
+h2_full_force_stress	h2_time_reversal_force_stress	0.000e+00	0.000e+00	0.000e+00	1.000e-12	0.000e+00
+gxtb_1d_x_k211_force_stress_full	gxtb_1d_x_k211_force_stress	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_1d_x_k211_force_stress_full	gxtb_1d_x_k211_force_stress_spglib	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_2d_xz_k212_force_stress_full	gxtb_2d_xz_k212_force_stress	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+gxtb_2d_xz_k212_force_stress_full	gxtb_2d_xz_k212_force_stress_spglib	0.000e+00	0.000e+00	0.000e+00	0.000e+00	0.000e+00
+si_shifted_full_energy	si_shifted_spglib_energy	0.000e+00	9.326e-17	LEN	LEN	2.426e-10
+
+BASELINE_SYMMETRY_METADATA
+case	grid_r3/base	nirr_r3/base
+ch4_full_debug	(2, 2, 2)/(2, 2, 2)	8/8
+ch4_spglib_debug	(2, 2, 2)/(2, 2, 2)	1/1
+ch4_spglib_oracle_iter2	(2, 2, 2)/(2, 2, 2)	1/1
+gxtb_1d_native_gamma_centered_k211	(2, 1, 1)/(2, 1, 1)	2/2
+gxtb_1d_native_k211	(2, 1, 1)/(2, 1, 1)	2/2
+gxtb_1d_supercell_k111	(1, 1, 1)/(1, 1, 1)	1/1
+gxtb_1d_x_k211_force_stress	(2, 1, 1)/(2, 1, 1)	1/1
+gxtb_1d_x_k211_force_stress_full	(2, 1, 1)/(2, 1, 1)	2/2
+gxtb_1d_x_k211_force_stress_spglib	(2, 1, 1)/(2, 1, 1)	1/1
+gxtb_2d_native_gamma_centered_k212	(2, 1, 2)/(2, 1, 2)	4/4
+gxtb_2d_native_k212	(2, 1, 2)/(2, 1, 2)	4/4
+gxtb_2d_supercell_k111	(1, 1, 1)/(1, 1, 1)	1/1
+gxtb_2d_xz_k212_force_stress	(2, 1, 2)/(2, 1, 2)	2/2
+gxtb_2d_xz_k212_force_stress_full	(2, 1, 2)/(2, 1, 2)	4/4
+gxtb_2d_xz_k212_force_stress_spglib	(2, 1, 2)/(2, 1, 2)	2/2
+h2_full_force_stress	(3, 1, 1)/(3, 1, 1)	3/3
+h2_time_reversal_force_stress	(3, 1, 1)/(3, 1, 1)	2/2
+si_shifted_full_energy	(2, 2, 2)/(2, 2, 2)	8/8
+si_shifted_spglib_energy	(2, 2, 2)/(2, 2, 2)	3/3
+
