@@ -149,3 +149,6 @@ and stress therefore remain `implementation_in_progress`.  Likewise,
 separately passing provider and CP2K block-helper tests do not yet qualify the
 production CP2K stream consumer, which also remains
 `implementation_in_progress`.
+
+Repository-level archive validation is reported only for this acceleration
+campaign: all 13 campaign tests pass.
