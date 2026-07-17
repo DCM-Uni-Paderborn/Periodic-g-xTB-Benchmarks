@@ -435,7 +435,8 @@ def make_log_mae_plot(summary_rows: list[dict[str, object]]) -> None:
 def main() -> None:
     DATA.mkdir(exist_ok=True)
     FIGURES.mkdir(exist_ok=True)
-    results = json.loads((DATA / "results.json").read_text())
+    legacy_results = DATA / "results.json"
+    results = json.loads(legacy_results.read_text()) if legacy_results.exists() else {}
     published_abs = parse_published_abs()
 
     dmc_rel = rel_from_abs(published_abs["DMC"])

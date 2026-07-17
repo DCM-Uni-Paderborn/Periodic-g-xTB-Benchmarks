@@ -67,7 +67,9 @@ def main() -> int:
         run_dir = ROOT / "runs_cli" / "GXTB" / phase
         run_dir.mkdir(parents=True, exist_ok=True)
         poscar = run_dir / "POSCAR"
-        labels = gamma_check.coordinate_labels(ROOT / "inputs" / f"ice_{phase}_GFN2.inp")
+        labels = gamma_check.coordinate_labels(
+            ROOT / "kpoint_inputs" / "gamma" / f"ice_{phase}_GXTB_gamma.inp"
+        )
         gamma_check.write_poscar(poscar, phase, geometries[phase], labels)
         energies: dict[str, float] = {}
         returncodes: dict[str, int] = {}

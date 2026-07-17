@@ -1329,11 +1329,7 @@ def analyse(
     if make_figures:
         if output_dir.resolve() != DATA.resolve():
             raise ValueError("figures can only be regenerated from the curated X23b/data tables")
-        publication_plotter = ROOT.parent / "scripts" / "update_x23b_k222_figures.py"
-        if external_cellopt is not None and publication_plotter.exists():
-            subprocess.run([sys.executable, str(publication_plotter)], cwd=ROOT.parent, check=True)
-        else:
-            make_plots(summaries, rows_energy, rows_volume)
+        make_plots(summaries, rows_energy, rows_volume)
     if "GXTB" in selected_methods:
         common.update_gxtb_provenance(
             ROOT,
