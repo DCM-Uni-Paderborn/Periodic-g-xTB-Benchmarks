@@ -179,6 +179,34 @@ def execution_record_path(output: Path) -> Path:
     return output.with_suffix(output.suffix + ".execution.json")
 
 
+def cp2k_command(
+    *,
+    taskset: str | Path,
+    cpu_set: str,
+    mpi_launcher: str | Path,
+    mpi_launcher_args: Sequence[str],
+    mpi_ranks_per_job: int,
+    cp2k: Path,
+    inp: Path,
+    out: Path,
+) -> list[str]:
+    """Build the exact launch command with location-independent I/O paths."""
+    return [
+        str(taskset),
+        "-c",
+        cpu_set,
+        str(mpi_launcher),
+        *mpi_launcher_args,
+        "-np",
+        str(mpi_ranks_per_job),
+        str(cp2k.resolve(strict=True)),
+        "-i",
+        str(inp.resolve(strict=True)),
+        "-o",
+        str(out.resolve()),
+    ]
+
+
 def recorded_execution_issue(
     path: Path,
     expected_contract: Mapping[str, object],
@@ -209,18 +237,6 @@ def recorded_execution_issue(
     ranks = expected_contract.get("mpi_ranks_per_job")
     if not isinstance(launcher_args, list) or not isinstance(ranks, int):
         return f"invalid expected execution contract for {path}"
-    command = record.get("command")
-    expected_prefix = [
-        taskset,
-        "-c",
-        assigned,
-        launcher,
-        *launcher_args,
-        "-np",
-        str(ranks),
-    ]
-    if not isinstance(command, list) or command[: len(expected_prefix)] != expected_prefix:
-        return f"execution command/affinity mismatch in {path}"
     if record.get("runtime_affinity_gate") is not True:
         return f"runtime MPI/affinity gate failed in {path}"
     if record.get("mpiexec_internal_rebinding_detected") is not False:
@@ -242,8 +258,22 @@ def recorded_execution_issue(
         mask != assigned_cpus for mask in normalized_rank_masks
     ):
         return f"observed CP2K rank CPU-mask mismatch in {path}"
+    cp2k_path = Path(str(record.get("cp2k", "")))
+    try:
+        cp2k_resolved = cp2k_path.resolve(strict=True)
+    except (FileNotFoundError, OSError):
+        return f"missing recorded CP2K executable in {path}"
+    if not cp2k_resolved.is_file() or not os.access(cp2k_resolved, os.X_OK):
+        return f"recorded CP2K executable is not executable in {path}"
+    cp2k_sha256 = sha256(cp2k_resolved)
+    if record.get("cp2k_sha256_at_launch") != cp2k_sha256:
+        return f"CP2K executable hash mismatch in {path}"
     input_path = Path(str(record.get("input", "")))
-    if not input_path.is_file() or record.get("input_sha256_at_launch") != sha256(input_path):
+    try:
+        input_resolved = input_path.resolve(strict=True)
+    except (FileNotFoundError, OSError):
+        return f"missing recorded execution input in {path}"
+    if record.get("input_sha256_at_launch") != sha256(input_resolved):
         return f"execution input hash mismatch in {path}"
     if Path(str(record.get("output", ""))).resolve() != output.resolve():
         return f"execution output path mismatch in {path}"
@@ -256,6 +286,44 @@ def recorded_execution_issue(
         or record.get("scientific_job_stamp_sha256") != sha256(scientific_job_stamp)
     ):
         return f"scientific job-stamp hash mismatch in {path}"
+    try:
+        scientific_signature = json.loads(scientific_job_stamp.read_text())
+    except (json.JSONDecodeError, OSError) as exc:
+        return f"invalid scientific job stamp for {path}: {exc}"
+    if not isinstance(scientific_signature, Mapping):
+        return f"invalid scientific job-stamp payload for {path}"
+    try:
+        stamped_cp2k = Path(str(scientific_signature.get("executable", ""))).resolve(
+            strict=True
+        )
+    except (FileNotFoundError, OSError):
+        return f"scientific job stamp has no reusable CP2K executable for {path}"
+    if stamped_cp2k != cp2k_resolved:
+        return f"recorded CP2K executable differs from scientific job stamp in {path}"
+    if scientific_signature.get("executable_sha256") != cp2k_sha256:
+        return f"scientific job-stamp CP2K hash mismatch in {path}"
+    try:
+        stamped_input = Path(str(scientific_signature.get("input", ""))).resolve(
+            strict=True
+        )
+    except (FileNotFoundError, OSError):
+        return f"scientific job stamp has no reusable input for {path}"
+    if stamped_input != input_resolved:
+        return f"recorded input differs from scientific job stamp in {path}"
+    if scientific_signature.get("input_sha256") != sha256(input_resolved):
+        return f"scientific job-stamp input hash mismatch in {path}"
+    expected_command = cp2k_command(
+        taskset=taskset,
+        cpu_set=assigned,
+        mpi_launcher=launcher,
+        mpi_launcher_args=launcher_args,
+        mpi_ranks_per_job=ranks,
+        cp2k=cp2k_resolved,
+        inp=input_resolved,
+        out=output,
+    )
+    if record.get("command") != expected_command:
+        return f"full execution command/affinity mismatch in {path}"
     return None
 
 
@@ -389,7 +457,7 @@ class ExecutionPool:
         cp2k: Path,
         inp: Path,
         out: Path,
-    ) -> tuple[int, dict[str, object]]:
+        ) -> tuple[int, dict[str, object]]:
         cpu_set = self._available.get()
         with self._active_lock:
             if cpu_set in self._active:
@@ -397,6 +465,9 @@ class ExecutionPool:
                 raise RuntimeError(f"CPU set was allocated twice: {cpu_set}")
             self._active.add(cpu_set)
         try:
+            cp2k_resolved = resolve_executable(cp2k, "CP2K executable")
+            cp2k_sha256_at_launch = sha256(cp2k_resolved)
+            input_sha256_at_launch = sha256(inp.resolve(strict=True))
             out.parent.mkdir(parents=True, exist_ok=True)
             for stale in (out, execution_record_path(out)):
                 if stale.exists():
@@ -410,20 +481,16 @@ class ExecutionPool:
             env["OMP_NUM_THREADS"] = str(self.threads_per_rank)
             env["OMP_PROC_BIND"] = "false"
             env["OMP_WAIT_POLICY"] = "PASSIVE"
-            command = [
-                str(self.taskset),
-                "-c",
-                cpu_set,
-                str(self.mpi_launcher),
-                *self.mpi_launcher_args,
-                "-np",
-                str(self.mpi_ranks_per_job),
-                str(cp2k),
-                "-i",
-                inp.name,
-                "-o",
-                out.name,
-            ]
+            command = cp2k_command(
+                taskset=self.taskset,
+                cpu_set=cpu_set,
+                mpi_launcher=self.mpi_launcher,
+                mpi_launcher_args=self.mpi_launcher_args,
+                mpi_ranks_per_job=self.mpi_ranks_per_job,
+                cp2k=cp2k_resolved,
+                inp=inp,
+                out=out,
+            )
             started = datetime.now(timezone.utc).isoformat()
             proc = subprocess.Popen(
                 command,
@@ -436,7 +503,7 @@ class ExecutionPool:
             while True:
                 if Path("/proc").is_dir():
                     for pid in _linux_descendants(proc.pid):
-                        snapshot = _linux_process_snapshot(pid, cp2k)
+                        snapshot = _linux_process_snapshot(pid, cp2k_resolved)
                         if snapshot is None:
                             continue
                         previous = observed.get(pid)
@@ -479,8 +546,10 @@ class ExecutionPool:
                 "assigned_cpu_count": len(parse_cpu_set(cpu_set)),
                 "command": command,
                 "working_directory": str(inp.parent.resolve()),
+                "cp2k": str(cp2k_resolved),
+                "cp2k_sha256_at_launch": cp2k_sha256_at_launch,
                 "input": str(inp.resolve()),
-                "input_sha256_at_launch": sha256(inp),
+                "input_sha256_at_launch": input_sha256_at_launch,
                 "output": str(out.resolve()),
                 "return_code": return_code,
                 "started_at_utc": started,
