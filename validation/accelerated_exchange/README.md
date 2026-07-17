@@ -9,6 +9,8 @@ The explicit expanded-full-mesh implementation remains the numerical oracle.
 | `provider_streamed_reverse/` | Bounded save_tblite reverse transaction; overlap adjoint, force, stress, state-machine and exact workspace tests | Provider AO-matrix storage is bounded by the declared image-batch size; the unit suite is not a speedup benchmark |
 | `cp2k_streamed_reverse_consumer/` | CP2K bounded derivative consumer; 21 Linux RKS/UKS, full/TR/K290/SPGLIB, shifted, 1D/2D/3D cases at MPI P=1/2/4 plus force/stress finite differences | Correctness and exact provider high-water are qualified; historical P=2/P=4 shared-mask timings are legacy/non-scaling and only numerical equivalence remains usable |
 | `cp2k_kgroup_owner/` | CP2K owner/communicator precursor; full/TR/K290/SPGLIB, shifted, 1D/2D/3D, RKS/UKS, and Linux MPI P=1/2/4 oracle comparisons | No coupled-kernel speedup: save_tblite still has one global stream state |
+| `mixed_radix_fft_20260717/` | Dense-oracle equivalence of separable and mixed-radix FFT regular-mesh exchange transforms for RKS/UKS, shifted/unshifted K290/TR/SPGLIB, 1D/2D/3D, energy, force and stress | Correctness qualification only; the short serial matrix is not a speedup benchmark |
+| `symmetry_phase_cache_20260717/` | Cached-versus-uncached symmetry-star atom phases across RKS/UKS, K290/TR/SPGLIB, shifted meshes and derivative diagnostics | Correctness qualification only; the short serial matrix is not a speedup benchmark |
 | `crossmesh_restart/` | Opt-in, metadata-validated regular-mesh density restart; official regression, malformed-file fallback, RKS/UKS, force/stress, density and Linux MPI-2 tests | Reduces SCF iterations in the qualified cases; the interpolated initial guess is not guaranteed N-representable, so default activation awaits a spectral projection or accept/fallback gate |
 
 Genuine k-group scaling requires additive partial k-to-R accumulators to be
@@ -26,3 +28,7 @@ comparisons remain valid; no speedup or scalability claim may use their times.
 Each subdirectory carries raw output, verification scripts, provenance, and
 SHA-256 manifests.  Run those scripts from within the corresponding archive
 after copying or publishing the data.
+
+`fft_phase_cache_crossmesh_20260717/README.md` is the compact index for the
+three corresponding acceleration archives and their deliberately separate
+qualification boundaries.
