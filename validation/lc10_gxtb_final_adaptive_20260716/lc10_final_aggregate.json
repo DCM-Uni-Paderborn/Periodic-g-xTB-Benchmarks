@@ -1,0 +1,155 @@
+{
+  "artifact": "LC10 final adaptive g-xTB aggregate",
+  "benchmark": "LC10 common ten-solid subset",
+  "campaign_fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+  "convergence_rule": {
+    "criteria_combination": "AND",
+    "decision": "first adjacent passing interval; retain denser endpoint",
+    "maximum_scientific_mesh": null,
+    "threshold_abs_delta_a0_A": 0.025,
+    "threshold_abs_delta_ecoh_kJmol_per_atom": 0.25
+  },
+  "final_mesh_counts": {
+    "k777": 3,
+    "k888": 4,
+    "k999": 3
+  },
+  "lattice_A": {
+    "MAE": 0.14339000785000006,
+    "ME": -0.13937815699000017,
+    "MaxAE": 0.2673569734000001,
+    "RMSE": 0.1682155441296896
+  },
+  "cohesive_eV_per_atom": {
+    "MAE": 0.2946943727224002,
+    "ME": 0.22993506762020025,
+    "MaxAE": 0.7966899393669999,
+    "RMSE": 0.35035869933740393
+  },
+  "cohesive_kJmol_per_atom": {
+    "MAE": 28.433684426991295,
+    "ME": 22.185361366130767,
+    "MaxAE": 76.86889339912472,
+    "RMSE": 33.804475467860335
+  },
+  "selection_decisions": [
+    {
+      "solid": "C",
+      "coarse_mesh": "k888",
+      "dense_mesh": "k999",
+      "delta_a0_A": 0.0002512319,
+      "delta_ecoh_eV_per_atom": -0.001514349634,
+      "delta_ecoh_kJmol_per_atom": -0.146112527387,
+      "lattice_passed": true,
+      "energy_passed": true,
+      "preceding_interval_failed": true
+    },
+    {
+      "solid": "Si",
+      "coarse_mesh": "k666",
+      "dense_mesh": "k777",
+      "delta_a0_A": 0.0008743861,
+      "delta_ecoh_eV_per_atom": -0.002087859437,
+      "delta_ecoh_kJmol_per_atom": -0.201447811206,
+      "lattice_passed": true,
+      "energy_passed": true,
+      "preceding_interval_failed": true
+    },
+    {
+      "solid": "SiC",
+      "coarse_mesh": "k777",
+      "dense_mesh": "k888",
+      "delta_a0_A": 0.0004044082,
+      "delta_ecoh_eV_per_atom": -0.001344002643,
+      "delta_ecoh_kJmol_per_atom": -0.129676541384,
+      "lattice_passed": true,
+      "energy_passed": true,
+      "preceding_interval_failed": true
+    },
+    {
+      "solid": "BN",
+      "coarse_mesh": "k888",
+      "dense_mesh": "k999",
+      "delta_a0_A": 0.0005395193,
+      "delta_ecoh_eV_per_atom": -0.001982136042,
+      "delta_ecoh_kJmol_per_atom": -0.191247054326,
+      "lattice_passed": true,
+      "energy_passed": true,
+      "preceding_interval_failed": true
+    },
+    {
+      "solid": "BP",
+      "coarse_mesh": "k777",
+      "dense_mesh": "k888",
+      "delta_a0_A": 0.0004218027,
+      "delta_ecoh_eV_per_atom": -0.001278848769,
+      "delta_ecoh_kJmol_per_atom": -0.123390148212,
+      "lattice_passed": true,
+      "energy_passed": true,
+      "preceding_interval_failed": true
+    },
+    {
+      "solid": "AlN",
+      "coarse_mesh": "k777",
+      "dense_mesh": "k888",
+      "delta_a0_A": 0.0006972497,
+      "delta_ecoh_eV_per_atom": -0.001255959146,
+      "delta_ecoh_kJmol_per_atom": -0.121181635335,
+      "lattice_passed": true,
+      "energy_passed": true,
+      "preceding_interval_failed": true
+    },
+    {
+      "solid": "AlP",
+      "coarse_mesh": "k666",
+      "dense_mesh": "k777",
+      "delta_a0_A": 0.000898089,
+      "delta_ecoh_eV_per_atom": -0.002120779464,
+      "delta_ecoh_kJmol_per_atom": -0.204624110944,
+      "lattice_passed": true,
+      "energy_passed": true,
+      "preceding_interval_failed": true
+    },
+    {
+      "solid": "MgS",
+      "coarse_mesh": "k666",
+      "dense_mesh": "k777",
+      "delta_a0_A": -0.0022992458,
+      "delta_ecoh_eV_per_atom": -0.002541680121,
+      "delta_ecoh_kJmol_per_atom": -0.245234850626,
+      "lattice_passed": true,
+      "energy_passed": true,
+      "preceding_interval_failed": true,
+      "branch_policy": "user-approved cleaned physical SCC branch; rejected collapsed point excluded"
+    },
+    {
+      "solid": "LiF",
+      "coarse_mesh": "k888",
+      "dense_mesh": "k999",
+      "delta_a0_A": 0.0004733645,
+      "delta_ecoh_eV_per_atom": -0.000907105094,
+      "delta_ecoh_kJmol_per_atom": -0.087522336265,
+      "lattice_passed": true,
+      "energy_passed": true,
+      "preceding_interval_failed": true
+    },
+    {
+      "solid": "LiCl",
+      "coarse_mesh": "k777",
+      "dense_mesh": "k888",
+      "delta_a0_A": 0.0053496525,
+      "delta_ecoh_eV_per_atom": -0.000570211055,
+      "delta_ecoh_kJmol_per_atom": -0.055017003022,
+      "lattice_passed": true,
+      "energy_passed": true,
+      "preceding_interval_failed": true
+    }
+  ],
+  "n_systems": 10,
+  "publication_status": "final_protocol_converged",
+  "schema_version": 2,
+  "selected_values": "lc10_final_selected_values.csv",
+  "sensitivity_data_policy": "available k101010 and denser endpoints are archived as sensitivity data and do not supersede the first passing adjacent pair",
+  "validation_archive": "validation/lc10_gxtb_final_adaptive_20260716"
+}
+

@@ -1,0 +1,74 @@
+{
+  "campaign_fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+  "fit_scales": [
+    0.94,
+    0.95,
+    0.96,
+    0.97,
+    0.98,
+    1.0,
+    1.02
+  ],
+  "fits": [
+    {
+      "a_eos_A": "3.4587437043",
+      "energy_fit_hartree": "-319.025350630788",
+      "eos_mesh": "k111111",
+      "fit_rmse_hartree": "0.000103170566",
+      "fit_scales": [
+        "0.94000",
+        "0.95000",
+        "0.96000",
+        "0.97000",
+        "0.98000",
+        "1.00000",
+        "1.02000"
+      ],
+      "fit_scope": "local_refinement_bracket",
+      "fit_status": "quadratic",
+      "grid_min_a_A": "3.4492800000",
+      "grid_min_energy_hartree": "-319.025221028730",
+      "grid_min_scale": "0.96000",
+      "method": "GXTB",
+      "n_completed": 7,
+      "n_converged_raw": 7,
+      "n_explicit_excluded": 0,
+      "n_points": 7,
+      "n_requested": 7,
+      "n_unresolved_branch_candidates": 0,
+      "solid": "BN"
+    }
+  ],
+  "mesh": "k111111",
+  "outputs": [
+    "/home/kuehne88/work/lc10-k999-nine-speculative-20260715T1854/Goldzak12/runs/eos_k_convergence/GXTB/BN/k111111/BN_GXTB_independent_eos_minimum_k111111.out"
+  ],
+  "phase": "complete",
+  "records": [
+    {
+      "a0_A": "3.4587437043",
+      "atom_reference_source": "save_tblite_cli",
+      "campaign_stamp_sha256": "a81beb47cadc9d5a1cfd1cedd586f03c5cb278e850cee2b0b67cb88bd2f63bbd",
+      "ecoh_eV_per_atom": "7.046422827659",
+      "fit_energy_hartree": "-319.025350630788",
+      "fit_rmse_hartree": "0.000103170566",
+      "fit_status": "quadratic",
+      "input_sha256": "a36a54b278ef4ed5814d6e9131375840072e19cacb206bfe6be88f79aa274aff",
+      "lineage_sha256": "b73db1130d530db1889a691e9a283567710a120e633ea58a3c58f46813ad35f2",
+      "mesh": "k111111",
+      "mesh_n": 11,
+      "method": "GXTB",
+      "n_eos_points": "7",
+      "output_sha256": "cbed82330300bee0dbf72ed1017fe6fcac5122c0d66feb9b5bf79869e89894bb",
+      "solid": "BN",
+      "solid_energy_hartree": "-319.025298379092",
+      "structure": "zincblende",
+      "value_source": "single_point_at_own_independent_eos_minimum"
+    }
+  ],
+  "schema_version": 1,
+  "solids": [
+    "BN"
+  ],
+  "updated_at_utc": "2026-07-15T22:44:44.083846+00:00"
+}

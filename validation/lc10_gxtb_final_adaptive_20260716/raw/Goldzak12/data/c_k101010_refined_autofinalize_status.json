@@ -1,0 +1,74 @@
+{
+  "campaign_fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+  "fit_scales": [
+    0.94,
+    0.95,
+    0.96,
+    0.97,
+    0.98,
+    1.0,
+    1.02
+  ],
+  "fits": [
+    {
+      "a_eos_A": "3.4950058076",
+      "energy_fit_hartree": "-305.015941389257",
+      "eos_mesh": "k101010",
+      "fit_rmse_hartree": "0.000468266607",
+      "fit_scales": [
+        "0.94000",
+        "0.95000",
+        "0.96000",
+        "0.97000",
+        "0.98000",
+        "1.00000",
+        "1.02000"
+      ],
+      "fit_scope": "local_refinement_bracket",
+      "fit_status": "quadratic",
+      "grid_min_a_A": "3.4819400000",
+      "grid_min_energy_hartree": "-305.016054143815",
+      "grid_min_scale": "0.98000",
+      "method": "GXTB",
+      "n_completed": 7,
+      "n_converged_raw": 7,
+      "n_explicit_excluded": 0,
+      "n_points": 7,
+      "n_requested": 7,
+      "n_unresolved_branch_candidates": 0,
+      "solid": "C"
+    }
+  ],
+  "mesh": "k101010",
+  "outputs": [
+    "/home/kuehne88/work/lc10-k999-nine-speculative-20260715T1854/Goldzak12/runs/eos_k_convergence/GXTB/C/k101010/C_GXTB_independent_eos_minimum_k101010.out"
+  ],
+  "phase": "complete",
+  "records": [
+    {
+      "a0_A": "3.4950058076",
+      "atom_reference_source": "save_tblite_cli",
+      "campaign_stamp_sha256": "66295281db8be6abe3f737c7abd1c3c0f7b1c52a0aa618f8924da4a81a73b0b5",
+      "ecoh_eV_per_atom": "7.696142552813",
+      "fit_energy_hartree": "-305.015941389257",
+      "fit_rmse_hartree": "0.000468266607",
+      "fit_status": "quadratic",
+      "input_sha256": "b88b89529eee8b51b4904f67e3b8365f91d2801fc0cfc275d674532d1268e1b3",
+      "lineage_sha256": "5f303381f55fc3070955ca9596a196e8b710bdda977ff5554a9da32b40620d67",
+      "mesh": "k101010",
+      "mesh_n": 10,
+      "method": "GXTB",
+      "n_eos_points": "7",
+      "output_sha256": "79e851d854500f6bc4867aea6b9bd9655d8cd0b4cca66452717b2197694b8853",
+      "solid": "C",
+      "solid_energy_hartree": "-305.016138741633",
+      "structure": "diamond",
+      "value_source": "single_point_at_own_independent_eos_minimum"
+    }
+  ],
+  "schema_version": 1,
+  "solids": [
+    "C"
+  ],
+  "updated_at_utc": "2026-07-15T20:25:36.334009+00:00"
+}

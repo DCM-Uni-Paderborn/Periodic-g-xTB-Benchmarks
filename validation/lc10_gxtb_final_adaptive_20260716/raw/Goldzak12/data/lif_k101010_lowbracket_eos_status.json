@@ -1,0 +1,18 @@
+{
+  "campaign_fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+  "mesh": "k101010",
+  "outputs": [
+    "/home/kuehne88/work/lc10-k999-nine-speculative-20260715T1854/Goldzak12/runs/eos/GXTB/LiF/k101010/s0p91000/LiF_GXTB_eos_k101010_s0p91000.out",
+    "/home/kuehne88/work/lc10-k999-nine-speculative-20260715T1854/Goldzak12/runs/eos/GXTB/LiF/k101010/s0p93000/LiF_GXTB_eos_k101010_s0p93000.out"
+  ],
+  "phase": "complete",
+  "scales": [
+    0.91,
+    0.93
+  ],
+  "schema_version": 1,
+  "solids": [
+    "LiF"
+  ],
+  "updated_at_utc": "2026-07-16T07:21:31.394131+00:00"
+}

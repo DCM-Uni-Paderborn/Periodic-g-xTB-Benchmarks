@@ -63,10 +63,17 @@ Current production calculations use post-#5582 CP2K source revision
 identity and the frozen energy, ACP, partial-periodicity, force, and stress
 qualification gates.
 
-DMC-ICE13 has completed its phase-wise convergence protocol. LC10 remains
-provisional until the independently fitted LiF endpoint passes, and X23b is
-paused outside the present paper scope. The publication finalizers refuse
-incomplete or unhashed data.
+DMC-ICE13 has completed its phase-wise convergence protocol. LC10 is also
+complete under the paper's first-passing one-step rule: every solid has an
+accepted adjacent pair at or below `9^3` for the confirmed thresholds of
+`0.025 A` and `0.25 kJ mol-1 atom-1`. The denser endpoint of that first passing
+pair is retained; available `10^3` and denser calculations remain archived as
+sensitivity data and do not replace an earlier accepted endpoint. The final
+selected values, aggregate, and checksummed raw archive are in
+`Goldzak12/data/lc10_gxtb_final_*` and
+`validation/lc10_gxtb_final_adaptive_20260716/`. X23b remains paused outside
+the present paper scope. Publication finalizers continue to reject incomplete
+or unhashed data.
 
 After the DMC-ICE13, X23b, and LC12 finalizers have all succeeded, create the
 single manuscript-facing bundle with

@@ -1,0 +1,23 @@
+{
+  "campaign_fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+  "fit": {
+    "a_eos_A": "4.9451397264",
+    "classification": "isolated_wrong_scc_branch_user_approved_exclusion",
+    "energy_fit_hartree": "-2394.016410034221",
+    "eos_mesh": "k888",
+    "excluded_scale": "0.88000",
+    "fit_rmse_hartree": "0.002480039663",
+    "fit_status": "quadratic",
+    "method": "GXTB",
+    "n_completed": 10,
+    "n_converged_raw": 10,
+    "n_explicit_excluded": 1,
+    "n_requested": 11,
+    "n_unresolved_branch_candidates": 0,
+    "solid": "MgS"
+  },
+  "output": "/home/kuehne88/work/lc10-k888-mgs-diagnostic-20260715T1815/Goldzak12/runs/eos_k_convergence/GXTB/MgS/k888/MgS_GXTB_independent_eos_minimum_k888.out",
+  "phase": "complete",
+  "schema_version": 1,
+  "updated_at_utc": "2026-07-15T18:29:48.686861+00:00"
+}

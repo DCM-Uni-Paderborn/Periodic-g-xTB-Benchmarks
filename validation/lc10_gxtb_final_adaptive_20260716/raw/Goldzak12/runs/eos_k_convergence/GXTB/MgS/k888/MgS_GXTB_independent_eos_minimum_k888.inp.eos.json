@@ -1,0 +1,13 @@
+{
+  "a_eos_A": "4.9451397264",
+  "benchmark": "LC10 independent-EOS k convergence",
+  "energy_mesh": "k888",
+  "eos_mesh": "k888",
+  "fit_record_sha256": "3202ce7dd078c7568e7a1a05b6a6a0a1aa51eabdf1e4ecb4d03afd52df0873b4",
+  "fit_status": "quadratic",
+  "input_sha256": "3ea3981b841a5ddfc800a25e100b29e65267ba66159e3a96b27faa42b0939d9a",
+  "kpoint_mesh_contract": "CP2K native Bloch MACDONALD meshes with SPGLIB reduction for GFN1, GFN2, and GXTB (SYMMETRY T, FULL_GRID F, SYMMETRY_BACKEND SPGLIB, SYMMETRY_REDUCTION_METHOD SPGLIB); the GXTB interface expands the irreducible data to the complete mesh before save_tblite and folds the response back afterwards",
+  "method": "GXTB",
+  "schema_version": 1,
+  "solid": "MgS"
+}

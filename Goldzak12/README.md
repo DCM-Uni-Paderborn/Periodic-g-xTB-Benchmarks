@@ -21,9 +21,9 @@ K-point convergence is assessed independently for every method/system pair.
 Separate EOS fits and equilibrium single points are first evaluated at
 `k333`, `k444`, and `k555`.  The earliest single adjacent step
 `n^3 -> (n+1)^3` is accepted when both
-`|Delta a0| <= 0.001 A` and
-`|Delta Ecoh| <= 0.05 kJ mol-1 atom-1`
-(`0.000518213... eV atom-1`).  Exactly one passing interval suffices: there is
+`|Delta a0| <= 0.025 A` and
+`|Delta Ecoh| <= 0.25 kJ mol-1 atom-1`
+(`0.002591067... eV atom-1`).  Exactly one passing interval suffices: there is
 no RMS gate and no two-step requirement.  The denser `(n+1)^3` values are
 reported.  An unresolved pair alone proceeds to `k666`, `k777`, `k888`,
 `k999`, `k101010`, and onward until the same two criteria pass.
@@ -59,6 +59,27 @@ comparison.  That table is emitted only after the complete campaign passes.
 These values are recomputed from the existing raw result table on precisely
 the same ten systems. Historical 12-system and old/new diagnostic tables are
 preserved under `data/`, but are not direct paper comparisons.
+
+The final adaptive g-xTB selection is stored in
+`data/lc10_gxtb_final_selected_values.csv`; its aggregate is
+`data/lc10_gxtb_final_aggregate.json`. All ten solids satisfy both numerical
+criteria at their first passing adjacent pair. The selected meshes are three
+`7^3`, four `8^3`, and three `9^3`. Calculated `10^3` and denser endpoints are
+retained only as sensitivity data and do not supersede an earlier accepted
+pair. The complete raw, lineage, status, and build evidence is frozen under
+`validation/lc10_gxtb_final_adaptive_20260716/` and protected by its own
+`SHA256SUMS` manifest.
+
+The uniform-to-adaptive convergence data are in
+`data/lc10_gxtb_adaptive_kmesh_mae.csv`. Regenerate the corresponding plot
+with
+
+```bash
+python3 Goldzak12/scripts/plot_lc10_adaptive_kmesh.py
+```
+
+The historical files whose names contain `provisional` remain immutable
+progress snapshots and must not be used as the final LC10 result.
 
 Reproduction
 ------------

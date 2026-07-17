@@ -1,0 +1,70 @@
+{
+  "campaign_fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+  "fit_scales": [
+    0.94,
+    0.95,
+    0.96,
+    0.97,
+    0.98
+  ],
+  "fits": [
+    {
+      "a_eos_A": "4.8513482687",
+      "energy_fit_hartree": "-1871.546391549929",
+      "eos_mesh": "k999",
+      "fit_rmse_hartree": "0.000028231488",
+      "fit_scales": [
+        "0.94000",
+        "0.95000",
+        "0.96000",
+        "0.97000",
+        "0.98000"
+      ],
+      "fit_scope": "local_refinement_bracket",
+      "fit_status": "quadratic",
+      "grid_min_a_A": "4.8691200000",
+      "grid_min_energy_hartree": "-1871.546320014003",
+      "grid_min_scale": "0.96000",
+      "method": "GXTB",
+      "n_completed": 5,
+      "n_converged_raw": 5,
+      "n_explicit_excluded": 0,
+      "n_points": 5,
+      "n_requested": 5,
+      "n_unresolved_branch_candidates": 0,
+      "solid": "LiCl"
+    }
+  ],
+  "mesh": "k999",
+  "outputs": [
+    "/home/kuehne88/work/lc10-k999-nine-speculative-20260715T1854/Goldzak12/runs/eos_k_convergence/GXTB/LiCl/k999/LiCl_GXTB_independent_eos_minimum_k999.out"
+  ],
+  "phase": "complete",
+  "records": [
+    {
+      "a0_A": "4.8513482687",
+      "atom_reference_source": "save_tblite_cli",
+      "campaign_stamp_sha256": "361d52d8dee13f439c91cb4d0b89664c4a0a1d2147ca6211bbd3fd244abc5a42",
+      "ecoh_eV_per_atom": "3.912183075614",
+      "fit_energy_hartree": "-1871.546391549929",
+      "fit_rmse_hartree": "0.000028231488",
+      "fit_status": "quadratic",
+      "input_sha256": "14f634d12bcd779c2b9f8041ca97ea53f9b3a7f0c520b0a344b5a98348d861e0",
+      "lineage_sha256": "444e06ae058ff04ac54925b2e13fb3b498068e8b47ac0c4666a55bc11585a201",
+      "mesh": "k999",
+      "mesh_n": 9,
+      "method": "GXTB",
+      "n_eos_points": "5",
+      "output_sha256": "a506d2141b1253fbc481dce7f4647c8354eb077e88fc9a5050cc4ff17fa56170",
+      "solid": "LiCl",
+      "solid_energy_hartree": "-1871.546424428822",
+      "structure": "rocksalt",
+      "value_source": "single_point_at_own_independent_eos_minimum"
+    }
+  ],
+  "schema_version": 1,
+  "solids": [
+    "LiCl"
+  ],
+  "updated_at_utc": "2026-07-15T20:59:51.037089+00:00"
+}

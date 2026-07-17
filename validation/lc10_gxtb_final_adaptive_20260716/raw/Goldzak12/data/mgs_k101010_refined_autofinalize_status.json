@@ -1,0 +1,70 @@
+{
+  "campaign_fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+  "fit_scales": [
+    0.92,
+    0.94,
+    0.95,
+    0.96,
+    0.98
+  ],
+  "fits": [
+    {
+      "a_eos_A": "4.9220680458",
+      "energy_fit_hartree": "-2394.015411079943",
+      "eos_mesh": "k101010",
+      "fit_rmse_hartree": "0.000403857981",
+      "fit_scales": [
+        "0.92000",
+        "0.94000",
+        "0.95000",
+        "0.96000",
+        "0.98000"
+      ],
+      "fit_scope": "local_refinement_bracket",
+      "fit_status": "quadratic",
+      "grid_min_a_A": "4.9286000000",
+      "grid_min_energy_hartree": "-2394.015390325256",
+      "grid_min_scale": "0.95000",
+      "method": "GXTB",
+      "n_completed": 5,
+      "n_converged_raw": 5,
+      "n_explicit_excluded": 0,
+      "n_points": 5,
+      "n_requested": 5,
+      "n_unresolved_branch_candidates": 0,
+      "solid": "MgS"
+    }
+  ],
+  "mesh": "k101010",
+  "outputs": [
+    "/home/kuehne88/work/lc10-k888-mgs-diagnostic-20260715T1815/Goldzak12/runs/eos_k_convergence/GXTB/MgS/k101010/MgS_GXTB_independent_eos_minimum_k101010.out"
+  ],
+  "phase": "complete",
+  "records": [
+    {
+      "a0_A": "4.9220680458",
+      "atom_reference_source": "save_tblite_cli",
+      "campaign_stamp_sha256": "0711f7b74b1bc387798317795e7d9833f9518ae14b5eeeb803b48408f791b9cc",
+      "ecoh_eV_per_atom": "4.838331190236",
+      "fit_energy_hartree": "-2394.015411079943",
+      "fit_rmse_hartree": "0.000403857981",
+      "fit_status": "quadratic",
+      "input_sha256": "df18e025c898b8cbe3d57b7fd1d9ad3a09b52fd492ce9105923d8f3d5e1d1c48",
+      "lineage_sha256": "5eb0a1abbe565e542b595b02ad08243e8154cd892676e635c5ad42751f5d4918",
+      "mesh": "k101010",
+      "mesh_n": 10,
+      "method": "GXTB",
+      "n_eos_points": "5",
+      "output_sha256": "bdaadfff0545d6dd22b8269f4fad6f59adb42a6f0d3d739353b11f528f4641ed",
+      "solid": "MgS",
+      "solid_energy_hartree": "-2394.015513747862",
+      "structure": "rocksalt",
+      "value_source": "single_point_at_own_independent_eos_minimum"
+    }
+  ],
+  "schema_version": 1,
+  "solids": [
+    "MgS"
+  ],
+  "updated_at_utc": "2026-07-15T22:05:50.424987+00:00"
+}

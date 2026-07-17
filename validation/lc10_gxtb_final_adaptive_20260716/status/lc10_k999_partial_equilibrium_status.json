@@ -1,0 +1,20 @@
+{
+  "campaign_fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+  "fits": [
+    "C",
+    "SiC",
+    "BN",
+    "BP",
+    "AlN"
+  ],
+  "outputs": [
+    "/home/kuehne88/work/lc10-k999-nine-speculative-20260715T1854/Goldzak12/runs/eos_k_convergence/GXTB/C/k999/C_GXTB_independent_eos_minimum_k999.out",
+    "/home/kuehne88/work/lc10-k999-nine-speculative-20260715T1854/Goldzak12/runs/eos_k_convergence/GXTB/SiC/k999/SiC_GXTB_independent_eos_minimum_k999.out",
+    "/home/kuehne88/work/lc10-k999-nine-speculative-20260715T1854/Goldzak12/runs/eos_k_convergence/GXTB/BN/k999/BN_GXTB_independent_eos_minimum_k999.out",
+    "/home/kuehne88/work/lc10-k999-nine-speculative-20260715T1854/Goldzak12/runs/eos_k_convergence/GXTB/BP/k999/BP_GXTB_independent_eos_minimum_k999.out",
+    "/home/kuehne88/work/lc10-k999-nine-speculative-20260715T1854/Goldzak12/runs/eos_k_convergence/GXTB/AlN/k999/AlN_GXTB_independent_eos_minimum_k999.out"
+  ],
+  "phase": "complete",
+  "schema_version": 1,
+  "updated_at_utc": "2026-07-15T18:36:04.376422+00:00"
+}

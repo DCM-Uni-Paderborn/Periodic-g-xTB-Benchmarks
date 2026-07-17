@@ -1,0 +1,3359 @@
+{
+  "artifact": "LC10 provisional k666-to-k777 decisions",
+  "benchmark": "LC10",
+  "campaign_identity": {
+    "campaign_id": "gxtb-pbc-v1-post5582-20260714",
+    "cp2k_cmake_cache_sha256": "34ce77b797fa397b9f0ece2b3e3801d4769010a5fdf096ceb616be1f6b8048d6",
+    "cp2k_embedded_source_revision": "28df9380ab",
+    "cp2k_executable_sha256": "86949402a326e3118551fea079dd2b79df331087b47cb355b8803964f15deb89",
+    "cp2k_loaded_library_sha256": "f0f4cadba1ea416c29c809d949412eea72be463c9528febc64665c48c1dd60ba",
+    "cp2k_source_revision": "28df9380abb327d56bbf216d2469a1fd8c953fc0",
+    "dependency_lock_sha256": "f80b045dd5bae175d16d035433b0507ab72c755973f081f9a1df891c4f36e191",
+    "fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+    "save_tblite_cmake_cache_sha256": "a2d2d0584dc9b4792c87426b06e09f7d12219c71b907ca6cd85bebbdc1690ab1",
+    "save_tblite_executable_sha256": "949fe2199ab9fa735653279d49a2f0b270af003e60d272ba2517cce88333db75",
+    "save_tblite_library_sha256": "8ac8c98f462c6b29a2350ed341bf310addbc4692b0f6339a28ecb26c996c13a4",
+    "save_tblite_source_revision": "257ba442684c39454175e5192c8a2342b4c6380f",
+    "schema": 1
+  },
+  "campaign_manifest": {
+    "path": "/home/kuehne88/work/codex-gxtb-post5582-clean-20260714/campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json",
+    "sha256": "b0feea6a411f02dedb1eb57190092e35d38f4c5705a985893d9f97070ddb1d51",
+    "size_bytes": 5553
+  },
+  "completed_count": 10,
+  "completed_solids": [
+    "C",
+    "Si",
+    "SiC",
+    "BN",
+    "BP",
+    "AlN",
+    "AlP",
+    "MgS",
+    "LiF",
+    "LiCl"
+  ],
+  "completed_subset_uniform_k777_metrics": {
+    "cohesive_eV_per_atom": {
+      "mae": 0.29642501043140007,
+      "maxae": 0.7966899393669999,
+      "me": 0.2319168971584002,
+      "rmse": 0.3513782724545442
+    },
+    "cohesive_kJmol_per_atom": {
+      "mae": 28.60066558112927,
+      "maxae": 76.86889339912472,
+      "me": 22.376578847335775,
+      "rmse": 33.902849318691615
+    },
+    "lattice_A": {
+      "mae": 0.14002726171000016,
+      "maxae": 0.2673569734000001,
+      "me": -0.13609629249000016,
+      "rmse": 0.16349903339814215
+    },
+    "n": 10
+  },
+  "completeness_status": "complete_10_of_10",
+  "decision_rule": "one_consecutive_step_AND_take_denser_endpoint",
+  "method": "GXTB",
+  "mixed_frontier_metrics": {
+    "cohesive_eV_per_atom": {
+      "mae": 0.29642501043140007,
+      "maxae": 0.7966899393669999,
+      "me": 0.2319168971584002,
+      "rmse": 0.3513782724545442
+    },
+    "cohesive_kJmol_per_atom": {
+      "mae": 28.60066558112927,
+      "maxae": 76.86889339912472,
+      "me": 22.376578847335775,
+      "rmse": 33.902849318691615
+    },
+    "lattice_A": {
+      "mae": 0.14002726171000016,
+      "maxae": 0.2673569734000001,
+      "me": -0.13609629249000016,
+      "rmse": 0.16349903339814215
+    },
+    "n": 10
+  },
+  "mixed_frontier_values": [
+    {
+      "a0_A": "3.4962900565",
+      "ecoh_eV_per_atom": "7.703307989589",
+      "mesh": "k777",
+      "solid": "C"
+    },
+    {
+      "a0_A": "5.2753011383",
+      "ecoh_eV_per_atom": "5.007997190938",
+      "mesh": "k777",
+      "solid": "Si"
+    },
+    {
+      "a0_A": "4.3666548461",
+      "ecoh_eV_per_atom": "6.592141656370",
+      "mesh": "k777",
+      "solid": "SiC"
+    },
+    {
+      "a0_A": "3.4762888192",
+      "ecoh_eV_per_atom": "7.053889296168",
+      "mesh": "k777",
+      "solid": "BN"
+    },
+    {
+      "a0_A": "4.4623797335",
+      "ecoh_eV_per_atom": "5.275678765700",
+      "mesh": "k777",
+      "solid": "BP"
+    },
+    {
+      "a0_A": "4.3033279759",
+      "ecoh_eV_per_atom": "5.527459433635",
+      "mesh": "k777",
+      "solid": "AlN"
+    },
+    {
+      "a0_A": "5.1806430266",
+      "ecoh_eV_per_atom": "4.453536947280",
+      "mesh": "k777",
+      "solid": "AlP"
+    },
+    {
+      "a0_A": "4.9449501531",
+      "ecoh_eV_per_atom": "4.836689939367",
+      "mesh": "k777",
+      "solid": "MgS"
+    },
+    {
+      "a0_A": "3.7753825512",
+      "ecoh_eV_per_atom": "4.815613887984",
+      "mesh": "k777",
+      "solid": "LiF"
+    },
+    {
+      "a0_A": "4.8458187747",
+      "ecoh_eV_per_atom": "3.912853864553",
+      "mesh": "k777",
+      "solid": "LiCl"
+    }
+  ],
+  "pending_solids": [],
+  "publication_status": "provisional",
+  "required_count": 10,
+  "required_solids": [
+    "C",
+    "Si",
+    "SiC",
+    "BN",
+    "BP",
+    "AlN",
+    "AlP",
+    "MgS",
+    "LiF",
+    "LiCl"
+  ],
+  "rows": [
+    {
+      "abs_delta_a0_A": "0.0022064683",
+      "abs_delta_ecoh_kJmol_per_atom": "1.8046851650",
+      "both_passed": false,
+      "coarse_a0_A": "3.4940835882",
+      "coarse_ecoh_eV_per_atom": "7.722012233284",
+      "coarse_mesh": "k666",
+      "delta_a0_dense_minus_coarse_A": "0.0022064683",
+      "delta_ecoh_dense_minus_coarse_eV_per_atom": "-0.018704243695",
+      "delta_ecoh_dense_minus_coarse_kJmol_per_atom": "-1.8046851650",
+      "dense_a0_A": "3.4962900565",
+      "dense_ecoh_eV_per_atom": "7.703307989589",
+      "dense_mesh": "k777",
+      "ecoh_passed": false,
+      "equilibrium_sources": {
+        "k666": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/C/k666/C_GXTB_independent_eos_minimum_k666.out.job.json",
+            "sha256": "64c027499e129550d8c3a22c2ff39e6cb2b3bd29e2b3358a2b1c58c510de49a0",
+            "size_bytes": 1678
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/C/k666/C_GXTB_independent_eos_minimum_k666.inp",
+            "sha256": "2e7853ed311481e4eb8ff3760460f3e1c7ed5ca0de0c55d5626dbc79625e3520",
+            "size_bytes": 1517
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/C/k666/C_GXTB_independent_eos_minimum_k666.inp.eos.json",
+            "sha256": "e95a0939ab6a8b6185242af3ae08b663313bf1720d9609962d0d468a3c514120",
+            "size_bytes": 721
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/C/k666/C_GXTB_independent_eos_minimum_k666.out",
+            "sha256": "ae11f0efdfd4d490d0bc04dc08f2787f569ebd48d08bf24390d04fcd624951dd",
+            "size_bytes": 20906
+          }
+        },
+        "k777": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/C/k777/C_GXTB_independent_eos_minimum_k777.out.job.json",
+            "sha256": "43a81c07d6423f7e185600e1fad74d0edb4be94fd2c7bb489a6f0e3b3866a5df",
+            "size_bytes": 1672
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/C/k777/C_GXTB_independent_eos_minimum_k777.inp",
+            "sha256": "23451c90e5c1eb12cc8c2f1c7f107de1fef7972794a6e164357973d5743d1c8a",
+            "size_bytes": 1481
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/C/k777/C_GXTB_independent_eos_minimum_k777.inp.eos.json",
+            "sha256": "a809be89f1329f4cdc64b0499dc4d0477b8c71969b3193d2dca09a79748e6fce",
+            "size_bytes": 721
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/C/k777/C_GXTB_independent_eos_minimum_k777.out",
+            "sha256": "5a0b203947aa75517cfcd278e85c19edb1634fcd2c9cc07997cd078bcd007ee1",
+            "size_bytes": 20894
+          }
+        }
+      },
+      "fit_records": {
+        "k666": {
+          "record": {
+            "a_eos_A": "3.4940835882",
+            "a_exp_A": "3.553",
+            "energy_fit_hartree": "-305.031758529153",
+            "eos_mesh": "k666",
+            "fit_rmse_hartree": "0.006884108337",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "3.4819400000",
+            "grid_min_energy_hartree": "-305.023854041318",
+            "grid_min_scale": "0.98000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "C",
+            "structure": "diamond",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "ffae565d215b33718008ff2fa5cfff6f802567aa7bd91aabb3e0fa6d69018082"
+        },
+        "k777": {
+          "record": {
+            "a_eos_A": "3.4962900565",
+            "a_exp_A": "3.553",
+            "energy_fit_hartree": "-305.026342351782",
+            "eos_mesh": "k777",
+            "fit_rmse_hartree": "0.006902854670",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "3.4819400000",
+            "grid_min_energy_hartree": "-305.018265732937",
+            "grid_min_scale": "0.98000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "C",
+            "structure": "diamond",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "3495aa6a26ad8c3eef7073f820919465a997ee12d335fb2ee39fbcc1b3b2037b"
+        }
+      },
+      "k777_eos_sources": [
+        {
+          "a_A": "2.9134600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s0p82000/C_GXTB_eos_k777_s0p82000.out.job.json",
+            "sha256": "917a9642be30c4188fe316b89952078f03991d9683a72ee56cc5a967e57cc054",
+            "size_bytes": 1662
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-303.885258850023",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s0p82000/C_GXTB_eos_k777_s0p82000.out",
+            "sha256": "db8cdc6ec28666facd0ccccc5034f53ad152fcb74adbb2222512e6c34d3e5d2c",
+            "size_bytes": 20815
+          },
+          "scale": 0.82,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.1266400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s0p88000/C_GXTB_eos_k777_s0p88000.out.job.json",
+            "sha256": "0d0b4e2566ab6f019db83d276ea301227fdf60106715ad6e349d9fafae98b946",
+            "size_bytes": 1662
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-304.673084796367",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s0p88000/C_GXTB_eos_k777_s0p88000.out",
+            "sha256": "d9a84be7d2bccd53d57aca35fcb01745f05755cce41dd464fc3d396874586906",
+            "size_bytes": 20896
+          },
+          "scale": 0.88,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.3398200000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s0p94000/C_GXTB_eos_k777_s0p94000.out.job.json",
+            "sha256": "077af62262c5d33ad58260a444fbb9301e850dc66dfd9be87311178fb6c1aecb",
+            "size_bytes": 1662
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-304.972930808492",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s0p94000/C_GXTB_eos_k777_s0p94000.out",
+            "sha256": "96d809e5df528325da928e7fd2c2d69af19b7facada2027dccd741fa849b76ce",
+            "size_bytes": 20896
+          },
+          "scale": 0.94,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.4819400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s0p98000/C_GXTB_eos_k777_s0p98000.out.job.json",
+            "sha256": "0e567b0879a0991e3e8267d7c257702bc424ee2cc376898366e6e8a48e0b446e",
+            "size_bytes": 1662
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-305.018265732937",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s0p98000/C_GXTB_eos_k777_s0p98000.out",
+            "sha256": "d2482cefc8728740e5d2953edff85291f4a93272acdf3059d0be96762cb501c2",
+            "size_bytes": 20896
+          },
+          "scale": 0.98,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.5530000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p00000/C_GXTB_eos_k777_s1p00000.out.job.json",
+            "sha256": "1c1c4615f673e0d683dc1303096f2737e0d2bd155f0e7249d4840082f818ff30",
+            "size_bytes": 1662
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-305.011735198120",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p00000/C_GXTB_eos_k777_s1p00000.out",
+            "sha256": "9b40ff7392d3c75ed17461e9836a59b32272d43c5ce19fee17f8403fee41d9ed",
+            "size_bytes": 20896
+          },
+          "scale": 1.0,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.6240600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p02000/C_GXTB_eos_k777_s1p02000.out.job.json",
+            "sha256": "53fc0fbbd020ce39cac2b67d9b40d497aac69b4d4eba77cbc5c8217de2d6b8e6",
+            "size_bytes": 1662
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-304.991193614333",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p02000/C_GXTB_eos_k777_s1p02000.out",
+            "sha256": "7816b8c4c1fe837d810791539372adb1bb1ea86b7874483d3a005965f2e06678",
+            "size_bytes": 20896
+          },
+          "scale": 1.02,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.7661800000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p06000/C_GXTB_eos_k777_s1p06000.out.job.json",
+            "sha256": "dda1bbbe16be5506b06761eee2420020febca379a670bb81eab2d2460bdbf60c",
+            "size_bytes": 1662
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-304.920196576087",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p06000/C_GXTB_eos_k777_s1p06000.out",
+            "sha256": "92a131951140b76f68af4cd0f8bbc0504d5d49cfa209f8663453b091d6b07067",
+            "size_bytes": 20977
+          },
+          "scale": 1.06,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.9793600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p12000/C_GXTB_eos_k777_s1p12000.out.job.json",
+            "sha256": "d605bdf709503224a91d06812bf96218c4185bada59b9f434640bc90c2ad5b83",
+            "size_bytes": 1662
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-304.770297489322",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p12000/C_GXTB_eos_k777_s1p12000.out",
+            "sha256": "e6665721b9babc26694891d1e63fe8007aa078c554093f2c90bdc3f1b67e247f",
+            "size_bytes": 20977
+          },
+          "scale": 1.12,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.2636000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p20000/C_GXTB_eos_k777_s1p20000.out.job.json",
+            "sha256": "802f35ace4d68aaa7de476fada1a20b203cd4cbb75df5b46d107565e5631724f",
+            "size_bytes": 1662
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-304.535353072725",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p20000/C_GXTB_eos_k777_s1p20000.out",
+            "sha256": "769e9c73b067be86bf184ebdad8dab07b64c290d9510a95ccc14f2497f2eb661",
+            "size_bytes": 20977
+          },
+          "scale": 1.2,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.6189000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p30000/C_GXTB_eos_k777_s1p30000.out.job.json",
+            "sha256": "959383dace0f0e54a9a60a5815dba7b2855963967f9882f0b4c33e19d52b28b2",
+            "size_bytes": 1662
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-304.222635315939",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p30000/C_GXTB_eos_k777_s1p30000.out",
+            "sha256": "a3ad475d8c26d7dc5d526bd319537adb41da442655edc9bbcdac1d389ccb9840",
+            "size_bytes": 20977
+          },
+          "scale": 1.3,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.1518500000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p45000/C_GXTB_eos_k777_s1p45000.out.job.json",
+            "sha256": "ecdb117b5658c776b74531178789ead778e7c9eb7b3d19f4770033953e18ac36",
+            "size_bytes": 1662
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-303.758406374731",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/C/k777/s1p45000/C_GXTB_eos_k777_s1p45000.out",
+            "sha256": "9ae7c7f5b3d5d5edb9d6bf260971f7dbb35929111a309c0535681acd6dc7a682",
+            "size_bytes": 21058
+          },
+          "scale": 1.45,
+          "valid_for_fit": true
+        }
+      ],
+      "lattice_passed": false,
+      "method": "GXTB",
+      "solid": "C",
+      "verdict": "unresolved_require_k888"
+    },
+    {
+      "abs_delta_a0_A": "0.0008743861",
+      "abs_delta_ecoh_kJmol_per_atom": "0.2014478112",
+      "both_passed": false,
+      "coarse_a0_A": "5.2744267522",
+      "coarse_ecoh_eV_per_atom": "5.010085050375",
+      "coarse_mesh": "k666",
+      "delta_a0_dense_minus_coarse_A": "0.0008743861",
+      "delta_ecoh_dense_minus_coarse_eV_per_atom": "-0.002087859437",
+      "delta_ecoh_dense_minus_coarse_kJmol_per_atom": "-0.2014478112",
+      "dense_a0_A": "5.2753011383",
+      "dense_ecoh_eV_per_atom": "5.007997190938",
+      "dense_mesh": "k777",
+      "ecoh_passed": false,
+      "equilibrium_sources": {
+        "k666": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/Si/k666/Si_GXTB_independent_eos_minimum_k666.out.job.json",
+            "sha256": "4af87bbedc11d1ce2797378c926617f2ea7ae0052c525a3b329529660d40a785",
+            "size_bytes": 1680
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/Si/k666/Si_GXTB_independent_eos_minimum_k666.inp",
+            "sha256": "5cc3867472835bc82ae86b8767a8b3a1155354ec147473f54a30be7b67c64585",
+            "size_bytes": 1518
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/Si/k666/Si_GXTB_independent_eos_minimum_k666.inp.eos.json",
+            "sha256": "e0575c206842d1e4c5a30bfce927d44f9940ada57e984cfab926cfbcd69e3a14",
+            "size_bytes": 722
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/Si/k666/Si_GXTB_independent_eos_minimum_k666.out",
+            "sha256": "27b392cc1cdf08df35e74c66f00291912f314f2784250a39c43a56403937aac7",
+            "size_bytes": 21070
+          }
+        },
+        "k777": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/Si/k777/Si_GXTB_independent_eos_minimum_k777.out.job.json",
+            "sha256": "51bf3d8b325bb51c67849994e5ce610ca25947b6a570e20c520ad3af963a02b8",
+            "size_bytes": 1674
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/Si/k777/Si_GXTB_independent_eos_minimum_k777.inp",
+            "sha256": "f4d2d2cae2539cb70c9b82c40fb46910435282134fa94f0e0cfbaaa664ae7701",
+            "size_bytes": 1482
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/Si/k777/Si_GXTB_independent_eos_minimum_k777.inp.eos.json",
+            "sha256": "26f71f2efec92da719d7afe9e5efc1fd04652f9a70be3e1829e84dffd05b99b3",
+            "size_bytes": 722
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/Si/k777/Si_GXTB_independent_eos_minimum_k777.out",
+            "sha256": "ba3d1f6a67bb44121adc45748d350aa4d02900bc6e0ae8cd33989b6bd37105d2",
+            "size_bytes": 21058
+          }
+        }
+      },
+      "fit_records": {
+        "k666": {
+          "record": {
+            "a_eos_A": "5.2744267522",
+            "a_exp_A": "5.421",
+            "energy_fit_hartree": "-2316.259077817289",
+            "eos_mesh": "k666",
+            "fit_rmse_hartree": "0.003762207962",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "5.3125800000",
+            "grid_min_energy_hartree": "-2316.253964951889",
+            "grid_min_scale": "0.98000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "Si",
+            "structure": "diamond",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "86f132b78d9f03709bd5ccaea40022f56cd6a749f9da3407e2b8119dec181431"
+        },
+        "k777": {
+          "record": {
+            "a_eos_A": "5.2753011383",
+            "a_exp_A": "5.421",
+            "energy_fit_hartree": "-2316.258497370839",
+            "eos_mesh": "k777",
+            "fit_rmse_hartree": "0.003769379630",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "5.3125800000",
+            "grid_min_energy_hartree": "-2316.253419871984",
+            "grid_min_scale": "0.98000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "Si",
+            "structure": "diamond",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "22f46cce91f1b9d1f824a139db937e3eb85d8a300296d11dd4a6ccf2cb242246"
+        }
+      },
+      "k777_eos_sources": [
+        {
+          "a_A": "4.4452200000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s0p82000/Si_GXTB_eos_k777_s0p82000.out.job.json",
+            "sha256": "f216b019071b5116340715264b4df4857cd7dcd70467181c41c86abfc4071923",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2315.636512814202",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s0p82000/Si_GXTB_eos_k777_s0p82000.out",
+            "sha256": "51c1282e4916cfbb27b76c31563f5071649ec28fcca921336b7125a67efafd91",
+            "size_bytes": 20979
+          },
+          "scale": 0.82,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.7704800000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s0p88000/Si_GXTB_eos_k777_s0p88000.out.job.json",
+            "sha256": "1a79940342e71ba2dad4bf925fa7f6b16c8a22d8ff8f5b301c68388643218a1c",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2316.082784530756",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s0p88000/Si_GXTB_eos_k777_s0p88000.out",
+            "sha256": "7aa9c83992ff3cd18b2687ac1f129cd7266fe412761ec35e125a3b2ea9c41f04",
+            "size_bytes": 21060
+          },
+          "scale": 0.88,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.0957400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s0p94000/Si_GXTB_eos_k777_s0p94000.out.job.json",
+            "sha256": "b2d7b0d43e3ba77d8f14eff1476b754b8989b094c6d9fc2e54dcd9b69bbe90ba",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2316.241597673797",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s0p94000/Si_GXTB_eos_k777_s0p94000.out",
+            "sha256": "22030bb2b0d89f23f92b217249963e10f7dc5cdd97ff19acd6c73aff0fffcbdb",
+            "size_bytes": 21060
+          },
+          "scale": 0.94,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.3125800000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s0p98000/Si_GXTB_eos_k777_s0p98000.out.job.json",
+            "sha256": "417bb2bf480d4313192e40fb5f8c5e5429afa391222202c7466f45c41d8b3540",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2316.253419871984",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s0p98000/Si_GXTB_eos_k777_s0p98000.out",
+            "sha256": "46dd66c204f49583f42da5302c9bfd98e7bdf833ca5cffc39782a4738a9ec93a",
+            "size_bytes": 21060
+          },
+          "scale": 0.98,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.4210000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p00000/Si_GXTB_eos_k777_s1p00000.out.job.json",
+            "sha256": "8c074daa016f930f109ce9f51aa6594fe6beef3f7a0f7be9e17dca7471535456",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2316.240506521756",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p00000/Si_GXTB_eos_k777_s1p00000.out",
+            "sha256": "d9e8faec760dc13c766c95e4b19279da785f8119fcd6692e727b69a12887f298",
+            "size_bytes": 21141
+          },
+          "scale": 1.0,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.5294200000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p02000/Si_GXTB_eos_k777_s1p02000.out.job.json",
+            "sha256": "3ea8353f49898adb39b1ffc1accf8d9d77d746a1c2afa0670730b398edcc6439",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2316.217995511835",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p02000/Si_GXTB_eos_k777_s1p02000.out",
+            "sha256": "8565a17a703dcb51f15c55a8cd9b887421bb1e76a35e97bc3543f90a5e08442d",
+            "size_bytes": 21141
+          },
+          "scale": 1.02,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.7462600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p06000/Si_GXTB_eos_k777_s1p06000.out.job.json",
+            "sha256": "def370636f8d5f7b37c4cd9b9467ba8905aacdadb82611ae763a3b357e96ad26",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2316.151406056858",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p06000/Si_GXTB_eos_k777_s1p06000.out",
+            "sha256": "89bfd9e57a67764d5d1f3c028def88eb726827e9c6f85633f862877c0c1c24fe",
+            "size_bytes": 21141
+          },
+          "scale": 1.06,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "6.0715200000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p12000/Si_GXTB_eos_k777_s1p12000.out.job.json",
+            "sha256": "fb25c6610e79c88d47c2467fe9b63fb42a73ab7ae432ce389f33f6e965d96cbe",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2316.016357769583",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p12000/Si_GXTB_eos_k777_s1p12000.out",
+            "sha256": "d170608d43ee1c388198cb646493399e21cbce5fd3bb57c1f990574b71b54c6e",
+            "size_bytes": 21060
+          },
+          "scale": 1.12,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "6.5052000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p20000/Si_GXTB_eos_k777_s1p20000.out.job.json",
+            "sha256": "c18e2b7cdbe58c75ef87e54f793273270ad386888e175b257f6aa55d4640006b",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2315.804176962306",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p20000/Si_GXTB_eos_k777_s1p20000.out",
+            "sha256": "ae8d957927ac403079740c92be68141da9422cd0f43ea611436752299158f3ed",
+            "size_bytes": 21060
+          },
+          "scale": 1.2,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "7.0473000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p30000/Si_GXTB_eos_k777_s1p30000.out.job.json",
+            "sha256": "0955d2d1090960a9520e7ede55004817292988de6db618dd76f2aa6cf3580a7a",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2315.541351271703",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p30000/Si_GXTB_eos_k777_s1p30000.out",
+            "sha256": "3bfec74b9f32fa0ea246787f5d3484dc6d2e5f26e3199b86b3af18d024503939",
+            "size_bytes": 21060
+          },
+          "scale": 1.3,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "7.8604500000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p45000/Si_GXTB_eos_k777_s1p45000.out.job.json",
+            "sha256": "2b674b427f220c99a4f28bf494ac088574ffa64b8b324e4b5ac0441101e03259",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2315.182630611822",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/Si/k777/s1p45000/Si_GXTB_eos_k777_s1p45000.out",
+            "sha256": "f2584fa33bc05bf33d6b5bd9ebdb3a39f77db0be7a550d5a58e087a1faab51a2",
+            "size_bytes": 20979
+          },
+          "scale": 1.45,
+          "valid_for_fit": true
+        }
+      ],
+      "lattice_passed": true,
+      "method": "GXTB",
+      "solid": "Si",
+      "verdict": "unresolved_require_k888"
+    },
+    {
+      "abs_delta_a0_A": "0.0013914354",
+      "abs_delta_ecoh_kJmol_per_atom": "0.5276991558",
+      "both_passed": false,
+      "coarse_a0_A": "4.3652634107",
+      "coarse_ecoh_eV_per_atom": "6.597610872718",
+      "coarse_mesh": "k666",
+      "delta_a0_dense_minus_coarse_A": "0.0013914354",
+      "delta_ecoh_dense_minus_coarse_eV_per_atom": "-0.005469216348",
+      "delta_ecoh_dense_minus_coarse_kJmol_per_atom": "-0.5276991558",
+      "dense_a0_A": "4.3666548461",
+      "dense_ecoh_eV_per_atom": "6.592141656370",
+      "dense_mesh": "k777",
+      "ecoh_passed": false,
+      "equilibrium_sources": {
+        "k666": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/SiC/k666/SiC_GXTB_independent_eos_minimum_k666.out.job.json",
+            "sha256": "29b4e516957917a5b2de19a90347940b294248c9c3247a0bc2d81e616a928a72",
+            "size_bytes": 1682
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/SiC/k666/SiC_GXTB_independent_eos_minimum_k666.inp",
+            "sha256": "8d3cbbbb779c1d6be07d06970ab39cf2ea0930eccaf609be42707160a62f507c",
+            "size_bytes": 1519
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/SiC/k666/SiC_GXTB_independent_eos_minimum_k666.inp.eos.json",
+            "sha256": "de1828adc856bc5ec1a7900e3a430527d50bdf1d84bc85b9f5a4925dc169783e",
+            "size_bytes": 723
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/SiC/k666/SiC_GXTB_independent_eos_minimum_k666.out",
+            "sha256": "6b40da810dbb2a9b4dbf530d71704604b9c621105430d0fa0a985b57b64ad168",
+            "size_bytes": 21153
+          }
+        },
+        "k777": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/SiC/k777/SiC_GXTB_independent_eos_minimum_k777.out.job.json",
+            "sha256": "b795af2d34aa44e0793e5677c908d61f19a88a3a814c85b99424500fd6fe84ec",
+            "size_bytes": 1676
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/SiC/k777/SiC_GXTB_independent_eos_minimum_k777.inp",
+            "sha256": "e496c800859264e96f81952aa6b51bd9753074e10695b340aececcf9c3f51031",
+            "size_bytes": 1483
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/SiC/k777/SiC_GXTB_independent_eos_minimum_k777.inp.eos.json",
+            "sha256": "91bb581ea9278799f8ec0538ab40f31afc5d13b185153eeef59cd06b4a7db7f4",
+            "size_bytes": 723
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/SiC/k777/SiC_GXTB_independent_eos_minimum_k777.out",
+            "sha256": "77dc807dcde4783467a91f122e3539e6a69a7a41ca2a7077c4ba9b731f0bc1de",
+            "size_bytes": 21141
+          }
+        }
+      },
+      "fit_records": {
+        "k666": {
+          "record": {
+            "a_eos_A": "4.3652634107",
+            "a_exp_A": "4.347",
+            "energy_fit_hartree": "-1310.708923385978",
+            "eos_mesh": "k666",
+            "fit_rmse_hartree": "0.002570120981",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "4.3470000000",
+            "grid_min_energy_hartree": "-1310.708443286424",
+            "grid_min_scale": "1.00000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "SiC",
+            "structure": "zincblende",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "39e65b43e2a19bed68579847ba3607d7a7c5cfff2fc0a8e69a007c4b955f8010"
+        },
+        "k777": {
+          "record": {
+            "a_eos_A": "4.3666548461",
+            "a_exp_A": "4.347",
+            "energy_fit_hartree": "-1310.707385705138",
+            "eos_mesh": "k777",
+            "fit_rmse_hartree": "0.002574862116",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "4.3470000000",
+            "grid_min_energy_hartree": "-1310.706846036003",
+            "grid_min_scale": "1.00000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "SiC",
+            "structure": "zincblende",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "faa98a448d5eff275bd7c8208e0cf05884239e515580649ca1539274ad6bce40"
+        }
+      },
+      "k777_eos_sources": [
+        {
+          "a_A": "3.5645400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s0p82000/SiC_GXTB_eos_k777_s0p82000.out.job.json",
+            "sha256": "d99c7ef722ef580c8f69e6890dff68eee0fd60e636111947aa428b78229cf68f",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1309.481966335400",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s0p82000/SiC_GXTB_eos_k777_s0p82000.out",
+            "sha256": "61d406f181fb6b2d97e3c02d5ee5843b0ed625ac3e4980b677bf23debbe4a3ff",
+            "size_bytes": 21062
+          },
+          "scale": 0.82,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.8253600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s0p88000/SiC_GXTB_eos_k777_s0p88000.out.job.json",
+            "sha256": "f1394be9bc67fcd1ff87d579dd146f2920ce14a68fb5a72df81b99a8b66319d4",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1310.268719467844",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s0p88000/SiC_GXTB_eos_k777_s0p88000.out",
+            "sha256": "1b950b937da43ddb0f9e07a1fd024a72b2f72eb30b619dc80ff750952623ba6d",
+            "size_bytes": 21143
+          },
+          "scale": 0.88,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.0861800000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s0p94000/SiC_GXTB_eos_k777_s0p94000.out.job.json",
+            "sha256": "8168a798a3d628e48fcd2fe5fb1a732a5d0ceebdf186b02570518c31ed14690c",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1310.618901899121",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s0p94000/SiC_GXTB_eos_k777_s0p94000.out",
+            "sha256": "7c23809b83297aed68b0d31ab530ab377d6dfc7abe31dd7e322625ac83a9d247",
+            "size_bytes": 21143
+          },
+          "scale": 0.94,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.2600600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s0p98000/SiC_GXTB_eos_k777_s0p98000.out.job.json",
+            "sha256": "a21509f54e32389db319f8f194d7a07b1c1a5aea1cf527b838daae01841a208d",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1310.698715916816",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s0p98000/SiC_GXTB_eos_k777_s0p98000.out",
+            "sha256": "18c49914ae4ed000151c2b993ff9b9781af01cc778165136a81bf9f8da356c4e",
+            "size_bytes": 21143
+          },
+          "scale": 0.98,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.3470000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p00000/SiC_GXTB_eos_k777_s1p00000.out.job.json",
+            "sha256": "c9f786fd3a67b0c9d489e361b9868f9c06f6f2af4b20db9abf2b25fae9c5f689",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1310.706846036003",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p00000/SiC_GXTB_eos_k777_s1p00000.out",
+            "sha256": "c0b9070e50484ca256663004398d57fa26ac2f02aeb9f6d24fb50b4d562a8224",
+            "size_bytes": 21143
+          },
+          "scale": 1.0,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.4339400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p02000/SiC_GXTB_eos_k777_s1p02000.out.job.json",
+            "sha256": "c2a8b0513dd8d7f167082407eb0e1e7928587ab5af3d3260b1d19a31f751088a",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1310.698569483304",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p02000/SiC_GXTB_eos_k777_s1p02000.out",
+            "sha256": "f36001e72469024952441530a3bd26ac110e588ef786c0f033e70239401700d3",
+            "size_bytes": 21143
+          },
+          "scale": 1.02,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.6078200000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p06000/SiC_GXTB_eos_k777_s1p06000.out.job.json",
+            "sha256": "fbc49f00627949daffd656f751788eadfc3c6b134afbb52dc629767727b5b574",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1310.644203297323",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p06000/SiC_GXTB_eos_k777_s1p06000.out",
+            "sha256": "2eb818a1d0cdb2699eaf954b544dea847ae5e36adfab5a188ff3afd8e5f9d651",
+            "size_bytes": 21143
+          },
+          "scale": 1.06,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.8686400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p12000/SiC_GXTB_eos_k777_s1p12000.out.job.json",
+            "sha256": "ebfef668dc0dc98811cb92ce07fd0531e03d1078a75e77e0efb5f67854e778ea",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1310.499056669984",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p12000/SiC_GXTB_eos_k777_s1p12000.out",
+            "sha256": "0cdf83af2f680d71b582b336f84a8703bd42d6b0a733f2c54f15284ad5eb2538",
+            "size_bytes": 21224
+          },
+          "scale": 1.12,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.2164000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p20000/SiC_GXTB_eos_k777_s1p20000.out.job.json",
+            "sha256": "81919d9c117de5bed203dc7b1316525c1c4c8c8c5dfbd7365f76253ef89f5e68",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1310.242998753626",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p20000/SiC_GXTB_eos_k777_s1p20000.out",
+            "sha256": "f7ed87e001f5d4b4396d1dab5857096deaacfdfa09d763527150f7647d7082ab",
+            "size_bytes": 21143
+          },
+          "scale": 1.2,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.6511000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p30000/SiC_GXTB_eos_k777_s1p30000.out.job.json",
+            "sha256": "ea90012c5c525fc85deeaf39f26793918c543101f19db881c82b9b6d5beefe36",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1309.896253450441",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p30000/SiC_GXTB_eos_k777_s1p30000.out",
+            "sha256": "0afe92d27a4f17508abad38c0940b6006f8e392298defd3f2cd6c69d76f1480d",
+            "size_bytes": 21224
+          },
+          "scale": 1.3,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "6.3031500000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p45000/SiC_GXTB_eos_k777_s1p45000.out.job.json",
+            "sha256": "d5c8c88bd8f8bf5f8581b7473bc75e0c2b8651446576ba5eacbc9446524b5a81",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1309.424486751013",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/SiC/k777/s1p45000/SiC_GXTB_eos_k777_s1p45000.out",
+            "sha256": "d540c65ea52edb05ee20cabdff0ef84218e38d6d334456aaa87f70bc3bf3a555",
+            "size_bytes": 21143
+          },
+          "scale": 1.45,
+          "valid_for_fit": true
+        }
+      ],
+      "lattice_passed": false,
+      "method": "GXTB",
+      "solid": "SiC",
+      "verdict": "unresolved_require_k888"
+    },
+    {
+      "abs_delta_a0_A": "0.0043932658",
+      "abs_delta_ecoh_kJmol_per_atom": "2.2531333945",
+      "both_passed": false,
+      "coarse_a0_A": "3.4718955534",
+      "coarse_ecoh_eV_per_atom": "7.077241378240",
+      "coarse_mesh": "k666",
+      "delta_a0_dense_minus_coarse_A": "0.0043932658",
+      "delta_ecoh_dense_minus_coarse_eV_per_atom": "-0.023352082072",
+      "delta_ecoh_dense_minus_coarse_kJmol_per_atom": "-2.2531333945",
+      "dense_a0_A": "3.4762888192",
+      "dense_ecoh_eV_per_atom": "7.053889296168",
+      "dense_mesh": "k777",
+      "ecoh_passed": false,
+      "equilibrium_sources": {
+        "k666": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BN/k666/BN_GXTB_independent_eos_minimum_k666.out.job.json",
+            "sha256": "06ca61b800432ed5ac574dcdc7d91716d328c580296cfa507227a537fc3507c2",
+            "size_bytes": 1680
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BN/k666/BN_GXTB_independent_eos_minimum_k666.inp",
+            "sha256": "442ff0ff16357bac276db4b7c614d63ede704586b058ae3756e6eb34a4b43776",
+            "size_bytes": 1518
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BN/k666/BN_GXTB_independent_eos_minimum_k666.inp.eos.json",
+            "sha256": "812f1f81b824a40cd705cf0877feec197e7fe2df3c403e584fbf3c2cb7384f41",
+            "size_bytes": 722
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BN/k666/BN_GXTB_independent_eos_minimum_k666.out",
+            "sha256": "ce228393b1d42ec6d30420bdc859bc96e6e71f861d2b99b4e2ae3b9546b4a562",
+            "size_bytes": 21232
+          }
+        },
+        "k777": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BN/k777/BN_GXTB_independent_eos_minimum_k777.out.job.json",
+            "sha256": "24dc3d85d809ed74db1e1309cce2578cb0602926da3200c9ea9a27727b643bfe",
+            "size_bytes": 1674
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BN/k777/BN_GXTB_independent_eos_minimum_k777.inp",
+            "sha256": "8943495805e03465762bb6164ce1365aa9df904db5ac056fc9d6dc448ad985d2",
+            "size_bytes": 1482
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BN/k777/BN_GXTB_independent_eos_minimum_k777.inp.eos.json",
+            "sha256": "d7e3c1e16d440049e28c30c8cab49d6fdea8eb6dfede2e61bb8a432fc4da909e",
+            "size_bytes": 722
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BN/k777/BN_GXTB_independent_eos_minimum_k777.out",
+            "sha256": "e3d0a8bce086b03e609d2f308d5c476c97c171b06023eab7bd8925205d3d825c",
+            "size_bytes": 21220
+          }
+        }
+      },
+      "fit_records": {
+        "k666": {
+          "record": {
+            "a_eos_A": "3.4718955534",
+            "a_exp_A": "3.593",
+            "energy_fit_hartree": "-319.036206449416",
+            "eos_mesh": "k666",
+            "fit_rmse_hartree": "0.003707814510",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "3.5211400000",
+            "grid_min_energy_hartree": "-319.028440205586",
+            "grid_min_scale": "0.98000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "BN",
+            "structure": "zincblende",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "c23325c1187667b13449b2cba5a34c796a295542e1d230cd78558d1ff66c37f5"
+        },
+        "k777": {
+          "record": {
+            "a_eos_A": "3.4762888192",
+            "a_exp_A": "3.593",
+            "energy_fit_hartree": "-319.029605349283",
+            "eos_mesh": "k777",
+            "fit_rmse_hartree": "0.003727636442",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "3.5211400000",
+            "grid_min_energy_hartree": "-319.022424700476",
+            "grid_min_scale": "0.98000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "BN",
+            "structure": "zincblende",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "0aa5012fc5dc89da1d96a6cca23037b2244b653f1b1c9585d247712a85d1d843"
+        }
+      },
+      "k777_eos_sources": [
+        {
+          "a_A": "2.9462600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s0p82000/BN_GXTB_eos_k777_s0p82000.out.job.json",
+            "sha256": "44cbf9a9cdc325275d97b2f0c52a17758c753f59427773948893f8147629408b",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-318.483485577522",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s0p82000/BN_GXTB_eos_k777_s0p82000.out",
+            "sha256": "8ec1b1f7904f3b2463c91ca9b2830e85d23ca6caa4a0e339d3f5b816975efa8b",
+            "size_bytes": 21141
+          },
+          "scale": 0.82,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.1618400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s0p88000/BN_GXTB_eos_k777_s0p88000.out.job.json",
+            "sha256": "302cf28ffba9a2fbd63d9bf5b29a4c093ea3fbe0ad0f69a62d50790000bf71e6",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-318.875389064824",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s0p88000/BN_GXTB_eos_k777_s0p88000.out",
+            "sha256": "4a24158bf83e35cff8250d002082229cc61fd4290134299964438fb6d8acecb2",
+            "size_bytes": 21222
+          },
+          "scale": 0.88,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.3774200000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s0p94000/BN_GXTB_eos_k777_s0p94000.out.job.json",
+            "sha256": "a2fa4a7d9a7f880d594cf0eb478de77174a6b395d1ed4e7e5bc5e57b183dd12b",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-319.019593559558",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s0p94000/BN_GXTB_eos_k777_s0p94000.out",
+            "sha256": "1d5dc6269c963f14385323c3dd2fcc0d42ee9c415a1ee8144d822d53fc14b910",
+            "size_bytes": 21222
+          },
+          "scale": 0.94,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.5211400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s0p98000/BN_GXTB_eos_k777_s0p98000.out.job.json",
+            "sha256": "9e06a65b4e3933e8b3c6f23a3c5c4dfc20570ff391d54dd0db74ea1bf8a86cb0",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-319.022424700476",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s0p98000/BN_GXTB_eos_k777_s0p98000.out",
+            "sha256": "5adfa814e938c2440a313d7a124164d825017b7377d61b550c14e90493810689",
+            "size_bytes": 21222
+          },
+          "scale": 0.98,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.5930000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p00000/BN_GXTB_eos_k777_s1p00000.out.job.json",
+            "sha256": "0367b64e59d3fc0c323357756483877158427b6e2e303327169529b9c0e2dae2",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-319.005098747055",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p00000/BN_GXTB_eos_k777_s1p00000.out",
+            "sha256": "dc4f7dae4512b9775e94eb9c8d5d321cef1cbd75251029ecdef532d376ac2df6",
+            "size_bytes": 21141
+          },
+          "scale": 1.0,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.6648600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p02000/BN_GXTB_eos_k777_s1p02000.out.job.json",
+            "sha256": "d484f84bf69af6f59fdbe62dfa1c1e33a75d497ab6ab067f7a58874f2d4d163c",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-318.978262558577",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p02000/BN_GXTB_eos_k777_s1p02000.out",
+            "sha256": "81a90774927dc735545272bcbf05d0de6d18e80dbbcefc1963ae34805a3e1a87",
+            "size_bytes": 21141
+          },
+          "scale": 1.02,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.8085800000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p06000/BN_GXTB_eos_k777_s1p06000.out.job.json",
+            "sha256": "659f6bf6635d4f64c0190473a9b19e0741307e554dcb0fa70001a48a6ef4d9d7",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-318.902556372176",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p06000/BN_GXTB_eos_k777_s1p06000.out",
+            "sha256": "42cc388b059de13125269309a76af4f9457f3ccac4414a906462c3890827c28e",
+            "size_bytes": 21141
+          },
+          "scale": 1.06,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.0241600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p12000/BN_GXTB_eos_k777_s1p12000.out.job.json",
+            "sha256": "f2ecebc7eb9f031f53f478111eef11df405d41922463303e567ee7aa156ce0e0",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-318.750799890886",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p12000/BN_GXTB_eos_k777_s1p12000.out",
+            "sha256": "89f4d6612f8960e75a903b493ea8a7724a98d3a6799ad0275c5d4f01d81ac4b2",
+            "size_bytes": 21141
+          },
+          "scale": 1.12,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.3116000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p20000/BN_GXTB_eos_k777_s1p20000.out.job.json",
+            "sha256": "de0cb753ec94c5a19140156af1b5eae7bbaa3367d1e128eef8709d66807b2db0",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-318.506744713733",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p20000/BN_GXTB_eos_k777_s1p20000.out",
+            "sha256": "440c724e5e73a01c202a161fe35d105c0b278d7e3f8fe1b408fa2628565b1dac",
+            "size_bytes": 21222
+          },
+          "scale": 1.2,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.6709000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p30000/BN_GXTB_eos_k777_s1p30000.out.job.json",
+            "sha256": "d71432aa5a1996567f5d051619408d1bf8e1a207e3eae29f2822dfeee39809dc",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-318.170558101882",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p30000/BN_GXTB_eos_k777_s1p30000.out",
+            "sha256": "b1b59caf7b8109c729765caf2815987762600fcf7faabd04cde66d33cdc4e8b5",
+            "size_bytes": 21222
+          },
+          "scale": 1.3,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.2098500000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p45000/BN_GXTB_eos_k777_s1p45000.out.job.json",
+            "sha256": "91d06a76fe22cbca9380daf34c1660d352722ba51407a75fb57820682684ad95",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-317.659307711566",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BN/k777/s1p45000/BN_GXTB_eos_k777_s1p45000.out",
+            "sha256": "a5f6c715465a665d9530f4320d73de8eeea872b5a5956cd698edda3320d7e7af",
+            "size_bytes": 21222
+          },
+          "scale": 1.45,
+          "valid_for_fit": true
+        }
+      ],
+      "lattice_passed": false,
+      "method": "GXTB",
+      "solid": "BN",
+      "verdict": "unresolved_require_k888"
+    },
+    {
+      "abs_delta_a0_A": "0.0015394644",
+      "abs_delta_ecoh_kJmol_per_atom": "0.5335515469",
+      "both_passed": false,
+      "coarse_a0_A": "4.4608402691",
+      "coarse_ecoh_eV_per_atom": "5.281208637808",
+      "coarse_mesh": "k666",
+      "delta_a0_dense_minus_coarse_A": "0.0015394644",
+      "delta_ecoh_dense_minus_coarse_eV_per_atom": "-0.005529872108",
+      "delta_ecoh_dense_minus_coarse_kJmol_per_atom": "-0.5335515469",
+      "dense_a0_A": "4.4623797335",
+      "dense_ecoh_eV_per_atom": "5.275678765700",
+      "dense_mesh": "k777",
+      "ecoh_passed": false,
+      "equilibrium_sources": {
+        "k666": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BP/k666/BP_GXTB_independent_eos_minimum_k666.out.job.json",
+            "sha256": "4c1e5257ebf824cadabac7ead9c50ccd154239e4ba27e5c08835e9a2580e4fa3",
+            "size_bytes": 1680
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BP/k666/BP_GXTB_independent_eos_minimum_k666.inp",
+            "sha256": "563f34d8dab72d9d552a48fc4f7152b12235ef663bd0613de5d853676e76e75a",
+            "size_bytes": 1518
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BP/k666/BP_GXTB_independent_eos_minimum_k666.inp.eos.json",
+            "sha256": "968390c0cb75bf2fd52bb5eff859638b70dcade0aa252326cf4c45163151e7dc",
+            "size_bytes": 722
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BP/k666/BP_GXTB_independent_eos_minimum_k666.out",
+            "sha256": "e024ce223dc0216e396e1875dbc0123280536831400ae1a5c259c908f7903e40",
+            "size_bytes": 21232
+          }
+        },
+        "k777": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BP/k777/BP_GXTB_independent_eos_minimum_k777.out.job.json",
+            "sha256": "96583f0c719cd3d5b893792b960f10ab220e3baf7860e8fd1ee0b83197606aaf",
+            "size_bytes": 1674
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BP/k777/BP_GXTB_independent_eos_minimum_k777.inp",
+            "sha256": "5f276544a88f5af068527f82abb1cf5a119fc32b58c9fb576ab6d77fef536e29",
+            "size_bytes": 1482
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BP/k777/BP_GXTB_independent_eos_minimum_k777.inp.eos.json",
+            "sha256": "3f1396b6a75e4e45106aa62822c5f26e836da63dcc02dd87925c7cacc9471d60",
+            "size_bytes": 722
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/BP/k777/BP_GXTB_independent_eos_minimum_k777.out",
+            "sha256": "c474954375f5ef4b9bc12b8cdf370f0bb6ae523c7dddb78bd133707c399d4aff",
+            "size_bytes": 21220
+          }
+        }
+      },
+      "fit_records": {
+        "k666": {
+          "record": {
+            "a_eos_A": "4.4608402691",
+            "a_exp_A": "4.525",
+            "energy_fit_hartree": "-1465.102303949813",
+            "eos_mesh": "k666",
+            "fit_rmse_hartree": "0.003605709280",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "4.4345000000",
+            "grid_min_energy_hartree": "-1465.097658646926",
+            "grid_min_scale": "0.98000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "BP",
+            "structure": "zincblende",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "e8b324001bf9206ca98272f2201c5656dff1a4bde7b1e6eef5ac25c63ba00c5b"
+        },
+        "k777": {
+          "record": {
+            "a_eos_A": "4.4623797335",
+            "a_exp_A": "4.525",
+            "energy_fit_hartree": "-1465.100697938841",
+            "eos_mesh": "k777",
+            "fit_rmse_hartree": "0.003615538613",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "4.4345000000",
+            "grid_min_energy_hartree": "-1465.095955922399",
+            "grid_min_scale": "0.98000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "BP",
+            "structure": "zincblende",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "06bb542d49dec4f8e8660e184d67f8ff803f9805a6cb88e5e1eca963d36e2912"
+        }
+      },
+      "k777_eos_sources": [
+        {
+          "a_A": "3.7105000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s0p82000/BP_GXTB_eos_k777_s0p82000.out.job.json",
+            "sha256": "f39209307e5b7e21f5e7b026a773be039767ea7a7f1a0dd7d09f0799bdc2d286",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1464.387981888209",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s0p82000/BP_GXTB_eos_k777_s0p82000.out",
+            "sha256": "3c3ad9f740e80c6d8fb46eb3266c1bd0edd264f5f062508855ea7cc86c8b071d",
+            "size_bytes": 21222
+          },
+          "scale": 0.82,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.9820000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s0p88000/BP_GXTB_eos_k777_s0p88000.out.job.json",
+            "sha256": "f18817e73ca4b612244e11a46f56460dd5a6a50f975a6404648e353f072b15e0",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1464.868111390743",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s0p88000/BP_GXTB_eos_k777_s0p88000.out",
+            "sha256": "41787f4e0d5b06f4ac149c26f1414e2c4073b497d262c313a3c8f282c77fadd5",
+            "size_bytes": 21222
+          },
+          "scale": 0.88,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.2535000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s0p94000/BP_GXTB_eos_k777_s0p94000.out.job.json",
+            "sha256": "ddd55417eadefacc50dcef55371d4234de6e723c1597c16739f352b258faeffa",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1465.061914232279",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s0p94000/BP_GXTB_eos_k777_s0p94000.out",
+            "sha256": "59d1488a13581619ca3e0e4fd2fa7f013fbd8bce695cd6b3c3b2aed44f0ba2a2",
+            "size_bytes": 21222
+          },
+          "scale": 0.94,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.4345000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s0p98000/BP_GXTB_eos_k777_s0p98000.out.job.json",
+            "sha256": "3334f8f17bb743b8e0657d5ee0d443a75ef6ee341c64222bb1e23173699bb625",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1465.095955922399",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s0p98000/BP_GXTB_eos_k777_s0p98000.out",
+            "sha256": "8430e01727ac81bda2ceb2af11cafcd873f988d5ad5e988215e565db1e4d0cf4",
+            "size_bytes": 21222
+          },
+          "scale": 0.98,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.5250000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p00000/BP_GXTB_eos_k777_s1p00000.out.job.json",
+            "sha256": "518efe44b62afaf87ff407839f5d3108d97f13c39f62e3b38cc182307916e906",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1465.093452568972",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p00000/BP_GXTB_eos_k777_s1p00000.out",
+            "sha256": "cf13a40e0a1cc6e5c52e23eba63f6364bd9368d2b0e160d166785ec51506682c",
+            "size_bytes": 21222
+          },
+          "scale": 1.0,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.6155000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p02000/BP_GXTB_eos_k777_s1p02000.out.job.json",
+            "sha256": "b70551736ea4da7aca5a720f70b81465db31e149d2164cee6b1b71e814a51ae4",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1465.080737492270",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p02000/BP_GXTB_eos_k777_s1p02000.out",
+            "sha256": "e8b62694ae3ba1b58059c0211ed6c32456f5376f121ab43a294f86a69f64decc",
+            "size_bytes": 21222
+          },
+          "scale": 1.02,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.7965000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p06000/BP_GXTB_eos_k777_s1p06000.out.job.json",
+            "sha256": "559b4c974f4b009dfa452bbd5ae52f6a0f5f8d5cb07111c6e391fedb01371df6",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1465.030786685363",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p06000/BP_GXTB_eos_k777_s1p06000.out",
+            "sha256": "9a7d8c2cc4b6a18dfbbfc83c602d0f091b5874733364bca08d59832439e4b0e4",
+            "size_bytes": 21222
+          },
+          "scale": 1.06,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.0680000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p12000/BP_GXTB_eos_k777_s1p12000.out.job.json",
+            "sha256": "3edf90bc40b9ee3d69f1863b5698750a5947648262330afc31a1609206a7e548",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1464.911103162289",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p12000/BP_GXTB_eos_k777_s1p12000.out",
+            "sha256": "a34212d8133d61b0a487dd9a2b3bf86657bf3d03358dd2a274c9160bad2bf113",
+            "size_bytes": 21222
+          },
+          "scale": 1.12,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.4300000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p20000/BP_GXTB_eos_k777_s1p20000.out.job.json",
+            "sha256": "26feafe7ae1920005b34244688a07af8ec5082105c00fe302ceac4a3cfdeff01",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1464.700369743719",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p20000/BP_GXTB_eos_k777_s1p20000.out",
+            "sha256": "76b132f6c85de8353cc14bdc7043e084f6b8f4e056e423c04e1f50dc94547684",
+            "size_bytes": 21303
+          },
+          "scale": 1.2,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.8825000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p30000/BP_GXTB_eos_k777_s1p30000.out.job.json",
+            "sha256": "c088bd5bb930031c7fb03e93ad2aeb012de70da3c42da8455d9e673fc422311a",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1464.405284664519",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p30000/BP_GXTB_eos_k777_s1p30000.out",
+            "sha256": "d395c814302cc0103e6d012a5871a1eff1778cc7836b27b3f3326263c5572bdd",
+            "size_bytes": 21303
+          },
+          "scale": 1.3,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "6.5612500000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p45000/BP_GXTB_eos_k777_s1p45000.out.job.json",
+            "sha256": "f75fb88827b9d66969b0c71dddda1e93f515b5a456c9387d926bc12b5eee4e8f",
+            "size_bytes": 1664
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1463.975891941998",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/BP/k777/s1p45000/BP_GXTB_eos_k777_s1p45000.out",
+            "sha256": "008f4f7316dd31f8621088f0e21bac756d3e13bd45a60f2f6d414093a222c35a",
+            "size_bytes": 21222
+          },
+          "scale": 1.45,
+          "valid_for_fit": true
+        }
+      ],
+      "lattice_passed": false,
+      "method": "GXTB",
+      "solid": "BP",
+      "verdict": "unresolved_require_k888"
+    },
+    {
+      "abs_delta_a0_A": "0.0023921976",
+      "abs_delta_ecoh_kJmol_per_atom": "0.4842718679",
+      "both_passed": false,
+      "coarse_a0_A": "4.3009357783",
+      "coarse_ecoh_eV_per_atom": "5.532478557861",
+      "coarse_mesh": "k666",
+      "delta_a0_dense_minus_coarse_A": "0.0023921976",
+      "delta_ecoh_dense_minus_coarse_eV_per_atom": "-0.005019124226",
+      "delta_ecoh_dense_minus_coarse_kJmol_per_atom": "-0.4842718679",
+      "dense_a0_A": "4.3033279759",
+      "dense_ecoh_eV_per_atom": "5.527459433635",
+      "dense_mesh": "k777",
+      "ecoh_passed": false,
+      "equilibrium_sources": {
+        "k666": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlN/k666/AlN_GXTB_independent_eos_minimum_k666.out.job.json",
+            "sha256": "666b19c2d7366c7d67161b97bbc8a01a921c1626d60a355f969842d7a2664684",
+            "size_bytes": 1682
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlN/k666/AlN_GXTB_independent_eos_minimum_k666.inp",
+            "sha256": "24bdf9c858e472f2f53b9035cd403ff6d1f56a69e5825080ac63a1f90631437f",
+            "size_bytes": 1519
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlN/k666/AlN_GXTB_independent_eos_minimum_k666.inp.eos.json",
+            "sha256": "4ac6539a5aea6a3705b149b5753546797d0ddb262ce4167501ba66be5bdf58bd",
+            "size_bytes": 723
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlN/k666/AlN_GXTB_independent_eos_minimum_k666.out",
+            "sha256": "ae96be6e445be665eaf6e335e5c7f0aa5e3f6dea7dc75b6887c22b97510bfc74",
+            "size_bytes": 21234
+          }
+        },
+        "k777": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlN/k777/AlN_GXTB_independent_eos_minimum_k777.out.job.json",
+            "sha256": "d50602d0de061cd36d9d05886fc9edfa35255fff4ebfee48e47ddf53ddcc5165",
+            "size_bytes": 1676
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlN/k777/AlN_GXTB_independent_eos_minimum_k777.inp",
+            "sha256": "1c7f2e59de258b76a5171e4f311b368b8c8c9be0568d4fedab3ff3ee30fb6c04",
+            "size_bytes": 1483
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlN/k777/AlN_GXTB_independent_eos_minimum_k777.inp.eos.json",
+            "sha256": "ff9d2e88fb0e65a3c9ccd5a53a3c984e873dc6975d5dc9f4aa083eb147951709",
+            "size_bytes": 723
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlN/k777/AlN_GXTB_independent_eos_minimum_k777.out",
+            "sha256": "4bf29d5ad6b06785fa89c36745df8f51cd8e68ce6f86cf18b4aed3d61b7826fe",
+            "size_bytes": 21222
+          }
+        }
+      },
+      "fit_records": {
+        "k666": {
+          "record": {
+            "a_eos_A": "4.3009357783",
+            "a_exp_A": "4.368",
+            "energy_fit_hartree": "-1189.348722072317",
+            "eos_mesh": "k666",
+            "fit_rmse_hartree": "0.001554573741",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "4.2806400000",
+            "grid_min_energy_hartree": "-1189.350491546907",
+            "grid_min_scale": "0.98000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "AlN",
+            "structure": "zincblende",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "c9012d2fee09dd0eff18071183c15d51c924c47510d2b9d5a4774ea2a8acae4d"
+        },
+        "k777": {
+          "record": {
+            "a_eos_A": "4.3033279759",
+            "a_exp_A": "4.368",
+            "energy_fit_hartree": "-1189.347281175954",
+            "eos_mesh": "k777",
+            "fit_rmse_hartree": "0.001539920655",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "4.2806400000",
+            "grid_min_energy_hartree": "-1189.348967840082",
+            "grid_min_scale": "0.98000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "AlN",
+            "structure": "zincblende",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "7bb844d046d2fe2dbaf5e2b804888c22d071bb94e21d4367c01091a184ca7197"
+        }
+      },
+      "k777_eos_sources": [
+        {
+          "a_A": "3.5817600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s0p82000/AlN_GXTB_eos_k777_s0p82000.out.job.json",
+            "sha256": "000ab368afde590ed8addadd755e0ae594225cc7cc8d409f6e4b4ba161f6877d",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1189.076447514835",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s0p82000/AlN_GXTB_eos_k777_s0p82000.out",
+            "sha256": "9ecaae62f0eaae77c893ea34f5e276deb397e7288d88d3192a1e71f2ee374a28",
+            "size_bytes": 21143
+          },
+          "scale": 0.82,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.8438400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s0p88000/AlN_GXTB_eos_k777_s0p88000.out.job.json",
+            "sha256": "62d6e4db80a144238247aae8cbe6b508ca1e8e8911b0528fd1d939a056d7df1e",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1189.215004567575",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s0p88000/AlN_GXTB_eos_k777_s0p88000.out",
+            "sha256": "87449f87273539f1df68c88d279ce0511a273e96e9bf933374d580c86bc78df8",
+            "size_bytes": 21224
+          },
+          "scale": 0.88,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.1059200000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s0p94000/AlN_GXTB_eos_k777_s0p94000.out.job.json",
+            "sha256": "b31d67fa89dd5fa82e6aaa434951e3eea282de2952aee6a289b879f0cb05d4c2",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1189.320597313284",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s0p94000/AlN_GXTB_eos_k777_s0p94000.out",
+            "sha256": "36d2bdb09c737ccfb75cedba45ca0d7b5c0215a44c4e0bf0c82fde8db672d19b",
+            "size_bytes": 21224
+          },
+          "scale": 0.94,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.2806400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s0p98000/AlN_GXTB_eos_k777_s0p98000.out.job.json",
+            "sha256": "5edd7850fdd97e520dd08601d19c5c12b6c382d3988bd42759e2d9477ed58452",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1189.348967840082",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s0p98000/AlN_GXTB_eos_k777_s0p98000.out",
+            "sha256": "361a871d19b8154045a2f762ea9a852af7a7ce9c4d3743b67660cbc85819bfd7",
+            "size_bytes": 21224
+          },
+          "scale": 0.98,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.3680000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p00000/AlN_GXTB_eos_k777_s1p00000.out.job.json",
+            "sha256": "b7a4dfca3abb9f3c315b2fe56cdd73acb3e8c54b5850a113da3b9829f39fb102",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1189.345642834038",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p00000/AlN_GXTB_eos_k777_s1p00000.out",
+            "sha256": "b06c37177c86d6710c4318499fca97fbd4fd624119ce735dd68295ae01594b67",
+            "size_bytes": 21224
+          },
+          "scale": 1.0,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.4553600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p02000/AlN_GXTB_eos_k777_s1p02000.out.job.json",
+            "sha256": "473ce8ca135f6cff5cc3b9deac147316025487346c16a8bef7249be0449d4a68",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1189.331386499354",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p02000/AlN_GXTB_eos_k777_s1p02000.out",
+            "sha256": "6f098c4194d8cc720acdd4f8d191b7240168554d907abd87132b1a9e51c45f60",
+            "size_bytes": 21224
+          },
+          "scale": 1.02,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.6300800000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p06000/AlN_GXTB_eos_k777_s1p06000.out.job.json",
+            "sha256": "a5772919335427ce0b817953a949520db708788d38e91a76a0a6e12396e58d9f",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1189.275361579726",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p06000/AlN_GXTB_eos_k777_s1p06000.out",
+            "sha256": "1eddc80d11ed613eb6c807d82432fa84cbb2317ba659534796812ca3e2d2ebfa",
+            "size_bytes": 21224
+          },
+          "scale": 1.06,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.8921600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p12000/AlN_GXTB_eos_k777_s1p12000.out.job.json",
+            "sha256": "dbafe7a5929decc8fd2c5a97f530b458bc16f510c2bc9705e825ea305e3a3dfe",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1189.142103847867",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p12000/AlN_GXTB_eos_k777_s1p12000.out",
+            "sha256": "1fc46ee781fdf4f9e023f0c94221013dcf343608efaa6f3e1a0f46a46b314439",
+            "size_bytes": 21224
+          },
+          "scale": 1.12,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.2416000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p20000/AlN_GXTB_eos_k777_s1p20000.out.job.json",
+            "sha256": "c703adabeeb48509bea26a3141438336d17262715ab8f6eb66a75772df2089fd",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1188.913738423931",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p20000/AlN_GXTB_eos_k777_s1p20000.out",
+            "sha256": "dfbd88c289a6051ba3c04e72d1684d957b780056cd7dac1c4ed19a4e3b753544",
+            "size_bytes": 21224
+          },
+          "scale": 1.2,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.6784000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p30000/AlN_GXTB_eos_k777_s1p30000.out.job.json",
+            "sha256": "31aaeb887a1f1071b2a00634524a442834ff47514234947aa5f0d63f618938ee",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1188.596572539988",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p30000/AlN_GXTB_eos_k777_s1p30000.out",
+            "sha256": "17dd8ef69ab090fc4430336534dd7b961eb9ae8ed70b4bbd039f3218cb0a81cf",
+            "size_bytes": 21305
+          },
+          "scale": 1.3,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "6.3336000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p45000/AlN_GXTB_eos_k777_s1p45000.out.job.json",
+            "sha256": "778bf241c2cb02be3bd333450523199d78053b8e1ef23357c94fcb246ec4499c",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1188.118152222130",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlN/k777/s1p45000/AlN_GXTB_eos_k777_s1p45000.out",
+            "sha256": "eced26c0441fd1b38725cb8913c10f6ee16710c2262a18b8406547d4cc95693f",
+            "size_bytes": 21305
+          },
+          "scale": 1.45,
+          "valid_for_fit": true
+        }
+      ],
+      "lattice_passed": false,
+      "method": "GXTB",
+      "solid": "AlN",
+      "verdict": "unresolved_require_k888"
+    },
+    {
+      "abs_delta_a0_A": "0.0008980890",
+      "abs_delta_ecoh_kJmol_per_atom": "0.2046241109",
+      "both_passed": false,
+      "coarse_a0_A": "5.1797449376",
+      "coarse_ecoh_eV_per_atom": "4.455657726744",
+      "coarse_mesh": "k666",
+      "delta_a0_dense_minus_coarse_A": "0.0008980890",
+      "delta_ecoh_dense_minus_coarse_eV_per_atom": "-0.002120779464",
+      "delta_ecoh_dense_minus_coarse_kJmol_per_atom": "-0.2046241109",
+      "dense_a0_A": "5.1806430266",
+      "dense_ecoh_eV_per_atom": "4.453536947280",
+      "dense_mesh": "k777",
+      "ecoh_passed": false,
+      "equilibrium_sources": {
+        "k666": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlP/k666/AlP_GXTB_independent_eos_minimum_k666.out.job.json",
+            "sha256": "3923fee68e87d2ba21dc2c90f1905542f29819c91c8d39de7401fd65eb51be7d",
+            "size_bytes": 1682
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlP/k666/AlP_GXTB_independent_eos_minimum_k666.inp",
+            "sha256": "d5ac54fa2bd9a0e61b6c687d98da413faed171f13300e3c3d0abb6515d41bdb9",
+            "size_bytes": 1519
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlP/k666/AlP_GXTB_independent_eos_minimum_k666.inp.eos.json",
+            "sha256": "b78a3cf0c252bf3d6f43cc23bc05dd36cb60e9136254408d7ce931b2bd95c2aa",
+            "size_bytes": 723
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlP/k666/AlP_GXTB_independent_eos_minimum_k666.out",
+            "sha256": "58c81df57a9b86fb049326516250e1b7db569270dbc08cf3086f036f6d201e24",
+            "size_bytes": 21315
+          }
+        },
+        "k777": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlP/k777/AlP_GXTB_independent_eos_minimum_k777.out.job.json",
+            "sha256": "f5b8146eea9cbfcf49a19356200cbee85aebdeb1bd3a9012662547ee373162ab",
+            "size_bytes": 1676
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlP/k777/AlP_GXTB_independent_eos_minimum_k777.inp",
+            "sha256": "e60cbc2abff4a814da9b86b47e3060e4cc10dae7dc6f95fede5163690bbf37da",
+            "size_bytes": 1483
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlP/k777/AlP_GXTB_independent_eos_minimum_k777.inp.eos.json",
+            "sha256": "b74325c8d7bfe5fcbce4101cdb0ad780f213af124aeeb2407a94f85a7f8915e0",
+            "size_bytes": 723
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/AlP/k777/AlP_GXTB_independent_eos_minimum_k777.out",
+            "sha256": "2007a44ac25c7004a2d60434c759aa5fe5f87324e706baf19f63311cfaddffca",
+            "size_bytes": 21303
+          }
+        }
+      },
+      "fit_records": {
+        "k666": {
+          "record": {
+            "a_eos_A": "5.1797449376",
+            "a_exp_A": "5.448",
+            "energy_fit_hartree": "-2335.638126136072",
+            "eos_mesh": "k666",
+            "fit_rmse_hartree": "0.009292400593",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "5.1211200000",
+            "grid_min_energy_hartree": "-2335.624993783251",
+            "grid_min_scale": "0.94000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "AlP",
+            "structure": "zincblende",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "e287359a3541c094401b7e9d7bb3772ef4cb33b946153c5f91767fa2d14f525a"
+        },
+        "k777": {
+          "record": {
+            "a_eos_A": "5.1806430266",
+            "a_exp_A": "5.448",
+            "energy_fit_hartree": "-2335.637553645763",
+            "eos_mesh": "k777",
+            "fit_rmse_hartree": "0.009323188737",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "5.1211200000",
+            "grid_min_energy_hartree": "-2335.624304948851",
+            "grid_min_scale": "0.94000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "AlP",
+            "structure": "zincblende",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "5c397e46e6757d68bae606092164263a9a5fb0699aae9edb4afaf469ed95ef4b"
+        }
+      },
+      "k777_eos_sources": [
+        {
+          "a_A": "4.4673600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s0p82000/AlP_GXTB_eos_k777_s0p82000.out.job.json",
+            "sha256": "4bb2b48e5f33e1896ad68c6fc50b2bba2417d626b834f666518ea29bff344844",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2335.281034908346",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s0p82000/AlP_GXTB_eos_k777_s0p82000.out",
+            "sha256": "68aec410240a4be26fc43a3537d06120f378592fb3ca615ba64ce07f7ddf19d4",
+            "size_bytes": 21224
+          },
+          "scale": 0.82,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.7942400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s0p88000/AlP_GXTB_eos_k777_s0p88000.out.job.json",
+            "sha256": "3228e6b8c360f9f97394f373fc2f4e33e9dac9b98079fe01f0c7fde719312734",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2335.547955280195",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s0p88000/AlP_GXTB_eos_k777_s0p88000.out",
+            "sha256": "07cc0d6b2177c43f63952640dc39e4e394f99897bdf448e322fc2755b24d30d7",
+            "size_bytes": 21224
+          },
+          "scale": 0.88,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.1211200000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s0p94000/AlP_GXTB_eos_k777_s0p94000.out.job.json",
+            "sha256": "8b1b12bd4b6f8416f767511c8ea2bab82c449c6cefaa0a4fd4d079c6b4c94e68",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2335.624304948851",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s0p94000/AlP_GXTB_eos_k777_s0p94000.out",
+            "sha256": "d7759edd1fe70efee8088a64e25602e302b18c370e2e42df3e5f92a65eeac538",
+            "size_bytes": 21305
+          },
+          "scale": 0.94,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.3390400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s0p98000/AlP_GXTB_eos_k777_s0p98000.out.job.json",
+            "sha256": "4d5124c210c1dc613b7e3c152dce411eaa9f1b5564f46c7e8ee0293bee35bb24",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2335.613848511716",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s0p98000/AlP_GXTB_eos_k777_s0p98000.out",
+            "sha256": "e8998212b4f86b037f83030fb955821c8e3ba07309099a3e7337b4fde51065c1",
+            "size_bytes": 21224
+          },
+          "scale": 0.98,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.4480000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p00000/AlP_GXTB_eos_k777_s1p00000.out.job.json",
+            "sha256": "8226bfc73697baca870b27546bde648089e34a9e402cd1f78d17f0bbd0f5e073",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2335.596446324671",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p00000/AlP_GXTB_eos_k777_s1p00000.out",
+            "sha256": "f2d1bef0b68cca68c2e17b35eb6c0da2101740fe90d41d6a086c2186245873bd",
+            "size_bytes": 21224
+          },
+          "scale": 1.0,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.5569600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p02000/AlP_GXTB_eos_k777_s1p02000.out.job.json",
+            "sha256": "4c1bcc2373d32943f46c736a181040128ca3c49317ef379dda59df209d34b5bb",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2335.572848794607",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p02000/AlP_GXTB_eos_k777_s1p02000.out",
+            "sha256": "613ca01a1a4c88de2630fd3d34c715cc9289027372e9bb72212fa97379a224c5",
+            "size_bytes": 21224
+          },
+          "scale": 1.02,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.7748800000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p06000/AlP_GXTB_eos_k777_s1p06000.out.job.json",
+            "sha256": "04b11a1dad734d3becb64a288474d7971541f6e09ac03ef5f623ea7ba081dbd6",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2335.511185600768",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p06000/AlP_GXTB_eos_k777_s1p06000.out",
+            "sha256": "41cb3ecfa1a2985d718a987a894f28f987a0ee97894e1ddb2be8bfc5e3873f57",
+            "size_bytes": 21224
+          },
+          "scale": 1.06,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "6.1017600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p12000/AlP_GXTB_eos_k777_s1p12000.out.job.json",
+            "sha256": "0c5d4060c497e3f5a8a5509996b898776a3e204e7c141a9e667f2d7eaefb2c54",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2335.393631067963",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p12000/AlP_GXTB_eos_k777_s1p12000.out",
+            "sha256": "ae76db7bc2265d3e37383ff2b87e6ade6ee9c4c1550ca58c1f7db59dd9667683",
+            "size_bytes": 21143
+          },
+          "scale": 1.12,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "6.5376000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p20000/AlP_GXTB_eos_k777_s1p20000.out.job.json",
+            "sha256": "224e19e28a0e75eb65b37e36f910b2e57b7698c65ff28d6151c346c7bd685cd8",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2335.211482666762",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p20000/AlP_GXTB_eos_k777_s1p20000.out",
+            "sha256": "10ce13cebd795d7f911c04138b032a2f9bb8ebc97efb0ce34be3b9cf9583793e",
+            "size_bytes": 21143
+          },
+          "scale": 1.2,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "7.0824000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p30000/AlP_GXTB_eos_k777_s1p30000.out.job.json",
+            "sha256": "bedf82a64e221e0b59469b8c057bebd44f32aec6941903921fe333bc454550e9",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2334.977402451865",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p30000/AlP_GXTB_eos_k777_s1p30000.out",
+            "sha256": "2e34138d86fb6c3e504bd67f9ea45a073c693f39e5510613aff024d953dc29eb",
+            "size_bytes": 21224
+          },
+          "scale": 1.3,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "7.8996000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p45000/AlP_GXTB_eos_k777_s1p45000.out.job.json",
+            "sha256": "5c4d04a1f38f9c0dba5cd75e2f5f530a491bc30902dfdb97d57107aef9eccb0b",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2334.652383197467",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/AlP/k777/s1p45000/AlP_GXTB_eos_k777_s1p45000.out",
+            "sha256": "1491be435287de91955a5af2ff964cc076bb1c14eebff88f2708ae0c21300278",
+            "size_bytes": 21143
+          },
+          "scale": 1.45,
+          "valid_for_fit": true
+        }
+      ],
+      "lattice_passed": true,
+      "method": "GXTB",
+      "solid": "AlP",
+      "verdict": "unresolved_require_k888"
+    },
+    {
+      "abs_delta_a0_A": "0.0022992458",
+      "abs_delta_ecoh_kJmol_per_atom": "0.2452348506",
+      "both_passed": false,
+      "coarse_a0_A": "4.9472493989",
+      "coarse_ecoh_eV_per_atom": "4.839231619488",
+      "coarse_mesh": "k666",
+      "delta_a0_dense_minus_coarse_A": "-0.0022992458",
+      "delta_ecoh_dense_minus_coarse_eV_per_atom": "-0.002541680121",
+      "delta_ecoh_dense_minus_coarse_kJmol_per_atom": "-0.2452348506",
+      "dense_a0_A": "4.9449501531",
+      "dense_ecoh_eV_per_atom": "4.836689939367",
+      "dense_mesh": "k777",
+      "ecoh_passed": false,
+      "equilibrium_sources": {
+        "k666": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/MgS/k666/MgS_GXTB_independent_eos_minimum_k666.out.job.json",
+            "sha256": "4aa4eebb6c90975bce3a921539437f1b2c8407cc90c2d9ed7e29e5a1f69ef5ed",
+            "size_bytes": 1682
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/MgS/k666/MgS_GXTB_independent_eos_minimum_k666.inp",
+            "sha256": "7d2ccf21664558e212ba81954d2d7ff58d1e54846c1ead6f6df5ccdd5791e9ad",
+            "size_bytes": 1519
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/MgS/k666/MgS_GXTB_independent_eos_minimum_k666.inp.eos.json",
+            "sha256": "b9de801230e035777b89404fc7ac59ea2580512789246c66f552f7b8fb8f64cc",
+            "size_bytes": 723
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/MgS/k666/MgS_GXTB_independent_eos_minimum_k666.out",
+            "sha256": "895d3fca73ccebc9690b5a2fb3ec1af6f7e86a53b942bec36d31590fdeb41ebf",
+            "size_bytes": 21234
+          }
+        },
+        "k777": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/MgS/k777/MgS_GXTB_independent_eos_minimum_k777.out.job.json",
+            "sha256": "21ffff5bf7b5baff1fad4ebbe9f2914845584df5fd59f80f93bba2fd39f0b7a6",
+            "size_bytes": 1676
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/MgS/k777/MgS_GXTB_independent_eos_minimum_k777.inp",
+            "sha256": "a936ba6fa81ab65050f136aead69c1d1c0a5eab0d6f6ecaedfe78c592385e800",
+            "size_bytes": 1483
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/MgS/k777/MgS_GXTB_independent_eos_minimum_k777.inp.eos.json",
+            "sha256": "c2c4763d67808bf50b909701c1648b3fee5caab7d81db2a07c7d1bc1805158a3",
+            "size_bytes": 723
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/MgS/k777/MgS_GXTB_independent_eos_minimum_k777.out",
+            "sha256": "89c83e13a92e04fc1017f3b05c1825a982fef5bef0455a80b6fe91369a31bac1",
+            "size_bytes": 21222
+          }
+        }
+      },
+      "fit_records": {
+        "k666": {
+          "record": {
+            "a_eos_A": "4.9472493989",
+            "a_exp_A": "5.188",
+            "energy_fit_hartree": "-2394.016451732503",
+            "eos_mesh": "k666",
+            "fit_rmse_hartree": "0.002430155648",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "4.8767200000",
+            "grid_min_energy_hartree": "-2394.015848095913",
+            "grid_min_scale": "0.94000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "MgS",
+            "structure": "rocksalt",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "11448905291f999625854b7bd2a03a67a1d5ef74aa34dfccd5bae75703ee9a18"
+        },
+        "k777": {
+          "record": {
+            "a_eos_A": "4.9449501531",
+            "a_exp_A": "5.188",
+            "energy_fit_hartree": "-2394.016576941592",
+            "eos_mesh": "k777",
+            "fit_rmse_hartree": "0.002485582852",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "4.8767200000",
+            "grid_min_energy_hartree": "-2394.014858270687",
+            "grid_min_scale": "0.94000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "10",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "1",
+            "n_points": "10",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "MgS",
+            "structure": "rocksalt",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "232d7568915cdedfa812f4a4b429e62556190c1aebebec25fe5dd6f2f503413d"
+        }
+      },
+      "k777_eos_sources": [
+        {
+          "a_A": "4.2541600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s0p82000/MgS_GXTB_eos_k777_s0p82000.out.job.json",
+            "sha256": "6d092a9eef34c744d840b02fcc1512d59bafe33cbbbae0e393bad12e6d1c2587",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2393.658355919123",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s0p82000/MgS_GXTB_eos_k777_s0p82000.out",
+            "sha256": "c06b0e016adae50805d7826bbc6006e496828cf680dd83147a71b3d3eafbbe46",
+            "size_bytes": 21305
+          },
+          "scale": 0.82,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.5654400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s0p88000/MgS_GXTB_eos_k777_s0p88000.out.job.json",
+            "sha256": "901d0f37a3a4ab0122e1b207c4d753881117facc7010adf9ec411e99bb843e07",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "explicit_exclusion",
+          "diagnostic": "wrong_scf_branch",
+          "energy_hartree": "-2393.802635822648",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s0p88000/MgS_GXTB_eos_k777_s0p88000.out",
+            "sha256": "7b92a6af160f60bf92b55184d294594771b32b1e962f77216d4e5b7b0a6eeac6",
+            "size_bytes": 30701
+          },
+          "scale": 0.88,
+          "valid_for_fit": false
+        },
+        {
+          "a_A": "4.8767200000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s0p94000/MgS_GXTB_eos_k777_s0p94000.out.job.json",
+            "sha256": "3f24f43fd99a70222ae0cc5bcd6fa0e87590ee8e0af2aefc5e3662faf5ead00d",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2394.014858270687",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s0p94000/MgS_GXTB_eos_k777_s0p94000.out",
+            "sha256": "29c7d80aab686b8bfde0c94e6ebcc2cb02109e27e2034a08d4baee485c4f1726",
+            "size_bytes": 21224
+          },
+          "scale": 0.94,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.0842400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s0p98000/MgS_GXTB_eos_k777_s0p98000.out.job.json",
+            "sha256": "c58134d24770af5a2c0d367c2393ee66c9d05895357e8d38934f91d7fdd8931e",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2393.998025534597",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s0p98000/MgS_GXTB_eos_k777_s0p98000.out",
+            "sha256": "be6ebcce0881af2fd5ee6174d229c52ff1e1a3cd57f991d021eed75d968d58ef",
+            "size_bytes": 21224
+          },
+          "scale": 0.98,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.1880000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p00000/MgS_GXTB_eos_k777_s1p00000.out.job.json",
+            "sha256": "ede37cd0beb17d108fbfa226a1b9f401a867ce9c0a53246d96dfe5d42d576b32",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2393.974615886852",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p00000/MgS_GXTB_eos_k777_s1p00000.out",
+            "sha256": "54188527f10ec5b5f149614428fa324e188097628b7d7623c593642ebcc078f7",
+            "size_bytes": 21224
+          },
+          "scale": 1.0,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.2917600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p02000/MgS_GXTB_eos_k777_s1p02000.out.job.json",
+            "sha256": "18806c2f1c561d1690cbf56341d0d0818c453f64ec9c94b0d651c9978e4a831f",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2393.944247908444",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p02000/MgS_GXTB_eos_k777_s1p02000.out",
+            "sha256": "ddc83292988d18879634e3eaa233518aff7c340cb245cd0cedc227e6d87a1431",
+            "size_bytes": 21143
+          },
+          "scale": 1.02,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.4992800000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p06000/MgS_GXTB_eos_k777_s1p06000.out.job.json",
+            "sha256": "cc4a474c41a25551dd9f9e20005a51108383c0e381e8774b9f842a27135063ab",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2393.868919577149",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p06000/MgS_GXTB_eos_k777_s1p06000.out",
+            "sha256": "448bd8dd7dfedea9dced042d6c4dd67e31cc5a3aacd23990ad2f9e54f9442ebe",
+            "size_bytes": 21143
+          },
+          "scale": 1.06,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.8105600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p12000/MgS_GXTB_eos_k777_s1p12000.out.job.json",
+            "sha256": "092a782f2ac78fa929ced1cc8d177460a69358ed7e9dc720a396068cd4cb6a38",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2393.737497757544",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p12000/MgS_GXTB_eos_k777_s1p12000.out",
+            "sha256": "728b095100053dc59aea30f6c1786c6b6085a4515984419fc0db493f37a4da20",
+            "size_bytes": 21143
+          },
+          "scale": 1.12,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "6.2256000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p20000/MgS_GXTB_eos_k777_s1p20000.out.job.json",
+            "sha256": "26f93e1adf999fc4bc158a92b4036eab5775e465f35ccc14f45352b1bf122fd8",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2393.553403480463",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p20000/MgS_GXTB_eos_k777_s1p20000.out",
+            "sha256": "4faf59ba3d1790310789b937364860da5863a7987ede91070721e5545546b55e",
+            "size_bytes": 21062
+          },
+          "scale": 1.2,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "6.7444000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p30000/MgS_GXTB_eos_k777_s1p30000.out.job.json",
+            "sha256": "3ceb7b63d96e8906b71d5b234f0b872e94b758d54885c50fe5b22c91952cfa70",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2393.325128454266",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p30000/MgS_GXTB_eos_k777_s1p30000.out",
+            "sha256": "3c5e98884100301482754debae9332697ed0261dd5f87232eea7db4f4a40e6d4",
+            "size_bytes": 20981
+          },
+          "scale": 1.3,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "7.5226000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p45000/MgS_GXTB_eos_k777_s1p45000.out.job.json",
+            "sha256": "94baa1da0e2f0bb693d6cf317c4bea94818cee01778680fe5ad5a2f75bb373fd",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-2392.990550939998",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/MgS/k777/s1p45000/MgS_GXTB_eos_k777_s1p45000.out",
+            "sha256": "b682075b6d637dfaf72e3e7c4ac5e3353c16d551e3a09af4a5a1cd85bc2b1476",
+            "size_bytes": 20981
+          },
+          "scale": 1.45,
+          "valid_for_fit": true
+        }
+      ],
+      "lattice_passed": false,
+      "method": "GXTB",
+      "solid": "MgS",
+      "verdict": "unresolved_require_k888"
+    },
+    {
+      "abs_delta_a0_A": "0.0028254841",
+      "abs_delta_ecoh_kJmol_per_atom": "1.4429820656",
+      "both_passed": false,
+      "coarse_a0_A": "3.7725570671",
+      "coarse_ecoh_eV_per_atom": "4.830569343221",
+      "coarse_mesh": "k666",
+      "delta_a0_dense_minus_coarse_A": "0.0028254841",
+      "delta_ecoh_dense_minus_coarse_eV_per_atom": "-0.014955455237",
+      "delta_ecoh_dense_minus_coarse_kJmol_per_atom": "-1.4429820656",
+      "dense_a0_A": "3.7753825512",
+      "dense_ecoh_eV_per_atom": "4.815613887984",
+      "dense_mesh": "k777",
+      "ecoh_passed": false,
+      "equilibrium_sources": {
+        "k666": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiF/k666/LiF_GXTB_independent_eos_minimum_k666.out.job.json",
+            "sha256": "77007d6ada861ecf8e02a2718d5a39495b5bac3fb29475b5d3b9992a3fbba79f",
+            "size_bytes": 1682
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiF/k666/LiF_GXTB_independent_eos_minimum_k666.inp",
+            "sha256": "bb1b6cc98c9af7ed856a239fce2e350b65d66e29f5ce7121cfeb50ef7d5c2341",
+            "size_bytes": 1519
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiF/k666/LiF_GXTB_independent_eos_minimum_k666.inp.eos.json",
+            "sha256": "ea26a9c35886f3bb425c8627d901a5e15f27875a482625eacb91f18c6aad83ef",
+            "size_bytes": 723
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiF/k666/LiF_GXTB_independent_eos_minimum_k666.out",
+            "sha256": "915bce6f34bd44c61e6e4075b7118c589aa765a9b8ff201b669578bd2ba973c3",
+            "size_bytes": 21072
+          }
+        },
+        "k777": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiF/k777/LiF_GXTB_independent_eos_minimum_k777.out.job.json",
+            "sha256": "977bc54a20e20f5e35b392fb889fe7d0d4120ed9865be0a1bb37e73b6d37100d",
+            "size_bytes": 1676
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiF/k777/LiF_GXTB_independent_eos_minimum_k777.inp",
+            "sha256": "82425c5373c2e354a9f0e57ff7e40fd22fe0c146eba0b29b876943d45dd99cf9",
+            "size_bytes": 1483
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiF/k777/LiF_GXTB_independent_eos_minimum_k777.inp.eos.json",
+            "sha256": "75c0c00998df5282c51d1f8b0e22cdbc41dc100dd7ce84e2c301f5b6dd53e64e",
+            "size_bytes": 723
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiF/k777/LiF_GXTB_independent_eos_minimum_k777.out",
+            "sha256": "422513f8f887c2d5d26b33f6e6ec425a5c3cea5cd7dc61dc9318d8ed97419bb3",
+            "size_bytes": 21303
+          }
+        }
+      },
+      "fit_records": {
+        "k666": {
+          "record": {
+            "a_eos_A": "3.7725570671",
+            "a_exp_A": "3.973",
+            "energy_fit_hartree": "-430.327945000851",
+            "eos_mesh": "k666",
+            "fit_rmse_hartree": "0.019312040541",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "3.7346200000",
+            "grid_min_energy_hartree": "-430.303894715590",
+            "grid_min_scale": "0.94000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "LiF",
+            "structure": "rocksalt",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "1acdee19bbeac4ea3c04c50318515ff3ffa6b932db80c8af95301ae2fc248ad7"
+        },
+        "k777": {
+          "record": {
+            "a_eos_A": "3.7753825512",
+            "a_exp_A": "3.973",
+            "energy_fit_hartree": "-430.323804928003",
+            "eos_mesh": "k777",
+            "fit_rmse_hartree": "0.019376974373",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "3.7346200000",
+            "grid_min_energy_hartree": "-430.299309557033",
+            "grid_min_scale": "0.94000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "LiF",
+            "structure": "rocksalt",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "5a572d912bd7b8b39da6fb1543dfec9a5d25651463b690196761ee7c6e561f8e"
+        }
+      },
+      "k777_eos_sources": [
+        {
+          "a_A": "3.2578600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s0p82000/LiF_GXTB_eos_k777_s0p82000.out.job.json",
+            "sha256": "b072d893585f9d1799d36dfcd06293f95a56f487baa266be0e50e0fb7f067f47",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-429.898512275346",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s0p82000/LiF_GXTB_eos_k777_s0p82000.out",
+            "sha256": "85373157cae3f9820b78080874cb4c1675c1832d9cf3075ecf40ede9a5094b67",
+            "size_bytes": 21143
+          },
+          "scale": 0.82,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.4962400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s0p88000/LiF_GXTB_eos_k777_s0p88000.out.job.json",
+            "sha256": "7b646bcff1cfbbe110434abf471b5668632dd8312b85736e4fbad39c7c959856",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-430.231085021725",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s0p88000/LiF_GXTB_eos_k777_s0p88000.out",
+            "sha256": "7716c7b448ca47ba9847fdb92a2dac93b600295b821dc9d698f4703861ca982e",
+            "size_bytes": 21143
+          },
+          "scale": 0.88,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.7346200000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s0p94000/LiF_GXTB_eos_k777_s0p94000.out.job.json",
+            "sha256": "2d272e4d82d722bce3638b6b8ef5e0be3fad41fc44feb1d056fe7afe9a0716c7",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-430.299309557033",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s0p94000/LiF_GXTB_eos_k777_s0p94000.out",
+            "sha256": "4c29bad2759153c2f41c4eb9702083839a0a06114ca7c7a6053243276bc60db4",
+            "size_bytes": 21143
+          },
+          "scale": 0.94,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.8935400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s0p98000/LiF_GXTB_eos_k777_s0p98000.out.job.json",
+            "sha256": "b3db22dcdf9c3709ca2d531fd9235ce8fe668abdaa8d67ebf5639c94f4a2633f",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-430.288168450576",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s0p98000/LiF_GXTB_eos_k777_s0p98000.out",
+            "sha256": "6eb5df8e5b823e96c4c60c4b40c8e53764497e0c58479ebda503fadeb182595c",
+            "size_bytes": 21143
+          },
+          "scale": 0.98,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "3.9730000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p00000/LiF_GXTB_eos_k777_s1p00000.out.job.json",
+            "sha256": "60a575eaabd44b6ed0a0b034506461120210de6ecc440249db555cf04c926f02",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-430.280899114272",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p00000/LiF_GXTB_eos_k777_s1p00000.out",
+            "sha256": "bf83bded136aac8ce182f5dd9fde7f1b2d0391f77aff2bd3ff1fbdec7e4f226c",
+            "size_bytes": 21062
+          },
+          "scale": 1.0,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.0524600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p02000/LiF_GXTB_eos_k777_s1p02000.out.job.json",
+            "sha256": "f7609afc0cd7787c25ae002f4c47a85e8f3b78e0173810895338a022dac6b713",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-430.271270043968",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p02000/LiF_GXTB_eos_k777_s1p02000.out",
+            "sha256": "61ba4798c60f68f6a578860e74bd0af7c0f7ff36ffa9259374d87043a8c25b03",
+            "size_bytes": 21062
+          },
+          "scale": 1.02,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.2113800000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p06000/LiF_GXTB_eos_k777_s1p06000.out.job.json",
+            "sha256": "3da76132b0435e6a3a6058d7cb68008ef260b630be4c99a689acb44376302b9d",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-430.243965636805",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p06000/LiF_GXTB_eos_k777_s1p06000.out",
+            "sha256": "43b7a30ee9926d5d97d710ee6bdb110f09eab62fb4e272198b9d7f91e9d057b6",
+            "size_bytes": 21062
+          },
+          "scale": 1.06,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.4497600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p12000/LiF_GXTB_eos_k777_s1p12000.out.job.json",
+            "sha256": "ade5e0670abbdcab9a752cb45e58853089fdc71b5acedef525cbc78b182417a9",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-430.189387324419",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p12000/LiF_GXTB_eos_k777_s1p12000.out",
+            "sha256": "0bac1ee72913eda82659aca5bbe0908cca0e2fa984cd8393e5f976ed4037dcf6",
+            "size_bytes": 21062
+          },
+          "scale": 1.12,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.7676000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p20000/LiF_GXTB_eos_k777_s1p20000.out.job.json",
+            "sha256": "9eef6fd843f325758132fb869359dbd78033810f3d4d32b7470d493544d80913",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-430.106482733249",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p20000/LiF_GXTB_eos_k777_s1p20000.out",
+            "sha256": "2be39b374fc5e0cbda5dd4cb90fe33152a8d45790e2343a8cecd20bb07246149",
+            "size_bytes": 21062
+          },
+          "scale": 1.2,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.1649000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p30000/LiF_GXTB_eos_k777_s1p30000.out.job.json",
+            "sha256": "820b05691454dc8a022d34efd7752a25beafd6a74f0e3bae4bf412750709fbdd",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-429.994640188554",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p30000/LiF_GXTB_eos_k777_s1p30000.out",
+            "sha256": "574a44c21bfdb353c9a6f4d617910a0daba8123163240a097b03b39af72eed85",
+            "size_bytes": 21062
+          },
+          "scale": 1.3,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.7608500000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p45000/LiF_GXTB_eos_k777_s1p45000.out.job.json",
+            "sha256": "d6295c268ef3fdd274870b659c8ba6c59579d66903d5137b4fb9d08f0b649ebe",
+            "size_bytes": 1666
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-429.855399811956",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiF/k777/s1p45000/LiF_GXTB_eos_k777_s1p45000.out",
+            "sha256": "9fbfacfab7ce9320e149f0ff9d1b40451239ab7cfa0c133f8aa6f5178ab12270",
+            "size_bytes": 21062
+          },
+          "scale": 1.45,
+          "valid_for_fit": true
+        }
+      ],
+      "lattice_passed": false,
+      "method": "GXTB",
+      "solid": "LiF",
+      "verdict": "unresolved_require_k888"
+    },
+    {
+      "abs_delta_a0_A": "0.0022234246",
+      "abs_delta_ecoh_kJmol_per_atom": "0.2992957645",
+      "both_passed": false,
+      "coarse_a0_A": "4.8435953501",
+      "coarse_ecoh_eV_per_atom": "3.915955846563",
+      "coarse_mesh": "k666",
+      "delta_a0_dense_minus_coarse_A": "0.0022234246",
+      "delta_ecoh_dense_minus_coarse_eV_per_atom": "-0.003101982010",
+      "delta_ecoh_dense_minus_coarse_kJmol_per_atom": "-0.2992957645",
+      "dense_a0_A": "4.8458187747",
+      "dense_ecoh_eV_per_atom": "3.912853864553",
+      "dense_mesh": "k777",
+      "ecoh_passed": false,
+      "equilibrium_sources": {
+        "k666": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiCl/k666/LiCl_GXTB_independent_eos_minimum_k666.out.job.json",
+            "sha256": "d3bf688c298e5165c787771af0e7bfc3d94afacf33b22343bf821914d88ca4fe",
+            "size_bytes": 1684
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiCl/k666/LiCl_GXTB_independent_eos_minimum_k666.inp",
+            "sha256": "fc39d291fd545281c4121aeb5f026c488c32068bfacda967fcb23315776091f0",
+            "size_bytes": 1520
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiCl/k666/LiCl_GXTB_independent_eos_minimum_k666.inp.eos.json",
+            "sha256": "a31e17a83c044ea501a7f7660baf07932dad3ca561a0c447753d93c2c4fd7b79",
+            "size_bytes": 724
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiCl/k666/LiCl_GXTB_independent_eos_minimum_k666.out",
+            "sha256": "1b7951a899d25460f229df29744574ac0d1a57280c6d40d7158ea86b412e3524",
+            "size_bytes": 21155
+          }
+        },
+        "k777": {
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiCl/k777/LiCl_GXTB_independent_eos_minimum_k777.out.job.json",
+            "sha256": "4497032954f0134f05ee26c70c36f8b7176562f4562d0cc5798f6a98aa6780eb",
+            "size_bytes": 1678
+          },
+          "input": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiCl/k777/LiCl_GXTB_independent_eos_minimum_k777.inp",
+            "sha256": "1a7d285a9c581126fbbfc4dff76cb3d43b2d59ac1ca8a80d5c3a6058793a86e8",
+            "size_bytes": 1484
+          },
+          "lineage": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiCl/k777/LiCl_GXTB_independent_eos_minimum_k777.inp.eos.json",
+            "sha256": "57465464867efde0c0834d1522ee750925292d369d21cd08fbc1b7021eb247bf",
+            "size_bytes": 724
+          },
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos_k_convergence/GXTB/LiCl/k777/LiCl_GXTB_independent_eos_minimum_k777.out",
+            "sha256": "390bd21ca228f21c32e90e144546639ef071aea93816f8190eb9c6560edadc7c",
+            "size_bytes": 21143
+          }
+        }
+      },
+      "fit_records": {
+        "k666": {
+          "record": {
+            "a_eos_A": "4.8435953501",
+            "a_exp_A": "5.072",
+            "energy_fit_hartree": "-1871.554333072397",
+            "eos_mesh": "k666",
+            "fit_rmse_hartree": "0.005079998033",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "4.7676800000",
+            "grid_min_energy_hartree": "-1871.546104219230",
+            "grid_min_scale": "0.94000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "LiCl",
+            "structure": "rocksalt",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "2db4cb627516f27fae3d98bdf6f25a18f4445115b2dca6e33115b5563fe62105"
+        },
+        "k777": {
+          "record": {
+            "a_eos_A": "4.8458187747",
+            "a_exp_A": "5.072",
+            "energy_fit_hartree": "-1871.553442952136",
+            "eos_mesh": "k777",
+            "fit_rmse_hartree": "0.005095528523",
+            "fit_status": "quadratic",
+            "grid_min_a_A": "4.7676800000",
+            "grid_min_energy_hartree": "-1871.545041020033",
+            "grid_min_scale": "0.94000",
+            "method": "GXTB",
+            "n_charge_collapsed": "0",
+            "n_completed": "11",
+            "n_converged_raw": "11",
+            "n_explicit_excluded": "0",
+            "n_points": "11",
+            "n_requested": "11",
+            "n_unresolved_branch_candidates": "0",
+            "solid": "LiCl",
+            "structure": "rocksalt",
+            "topology_max_reversal_hartree": "",
+            "topology_reversal_count": ""
+          },
+          "record_sha256": "171d82757a8660dd279416813e2b2251a8b3bfc629e89059c95b274b6ad8c020"
+        }
+      },
+      "k777_eos_sources": [
+        {
+          "a_A": "4.1590400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s0p82000/LiCl_GXTB_eos_k777_s0p82000.out.job.json",
+            "sha256": "e1d633032d889ecb0752557b0f45716beb02cc0bd681e4eb15fc9606dd6e6884",
+            "size_bytes": 1668
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1871.353520175197",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s0p82000/LiCl_GXTB_eos_k777_s0p82000.out",
+            "sha256": "47df963507e4d9e27332d8e52e4a73ff2e324c32b8ce810ac966477fe4fc2b9e",
+            "size_bytes": 22927
+          },
+          "scale": 0.82,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.4633600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s0p88000/LiCl_GXTB_eos_k777_s0p88000.out.job.json",
+            "sha256": "7b784bde01ea96e9eac26778ab78c1ea66a870e3e15e4bbdd8092048c4f381f1",
+            "size_bytes": 1668
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1871.499678879657",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s0p88000/LiCl_GXTB_eos_k777_s0p88000.out",
+            "sha256": "ae32deb3c92ac26954b605d49ec58079a1f175d24fd9e995098347bff7c98eb1",
+            "size_bytes": 21226
+          },
+          "scale": 0.88,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.7676800000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s0p94000/LiCl_GXTB_eos_k777_s0p94000.out.job.json",
+            "sha256": "4b9ee237ce6d35cfbf4ea5be1aeef8c60799ccccd4cda3407c959deb8626b320",
+            "size_bytes": 1668
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1871.545041020033",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s0p94000/LiCl_GXTB_eos_k777_s0p94000.out",
+            "sha256": "02502ad0e0f021abff2c014dba95661a7553a7b5593d987003b7ff4b2c3231b2",
+            "size_bytes": 21064
+          },
+          "scale": 0.94,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "4.9705600000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s0p98000/LiCl_GXTB_eos_k777_s0p98000.out.job.json",
+            "sha256": "7a7b123c41d505c938bbeeadff024d2b2add7ecdf5c58abc738a7ffb30b51592",
+            "size_bytes": 1668
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1871.543377618560",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s0p98000/LiCl_GXTB_eos_k777_s0p98000.out",
+            "sha256": "435175c20fcf7c25bc01df7985360b72dacb5c4aa4d44b0c9532fa391096a6fb",
+            "size_bytes": 21145
+          },
+          "scale": 0.98,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.0720000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p00000/LiCl_GXTB_eos_k777_s1p00000.out.job.json",
+            "sha256": "007f8871e7fa6be9b17240b5037948ada3e2ceb3c4a39d98c764d9d871f9731e",
+            "size_bytes": 1668
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1871.536624877973",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p00000/LiCl_GXTB_eos_k777_s1p00000.out",
+            "sha256": "33181b249ddf09e16fc8d9fac37adbefe88d4cbecb9dcb66e737ff1835c28f7b",
+            "size_bytes": 21145
+          },
+          "scale": 1.0,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.1734400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p02000/LiCl_GXTB_eos_k777_s1p02000.out.job.json",
+            "sha256": "82d5c05d38a18f26eada84294ed0baec08b8680642bc818f3da96adbf712ef5a",
+            "size_bytes": 1668
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1871.527102116679",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p02000/LiCl_GXTB_eos_k777_s1p02000.out",
+            "sha256": "5462ac01bed937f164c4cdcde3f0b352eda1908447d057f470a618f15a9f0484",
+            "size_bytes": 21145
+          },
+          "scale": 1.02,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.3763200000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p06000/LiCl_GXTB_eos_k777_s1p06000.out.job.json",
+            "sha256": "6ff7e5fe5151f8b051ff3014329a235eda0de24d4c2faa2a8b28c04fb8f70c04",
+            "size_bytes": 1668
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1871.502120019362",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p06000/LiCl_GXTB_eos_k777_s1p06000.out",
+            "sha256": "c3dc4bdf2168f9cb1335eded604dd8632b786cad3329c0fc4cac3b71b63aa42c",
+            "size_bytes": 21064
+          },
+          "scale": 1.06,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "5.6806400000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p12000/LiCl_GXTB_eos_k777_s1p12000.out.job.json",
+            "sha256": "c4371107b09e808339281621056ac57c7f4d55b4712bcf2f0a51b111808efa78",
+            "size_bytes": 1668
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1871.453089198614",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p12000/LiCl_GXTB_eos_k777_s1p12000.out",
+            "sha256": "e7b24a3ef8c03b0f70533d68972f2fcdbc7464c4f1da0d28a80915b0a0306dff",
+            "size_bytes": 21145
+          },
+          "scale": 1.12,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "6.0864000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p20000/LiCl_GXTB_eos_k777_s1p20000.out.job.json",
+            "sha256": "3dd877fd2ad67af9c2e0f17904ae85e3c7fb478580b4cf9a8690f498dca66c5d",
+            "size_bytes": 1668
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1871.382960363135",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p20000/LiCl_GXTB_eos_k777_s1p20000.out",
+            "sha256": "2450329874a50de8d08bdc2ed7ef4c9e9d05e147fa3f99190c8e5666eef37c9a",
+            "size_bytes": 21145
+          },
+          "scale": 1.2,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "6.5936000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p30000/LiCl_GXTB_eos_k777_s1p30000.out.job.json",
+            "sha256": "a29cffdff6ccd4458abe97247d596be5f8423440778f79dd9bef318641bc46dc",
+            "size_bytes": 1668
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1871.305045569261",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p30000/LiCl_GXTB_eos_k777_s1p30000.out",
+            "sha256": "8286b696097dece3c2f4d250c6c8f332b00105b04ca225b0ff4a536cd3904889",
+            "size_bytes": 21226
+          },
+          "scale": 1.3,
+          "valid_for_fit": true
+        },
+        {
+          "a_A": "7.3544000000",
+          "campaign_stamp": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p45000/LiCl_GXTB_eos_k777_s1p45000.out.job.json",
+            "sha256": "a7cdbd169e682e06ec9f9ce063256e40b1c61a89e331ec97150878fd46e5f38c",
+            "size_bytes": 1668
+          },
+          "classification_resolution": "",
+          "diagnostic": "",
+          "energy_hartree": "-1871.216119115382",
+          "output": {
+            "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/runs/eos/GXTB/LiCl/k777/s1p45000/LiCl_GXTB_eos_k777_s1p45000.out",
+            "sha256": "40632ca1670c37f6cccf258115d4669968c0d7703e52d2048989095e5599fa1e",
+            "size_bytes": 21064
+          },
+          "scale": 1.45,
+          "valid_for_fit": true
+        }
+      ],
+      "lattice_passed": false,
+      "method": "GXTB",
+      "solid": "LiCl",
+      "verdict": "unresolved_require_k888"
+    }
+  ],
+  "schema_version": 1,
+  "scientific_payload_sha256": "98b13bb29bf38a2deffeea92eb7ad8a2c4d307814d4c353ad1a2c4872d0c9aad",
+  "thresholds": {
+    "abs_delta_a0_A": 0.001,
+    "abs_delta_ecoh_eV_per_atom": 0.0005182134828131087,
+    "abs_delta_ecoh_kJmol_per_atom": 0.05
+  },
+  "updated_at_utc": "2026-07-15T17:01:19.732190+00:00"
+}

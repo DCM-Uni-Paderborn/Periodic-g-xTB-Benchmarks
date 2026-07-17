@@ -1,0 +1,28 @@
+{
+  "campaign_identity": {
+    "campaign_id": "gxtb-pbc-v1-post5582-20260714",
+    "cp2k_cmake_cache_sha256": "34ce77b797fa397b9f0ece2b3e3801d4769010a5fdf096ceb616be1f6b8048d6",
+    "cp2k_embedded_source_revision": "28df9380ab",
+    "cp2k_executable_sha256": "86949402a326e3118551fea079dd2b79df331087b47cb355b8803964f15deb89",
+    "cp2k_loaded_library_sha256": "f0f4cadba1ea416c29c809d949412eea72be463c9528febc64665c48c1dd60ba",
+    "cp2k_source_revision": "28df9380abb327d56bbf216d2469a1fd8c953fc0",
+    "dependency_lock_sha256": "f80b045dd5bae175d16d035433b0507ab72c755973f081f9a1df891c4f36e191",
+    "fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+    "save_tblite_cmake_cache_sha256": "a2d2d0584dc9b4792c87426b06e09f7d12219c71b907ca6cd85bebbdc1690ab1",
+    "save_tblite_executable_sha256": "949fe2199ab9fa735653279d49a2f0b270af003e60d272ba2517cce88333db75",
+    "save_tblite_library_sha256": "8ac8c98f462c6b29a2350ed341bf310addbc4692b0f6339a28ecb26c996c13a4",
+    "save_tblite_source_revision": "257ba442684c39454175e5192c8a2342b4c6380f",
+    "schema": 1
+  },
+  "command_contract": {
+    "driver": "cp2k",
+    "omp_threads": 1
+  },
+  "completed": true,
+  "executable": "/home/kuehne88/work/codex-gxtb-post5582-clean-20260714/build/cp2k/bin/cp2k.psmp",
+  "executable_sha256": "86949402a326e3118551fea079dd2b79df331087b47cb355b8803964f15deb89",
+  "input": "/home/kuehne88/work/lc10-k888-nine-20260715T1810/Goldzak12/runs/eos_k_convergence/GXTB/LiCl/k888/LiCl_GXTB_independent_eos_minimum_k888.inp",
+  "input_sha256": "48c97e14dad253c514f96dcee28970b264f5f4a112ec28219f88f8df8490efdb",
+  "return_code": 0,
+  "schema_version": 1
+}

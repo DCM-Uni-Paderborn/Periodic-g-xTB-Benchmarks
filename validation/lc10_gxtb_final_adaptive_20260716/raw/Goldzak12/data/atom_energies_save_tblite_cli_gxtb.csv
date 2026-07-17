@@ -1,0 +1,12 @@
+method,element,energy_hartree,source,multiplicity,spin_2S
+GXTB,Al,-242.336429147698,save_tblite_cli,2,1
+GXTB,B,-24.643801024768,save_tblite_cli,2,1
+GXTB,C,-37.844189320521,save_tblite_cli,3,2
+GXTB,Cl,-460.127206051290,save_tblite_cli,2,1
+GXTB,F,-99.748659234322,save_tblite_cli,2,1
+GXTB,Li,-7.471859903404,save_tblite_cli,2,1
+GXTB,Mg,-200.057233885409,save_tblite_cli,1,0
+GXTB,N,-54.594621044646,save_tblite_cli,4,3
+GXTB,P,-341.242537445517,save_tblite_cli,4,3
+GXTB,S,-398.091033768152,save_tblite_cli,3,2
+GXTB,Si,-289.347872226314,save_tblite_cli,3,2

@@ -1,0 +1,70 @@
+{
+  "campaign_fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+  "fit_scales": [
+    0.91,
+    0.92,
+    0.93,
+    0.94,
+    0.95
+  ],
+  "fits": [
+    {
+      "a_eos_A": "3.7326714514",
+      "energy_fit_hartree": "-430.298013615259",
+      "eos_mesh": "k101010",
+      "fit_rmse_hartree": "0.000096232626",
+      "fit_scales": [
+        "0.91000",
+        "0.92000",
+        "0.93000",
+        "0.94000",
+        "0.95000"
+      ],
+      "fit_scope": "local_refinement_bracket",
+      "fit_status": "quadratic",
+      "grid_min_a_A": "3.7346200000",
+      "grid_min_energy_hartree": "-430.297881319643",
+      "grid_min_scale": "0.94000",
+      "method": "GXTB",
+      "n_completed": 5,
+      "n_converged_raw": 5,
+      "n_explicit_excluded": 0,
+      "n_points": 5,
+      "n_requested": 5,
+      "n_unresolved_branch_candidates": 0,
+      "solid": "LiF"
+    }
+  ],
+  "mesh": "k101010",
+  "outputs": [
+    "/home/kuehne88/work/lc10-k999-nine-speculative-20260715T1854/Goldzak12/runs/eos_k_convergence/GXTB/LiF/k101010/LiF_GXTB_independent_eos_minimum_k101010.out"
+  ],
+  "phase": "complete",
+  "records": [
+    {
+      "a0_A": "3.7326714514",
+      "atom_reference_source": "save_tblite_cli",
+      "campaign_stamp_sha256": "aa1763834866cdf02ca18c5519f5929e4c522ce5e634a455c20d1f47f50016fa",
+      "ecoh_eV_per_atom": "4.815797135150",
+      "fit_energy_hartree": "-430.298013615259",
+      "fit_rmse_hartree": "0.000096232626",
+      "fit_status": "quadratic",
+      "input_sha256": "c184ef084cbe7000fe075755b04cfce912b4437de35fbadb5673624a0688fbcb",
+      "lineage_sha256": "3ee73d20f90f7c07116c5221df373e694633ce2cb510172a6f9ecbc88181b7ad",
+      "mesh": "k101010",
+      "mesh_n": 10,
+      "method": "GXTB",
+      "n_eos_points": "5",
+      "output_sha256": "ba7aae7c4cb44dd01c29c35b56fd9fbeb525ee7de5a64db0e0b8ce275caa748b",
+      "solid": "LiF",
+      "solid_energy_hartree": "-430.297894794519",
+      "structure": "rocksalt",
+      "value_source": "single_point_at_own_independent_eos_minimum"
+    }
+  ],
+  "schema_version": 1,
+  "solids": [
+    "LiF"
+  ],
+  "updated_at_utc": "2026-07-16T08:54:58.091750+00:00"
+}
