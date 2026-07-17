@@ -236,10 +236,7 @@ def load_campaign_identity(benchmark_root: Path) -> dict[str, object]:
         )
     ):
         raise ValueError(f"GXTB campaign manifest record is missing from {path}")
-    manifest_path = _resolve_hash_bound_repository_path(
-        manifest_record,
-        label="campaign manifest",
-    )
+    manifest_path = _resolve_frozen_campaign_manifest(benchmark_root, manifest_record)
     manifest = json.loads(manifest_path.read_text())
     declared = _identity_from_manifest_declarations(manifest, manifest_path)
     observed = {
@@ -258,8 +255,27 @@ def _resolve_frozen_campaign_manifest(
 
     expected_sha256 = str(manifest_record["file_sha256"]).lower()
     recorded_path = Path(str(manifest_record["path"])).expanduser()
+    try:
+        recorded = recorded_path.resolve(strict=True)
+    except FileNotFoundError:
+        recorded = None
+    if recorded is not None:
+        if sha256_file(recorded) == expected_sha256:
+            return recorded
+        raise ValueError(
+            "current campaign manifest fingerprint differs from the frozen X23b provenance"
+        )
+
     campaign_id = str(manifest_record.get("campaign_id", "")).strip()
-    candidates = [recorded_path]
+    candidates: list[Path] = []
+
+    relative_value = manifest_record.get("repository_relative_path")
+    if relative_value:
+        relative = Path(str(relative_value))
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValueError("campaign manifest has an invalid repository-relative path")
+        candidates.append(REPOSITORY_ROOT / relative)
+
     if campaign_id:
         candidates.append(
             benchmark_root.resolve().parent
@@ -267,6 +283,15 @@ def _resolve_frozen_campaign_manifest(
             / campaign_id
             / "build_manifest.json"
         )
+
+    if recorded_path.is_absolute():
+        for marker in ("Periodic-g-xTB-Benchmarks", "Periodic-GFN2-Benchmarks"):
+            if marker in recorded_path.parts:
+                index = recorded_path.parts.index(marker)
+                suffix = Path(*recorded_path.parts[index + 1 :])
+                if suffix.parts and ".." not in suffix.parts:
+                    candidates.append(REPOSITORY_ROOT / suffix)
+                break
 
     existing: list[Path] = []
     seen: set[Path] = set()
