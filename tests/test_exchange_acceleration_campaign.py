@@ -176,6 +176,61 @@ def test_provider_forward_status_is_scoped_conservatively():
         "provider_bounded_ao_image_batching"
     ]["scope"]
 
+    assert {
+        "energy",
+        "fock",
+        "overlap_adjoint",
+        "forces",
+        "stress",
+        "cold_warm_identity",
+        "invalidation",
+    } <= set(modules["regular_grid_bvk_cache"]["required_observables"])
+    assert {
+        "energy",
+        "shell_potential",
+        "fock",
+        "no_retained_full_k_space_density_overlap_arrays",
+        "push_order_permutation",
+        "twist_and_physical_kpoint_permutation",
+        "negative_recovery_paths",
+        "9x9x1_dense_oracle_identity",
+    } <= set(modules["provider_matrix_lean_forward_stream"]["required_observables"])
+    evidence = modules["provider_matrix_lean_forward_stream"]["current_evidence"]
+    assert "not a bounded-memory implementation" in evidence
+    assert "amat_r, cmat_r and vmat_r" in evidence
+    assert "two dense Nk x Nk phase tables" in evidence
+
+    assert {
+        "bounded_peak_memory",
+        "r_image_batching",
+        "batched_or_on_demand_phases",
+        "energy",
+        "shell_potential",
+        "fock",
+        "push_order_permutation",
+        "9x9x1_dense_oracle_identity",
+    } <= set(modules["provider_bounded_ao_image_batching"]["required_observables"])
+    assert {
+        "overlap_adjoint",
+        "forces",
+        "stress",
+        "reverse_pull_permutation",
+        "no_retained_full_k_space_density_overlap_arrays",
+        "state_machine_negative_tests",
+    } <= set(modules["provider_streamed_reverse"]["required_observables"])
+    assert {
+        "irreducible_to_star_block_expansion",
+        "provider_stream_push_pull",
+        "weighted_real_adjoint_foldback",
+        "energy",
+        "fock",
+        "overlap_adjoint",
+        "forces",
+        "stress",
+        "push_pull_permutation",
+        "state_machine_negative_tests",
+    } <= set(modules["cp2k_streamed_star_consumer"]["required_observables"])
+
 
 def test_provider_forward_focused_raw_record():
     raw = CAMPAIGN / "raw" / "save_tblite_provider_forward"

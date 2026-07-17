@@ -163,7 +163,11 @@ qualification basis because its executable path was replaced during that
 long-running test.
 
 This historical result is intentionally limited to the provider cache/planner
-and matrix-lean **forward** stream.  Subsequent evidence under
+and matrix-lean **forward** stream: it established the absence of retained
+full-k-space density/overlap input arrays, while its three complete BvK-image
+tensors and two dense phase tables meant it was not itself a bounded-memory
+implementation.  At that point its reduced transaction rejected reverse
+application by contract.  Subsequent evidence under
 `validation/accelerated_exchange/cp2k_streamed_reverse_consumer/` qualifies
 fixed-batch provider AO-image workspace and the CP2K forward/reverse consumer,
 including overlap adjoints, forces, and stress.  It still does not establish

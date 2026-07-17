@@ -1,0 +1,5 @@
+# Raw CP2K and provider transcripts are intentional immutable evidence.
+!*.out
+!*.log
+!**/*.out
+!**/*.log

@@ -1,0 +1,685 @@
+{
+  "archive_created_utc": "2026-07-16T17:00:19Z",
+  "archive_extended_with_cp2k_consumer_utc": "2026-07-16T18:27:48Z",
+  "archive_notes": [
+    "All copied source inputs and outputs are preserved byte-for-byte.",
+    "Seven extra CP2K outputs without PROGRAM ENDED are retained as diagnostic/incomplete raw evidence and are not qualification rows.",
+    "Two CP2K transform-consumer identity-diagnostic outputs terminate through qualification-only ABORT gates; they are preserved but are not production passes or tabulated comparison pairs.",
+    "Provider transform timing is transform-only and must not be interpreted as whole-SCF speedup.",
+    "The six-run CP2K release probe resolves a 1.20x exclusive kernel speedup but no measurable end-to-end speedup.",
+    "Serial image batching is a bounded-memory/recomputation trade-off, not a serial acceleration claim.",
+    "No paper or supporting-information file, PDF, or paper hash is contained in this campaign."
+  ],
+  "campaign_id": "gxtb-exchange-distributed-separable-dft-20260716T170019Z",
+  "cp2k_separable_direct_dft_consumer_qualification": {
+    "aggregate_maxima": {
+      "max_abs_energy_delta_Ha": 7.105427357601002e-15,
+      "max_abs_force_delta_Ha_per_bohr": 1.7318587359999999e-16,
+      "max_abs_stress_delta_bar": 8.000006346264854e-07
+    },
+    "all_output_inventory": {
+      "diagnostic_or_incomplete_outputs": [
+        {
+          "path": "raw/cp2k_separable_consumer/runs/ch4_full_dense/cp2k.out",
+          "sha256": "d983a62b4bf894b1883b9d04cec73cebbbc096752df92341a01bc2ce55137695"
+        },
+        {
+          "path": "raw/cp2k_separable_consumer/runs/ch4_full_separable/cp2k.out",
+          "sha256": "700856fdd294da6f2c01d45c34357b6c70ad7da4fc86e00e9e79c1cca4e98603"
+        }
+      ],
+      "normally_ended": 30,
+      "preserved_diagnostic_or_incomplete": 2,
+      "total_outputs": 32
+    },
+    "case_count": 9,
+    "cases": [
+      {
+        "case": "ch4_full_debug",
+        "max_abs_energy_delta_Ha": "7.105427357601002e-15",
+        "max_abs_force_delta_Ha_per_bohr": "7.58372569e-17",
+        "max_abs_stress_delta_bar": "3.9999940781854093e-07",
+        "mesh_or_reduction": "2x2x2_full",
+        "periodicity": "3D",
+        "spin": "RKS",
+        "status": "pass_23_energies"
+      },
+      {
+        "case": "ch4_spglib",
+        "max_abs_energy_delta_Ha": "7.105427357601002e-15",
+        "max_abs_force_delta_Ha_per_bohr": "4.3059202999999984e-17",
+        "max_abs_stress_delta_bar": "8.000006346264854e-07",
+        "mesh_or_reduction": "2x2x2_SPGLIB",
+        "periodicity": "3D",
+        "spin": "RKS",
+        "status": "pass"
+      },
+      {
+        "case": "ch4_k290",
+        "max_abs_energy_delta_Ha": "0",
+        "max_abs_force_delta_Ha_per_bohr": "1.26441315e-16",
+        "max_abs_stress_delta_bar": "4.235174662200001e-12",
+        "mesh_or_reduction": "2x2x2_K290",
+        "periodicity": "3D",
+        "spin": "RKS",
+        "status": "pass"
+      },
+      {
+        "case": "ar2_1d",
+        "max_abs_energy_delta_Ha": "0",
+        "max_abs_force_delta_Ha_per_bohr": "0",
+        "max_abs_stress_delta_bar": "1.144410498399e-12",
+        "mesh_or_reduction": "2x1x1_full",
+        "periodicity": "1D",
+        "spin": "RKS",
+        "status": "pass"
+      },
+      {
+        "case": "ar4_2d",
+        "max_abs_energy_delta_Ha": "0",
+        "max_abs_force_delta_Ha_per_bohr": "0",
+        "max_abs_stress_delta_bar": "0",
+        "mesh_or_reduction": "2x2x1_full",
+        "periodicity": "2D",
+        "spin": "RKS",
+        "status": "pass"
+      },
+      {
+        "case": "si_shifted",
+        "max_abs_energy_delta_Ha": "0",
+        "max_abs_force_delta_Ha_per_bohr": "1.7318587359999999e-16",
+        "max_abs_stress_delta_bar": "1.9317531029700002e-10",
+        "mesh_or_reduction": "2x2x2_shifted_full",
+        "periodicity": "3D",
+        "spin": "RKS",
+        "status": "pass"
+      },
+      {
+        "case": "o2_uks_time_reversal",
+        "max_abs_energy_delta_Ha": "0",
+        "max_abs_force_delta_Ha_per_bohr": "0",
+        "max_abs_stress_delta_bar": "0",
+        "mesh_or_reduction": "3x1x1_inversion_reduced",
+        "periodicity": "3D",
+        "spin": "UKS",
+        "status": "pass"
+      },
+      {
+        "case": "ch4_distributed_smoke",
+        "max_abs_energy_delta_Ha": "0",
+        "max_abs_force_delta_Ha_per_bohr": "1.532643619e-16",
+        "max_abs_stress_delta_bar": "9.999894245993346e-08",
+        "mesh_or_reduction": "2x2x2_full_P2_vs_P1",
+        "periodicity": "3D",
+        "spin": "RKS",
+        "status": "pass"
+      },
+      {
+        "case": "ch4_distributed_plus_separable",
+        "max_abs_energy_delta_Ha": "0",
+        "max_abs_force_delta_Ha_per_bohr": "1.2929111000000015e-17",
+        "max_abs_stress_delta_bar": "1.3388011983072999e-12",
+        "mesh_or_reduction": "2x2x2_full_P2_dense_vs_separable_derivative",
+        "periodicity": "3D",
+        "spin": "RKS",
+        "status": "pass"
+      }
+    ],
+    "copied_source_manifest": {
+      "checked": 41,
+      "failures": [],
+      "passed": true
+    },
+    "derivative_boundary": "Energy, force, and analytical-stress equivalence is qualified, including a 23-energy DEBUG trajectory. The derivative contraction itself still uses the complete mesh and has no distributed or batch-bounded scaling claim.",
+    "distinct_normally_ended_tabulated_outputs": 17,
+    "normally_ended_tabulated_outputs": 18,
+    "preserved_nonpass_identity_diagnostics": [
+      {
+        "classification": "qualification-only identity-gate diagnostic",
+        "path": "runs/ch4_full_dense/cp2k.out",
+        "termination": "intentional ABORT; not a production pass"
+      },
+      {
+        "classification": "qualification-only identity-duality diagnostic",
+        "path": "runs/ch4_full_separable/cp2k.out",
+        "termination": "intentional ABORT; not a production pass"
+      }
+    ],
+    "production_pairs": {
+      "ar2_1d": [
+        "runs/ar2_1d_dense/cp2k.out",
+        "runs/ar2_1d_separable/cp2k.out"
+      ],
+      "ar4_2d": [
+        "runs/ar4_2d_dense/cp2k.out",
+        "runs/ar4_2d_separable/cp2k.out"
+      ],
+      "ch4_distributed_plus_separable": [
+        "runs/ch4_full_distributed_p2/cp2k.out",
+        "runs/ch4_full_distributed_separable_p2/cp2k.out"
+      ],
+      "ch4_distributed_smoke": [
+        "runs/ch4_full_dense_nooracle/cp2k.out",
+        "runs/ch4_full_distributed_p2/cp2k.out"
+      ],
+      "ch4_full_debug": [
+        "runs/ch4_full_debug_dense/cp2k.out",
+        "runs/ch4_full_debug_separable/cp2k.out"
+      ],
+      "ch4_k290": [
+        "runs/ch4_k290_dense_printed/cp2k.out",
+        "runs/ch4_k290_separable_printed/cp2k.out"
+      ],
+      "ch4_spglib": [
+        "runs/ch4_spglib_dense_printed/cp2k.out",
+        "runs/ch4_spglib_separable_printed/cp2k.out"
+      ],
+      "o2_uks_time_reversal": [
+        "runs/o2_uks_dense/cp2k.out",
+        "runs/o2_uks_separable/cp2k.out"
+      ],
+      "si_shifted": [
+        "runs/si_shifted_dense/cp2k.out",
+        "runs/si_shifted_separable/cp2k.out"
+      ]
+    },
+    "release_k666_timing": {
+      "dense_over_separable_speedups": {
+        "exclusive_s": 1.2012987012987013,
+        "inclusive_s": 1.0253853127833183,
+        "real_s": 1.0013927576601673
+      },
+      "input": "inputs/ch4_full_k666_energy.inp",
+      "interpretation": "The exclusive build_tblite_ks_matrix kernel is 1.20x faster, but the inclusive timer changes by only 1.03x and the approximately 7.18 s total wall time is indistinguishable. This does not establish an end-to-end SCF speedup.",
+      "medians_s": {
+        "dense": {
+          "exclusive_s": 0.185,
+          "inclusive_s": 1.131,
+          "real_s": 7.19
+        },
+        "separable_dft": {
+          "exclusive_s": 0.154,
+          "inclusive_s": 1.103,
+          "real_s": 7.18
+        }
+      },
+      "normally_ended_outputs": [
+        "raw/cp2k_separable_consumer/release_bench/ch4_k666_dense_r1/cp2k.out",
+        "raw/cp2k_separable_consumer/release_bench/ch4_k666_dense_r2/cp2k.out",
+        "raw/cp2k_separable_consumer/release_bench/ch4_k666_dense_r3/cp2k.out",
+        "raw/cp2k_separable_consumer/release_bench/ch4_k666_separable_r1/cp2k.out",
+        "raw/cp2k_separable_consumer/release_bench/ch4_k666_separable_r2/cp2k.out",
+        "raw/cp2k_separable_consumer/release_bench/ch4_k666_separable_r3/cp2k.out"
+      ],
+      "raw_rows": [
+        {
+          "backend": "dense",
+          "build_tblite_ks_matrix_calls": "11",
+          "energy_Ha": "-40.468538113669773",
+          "exclusive_s": "0.187",
+          "inclusive_s": "1.131",
+          "program_ended": "true",
+          "real_s": "7.84",
+          "repeat": "1",
+          "sys_s": "0.10",
+          "user_s": "7.07"
+        },
+        {
+          "backend": "dense",
+          "build_tblite_ks_matrix_calls": "11",
+          "energy_Ha": "-40.468538113669773",
+          "exclusive_s": "0.183",
+          "inclusive_s": "1.123",
+          "program_ended": "true",
+          "real_s": "7.18",
+          "repeat": "2",
+          "sys_s": "0.09",
+          "user_s": "7.06"
+        },
+        {
+          "backend": "dense",
+          "build_tblite_ks_matrix_calls": "11",
+          "energy_Ha": "-40.468538113669773",
+          "exclusive_s": "0.185",
+          "inclusive_s": "1.133",
+          "program_ended": "true",
+          "real_s": "7.19",
+          "repeat": "3",
+          "sys_s": "0.08",
+          "user_s": "7.07"
+        },
+        {
+          "backend": "separable_dft",
+          "build_tblite_ks_matrix_calls": "11",
+          "energy_Ha": "-40.468538113669780",
+          "exclusive_s": "0.154",
+          "inclusive_s": "1.092",
+          "program_ended": "true",
+          "real_s": "7.24",
+          "repeat": "1",
+          "sys_s": "0.09",
+          "user_s": "7.12"
+        },
+        {
+          "backend": "separable_dft",
+          "build_tblite_ks_matrix_calls": "11",
+          "energy_Ha": "-40.468538113669780",
+          "exclusive_s": "0.157",
+          "inclusive_s": "1.110",
+          "program_ended": "true",
+          "real_s": "7.18",
+          "repeat": "2",
+          "sys_s": "0.10",
+          "user_s": "7.05"
+        },
+        {
+          "backend": "separable_dft",
+          "build_tblite_ks_matrix_calls": "11",
+          "energy_Ha": "-40.468538113669780",
+          "exclusive_s": "0.154",
+          "inclusive_s": "1.103",
+          "program_ended": "true",
+          "real_s": "7.17",
+          "repeat": "3",
+          "sys_s": "0.08",
+          "user_s": "7.05"
+        }
+      ],
+      "repeat_count_per_backend": 3
+    }
+  },
+  "distributed_qualification": {
+    "aggregate_maxima": {
+      "max_abs_analytical_stress_bar": 1.399999746e-06,
+      "max_abs_energy_Eh": 7.105427358e-15,
+      "max_abs_force_Eh_per_bohr": 3.330900228e-16,
+      "oracle_max_cov_fold": 8.842288e-12,
+      "oracle_max_cov_full": 1.885126e-12,
+      "oracle_max_dE_Eh": 2.664535e-15,
+      "oracle_max_dFfold_Eh": 3.053113e-16,
+      "oracle_max_dVsh_Eh": 6.938894e-18,
+      "oracle_max_duality_fold": 4.1915e-16,
+      "oracle_max_hermiticity": 0.0
+    },
+    "all_output_inventory": {
+      "diagnostic_or_incomplete_outputs": [
+        {
+          "path": "raw/distributed_cp2k/ar2_1d_full_debug_distributed_p2/distributed.out",
+          "sha256": "a630dd8fe7d6a9a9e8d49d3ee80f55b8203686b0a93a7f3c113715e964cbb1fc"
+        },
+        {
+          "path": "raw/distributed_cp2k/ar2_1d_full_debug_legacy_p2/legacy.out",
+          "sha256": "52a77c7911f8c60d5b50bd0b0f5e5d43e950dabc565d5676b2c80b851dc0b240"
+        },
+        {
+          "path": "raw/distributed_cp2k/ch4_k1_legacy_p2/legacy.out",
+          "sha256": "a97b76ae24fae9b9192f7e9783766e11ba375d33d53315396e1c3d947ded8ecf"
+        },
+        {
+          "path": "raw/distributed_cp2k/h2_k311_debug_legacy_p2/legacy.out",
+          "sha256": "9b2573e44fc3fddfcb9cca2fb3d8ce147c6007cbb33515cf3c89df293e593301"
+        },
+        {
+          "path": "raw/distributed_cp2k/k1_legacy_p2/legacy.out",
+          "sha256": "e691e00c6f7d3fe28c03ee79e9c05a3c527aa618eb2d04ac3a60d8ac2e7f3fc9"
+        },
+        {
+          "path": "raw/distributed_cp2k/legacy.out",
+          "sha256": "5ab1d9a04cad088494dd2c0bf178c858a25518f34c4ed2ccd0c8e1573efeeecd"
+        },
+        {
+          "path": "raw/distributed_cp2k/si_shifted_full_debug_legacy_p2/legacy.out",
+          "sha256": "0d02c94acb9022628afef3162375d468cac21c887d888818658257748f1f9898"
+        }
+      ],
+      "normally_ended": 24,
+      "preserved_diagnostic_or_incomplete": 7,
+      "total_outputs": 31
+    },
+    "case_count": 9,
+    "cases": [
+      {
+        "case": "ch4_k1_p_gt_k",
+        "dimensionality": "3D",
+        "distributed_output": "ch4_k1_distributed_p2/distributed.out",
+        "distributed_wall_s": "1.022",
+        "energy_samples": "1",
+        "legacy_output": "ch4_k1_legacy_p2_nooracle/legacy.out",
+        "legacy_wall_s": "1.037",
+        "max_abs_analytical_stress_bar": "1.199998223e-6",
+        "max_abs_energy_Eh": "0",
+        "max_abs_force_Eh_per_bohr": "3.330900228e-16",
+        "mesh": "1x1x1",
+        "mpi_ranks": "2",
+        "oracle_max_cov_fold": "0",
+        "oracle_max_cov_full": "0",
+        "oracle_max_dE_Eh": "1.221245e-15",
+        "oracle_max_dFfold_Eh": "0",
+        "oracle_max_dVsh_Eh": "0",
+        "oracle_max_duality_fold": "0",
+        "oracle_max_hermiticity": "0",
+        "reduction": "full",
+        "spin": "RKS"
+      },
+      {
+        "case": "ch4_full_debug",
+        "dimensionality": "3D",
+        "distributed_output": "ch4_full_debug_distributed_p2/distributed.out",
+        "distributed_wall_s": "18.164",
+        "energy_samples": "23",
+        "legacy_output": "ch4_full_debug_legacy_p2/legacy.out",
+        "legacy_wall_s": "17.246",
+        "max_abs_analytical_stress_bar": "7.999988156e-7",
+        "max_abs_energy_Eh": "7.105427358e-15",
+        "max_abs_force_Eh_per_bohr": "1.206784460e-16",
+        "mesh": "2x2x2",
+        "mpi_ranks": "2",
+        "oracle_max_cov_fold": "0",
+        "oracle_max_cov_full": "0",
+        "oracle_max_dE_Eh": "7.771561e-16",
+        "oracle_max_dFfold_Eh": "8.326673e-17",
+        "oracle_max_dVsh_Eh": "3.469447e-18",
+        "oracle_max_duality_fold": "0",
+        "oracle_max_hermiticity": "0",
+        "reduction": "full",
+        "spin": "RKS"
+      },
+      {
+        "case": "ch4_spglib_debug",
+        "dimensionality": "3D",
+        "distributed_output": "ch4_spglib_debug_distributed_p2/distributed.out",
+        "distributed_wall_s": "21.406",
+        "energy_samples": "23",
+        "legacy_output": "ch4_spglib_debug_legacy_p2/legacy.out",
+        "legacy_wall_s": "20.128",
+        "max_abs_analytical_stress_bar": "1.999997039e-7",
+        "max_abs_energy_Eh": "7.105427358e-15",
+        "max_abs_force_Eh_per_bohr": "1.437798490e-16",
+        "mesh": "2x2x2",
+        "mpi_ranks": "2",
+        "oracle_max_cov_fold": "8.842288e-12",
+        "oracle_max_cov_full": "1.885126e-12",
+        "oracle_max_dE_Eh": "7.771561e-16",
+        "oracle_max_dFfold_Eh": "2.220446e-16",
+        "oracle_max_dVsh_Eh": "3.469447e-18",
+        "oracle_max_duality_fold": "4.191500e-16",
+        "oracle_max_hermiticity": "0",
+        "reduction": "SPGLIB",
+        "spin": "RKS"
+      },
+      {
+        "case": "ch4_k290_debug",
+        "dimensionality": "3D",
+        "distributed_output": "ch4_k290_debug_distributed_p2/distributed.out",
+        "distributed_wall_s": "20.825",
+        "energy_samples": "23",
+        "legacy_output": "ch4_k290_debug_legacy_p2/legacy.out",
+        "legacy_wall_s": "20.836",
+        "max_abs_analytical_stress_bar": "NA",
+        "max_abs_energy_Eh": "7.105427358e-15",
+        "max_abs_force_Eh_per_bohr": "0_printed_fd_table",
+        "mesh": "2x2x2",
+        "mpi_ranks": "2",
+        "oracle_max_cov_fold": "8.842233e-12",
+        "oracle_max_cov_full": "1.885126e-12",
+        "oracle_max_dE_Eh": "5.551115e-16",
+        "oracle_max_dFfold_Eh": "3.053113e-16",
+        "oracle_max_dVsh_Eh": "1.734723e-18",
+        "oracle_max_duality_fold": "4.191500e-16",
+        "oracle_max_hermiticity": "0",
+        "reduction": "K290",
+        "spin": "RKS"
+      },
+      {
+        "case": "h2_time_reversal_uneven",
+        "dimensionality": "3D",
+        "distributed_output": "h2_k311_tr_energy_force_distributed_p2/distributed.out",
+        "distributed_wall_s": "2.845",
+        "energy_samples": "1",
+        "legacy_output": "h2_k311_tr_energy_force_legacy_p2/legacy.out",
+        "legacy_wall_s": "2.816",
+        "max_abs_analytical_stress_bar": "1.399999746e-6",
+        "max_abs_energy_Eh": "0",
+        "max_abs_force_Eh_per_bohr": "0",
+        "mesh": "3x1x1",
+        "mpi_ranks": "2",
+        "oracle_max_cov_fold": "8.673617e-19",
+        "oracle_max_cov_full": "8.673617e-19",
+        "oracle_max_dE_Eh": "2.775558e-17",
+        "oracle_max_dFfold_Eh": "5.551115e-17",
+        "oracle_max_dVsh_Eh": "0",
+        "oracle_max_duality_fold": "1.371784e-16",
+        "oracle_max_hermiticity": "0",
+        "reduction": "time-reversal",
+        "spin": "RKS"
+      },
+      {
+        "case": "ar2_periodic_x",
+        "dimensionality": "1D",
+        "distributed_output": "ar2_1d_energy_force_distributed_p2/distributed.out",
+        "distributed_wall_s": "0.063",
+        "energy_samples": "1",
+        "legacy_output": "ar2_1d_energy_force_legacy_p2/legacy.out",
+        "legacy_wall_s": "0.066",
+        "max_abs_analytical_stress_bar": "4.682365149e-13",
+        "max_abs_energy_Eh": "0",
+        "max_abs_force_Eh_per_bohr": "3.745745038e-17",
+        "mesh": "2x1x1",
+        "mpi_ranks": "2",
+        "oracle_max_cov_fold": "0",
+        "oracle_max_cov_full": "0",
+        "oracle_max_dE_Eh": "2.220446e-15",
+        "oracle_max_dFfold_Eh": "1.665335e-16",
+        "oracle_max_dVsh_Eh": "2.710505e-20",
+        "oracle_max_duality_fold": "0",
+        "oracle_max_hermiticity": "0",
+        "reduction": "full",
+        "spin": "RKS"
+      },
+      {
+        "case": "ar4_periodic_xz",
+        "dimensionality": "2D",
+        "distributed_output": "ar4_2d_energy_force_distributed_p2/distributed.out",
+        "distributed_wall_s": "0.397",
+        "energy_samples": "1",
+        "legacy_output": "ar4_2d_energy_force_legacy_p2/legacy.out",
+        "legacy_wall_s": "0.391",
+        "max_abs_analytical_stress_bar": "0",
+        "max_abs_energy_Eh": "0",
+        "max_abs_force_Eh_per_bohr": "0",
+        "mesh": "2x1x2",
+        "mpi_ranks": "2",
+        "oracle_max_cov_fold": "0",
+        "oracle_max_cov_full": "0",
+        "oracle_max_dE_Eh": "2.664535e-15",
+        "oracle_max_dFfold_Eh": "2.775558e-16",
+        "oracle_max_dVsh_Eh": "6.938894e-18",
+        "oracle_max_duality_fold": "0",
+        "oracle_max_hermiticity": "0",
+        "reduction": "full",
+        "spin": "RKS"
+      },
+      {
+        "case": "si_shifted",
+        "dimensionality": "3D",
+        "distributed_output": "si_shifted_energy_force_distributed_p2/distributed.out",
+        "distributed_wall_s": "16.914",
+        "energy_samples": "1",
+        "legacy_output": "si_shifted_energy_force_legacy_p2/legacy.out",
+        "legacy_wall_s": "16.846",
+        "max_abs_analytical_stress_bar": "6.346693918e-10",
+        "max_abs_energy_Eh": "0",
+        "max_abs_force_Eh_per_bohr": "1.781581731e-16",
+        "mesh": "2x2x2_shift_0.25",
+        "mpi_ranks": "2",
+        "oracle_max_cov_fold": "0",
+        "oracle_max_cov_full": "0",
+        "oracle_max_dE_Eh": "4.440892e-16",
+        "oracle_max_dFfold_Eh": "1.110223e-16",
+        "oracle_max_dVsh_Eh": "1.734723e-18",
+        "oracle_max_duality_fold": "0",
+        "oracle_max_hermiticity": "0",
+        "reduction": "full",
+        "spin": "RKS"
+      },
+      {
+        "case": "o2_uks_time_reversal",
+        "dimensionality": "3D",
+        "distributed_output": "o2_uks_k311_tr_distributed_p2/distributed.out",
+        "distributed_wall_s": "3.465",
+        "energy_samples": "1",
+        "legacy_output": "o2_uks_k311_tr_legacy_p2/legacy.out",
+        "legacy_wall_s": "3.211",
+        "max_abs_analytical_stress_bar": "NA",
+        "max_abs_energy_Eh": "0",
+        "max_abs_force_Eh_per_bohr": "NA",
+        "mesh": "3x1x1",
+        "mpi_ranks": "2",
+        "oracle_max_cov_fold": "3.469739e-18",
+        "oracle_max_cov_full": "6.939478e-18",
+        "oracle_max_dE_Eh": "2.220446e-16",
+        "oracle_max_dFfold_Eh": "1.110223e-16",
+        "oracle_max_dVsh_Eh": "3.469447e-18",
+        "oracle_max_duality_fold": "0",
+        "oracle_max_hermiticity": "0",
+        "reduction": "time-reversal",
+        "spin": "UKS"
+      }
+    ],
+    "copied_source_manifest": {
+      "checked": 39,
+      "failures": [],
+      "passed": true
+    },
+    "normally_ended_listed_outputs": 18
+  },
+  "methods": {
+    "distributed_image_ranges": {
+      "algorithm": "contiguous_disjoint_BvK_image_range_contraction",
+      "derivative_boundary": "Analytical forces and stress were compared and agree, but their reverse/gradient path still evaluates the complete mesh and is not distributed or batch-bounded.",
+      "parallelism": "caller-owned MPI rank partition with exact-once coverage",
+      "reduction_targets": [
+        "exchange_energy",
+        "shell_potential",
+        "folded_Fock_response"
+      ],
+      "reference": "legacy explicit full-mesh CP2K path plus per-iteration full-mesh oracle"
+    },
+    "separable_direct_dft": {
+      "algorithm": "factorized direct DFT over regular-grid pencils",
+      "applicability": [
+        "machine-regular complete uniform product mesh",
+        "common grid shift",
+        "arbitrary external k and image order",
+        "1D, 2D, and 3D meshes"
+      ],
+      "arithmetic_complexity": "O(Nrow * Nk * sum(nmesh))",
+      "compact_plan_complex_elements": "Nk + 3 * max(nmesh)",
+      "compact_plan_integer_elements": "2 * Nk",
+      "dense_plan_complex_elements": "2 * Nk^2",
+      "is_fft": false,
+      "per_call_scratch_complex_elements": "2 * Nrow * Nk",
+      "reference": "selectable dense phase-table transform"
+    }
+  },
+  "qualification_boundary": {
+    "bounded_derivative_distribution": "not_implemented",
+    "cross_mesh_restart": "not_covered_by_this_archive",
+    "distributed_image_ranges": "qualified_end_to_end_forward",
+    "separable_direct_dft_cp2k_consumer": "qualified_end_to_end",
+    "separable_direct_dft_provider": "qualified_provider"
+  },
+  "schema_version": 1,
+  "scope": "periodic g-xTB Brillouin-zone-coupled nonlocal exchange",
+  "separable_direct_dft_qualification": {
+    "benchmark_protocol": {
+      "build": "release -O3",
+      "host": "local Apple-silicon host",
+      "paired_calls_per_sample": "k-to-R and R-to-k",
+      "repetitions": 20,
+      "rows": 64
+    },
+    "debug_exchange": {
+      "passed": 31,
+      "total": 31
+    },
+    "debug_gxtb": {
+      "expected_failure_diagnostics": 4,
+      "ordinary_passes": 40,
+      "total": 44
+    },
+    "focused_dense_oracle_absolute_tolerance": 1e-11,
+    "release_exchange": {
+      "passed": 31,
+      "total": 31
+    },
+    "transform_benchmarks": [
+      {
+        "dense_s": "0.001300",
+        "max_error": "4.3310e-12",
+        "n1": "216",
+        "n2": "1",
+        "n3": "1",
+        "nk": "216",
+        "rows": "64",
+        "separable_dft_s": "0.001800",
+        "speedup": "0.722"
+      },
+      {
+        "dense_s": "0.001200",
+        "max_error": "4.2963e-13",
+        "n1": "18",
+        "n2": "12",
+        "n3": "1",
+        "nk": "216",
+        "rows": "64",
+        "separable_dft_s": "0.000300",
+        "speedup": "4.000"
+      },
+      {
+        "dense_s": "0.001150",
+        "max_error": "1.4579e-13",
+        "n1": "6",
+        "n2": "6",
+        "n3": "6",
+        "nk": "216",
+        "rows": "64",
+        "separable_dft_s": "0.000200",
+        "speedup": "5.750"
+      },
+      {
+        "dense_s": "0.006400",
+        "max_error": "1.3911e-11",
+        "n1": "512",
+        "n2": "1",
+        "n3": "1",
+        "nk": "512",
+        "rows": "64",
+        "separable_dft_s": "0.009300",
+        "speedup": "0.688"
+      },
+      {
+        "dense_s": "0.006600",
+        "max_error": "1.0248e-12",
+        "n1": "32",
+        "n2": "16",
+        "n3": "1",
+        "nk": "512",
+        "rows": "64",
+        "separable_dft_s": "0.001150",
+        "speedup": "5.739"
+      },
+      {
+        "dense_s": "0.006550",
+        "max_error": "3.9351e-13",
+        "n1": "8",
+        "n2": "8",
+        "n3": "8",
+        "nk": "512",
+        "rows": "64",
+        "separable_dft_s": "0.000650",
+        "speedup": "10.077"
+      }
+    ]
+  }
+}

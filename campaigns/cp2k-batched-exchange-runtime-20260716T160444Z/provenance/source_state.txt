@@ -1,0 +1,66 @@
+Archive finalized UTC: 2026-07-16T16:06:07Z
+
+CP2K worktree
+  path: /private/tmp/cp2k_gxtb_symmetry_v2
+  branch: gxtb-symmetry-v2-audit
+  base HEAD: 28df9380abb327d56bbf216d2469a1fd8c953fc0
+  modified tracked files: src/tblite_interface.F, src/tblite_types.F
+  untracked qualification material: GXTB_SYMMETRY_V2_AUDIT.md,
+    GXTB_SYMMETRY_V2_RUNTIME/
+  current tracked binary-diff SHA-256:
+    f46cf276fa986bbec4c56564977e9c08119b54595559f4cb067a67c3d52d3ec3
+
+save_tblite worktree used for the final zero-safe build
+  path: /private/tmp/save_tblite_batched_stream_independent_20260716
+  branch: codex/periodic-exchange-cache
+  base HEAD: 257ba442684c39454175e5192c8a2342b4c6380f
+  modified tracked files: src/tblite/cp2k_compat.f90,
+    src/tblite/exchange.f90, src/tblite/exchange/cache.f90,
+    src/tblite/exchange/fock.f90, src/tblite/xtb/gxtb.f90,
+    test/unit/test_exchange.f90
+  final minimal-fix tracked binary-diff SHA-256:
+    378b822e538d406e9acb861c0ab024df07e58db5ce49eab6a5d6f536668e0c39
+
+Intermediate zero-safe Debug artifacts, captured before the minimal rewrite
+  /private/tmp/save_tblite_batched_install/lib/libtblite.a
+    mtime: 2026-07-16T17:56:17+0200
+    SHA-256: 45ebb72ac9e6806eec89ddcb278704f00aec25978f177a56e2e5a7011adecf94
+  /private/tmp/cp2k_gxtb_batch_build/src/libcp2k.2026.1.dylib
+    mtime: 2026-07-16T17:56:39+0200
+    SHA-256: 024e906206fd1d4784eb578c93459f97b77b1c6e05f1508b2ea53bd1ac73911d
+  /private/tmp/cp2k_gxtb_batch_build/bin/cp2k.pdbg
+    mtime: 2026-07-16T17:56:39+0200
+    SHA-256: fa11fbf962f32a15b3c4586fb936ae1e0ad88a72c45628313f5bd600e5a6c654
+
+Final operation-preserving minimal-zero-safe Debug artifacts
+  /private/tmp/save_tblite_batched_install/lib/libtblite.a
+    mtime: 2026-07-16T18:04:20+0200
+    SHA-256: 3dedec7da39a231dc65af00a02a4760ff04c7cfcbbd2b180b788578af985dcff
+  /private/tmp/cp2k_gxtb_batch_build/src/libcp2k.2026.1.dylib
+    mtime: 2026-07-16T18:04:31+0200
+    SHA-256: a46044a3ab5cd50c8eabddd3b8463d7ada718da204a5b33a07fefc7d46fc5e21
+  /private/tmp/cp2k_gxtb_batch_build/bin/cp2k.pdbg
+    mtime: 2026-07-16T18:04:31+0200
+    SHA-256: fa11fbf962f32a15b3c4586fb936ae1e0ad88a72c45628313f5bd600e5a6c654
+
+The final minimal-fix Debug outputs ended at 18:04:43 and 18:04:44 +0200,
+after the three artifacts immediately above were built.  Their exact build
+artifacts were therefore still available when this archive was finalized.
+
+K=216 timing-curve artifacts captured at 2026-07-16T16:01:11Z, before the
+minimal rewrite rebuilt the RelWithDebInfo library
+  /private/tmp/cp2k_gxtb_batch_rel_build/bin/cp2k.psmp
+    SHA-256: 626413af3ae5030d28e78bacc191f02ef685c9de0129ea0b0f7c0494349ca364
+  /private/tmp/cp2k_gxtb_batch_rel_build/src/libcp2k.2026.1.dylib
+    SHA-256: d0a47d9b11d1b9dfc2ed0c3a2b584cc4022f60d3d83d39eea446db04361e7d1a
+  /private/tmp/save_tblite_batched_install/lib/libtblite.a
+    SHA-256: 45ebb72ac9e6806eec89ddcb278704f00aec25978f177a56e2e5a7011adecf94
+
+The original RelWithDebInfo library and launcher used before 17:56 were
+overwritten after the pre-fix qualification outputs had completed.  No later
+hash is assigned to those earlier outputs.  The earlier outputs, inputs, CP2K
+base revision, worktree identity, and CMake configuration are preserved, but
+that original executable itself is unavailable.  The timing-curve batch runs
+used the subsequently captured 17:56 build listed above; the legacy 7.194 s
+baseline predates that rebuild and is compared only because the zero-safe
+change preserves every finite nonzero harmonic-mean operation.

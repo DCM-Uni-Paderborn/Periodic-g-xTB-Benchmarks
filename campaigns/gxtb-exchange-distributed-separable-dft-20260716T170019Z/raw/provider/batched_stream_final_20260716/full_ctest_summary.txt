@@ -1,0 +1,27 @@
+Command:
+  ctest --test-dir build --output-on-failure -j 8
+
+Result:
+  91% tests passed, 4 tests failed out of 43
+  tblite/exchange passed
+
+Unrelated failures in this Debug/-fcheck=all/WITH_DDX=OFF configuration:
+
+  4 - tblite/coulomb-charge
+      Existing tight numerical shell-gradient mismatch, maximum printed
+      difference approximately 2.24e-11.
+
+  7 - tblite/coulomb-multipole
+      Existing test-side bounds failure in test_coulomb_multipole.f90:
+      p_dkernel index 30 outside 1:20, exposed by -fcheck=all.
+
+  16 - tblite/hamiltonian
+      Existing g-xTB CeCl3 finite-difference gradient mismatch, maximum
+      printed difference approximately 2.88e-10.
+
+  43 - tblite/xtbml
+      The GFN1 xtbml case requests DDX, while this qualification build was
+      intentionally configured with WITH_DDX=OFF.
+
+None of these failures executes or diagnoses the new bounded image-batch
+transaction.  The dedicated exchange suite passed 30/30 in the same binary.

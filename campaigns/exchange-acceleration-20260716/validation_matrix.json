@@ -23,31 +23,88 @@
       "id": "regular_grid_bvk_cache",
       "status": "passed",
       "evidence": "campaigns/exchange-acceleration-20260716 and validation/accelerated_exchange/cp2k_streamed_reverse_consumer",
-      "scope": "Canonical regular-grid planning, exact order and twist maps, provider Born-von Karman cache hits and fail-closed invalidation passed forward and reverse dense-oracle checks. CP2K still recalibrates symmetry phases during each map preparation, so this is not a claim of a fully persistent CP2K phase cache."
+      "scope": "Canonical regular-grid planning, exact order and twist maps, provider Born-von Karman cache hits and fail-closed invalidation passed forward and reverse dense-oracle checks. CP2K still recalibrates symmetry phases during each map preparation, so this is not a claim of a fully persistent CP2K phase cache.",
+      "required_observables": [
+        "energy",
+        "fock",
+        "overlap_adjoint",
+        "forces",
+        "stress",
+        "cold_warm_identity",
+        "invalidation"
+      ],
+      "current_evidence": "The exact-source focused save_tblite BvK test passes through 9x9x1, including twist/order maps, cache hit and invalidation, incomplete/duplicate-grid failures and recovery, and dense-oracle forward/reverse comparisons. The archived 19-case CP2K comparison reproduces the baseline to roundoff for energy, analytical forces, virial and stress; its one nonzero return code is the same post-central-calculation SPGLIB finite-difference failure as in the baseline."
     },
     {
       "id": "provider_matrix_lean_forward_stream",
       "status": "passed",
       "evidence": "campaigns/exchange-acceleration-20260716",
-      "scope": "The reduced forward transaction does not retain full-k density or overlap input arrays and reproduces the dense oracle through 9x9x1, including permutations and negative recovery paths."
+      "scope": "The reduced forward transaction does not retain full-k density or overlap input arrays and reproduces the dense oracle through 9x9x1, including permutations and negative recovery paths.",
+      "required_observables": [
+        "energy",
+        "shell_potential",
+        "fock",
+        "no_retained_full_k_space_density_overlap_arrays",
+        "push_order_permutation",
+        "twist_and_physical_kpoint_permutation",
+        "negative_recovery_paths",
+        "9x9x1_dense_oracle_identity"
+      ],
+      "current_evidence": "The exact-source Debug provider test returns zero and passes. Six runtime storage-query assertions show that reduced mode retains neither full-k-space density nor overlap input arrays; the query does not inspect other stream/cache allocations. Duplicate, missing and stale-onsite failures recover; arbitrary arrival order, common twist, physical k-point permutation and a 9x9x1 forward evaluation reproduce the unchanged complete-mesh/dense oracle for energy, shell potential and Fock. This is a matrix-lean forward stream, not a bounded-memory implementation: it retains amat_r, cmat_r and vmat_r, each nao x nao x Nk x nspin, plus two dense Nk x Nk phase tables in the cache."
     },
     {
       "id": "provider_bounded_ao_image_batching",
       "status": "passed",
       "evidence": "validation/accelerated_exchange/cp2k_streamed_reverse_consumer",
-      "scope": "The provider complex AO-image workspace obeys the checked fixed-batch high-water formula in 39 derivative evaluations. This does not imply k-independent total CP2K memory because irreducible CP2K matrices and immutable metadata remain resident."
+      "scope": "The provider complex AO-image workspace obeys the checked fixed-batch high-water formula in 39 derivative evaluations. This does not imply k-independent total CP2K memory because irreducible CP2K matrices and immutable metadata remain resident.",
+      "required_observables": [
+        "bounded_peak_memory",
+        "r_image_batching",
+        "batched_or_on_demand_phases",
+        "energy",
+        "shell_potential",
+        "fock",
+        "push_order_permutation",
+        "9x9x1_dense_oracle_identity"
+      ],
+      "historical_evidence": "The earlier matrix-lean forward stream retained three complete nao x nao x Nk x nspin BvK-image tensors and two dense Nk x Nk phase tables; true bounded-memory qualification therefore still required R/image tiling plus batched or on-demand phase generation and measured peak-memory scaling.",
+      "current_evidence": "Fixed-batch complex AO-image workspace obeyed the checked high-water formula in 39 derivative evaluations while reproducing the dense oracle."
     },
     {
       "id": "provider_streamed_reverse",
       "status": "passed",
       "evidence": "validation/accelerated_exchange/cp2k_streamed_reverse_consumer",
-      "scope": "Streamed overlap adjoints, direct force derivatives, and direct stress derivatives passed the dense oracle for RKS, UKS, 1D, 2D, 3D, full, time-reversal, K290, SPGLIB, and shifted meshes at MPI P=1,2,4."
+      "scope": "Streamed overlap adjoints, direct force derivatives, and direct stress derivatives passed the dense oracle for RKS, UKS, 1D, 2D, 3D, full, time-reversal, K290, SPGLIB, and shifted meshes at MPI P=1,2,4.",
+      "required_observables": [
+        "overlap_adjoint",
+        "forces",
+        "stress",
+        "reverse_pull_permutation",
+        "no_retained_full_k_space_density_overlap_arrays",
+        "state_machine_negative_tests"
+      ],
+      "historical_evidence": "The earlier matrix-lean forward transaction rejected reverse_apply by contract and did not qualify a reduced-memory reverse path.",
+      "current_evidence": "The completed streamed reverse transaction passed overlap-adjoint, force, stress, permutation, and negative-state gates against the dense oracle."
     },
     {
       "id": "cp2k_streamed_star_consumer",
       "status": "passed",
       "evidence": "validation/accelerated_exchange/cp2k_streamed_reverse_consumer",
-      "scope": "Selectable forward and reverse consumers expand one star block transiently and fold each response immediately. Qualification modes retain the complete-mesh oracle by design."
+      "scope": "Selectable forward and reverse consumers expand one star block transiently and fold each response immediately. Qualification modes retain the complete-mesh oracle by design.",
+      "required_observables": [
+        "irreducible_to_star_block_expansion",
+        "provider_stream_push_pull",
+        "weighted_real_adjoint_foldback",
+        "energy",
+        "fock",
+        "overlap_adjoint",
+        "forces",
+        "stress",
+        "push_pull_permutation",
+        "state_machine_negative_tests"
+      ],
+      "historical_evidence": "Provider and CP2K block-helper components were first qualified separately before the production consumer invoked the complete streamed forward/reverse transaction.",
+      "current_evidence": "The production CP2K streamed consumer passed the complete oracle matrix for forward and reverse observables."
     },
     {
       "id": "cp2k_block_expansion_foldback_helpers",
@@ -155,6 +212,46 @@
         "cp2k_streamed_star_consumer"
       ],
       "runs": 21,
+      "status": "passed"
+    },
+    {
+      "id": "provider_matrix_lean_forward_3x1x1_and_9x9x1",
+      "periodicity": "3D",
+      "mesh": "3x1x1_and_9x9x1",
+      "symmetry": "full_twisted_permuted",
+      "modules": [
+        "regular_grid_bvk_cache",
+        "provider_matrix_lean_forward_stream"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "provider_true_bounded_memory_r_image_batching_qualification",
+      "periodicity": "3D",
+      "mesh": "3x1x1_then_9x9x1",
+      "symmetry": "full_twisted_permuted",
+      "modules": ["provider_bounded_ao_image_batching"],
+      "historical_scope": "This case was introduced while true bounded-memory R/image batching was still under implementation; the successor fixed-batch AO-image path has since passed its stated gates.",
+      "status": "passed"
+    },
+    {
+      "id": "provider_reduced_reverse",
+      "periodicity": "3D",
+      "mesh": "3x1x1_then_9x9x1",
+      "symmetry": "full",
+      "modules": ["provider_streamed_reverse"],
+      "historical_scope": "This case was introduced while reduced-memory reverse application was still under implementation; the successor streamed reverse path has since passed its stated gates.",
+      "status": "passed"
+    },
+    {
+      "id": "cp2k_production_stream_consumer",
+      "periodicity": "0D_1D_2D_3D",
+      "mesh": "Gamma_to_regular_shifted_meshes",
+      "symmetry": "time_reversal_K290_SPGLIB",
+      "modules": [
+        "cp2k_streamed_star_consumer"
+      ],
+      "historical_scope": "This case was introduced before the production forward/reverse consumer was qualified; the successor streamed-star consumer has since passed the complete oracle matrix.",
       "status": "passed"
     },
     {
