@@ -1,0 +1,8 @@
+case	abs_energy_delta_hartree	max_force_delta_hartree_per_bohr	max_stress_delta_bar	scientific_line_count	scientific_lines_identical	reference_revision	candidate_revision
+CH4_gxtb_kp_k290	0.00000000000000000e+00	NA	NA	1	true	eb9b157c72	09ac439080
+CH4_gxtb_kp_k290_force_stress	0.00000000000000000e+00	NA	NA	51	true	eb9b157c72	09ac439080
+CH4_gxtb_kp_spglib	0.00000000000000000e+00	NA	NA	1	true	eb9b157c72	09ac439080
+CH4_gxtb_kp_spglib_111_force_stress	0.00000000000000000e+00	NA	NA	51	true	eb9b157c72	09ac439080
+H2_gxtb_kp_311_tr_force_stress	0.00000000000000000e+00	NA	NA	82	true	eb9b157c72	09ac439080
+O2_gxtb_uks_kp_311_tr	0.00000000000000000e+00	NA	NA	1	true	eb9b157c72	09ac439080
+Si_prim_gxtb_kp_shifted_spglib	0.00000000000000000e+00	1.12727326999999988e-16	2.66995176391900044e-10	1	true	eb9b157c72	09ac439080
