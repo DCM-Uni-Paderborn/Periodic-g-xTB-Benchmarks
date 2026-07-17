@@ -21,7 +21,7 @@ K-point convergence is assessed independently for every method/system pair.
 Separate EOS fits and equilibrium single points are first evaluated at
 `k333`, `k444`, and `k555`.  The earliest single adjacent step
 `n^3 -> (n+1)^3` is accepted when both
-`|Delta a0| <= 0.001 A` and
+`|Delta a0| <= 0.0025 A` and
 `|Delta Ecoh| <= 0.05 kJ mol-1 atom-1`
 (`0.000518213... eV atom-1`).  Exactly one passing interval suffices: there is
 no RMS gate and no two-step requirement.  The denser `(n+1)^3` values are
@@ -59,6 +59,21 @@ comparison.  That table is emitted only after the complete campaign passes.
 These values are recomputed from the existing raw result table on precisely
 the same ten systems. Historical 12-system and old/new diagnostic tables are
 preserved under `data/`, but are not direct paper comparisons.
+
+The live, explicitly provisional g-xTB mixed-mesh result is stored in
+`data/lc10_gxtb_provisional_mixed_mesh.csv`; its recomputed aggregate
+sequence is in `data/lc10_gxtb_kmesh_mae_provisional.csv`. Regenerate the
+manuscript convergence figure after every accepted endpoint with
+
+```bash
+python3 Goldzak12/scripts/plot_lc10_adaptive_mixed_mesh.py
+```
+
+This writes `figures/lc10_gxtb_adaptive_mixed_mesh_mae.pdf` and `.png`.
+Uniform-mesh and adaptive mixed-mesh points are labelled separately;
+the mixed rows never imply that all ten solids were evaluated on their largest
+listed mesh. These provisional files are replaced, rather than reinterpreted,
+when the final all-solid convergence selection is available.
 
 Reproduction
 ------------

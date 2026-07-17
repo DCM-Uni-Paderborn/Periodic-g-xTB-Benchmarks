@@ -89,6 +89,50 @@ class LC10GXTBProvisionalTablesTest(unittest.TestCase):
         ):
             self.assertAlmostEqual(actual, float(aggregate[field]), places=9)
 
+    def test_provisional_mixed_mesh_recomputes_exactly_from_per_solid_rows(self) -> None:
+        with (DATA / "lc10_gxtb_provisional_mixed_mesh.csv").open() as handle:
+            records = list(csv.DictReader(handle))
+        self.assertEqual(len(records), 10)
+        self.assertEqual(
+            {row["solid"] for row in records},
+            {"C", "Si", "SiC", "BN", "BP", "AlN", "AlP", "MgS", "LiF", "LiCl"},
+        )
+        self.assertEqual(
+            {row["mesh"] for row in records},
+            {"k777", "k888", "k999", "k101010"},
+        )
+        with (DATA / "lc10_gxtb_kmesh_mae_provisional.csv").open() as handle:
+            stages = {row["stage"]: row for row in csv.DictReader(handle)}
+        aggregate = stages["provisional_mixed_k101010"]
+
+        def metrics(values: list[float]) -> tuple[float, float, float, float]:
+            return (
+                sum(values) / len(values),
+                sum(abs(value) for value in values) / len(values),
+                math.sqrt(sum(value * value for value in values) / len(values)),
+                max(abs(value) for value in values),
+            )
+
+        a_errors = [float(row["a0_error_A"]) for row in records]
+        e_errors = [float(row["ecoh_error_eV_per_atom"]) for row in records]
+        for actual, field in zip(
+            metrics(a_errors),
+            ("a0_me_A", "a0_mae_A", "a0_rmse_A", "a0_maxae_A"),
+            strict=True,
+        ):
+            self.assertAlmostEqual(actual, float(aggregate[field]), places=11)
+        for actual, field in zip(
+            metrics(e_errors),
+            (
+                "ecoh_me_eV_per_atom",
+                "ecoh_mae_eV_per_atom",
+                "ecoh_rmse_eV_per_atom",
+                "ecoh_maxae_eV_per_atom",
+            ),
+            strict=True,
+        ):
+            self.assertAlmostEqual(actual, float(aggregate[field]), places=11)
+
 
 if __name__ == "__main__":
     unittest.main()

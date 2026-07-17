@@ -55,21 +55,22 @@ can be recreated from the versioned inputs and scripts.
 ## Current g-xTB campaign
 
 The active campaign is deliberately fail-closed: provisional numbers are not
-promoted to paper summaries until the stored build identity, raw artifacts,
-k-point convergence, symmetry, force/stress, and cross-build gates pass.
-Current production calculations use post-#5582 CP2K source revision
+promoted to final paper summaries until the stored build identity, raw
+artifacts, k-point convergence, symmetry, force/stress, and cross-build gates
+pass. Current production calculations use post-#5582 CP2K source revision
 `28df9380abb3...` with save_tblite revision `257ba442684c...`. See
 `campaigns/gxtb-pbc-v1-post5582-20260714/` for the complete machine-readable
 identity and the frozen energy, ACP, partial-periodicity, force, and stress
 qualification gates.
 
-DMC-ICE13 has completed its phase-wise convergence protocol. LC10 remains
-provisional until the independently fitted LiF endpoint passes, and X23b is
-paused outside the present paper scope. The publication finalizers refuse
-incomplete or unhashed data.
+The phase-wise DMC-ICE13 result is frozen and archived. LC10 remains explicitly
+provisional until all ten solids pass the per-solid lattice-constant and
+cohesive-energy gates. Other retained files outside the current manuscript
+benchmark scope are technical regression material and not accuracy claims.
+The publication finalizers refuse incomplete or unhashed data.
 
-After the DMC-ICE13, X23b, and LC12 finalizers have all succeeded, create the
-single manuscript-facing bundle with
+The older three-benchmark bundle command remains available for archival
+campaigns:
 
 ```bash
 python3 scripts/finalize_paper_benchmark_bundle.py
