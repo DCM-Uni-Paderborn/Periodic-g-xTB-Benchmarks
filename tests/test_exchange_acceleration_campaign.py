@@ -62,11 +62,20 @@ def test_cp2k_block_helper_status_is_scoped_conservatively():
     matrix = load_json("validation_matrix.json")
     modules = {entry["id"]: entry for entry in matrix["modules"]}
 
-    assert modules["cp2k_block_expansion_foldback_helpers"]["status"] == "passed"
-    assert modules["streamed_symmetry_stars"]["status"] == "implementation_in_progress"
-    assert "full-array oracle" in modules["cp2k_block_expansion_foldback_helpers"][
-        "current_evidence"
-    ]
+    helpers = modules["cp2k_block_expansion_foldback_helpers"]
+    assert helpers["status"] == "passed"
+    assert modules["cp2k_streamed_star_consumer"]["status"] == "passed"
+    assert {
+        "physical_overlap_expansion",
+        "weighted_real_adjoint",
+        "time_reversal",
+        "K290",
+        "SPGLIB",
+        "energy",
+        "forces",
+        "stress",
+    } <= set(helpers["required_observables"])
+    assert "full-array oracle" in helpers["current_evidence"]
 
 
 def test_cp2k_block_helper_raw_archive_and_manifests():
@@ -157,23 +166,15 @@ def test_provider_forward_status_is_scoped_conservatively():
 
     assert modules["regular_grid_bvk_cache"]["status"] == "passed"
     assert modules["provider_matrix_lean_forward_stream"]["status"] == "passed"
-    assert (
-        modules["provider_true_bounded_memory_r_image_batching"]["status"]
-        == "implementation_in_progress"
-    )
-    assert (
-        modules["provider_reduced_memory_reverse_stream"]["status"]
-        == "implementation_in_progress"
-    )
-    assert (
-        modules["cp2k_stream_consumer_integration"]["status"]
-        == "implementation_in_progress"
-    )
-    assert modules["streamed_symmetry_stars"]["status"] == "implementation_in_progress"
-    evidence = modules["provider_matrix_lean_forward_stream"]["current_evidence"]
-    assert "not a bounded-memory implementation" in evidence
-    assert "amat_r, cmat_r and vmat_r" in evidence
-    assert "two dense Nk x Nk phase tables" in evidence
+    assert modules["provider_bounded_ao_image_batching"]["status"] == "passed"
+    assert modules["provider_streamed_reverse"]["status"] == "passed"
+    assert modules["cp2k_streamed_star_consumer"]["status"] == "passed"
+    assert "does not retain full-k density or overlap input arrays" in modules[
+        "provider_matrix_lean_forward_stream"
+    ]["scope"]
+    assert "does not imply k-independent total CP2K memory" in modules[
+        "provider_bounded_ao_image_batching"
+    ]["scope"]
 
 
 def test_provider_forward_focused_raw_record():
