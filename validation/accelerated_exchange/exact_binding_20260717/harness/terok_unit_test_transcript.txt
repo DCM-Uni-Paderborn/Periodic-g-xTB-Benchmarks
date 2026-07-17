@@ -1,0 +1,18 @@
+test_all_inherited_mpi_mca_controls_are_scrubbed (test_exact_binding.ExactBindingTests.test_all_inherited_mpi_mca_controls_are_scrubbed) ... ok
+test_bad_then_correct_rank_sample_remains_failed (test_exact_binding.ExactBindingTests.test_bad_then_correct_rank_sample_remains_failed) ... ok
+test_cross_process_cpu_lock_rejects_overlap (test_exact_binding.ExactBindingTests.test_cross_process_cpu_lock_rejects_overlap) ... ok
+test_fixed_matrix_has_48_runs (test_exact_binding.ExactBindingTests.test_fixed_matrix_has_48_runs) ... ok
+test_live_overlap_preflight_catches_cp2k_without_rank_environment (test_exact_binding.ExactBindingTests.test_live_overlap_preflight_catches_cp2k_without_rank_environment) ... ok
+test_new_launcher_contains_only_exact_ordered_binding (test_exact_binding.ExactBindingTests.test_new_launcher_contains_only_exact_ordered_binding) ... ok
+test_openmpi_binding_report_is_rank_complete (test_exact_binding.ExactBindingTests.test_openmpi_binding_report_is_rank_complete) ... ok
+test_ordered_reservation_is_literal_and_unique (test_exact_binding.ExactBindingTests.test_ordered_reservation_is_literal_and_unique) ... ok
+test_sequential_rank_generation_is_exact_but_changed_mask_and_concurrency_fail (test_exact_binding.ExactBindingTests.test_sequential_rank_generation_is_exact_but_changed_mask_and_concurrency_fail) ... ok
+test_term_timeout_kills_and_reaps_process_group (test_exact_binding.ExactBindingTests.test_term_timeout_kills_and_reaps_process_group) ... ok
+test_verifier_reconstructs_generation_and_duplicate_summaries (test_exact_binding.ExactBindingTests.test_verifier_reconstructs_generation_and_duplicate_summaries) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.208s
+
+OK
+
+exit=0

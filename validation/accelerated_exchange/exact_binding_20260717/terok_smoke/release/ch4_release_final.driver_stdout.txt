@@ -1,0 +1,1 @@
+{"binding_report_complete": true, "cp2k_return_code": 0, "rank_ids": [0, 1], "rank_masks": ["222", "223"], "reservation_gate": true, "runtime_affinity_gate": true}

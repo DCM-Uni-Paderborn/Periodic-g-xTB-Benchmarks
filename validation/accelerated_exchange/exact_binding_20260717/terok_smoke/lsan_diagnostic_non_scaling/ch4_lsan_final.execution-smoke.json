@@ -1,0 +1,277 @@
+{
+  "all_observed_rank_samples_match_ordered_pe_list": false,
+  "assigned_cpu_count": 2,
+  "assigned_ordered_pe_list": "220,221",
+  "binding_report_complete": true,
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=220,221:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "2",
+    "/home/kuehne88/work/cp2k-gxtb-streamed-reverse-consumer-20260716/build/bin/cp2k.pdbg",
+    "-i",
+    "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_full_energy_force.inp",
+    "-o",
+    "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_lsan_final.out"
+  ],
+  "concurrent_duplicate_rank_ids_ever": [
+    1
+  ],
+  "concurrent_duplicate_rank_processes_ever": true,
+  "concurrent_duplicate_rank_samples": [
+    {
+      "rank_pid_groups": [
+        {
+          "ompi_comm_world_rank": 1,
+          "pids": [
+            3669529,
+            3669592
+          ]
+        }
+      ],
+      "sample_index": 100
+    }
+  ],
+  "contract": {
+    "blas_environment": {
+      "MKL_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "concurrent_jobs": 1,
+    "cpu_reservation_lock_root": "/tmp/periodic-gxtb-cpu-reservations-12309",
+    "cross_process_cpu_reservation": "flock_per_logical_cpu",
+    "exact_cpus_per_job": 2,
+    "exact_cpus_per_rank": 1,
+    "live_compute_overlap_preflight": "linux_procfs_live_cp2k_or_mpi_rank_allowed_cpu_masks",
+    "mode": "openmpi_ordered_pe_list",
+    "mpi_bind_to": "core",
+    "mpi_launcher": "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "mpi_launcher_args": [],
+    "mpi_launcher_sha256": "6ffdc5f4649751c7e8d2f6d72ac0ec2c69c9512eeacbe041ffc4f8042cfa00ee",
+    "mpi_map_by": "pe-list=<ordered-list>:ordered",
+    "mpi_ranks_per_job": 2,
+    "mpi_report_bindings": true,
+    "openmp_environment": {
+      "OMP_DYNAMIC": "FALSE",
+      "OMP_NUM_THREADS": "1",
+      "OMP_PLACES": "cores",
+      "OMP_PROC_BIND": "true",
+      "OMP_SCHEDULE": "static",
+      "OMP_WAIT_POLICY": "PASSIVE"
+    },
+    "ordered_pe_lists": [
+      "220,221"
+    ],
+    "ordered_pe_lists_disjoint": true,
+    "outer_taskset": false,
+    "removed_mpi_binding_environment_key_policy": "all inherited OMPI_MCA_*/PRTE_MCA_* control variables",
+    "schema_version": 2,
+    "single_pu_core_preflight": true,
+    "threads_per_rank": 1
+  },
+  "contract_sha256": "4445a0b7abb9ba5f1cb8bafc40f3fc232c1666c37129be5b7410b02a27f1b15e",
+  "cp2k": "/home/kuehne88/work/cp2k-gxtb-streamed-reverse-consumer-20260716/build/bin/cp2k.pdbg",
+  "cp2k_sha256_at_launch": "8cdecb1e925ef1a2e6391da7298bd720d7bf4f335ab8d405127097db9e53033d",
+  "cross_process_cpu_reservation_gate": true,
+  "expected_cp2k_rank_count": 2,
+  "finished_at_utc": "2026-07-17T02:44:52.053011+00:00",
+  "hostname": "terok",
+  "input": "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_full_energy_force.inp",
+  "input_sha256_at_launch": "265deac3a4ee0572ce46fd676f86c27a92a1943b2fabc334631564a52174f0ac",
+  "launcher_log": "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_lsan_final.out.launcher.log",
+  "launcher_log_sha256": "254ff8d1b703f4d5125b0855971d4e62b070cacd328599de4c5a01df6c3074ac",
+  "live_compute_overlap_preflight_gate": true,
+  "live_compute_overlap_preflight_owners": [],
+  "mpi_bind_to": "core",
+  "mpi_launcher_sha256_at_launch": "6ffdc5f4649751c7e8d2f6d72ac0ec2c69c9512eeacbe041ffc4f8042cfa00ee",
+  "observed_child_processes": [
+    {
+      "affinity_violation_ever": false,
+      "arguments": [
+        "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/prterun",
+        "--map-by",
+        "pe-list=220,221:ordered",
+        "--bind-to",
+        "core",
+        "--report-bindings",
+        "-np",
+        "2",
+        "/home/kuehne88/work/cp2k-gxtb-streamed-reverse-consumer-20260716/build/bin/cp2k.pdbg",
+        "-i",
+        "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_full_energy_force.inp",
+        "-o",
+        "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_lsan_final.out"
+      ],
+      "cpus_allowed_list": "0-239",
+      "executable": "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/prte",
+      "is_cp2k_rank": false,
+      "ompi_comm_world_rank": null,
+      "pid": 3669525,
+      "ppid": 3669524,
+      "sample_count": 111,
+      "state": "S (sleeping)"
+    },
+    {
+      "affinity_violation_ever": false,
+      "arguments": [
+        "/home/kuehne88/work/cp2k-gxtb-streamed-reverse-consumer-20260716/build/bin/cp2k.pdbg",
+        "-i",
+        "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_full_energy_force.inp",
+        "-o",
+        "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_lsan_final.out"
+      ],
+      "cpus_allowed_list": "220",
+      "current_sample_matches_assigned_singleton": true,
+      "executable": "/home/kuehne88/work/cp2k-gxtb-streamed-reverse-consumer-20260716/build/bin/cp2k.pdbg",
+      "is_cp2k_rank": true,
+      "observed_cpu_masks": [
+        "220"
+      ],
+      "observed_rank_ids": [
+        0
+      ],
+      "ompi_comm_world_rank": 0,
+      "pid": 3669528,
+      "ppid": 3669525,
+      "rank_identity_changed_ever": false,
+      "sample_count": 99,
+      "state": "R (running)"
+    },
+    {
+      "affinity_violation_ever": false,
+      "arguments": [
+        "/home/kuehne88/work/cp2k-gxtb-streamed-reverse-consumer-20260716/build/bin/cp2k.pdbg",
+        "-i",
+        "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_full_energy_force.inp",
+        "-o",
+        "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_lsan_final.out"
+      ],
+      "cpus_allowed_list": "221",
+      "current_sample_matches_assigned_singleton": true,
+      "executable": "/home/kuehne88/work/cp2k-gxtb-streamed-reverse-consumer-20260716/build/bin/cp2k.pdbg",
+      "is_cp2k_rank": true,
+      "observed_cpu_masks": [
+        "221"
+      ],
+      "observed_rank_ids": [
+        1
+      ],
+      "ompi_comm_world_rank": 1,
+      "pid": 3669529,
+      "ppid": 3669525,
+      "rank_identity_changed_ever": false,
+      "sample_count": 99,
+      "state": "R (running)"
+    },
+    {
+      "affinity_violation_ever": false,
+      "arguments": [
+        "/home/kuehne88/work/cp2k-gxtb-streamed-reverse-consumer-20260716/build/bin/cp2k.pdbg",
+        "-i",
+        "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_full_energy_force.inp",
+        "-o",
+        "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_lsan_final.out"
+      ],
+      "cpus_allowed_list": "221",
+      "current_sample_matches_assigned_singleton": true,
+      "executable": "/home/kuehne88/work/cp2k-gxtb-streamed-reverse-consumer-20260716/build/bin/cp2k.pdbg",
+      "is_cp2k_rank": true,
+      "observed_cpu_masks": [
+        "221"
+      ],
+      "observed_rank_ids": [
+        1
+      ],
+      "ompi_comm_world_rank": 1,
+      "pid": 3669592,
+      "ppid": 3669529,
+      "rank_identity_changed_ever": false,
+      "sample_count": 1,
+      "state": "R (running)"
+    }
+  ],
+  "observed_cp2k_process_generation_count": 3,
+  "observed_cp2k_rank_count": 2,
+  "observed_cp2k_rank_evidence": [
+    {
+      "all_samples_match_assigned_singleton": true,
+      "canonical_pid": 3669528,
+      "concurrent_duplicate_pid_ever": false,
+      "observed_cpu_masks": [
+        "220"
+      ],
+      "ompi_comm_world_rank": 0,
+      "pid_generations": [
+        3669528
+      ]
+    },
+    {
+      "all_samples_match_assigned_singleton": false,
+      "canonical_pid": 3669529,
+      "concurrent_duplicate_pid_ever": true,
+      "observed_cpu_masks": [
+        "221"
+      ],
+      "ompi_comm_world_rank": 1,
+      "pid_generations": [
+        3669529,
+        3669592
+      ]
+    }
+  ],
+  "observed_cp2k_rank_ids": [
+    0,
+    1
+  ],
+  "observed_cp2k_rank_masks": [
+    "220",
+    "221"
+  ],
+  "observed_cp2k_rank_pid_generations": [
+    [
+      3669528
+    ],
+    [
+      3669529,
+      3669592
+    ]
+  ],
+  "observed_cp2k_rank_pids": [
+    3669528,
+    3669529
+  ],
+  "output": "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_lsan_final.out",
+  "pid": 3669524,
+  "rank_count_matches": true,
+  "rank_ids_exactly_0_to_n_minus_1": true,
+  "rank_masks_complete": true,
+  "rank_masks_exactly_match_ordered_pe_list": true,
+  "removed_mpi_binding_environment_keys": [],
+  "reported_binding_rank_ids": [
+    0,
+    1
+  ],
+  "return_code": 23,
+  "runtime_affinity_gate": false,
+  "schema_version": 2,
+  "started_at_utc": "2026-07-17T02:44:46.335449+00:00",
+  "thread_environment": {
+    "MKL_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_NUM_THREADS": "1",
+    "OMP_PLACES": "cores",
+    "OMP_PROC_BIND": "true",
+    "OMP_SCHEDULE": "static",
+    "OMP_WAIT_POLICY": "PASSIVE",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "timing_classification": "timing_non_scaling",
+  "unranked_cp2k_process_seen": false,
+  "working_directory": "/home/kuehne88/work/exact-binding-smoke-final-20260717"
+}

@@ -1,0 +1,3 @@
+{"injected_pid": 3672876, "preflight_error": "selected CPUs are already owned by live CP2K/MPI ranks: PID 3672876 (cp2k.inject) mask 224 overlaps [224]", "selected_cpu": 224, "status": "PASS"}
+
+exit=0
