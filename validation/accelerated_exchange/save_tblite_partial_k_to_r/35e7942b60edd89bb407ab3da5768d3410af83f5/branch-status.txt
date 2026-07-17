@@ -1,0 +1,5 @@
+## codex/partial-k-to-r-accumulator
+35e7942b60edd89bb407ab3da5768d3410af83f5
+WORKTREE_CLEAN yes
+PUSHED no
+

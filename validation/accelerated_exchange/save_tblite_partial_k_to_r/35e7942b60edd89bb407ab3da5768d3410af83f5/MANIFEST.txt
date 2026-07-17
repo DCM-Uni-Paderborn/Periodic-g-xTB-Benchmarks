@@ -1,0 +1,16 @@
+README.md                              Qualification summary and exact reproduction contract
+adversarial-review.txt                 Independent adversarial review checklist and host boundary
+branch-status.txt                      Qualified branch, full commit, clean/unpushed state
+source-worktree.tar.gz                 Exact git archive of qualified commit
+source-files.sha256                    Hashes of all implementation/test files changed from base
+worktree.diff                          Exact base-to-qualified-commit patch
+local-debug-exchange.log               macOS Debug exchange suite, controlled single-thread run
+local-release-exchange.log             macOS Release exchange suite, controlled single-thread run
+local-debug-ctest-exchange.log         macOS Debug CTest exchange target
+local-release-ctest-exchange.log       macOS Release CTest exchange target
+terok-linux-debug-exchange.log         Linux Debug exchange suite, controlled single-thread run
+terok-linux-release-exchange.log       Linux Release exchange suite, controlled single-thread run
+terok-linux-mpi2-release-smoke.log     Two-rank independent-process Release smoke
+terok-linux-mpi-freedom.log            Provider source/link/symbol MPI-freedom audit
+SHA256SUMS                             Hash manifest for every other bundle member
+
