@@ -1,0 +1,73 @@
+{
+  "affinity_sha256": "9746e97c33d85069901e5784aa6d54d51b1d38e7edab1d5fbac184f5f202d194",
+  "batch_size": 2,
+  "bindings_sha256": "988246da46136aca4b8a2f69c2b86fcf4c7707fdfbba8e5a0fac59379765af7c",
+  "case": "ch4_full",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=144,145:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "2",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/gxtb_rank_affinity_proof.sh",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/ch4_full_energy_force.inp"
+  ],
+  "cores": [
+    144,
+    145
+  ],
+  "cp2k": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "environment": {
+    "BLIS_NUM_THREADS": "1",
+    "CP2K_GXTB_EXCHANGE_GRADIENT_MODE": "DENSE",
+    "CP2K_GXTB_EXCHANGE_IMAGE_BATCH_SIZE": "2",
+    "CP2K_GXTB_EXCHANGE_STREAM_MODE": "LEGACY",
+    "GOTO_NUM_THREADS": "1",
+    "GXTB_AFFINITY_DIR": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/formal_runs/ch4_full_p2_b2_dense",
+    "GXTB_EXPECTED_CORES": "144,145",
+    "GXTB_EXPECTED_RANKS": "2",
+    "MKL_DYNAMIC": "FALSE",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "expected_nfull": 8,
+  "features": [
+    "RKS",
+    "FULL_GRID",
+    "3D",
+    "BATCH_2"
+  ],
+  "finished_unix": 1784249846.0615983,
+  "input": "ch4_full_energy_force.inp",
+  "input_sha256": "265deac3a4ee0572ce46fd676f86c27a92a1943b2fabc334631564a52174f0ac",
+  "kind": "positive",
+  "observed_rank_pids": [],
+  "observed_singleton_masks": [],
+  "output_sha256": "58c326848e366cf1660d79f75de44751cba5edea473ac3a8b1245e5fc4461646",
+  "peak_observed_cp2k_rank_vmhwm_kb": 0,
+  "peak_sampled_cp2k_rank_rss_kb": 0,
+  "preexec_affinity_sha256": "7c54d6950b0072a987974b2128b8f8327c1f9b538c36b1a8743cff85bf7774a6",
+  "preexec_singleton_masks": [
+    "144",
+    "145"
+  ],
+  "ranks": 2,
+  "returncode": 0,
+  "run_id": "ch4_full_p2_b2_dense",
+  "schema": 1,
+  "started_unix": 1784249841.1780372,
+  "stderr_sha256": "988246da46136aca4b8a2f69c2b86fcf4c7707fdfbba8e5a0fac59379765af7c",
+  "variant": "DENSE",
+  "wall_seconds": 4.8713618870824575
+}

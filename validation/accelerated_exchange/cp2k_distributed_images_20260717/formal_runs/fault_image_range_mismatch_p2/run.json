@@ -1,0 +1,47 @@
+{
+  "affinity_sha256": "9746e97c33d85069901e5784aa6d54d51b1d38e7edab1d5fbac184f5f202d194",
+  "bindings_sha256": "52f14e5ae87d8c7fdb3de322bcaee513bc08ef1464eccf88f11be6406d8148fc",
+  "case": "image_range_mismatch_p2",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=124,125:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "2",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/gxtb_rank_affinity_proof.sh",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/ch4_full_energy_force.inp"
+  ],
+  "cores": [
+    124,
+    125
+  ],
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "diagnostic_count": 1,
+  "expected_diagnostic": "Distributed-image importer ranges are not an exact cover",
+  "finished_unix": 1784249946.8697906,
+  "injection": "IMAGE_RANGE_MISMATCH",
+  "input": "ch4_full_energy_force.inp",
+  "input_sha256": "265deac3a4ee0572ce46fd676f86c27a92a1943b2fabc334631564a52174f0ac",
+  "kind": "fault",
+  "observed_rank_pids": [],
+  "observed_singleton_masks": [],
+  "output_sha256": "3e70804e18723d713478141ccbcd9f0a065d6531f0342f69d75c6ee1813f999c",
+  "peak_observed_cp2k_rank_vmhwm_kb": 0,
+  "peak_sampled_cp2k_rank_rss_kb": 0,
+  "preexec_affinity_sha256": "dfd32d1d77449b8cbe1558e36f2f62e9c117827c578df7cd07c4e42f4c6fcec5",
+  "preexec_singleton_masks": [
+    "124",
+    "125"
+  ],
+  "ranks": 2,
+  "returncode": 1,
+  "schema": 1,
+  "started_unix": 1784249943.089762,
+  "stderr_sha256": "52f14e5ae87d8c7fdb3de322bcaee513bc08ef1464eccf88f11be6406d8148fc",
+  "wall_seconds": 3.7760693915188313
+}

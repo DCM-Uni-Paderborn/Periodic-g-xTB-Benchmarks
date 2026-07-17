@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "description": "CP2K distributed nonlinear BvK-image kernel against DENSE",
+  "gates": {
+    "internal_forward": 1e-10,
+    "internal_reverse": 1e-10,
+    "external_energy_Ha": 1e-9,
+    "external_force_Ha_per_bohr": 1e-7,
+    "external_stress_bar": 1e-1
+  },
+  "jobs": [
+    {"case": "ch4_k1", "input": "ch4_k1_debug.inp", "nfull": 1, "ranks": 1, "batch": 3, "features": ["RKS", "GAMMA", "3D"]},
+    {"case": "ch4_k1", "input": "ch4_k1_debug.inp", "nfull": 1, "ranks": 2, "batch": 3, "features": ["RKS", "GAMMA", "3D", "P_GT_NFULL", "EMPTY_IMPORTER"]},
+    {"case": "ch4_k1", "input": "ch4_k1_debug.inp", "nfull": 1, "ranks": 4, "batch": 3, "features": ["RKS", "GAMMA", "3D", "P_GT_NFULL", "EMPTY_IMPORTER"]},
+
+    {"case": "ch4_full", "input": "ch4_full_energy_force.inp", "nfull": 8, "ranks": 1, "batch": 3, "features": ["RKS", "FULL_GRID", "3D", "NONDIVISOR_BATCH"]},
+    {"case": "ch4_full", "input": "ch4_full_energy_force.inp", "nfull": 8, "ranks": 2, "batch": 1, "features": ["RKS", "FULL_GRID", "3D", "BATCH_1"]},
+    {"case": "ch4_full", "input": "ch4_full_energy_force.inp", "nfull": 8, "ranks": 2, "batch": 2, "features": ["RKS", "FULL_GRID", "3D", "BATCH_2"]},
+    {"case": "ch4_full", "input": "ch4_full_energy_force.inp", "nfull": 8, "ranks": 2, "batch": 3, "features": ["RKS", "FULL_GRID", "3D", "NONDIVISOR_BATCH"]},
+    {"case": "ch4_full", "input": "ch4_full_energy_force.inp", "nfull": 8, "ranks": 2, "batch": 16, "features": ["RKS", "FULL_GRID", "3D", "BATCH_GE_NFULL"]},
+    {"case": "ch4_full", "input": "ch4_full_energy_force.inp", "nfull": 8, "ranks": 4, "batch": 3, "features": ["RKS", "FULL_GRID", "3D", "NONDIVISOR_BATCH"]},
+
+    {"case": "ch4_k290", "input": "ch4_k290_energy_force.inp", "nfull": 8, "ranks": 1, "batch": 3, "features": ["RKS", "K290", "3D"]},
+    {"case": "ch4_k290", "input": "ch4_k290_energy_force.inp", "nfull": 8, "ranks": 2, "batch": 3, "features": ["RKS", "K290", "3D"]},
+    {"case": "ch4_spglib", "input": "ch4_spglib_energy_force.inp", "nfull": 8, "ranks": 1, "batch": 3, "features": ["RKS", "SPGLIB", "3D"]},
+    {"case": "ch4_spglib", "input": "ch4_spglib_energy_force.inp", "nfull": 8, "ranks": 2, "batch": 3, "features": ["RKS", "SPGLIB", "3D"]},
+
+    {"case": "h2_tr", "input": "h2_k311_tr_energy_force_print.inp", "nfull": 3, "ranks": 1, "batch": 2, "features": ["RKS", "TIME_REVERSAL", "3D", "NONDIVISOR_BATCH"]},
+    {"case": "h2_tr", "input": "h2_k311_tr_energy_force_print.inp", "nfull": 3, "ranks": 2, "batch": 2, "features": ["RKS", "TIME_REVERSAL", "3D", "NONDIVISOR_BATCH"]},
+    {"case": "h2_tr", "input": "h2_k311_tr_energy_force_print.inp", "nfull": 3, "ranks": 4, "batch": 2, "features": ["RKS", "TIME_REVERSAL", "3D", "P_GT_NFULL", "EMPTY_IMPORTER"]},
+    {"case": "o2_uks_tr", "input": "o2_uks_k311_tr_energy_force.inp", "nfull": 3, "ranks": 1, "batch": 2, "features": ["UKS", "TIME_REVERSAL", "3D"]},
+    {"case": "o2_uks_tr", "input": "o2_uks_k311_tr_energy_force.inp", "nfull": 3, "ranks": 2, "batch": 2, "features": ["UKS", "TIME_REVERSAL", "3D"]},
+    {"case": "o2_uks_tr", "input": "o2_uks_k311_tr_energy_force.inp", "nfull": 3, "ranks": 4, "batch": 2, "features": ["UKS", "TIME_REVERSAL", "3D", "P_GT_NFULL", "EMPTY_IMPORTER"]},
+
+    {"case": "ar2_1d", "input": "ar2_1d_energy_force_print.inp", "nfull": 2, "ranks": 1, "batch": 1, "features": ["RKS", "PERIODIC_X", "NMESH_N11", "BATCH_1"]},
+    {"case": "ar2_1d", "input": "ar2_1d_energy_force_print.inp", "nfull": 2, "ranks": 2, "batch": 2, "features": ["RKS", "PERIODIC_X", "NMESH_N11", "BATCH_GE_NFULL"]},
+    {"case": "ar2_1d", "input": "ar2_1d_energy_force_print.inp", "nfull": 2, "ranks": 4, "batch": 3, "features": ["RKS", "PERIODIC_X", "NMESH_N11", "P_GT_NFULL", "EMPTY_IMPORTER"]},
+    {"case": "ar4_2d_xy", "input": "ar4_2d_xy_energy_force_print.inp", "nfull": 4, "ranks": 1, "batch": 3, "features": ["RKS", "PERIODIC_XY", "NMESH_NM1", "NONDIVISOR_BATCH"]},
+    {"case": "ar4_2d_xy", "input": "ar4_2d_xy_energy_force_print.inp", "nfull": 4, "ranks": 2, "batch": 1, "features": ["RKS", "PERIODIC_XY", "NMESH_NM1", "BATCH_1"]},
+    {"case": "ar4_2d_xy", "input": "ar4_2d_xy_energy_force_print.inp", "nfull": 4, "ranks": 2, "batch": 2, "features": ["RKS", "PERIODIC_XY", "NMESH_NM1", "BATCH_2"]},
+    {"case": "ar4_2d_xy", "input": "ar4_2d_xy_energy_force_print.inp", "nfull": 4, "ranks": 2, "batch": 4, "features": ["RKS", "PERIODIC_XY", "NMESH_NM1", "BATCH_GE_NFULL"]},
+    {"case": "ar4_2d_xy", "input": "ar4_2d_xy_energy_force_print.inp", "nfull": 4, "ranks": 4, "batch": 3, "features": ["RKS", "PERIODIC_XY", "NMESH_NM1", "NONDIVISOR_BATCH"]},
+
+    {"case": "si_shifted", "input": "si_shifted_full_energy_force.inp", "nfull": 8, "ranks": 1, "batch": 3, "features": ["RKS", "SHIFTED_MESH", "3D"]},
+    {"case": "si_shifted", "input": "si_shifted_full_energy_force.inp", "nfull": 8, "ranks": 2, "batch": 3, "features": ["RKS", "SHIFTED_MESH", "3D"]},
+    {"case": "si_shifted", "input": "si_shifted_full_energy_force.inp", "nfull": 8, "ranks": 4, "batch": 3, "features": ["RKS", "SHIFTED_MESH", "3D"]}
+  ],
+  "faults": [
+    {"name": "image_range_mismatch_p2", "input": "ch4_full_energy_force.inp", "ranks": 2, "injection": "IMAGE_RANGE_MISMATCH", "diagnostic": "Distributed-image importer ranges are not an exact cover"},
+    {"name": "descriptor_mismatch_p2", "input": "ch4_full_energy_force.inp", "ranks": 2, "injection": "DESCRIPTOR_MISMATCH", "diagnostic": "save_tblite replicated descriptor consensus failed"},
+    {"name": "nonleader_failure_p4", "input": "ch4_full_pgroup2_negative.inp", "ranks": 4, "injection": "NONLEADER_FAILURE", "diagnostic": "save_tblite KGROUP_PARTIAL_ROOT initialization failed"},
+    {"name": "nonfinite_forward_result_p2", "input": "ch4_full_energy_force.inp", "ranks": 2, "injection": "NONFINITE_FORWARD_RESULT", "diagnostic": "save_tblite KGROUP_PARTIAL_ROOT result failed"},
+    {"name": "antihermitian_reverse_p2", "input": "ch4_full_energy_force.inp", "ranks": 2, "injection": "ANTIHERMITIAN_REVERSE", "diagnostic": "Folded KGROUP_PARTIAL_ROOT overlap adjoint is not Hermitian"},
+    {"name": "owner_mode_rejected_p2", "input": "ch4_full_energy_force.inp", "ranks": 2, "injection": "OWNER_MISMATCH", "diagnostic": "OWNER_MISMATCH qualification requires replicated pull importers"}
+  ]
+}

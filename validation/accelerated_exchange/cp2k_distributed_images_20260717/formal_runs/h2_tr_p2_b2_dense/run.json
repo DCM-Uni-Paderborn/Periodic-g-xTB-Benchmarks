@@ -1,0 +1,79 @@
+{
+  "affinity_sha256": "8069d98e3d42acb8a67a3842c2c9f055380f3559d6da0fe8768dec9427335131",
+  "batch_size": 2,
+  "bindings_sha256": "30079d080665d34b7124fb8df429de90d3734c3cc3a333e3359b0530c5fd8d5e",
+  "case": "h2_tr",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=136,137:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "2",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/gxtb_rank_affinity_proof.sh",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/h2_k311_tr_energy_force_print.inp"
+  ],
+  "cores": [
+    136,
+    137
+  ],
+  "cp2k": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "environment": {
+    "BLIS_NUM_THREADS": "1",
+    "CP2K_GXTB_EXCHANGE_GRADIENT_MODE": "DENSE",
+    "CP2K_GXTB_EXCHANGE_IMAGE_BATCH_SIZE": "2",
+    "CP2K_GXTB_EXCHANGE_STREAM_MODE": "LEGACY",
+    "GOTO_NUM_THREADS": "1",
+    "GXTB_AFFINITY_DIR": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/formal_runs/h2_tr_p2_b2_dense",
+    "GXTB_EXPECTED_CORES": "136,137",
+    "GXTB_EXPECTED_RANKS": "2",
+    "MKL_DYNAMIC": "FALSE",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "expected_nfull": 3,
+  "features": [
+    "RKS",
+    "TIME_REVERSAL",
+    "3D",
+    "NONDIVISOR_BATCH"
+  ],
+  "finished_unix": 1784249861.8980956,
+  "input": "h2_k311_tr_energy_force_print.inp",
+  "input_sha256": "e0e6db55c0864aec3497e644737a11012c2a7995d97d5d31fabec87dcd04eef5",
+  "kind": "positive",
+  "observed_rank_pids": [
+    3598356,
+    3598357
+  ],
+  "observed_singleton_masks": [
+    "136",
+    "137"
+  ],
+  "output_sha256": "75c32624bfbe071262e57700d067b42994245396be14624e0019d5dde719ed34",
+  "peak_observed_cp2k_rank_vmhwm_kb": 177368,
+  "peak_sampled_cp2k_rank_rss_kb": 352072,
+  "preexec_affinity_sha256": "1c9b6dc8e44ae00c0385b9a76c358a5a527b6796a5612817b57decb7cfc4443f",
+  "preexec_singleton_masks": [
+    "136",
+    "137"
+  ],
+  "ranks": 2,
+  "returncode": 0,
+  "run_id": "h2_tr_p2_b2_dense",
+  "schema": 1,
+  "started_unix": 1784249852.0800974,
+  "stderr_sha256": "30079d080665d34b7124fb8df429de90d3734c3cc3a333e3359b0530c5fd8d5e",
+  "variant": "DENSE",
+  "wall_seconds": 9.807244550436735
+}

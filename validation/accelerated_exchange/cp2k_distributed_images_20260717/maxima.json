@@ -1,0 +1,13 @@
+{
+  "affinity_runs": 66,
+  "concurrent_core_conflicts": 0,
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "faults": 6,
+  "max_external_dE_Ha": 7.105427357601002e-15,
+  "max_external_dForce_Ha_per_bohr": 2.1396645148999998e-15,
+  "max_external_dStress_bar": 3.99999953515362e-06,
+  "max_internal_forward": 2.04281e-14,
+  "max_internal_reverse": 6.66133814775094e-16,
+  "pairs": 30,
+  "rss_pairs_sampled": 9
+}

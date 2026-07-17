@@ -1,0 +1,70 @@
+{
+  "affinity_sha256": "9746e97c33d85069901e5784aa6d54d51b1d38e7edab1d5fbac184f5f202d194",
+  "batch_size": 2,
+  "bindings_sha256": "cfe2d76033676b504117e518ed0c077697a19c2315d78757d2962f53fa52fb61",
+  "case": "o2_uks_tr",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=120:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "1",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/gxtb_rank_affinity_proof.sh",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/o2_uks_k311_tr_energy_force.inp"
+  ],
+  "cores": [
+    120
+  ],
+  "cp2k": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "environment": {
+    "BLIS_NUM_THREADS": "1",
+    "CP2K_GXTB_EXCHANGE_GRADIENT_MODE": "DENSE",
+    "CP2K_GXTB_EXCHANGE_IMAGE_BATCH_SIZE": "2",
+    "CP2K_GXTB_EXCHANGE_STREAM_MODE": "LEGACY",
+    "GOTO_NUM_THREADS": "1",
+    "GXTB_AFFINITY_DIR": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/formal_runs/o2_uks_tr_p1_b2_dense",
+    "GXTB_EXPECTED_CORES": "120",
+    "GXTB_EXPECTED_RANKS": "1",
+    "MKL_DYNAMIC": "FALSE",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "expected_nfull": 3,
+  "features": [
+    "UKS",
+    "TIME_REVERSAL",
+    "3D"
+  ],
+  "finished_unix": 1784249861.7452207,
+  "input": "o2_uks_k311_tr_energy_force.inp",
+  "input_sha256": "99d739e0d2164d928d7a1663f1fe1b6cc785c54a3b39434d1b5d069a7bf225c7",
+  "kind": "positive",
+  "observed_rank_pids": [],
+  "observed_singleton_masks": [],
+  "output_sha256": "5b6f070eb3e8887a68fa86bcf808af2a871f20f6801e025b39a2128d94f30c10",
+  "peak_observed_cp2k_rank_vmhwm_kb": 0,
+  "peak_sampled_cp2k_rank_rss_kb": 0,
+  "preexec_affinity_sha256": "2393da41705eb8e68c26d93b2e0c5a8af10bd4c8f24dbac7f010813e52e9b3de",
+  "preexec_singleton_masks": [
+    "120"
+  ],
+  "ranks": 1,
+  "returncode": 0,
+  "run_id": "o2_uks_tr_p1_b2_dense",
+  "schema": 1,
+  "started_unix": 1784249856.906028,
+  "stderr_sha256": "cfe2d76033676b504117e518ed0c077697a19c2315d78757d2962f53fa52fb61",
+  "variant": "DENSE",
+  "wall_seconds": 4.832649541087449
+}

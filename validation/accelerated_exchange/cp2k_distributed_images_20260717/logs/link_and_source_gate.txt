@@ -1,0 +1,7 @@
+-- Performing Test CP2K_TBLITE_HAS_GXTB
+-- Performing Test CP2K_TBLITE_HAS_GXTB - Success
+-- Configuring done (6.4s)
+-- Generating done (0.3s)
+appledouble_source_count=0
+base_cp2k_commit=eb9b157c728f040ed4f0297e994ee9078c41cfc5
+provider_commit=56b2332

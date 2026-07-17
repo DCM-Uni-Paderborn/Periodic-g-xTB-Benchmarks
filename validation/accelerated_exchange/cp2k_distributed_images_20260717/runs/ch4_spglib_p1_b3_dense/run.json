@@ -1,0 +1,66 @@
+{
+  "affinity_sha256": "1d271430b07d0cdbbb07ae3e79897a241da1624d59390d30c341ea4d4c8e0488",
+  "batch_size": 3,
+  "bindings_sha256": "fac8f474abc6ddc043ed26012a5823cc527282e65275a2bd7855b3dee4f56ce0",
+  "case": "ch4_spglib",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=148:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "1",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/ch4_spglib_energy_force.inp"
+  ],
+  "cores": [
+    148
+  ],
+  "cp2k": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "environment": {
+    "BLIS_NUM_THREADS": "1",
+    "CP2K_GXTB_EXCHANGE_GRADIENT_MODE": "DENSE",
+    "CP2K_GXTB_EXCHANGE_IMAGE_BATCH_SIZE": "3",
+    "CP2K_GXTB_EXCHANGE_STREAM_MODE": "LEGACY",
+    "GOTO_NUM_THREADS": "1",
+    "MKL_DYNAMIC": "FALSE",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "expected_nfull": 8,
+  "features": [
+    "RKS",
+    "SPGLIB",
+    "3D"
+  ],
+  "finished_unix": 1784249506.3388777,
+  "input": "ch4_spglib_energy_force.inp",
+  "input_sha256": "aa783972109de0fba3bef62cb3a7b6bc2cd0785245a53bd7a58c8a6ac4b3fbf1",
+  "kind": "positive",
+  "observed_rank_pids": [
+    3592041
+  ],
+  "observed_singleton_masks": [
+    "148"
+  ],
+  "output_sha256": "e56f7e4abd463cdcaf173065084474fece8816c9aedd604cbedf85b63b473d72",
+  "peak_observed_cp2k_rank_vmhwm_kb": 150556,
+  "peak_sampled_cp2k_rank_rss_kb": 150556,
+  "ranks": 1,
+  "returncode": 0,
+  "run_id": "ch4_spglib_p1_b3_dense",
+  "schema": 1,
+  "started_unix": 1784249502.010453,
+  "stderr_sha256": "fac8f474abc6ddc043ed26012a5823cc527282e65275a2bd7855b3dee4f56ce0",
+  "variant": "DENSE",
+  "wall_seconds": 4.327847555279732
+}

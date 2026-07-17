@@ -1,0 +1,71 @@
+{
+  "affinity_sha256": "cf99d943285e4b93f0f34e20bef7b6a3572d4734e724505810de5b8f4a8b264d",
+  "batch_size": 1,
+  "bindings_sha256": "bf11600f9b4b37b273dc4736bc5523e68b8f014444fc4098ed6e0dd0664e1b2a",
+  "case": "ch4_full",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=148,149:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "2",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/ch4_full_energy_force.inp"
+  ],
+  "cores": [
+    148,
+    149
+  ],
+  "cp2k": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "environment": {
+    "BLIS_NUM_THREADS": "1",
+    "CP2K_GXTB_EXCHANGE_GRADIENT_MODE": "QUALIFY",
+    "CP2K_GXTB_EXCHANGE_IMAGE_BATCH_SIZE": "1",
+    "CP2K_GXTB_EXCHANGE_STREAM_MODE": "KGROUP_PARTIAL_DISTRIBUTED_IMAGES",
+    "CP2K_GXTB_QUALIFICATION_FULLMESH_ORACLE_ITERATION": "1",
+    "GOTO_NUM_THREADS": "1",
+    "MKL_DYNAMIC": "FALSE",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "expected_nfull": 8,
+  "features": [
+    "RKS",
+    "FULL_GRID",
+    "3D",
+    "BATCH_1"
+  ],
+  "finished_unix": 1784249453.588584,
+  "input": "ch4_full_energy_force.inp",
+  "input_sha256": "265deac3a4ee0572ce46fd676f86c27a92a1943b2fabc334631564a52174f0ac",
+  "kind": "positive",
+  "observed_rank_pids": [
+    3591382,
+    3591383
+  ],
+  "observed_singleton_masks": [
+    "148",
+    "149"
+  ],
+  "output_sha256": "3b25b717524bbfec26a33c347fcfcddbec0c5f2c5c6aebc941153d0c614065f9",
+  "peak_observed_cp2k_rank_vmhwm_kb": 149300,
+  "peak_sampled_cp2k_rank_rss_kb": 297504,
+  "ranks": 2,
+  "returncode": 0,
+  "run_id": "ch4_full_p2_b1_distributed_images",
+  "schema": 1,
+  "started_unix": 1784249447.1664517,
+  "stderr_sha256": "bf11600f9b4b37b273dc4736bc5523e68b8f014444fc4098ed6e0dd0664e1b2a",
+  "variant": "DISTRIBUTED_IMAGES",
+  "wall_seconds": 6.421241898089647
+}
