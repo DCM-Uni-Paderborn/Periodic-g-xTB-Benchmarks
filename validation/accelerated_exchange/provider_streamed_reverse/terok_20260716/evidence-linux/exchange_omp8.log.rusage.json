@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-streamed-reverse-frozen-20260716/build-linux/test/unit/tblite-tester",
+    "exchange"
+  ],
+  "elapsed_seconds": 12.813907517120242,
+  "involuntary_context_switches": 2225,
+  "major_faults": 0,
+  "maxrss_kib": 188596,
+  "minor_faults": 1432774,
+  "returncode": 0,
+  "system_seconds": 19.7429,
+  "user_seconds": 34.755566,
+  "voluntary_context_switches": 128607
+}
