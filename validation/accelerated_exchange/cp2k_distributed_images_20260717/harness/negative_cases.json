@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "name": "descriptor_mismatch_p2",
+      "input": "ch4_full_energy_force.inp",
+      "ranks": 2,
+      "injection": "DESCRIPTOR_MISMATCH",
+      "diagnostic": "save_tblite replicated descriptor consensus failed"
+    },
+    {
+      "name": "image_range_mismatch_p2",
+      "input": "ch4_full_energy_force.inp",
+      "ranks": 2,
+      "injection": "IMAGE_RANGE_MISMATCH",
+      "diagnostic": "Distributed-image importer ranges are not an exact cover"
+    },
+    {
+      "name": "nonleader_failure_p4",
+      "input": "ch4_full_pgroup2_negative.inp",
+      "ranks": 4,
+      "injection": "NONLEADER_FAILURE",
+      "diagnostic": "save_tblite KGROUP_PARTIAL_ROOT initialization failed"
+    },
+    {
+      "name": "nonfinite_forward_result_p2",
+      "input": "ch4_full_energy_force.inp",
+      "ranks": 2,
+      "injection": "NONFINITE_FORWARD_RESULT",
+      "diagnostic": "save_tblite KGROUP_PARTIAL_ROOT result failed"
+    },
+    {
+      "name": "antihermitian_reverse_p2",
+      "input": "ch4_full_energy_force.inp",
+      "ranks": 2,
+      "injection": "ANTIHERMITIAN_REVERSE",
+      "diagnostic": "Folded KGROUP_PARTIAL_ROOT overlap adjoint is not Hermitian"
+    }
+  ]
+}

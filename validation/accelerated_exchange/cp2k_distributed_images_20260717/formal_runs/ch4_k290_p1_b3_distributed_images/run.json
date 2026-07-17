@@ -1,0 +1,75 @@
+{
+  "affinity_sha256": "92a95507fcd7f15c8267ecfa6f8a8ed8e193f5999ea3b7539112b1fb26e2a577",
+  "batch_size": 3,
+  "bindings_sha256": "cd3232598e719cf4d0f583b12650941adabf44f199d5bd92c7ac655dc470e91c",
+  "case": "ch4_k290",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=140:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "1",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/gxtb_rank_affinity_proof.sh",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/ch4_k290_energy_force.inp"
+  ],
+  "cores": [
+    140
+  ],
+  "cp2k": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "environment": {
+    "BLIS_NUM_THREADS": "1",
+    "CP2K_GXTB_EXCHANGE_GRADIENT_MODE": "QUALIFY",
+    "CP2K_GXTB_EXCHANGE_IMAGE_BATCH_SIZE": "3",
+    "CP2K_GXTB_EXCHANGE_STREAM_MODE": "KGROUP_PARTIAL_DISTRIBUTED_IMAGES",
+    "CP2K_GXTB_QUALIFICATION_FULLMESH_ORACLE_ITERATION": "1",
+    "GOTO_NUM_THREADS": "1",
+    "GXTB_AFFINITY_DIR": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/formal_runs/ch4_k290_p1_b3_distributed_images",
+    "GXTB_EXPECTED_CORES": "140",
+    "GXTB_EXPECTED_RANKS": "1",
+    "MKL_DYNAMIC": "FALSE",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "expected_nfull": 8,
+  "features": [
+    "RKS",
+    "K290",
+    "3D"
+  ],
+  "finished_unix": 1784249862.0958292,
+  "input": "ch4_k290_energy_force.inp",
+  "input_sha256": "9b911d4f4cab06f1d95763f3095fe75947980c129fa7131d5818c59468a944a9",
+  "kind": "positive",
+  "observed_rank_pids": [
+    3598633
+  ],
+  "observed_singleton_masks": [
+    "140"
+  ],
+  "output_sha256": "2374d80ff414b4adbbe713c0f6bc5763cd09c868fe70cb57e816bb7d537e76dd",
+  "peak_observed_cp2k_rank_vmhwm_kb": 152960,
+  "peak_sampled_cp2k_rank_rss_kb": 152960,
+  "preexec_affinity_sha256": "550dfa2eac7056296d5681edcf989a558feddc66895188b3ca6429ccfa76a6e9",
+  "preexec_singleton_masks": [
+    "140"
+  ],
+  "ranks": 1,
+  "returncode": 0,
+  "run_id": "ch4_k290_p1_b3_distributed_images",
+  "schema": 1,
+  "started_unix": 1784249857.2243018,
+  "stderr_sha256": "cd3232598e719cf4d0f583b12650941adabf44f199d5bd92c7ac655dc470e91c",
+  "variant": "DISTRIBUTED_IMAGES",
+  "wall_seconds": 4.863837533630431
+}

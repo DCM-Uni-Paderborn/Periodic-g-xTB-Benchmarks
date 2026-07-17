@@ -1,0 +1,89 @@
+{
+  "affinity_sha256": "00cb564c4d1b377303af049fbfbfdd94fb1258b6d83a2e38ff62dc88df4b68cf",
+  "batch_size": 2,
+  "bindings_sha256": "9cf26790e24111b29fdd695793595e701ee1f5a44f5de7405ffcdc4db81aef75",
+  "case": "h2_tr",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=132,133,134,135:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "4",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/gxtb_rank_affinity_proof.sh",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/h2_k311_tr_energy_force_print.inp"
+  ],
+  "cores": [
+    132,
+    133,
+    134,
+    135
+  ],
+  "cp2k": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "environment": {
+    "BLIS_NUM_THREADS": "1",
+    "CP2K_GXTB_EXCHANGE_GRADIENT_MODE": "QUALIFY",
+    "CP2K_GXTB_EXCHANGE_IMAGE_BATCH_SIZE": "2",
+    "CP2K_GXTB_EXCHANGE_STREAM_MODE": "KGROUP_PARTIAL_DISTRIBUTED_IMAGES",
+    "CP2K_GXTB_QUALIFICATION_FULLMESH_ORACLE_ITERATION": "1",
+    "GOTO_NUM_THREADS": "1",
+    "GXTB_AFFINITY_DIR": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/formal_runs/h2_tr_p4_b2_distributed_images",
+    "GXTB_EXPECTED_CORES": "132,133,134,135",
+    "GXTB_EXPECTED_RANKS": "4",
+    "MKL_DYNAMIC": "FALSE",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "expected_nfull": 3,
+  "features": [
+    "RKS",
+    "TIME_REVERSAL",
+    "3D",
+    "P_GT_NFULL",
+    "EMPTY_IMPORTER"
+  ],
+  "finished_unix": 1784249851.3009048,
+  "input": "h2_k311_tr_energy_force_print.inp",
+  "input_sha256": "e0e6db55c0864aec3497e644737a11012c2a7995d97d5d31fabec87dcd04eef5",
+  "kind": "positive",
+  "observed_rank_pids": [
+    3597148,
+    3597151,
+    3597154,
+    3597160
+  ],
+  "observed_singleton_masks": [
+    "132",
+    "133",
+    "134",
+    "135"
+  ],
+  "output_sha256": "601be21c72771c1700d7e4b8db9b257082d3318a9a3a36c22b4df60f9b77dd36",
+  "peak_observed_cp2k_rank_vmhwm_kb": 176076,
+  "peak_sampled_cp2k_rank_rss_kb": 701104,
+  "preexec_affinity_sha256": "d674401de3b59aa53e5a98ac965e265885bf9b979b6baec4a47fd6efcb7283e7",
+  "preexec_singleton_masks": [
+    "132",
+    "133",
+    "134",
+    "135"
+  ],
+  "ranks": 4,
+  "returncode": 0,
+  "run_id": "h2_tr_p4_b2_distributed_images",
+  "schema": 1,
+  "started_unix": 1784249841.3344789,
+  "stderr_sha256": "9cf26790e24111b29fdd695793595e701ee1f5a44f5de7405ffcdc4db81aef75",
+  "variant": "DISTRIBUTED_IMAGES",
+  "wall_seconds": 9.95449148118496
+}

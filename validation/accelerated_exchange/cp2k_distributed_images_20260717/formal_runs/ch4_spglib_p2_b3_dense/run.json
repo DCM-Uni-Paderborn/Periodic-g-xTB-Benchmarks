@@ -1,0 +1,72 @@
+{
+  "affinity_sha256": "9746e97c33d85069901e5784aa6d54d51b1d38e7edab1d5fbac184f5f202d194",
+  "batch_size": 3,
+  "bindings_sha256": "7a7f9e866548a35608b8a55acdcf36865abfc15eb9d1b8091ab5dd5e867bcb66",
+  "case": "ch4_spglib",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=128,129:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "2",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/gxtb_rank_affinity_proof.sh",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/ch4_spglib_energy_force.inp"
+  ],
+  "cores": [
+    128,
+    129
+  ],
+  "cp2k": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "environment": {
+    "BLIS_NUM_THREADS": "1",
+    "CP2K_GXTB_EXCHANGE_GRADIENT_MODE": "DENSE",
+    "CP2K_GXTB_EXCHANGE_IMAGE_BATCH_SIZE": "3",
+    "CP2K_GXTB_EXCHANGE_STREAM_MODE": "LEGACY",
+    "GOTO_NUM_THREADS": "1",
+    "GXTB_AFFINITY_DIR": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/formal_runs/ch4_spglib_p2_b3_dense",
+    "GXTB_EXPECTED_CORES": "128,129",
+    "GXTB_EXPECTED_RANKS": "2",
+    "MKL_DYNAMIC": "FALSE",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "expected_nfull": 8,
+  "features": [
+    "RKS",
+    "SPGLIB",
+    "3D"
+  ],
+  "finished_unix": 1784249846.3450987,
+  "input": "ch4_spglib_energy_force.inp",
+  "input_sha256": "aa783972109de0fba3bef62cb3a7b6bc2cd0785245a53bd7a58c8a6ac4b3fbf1",
+  "kind": "positive",
+  "observed_rank_pids": [],
+  "observed_singleton_masks": [],
+  "output_sha256": "65bcfd4dad9cabb4cc7d05050ceae9723738ae56f2a3ec2f2a94f42498e87829",
+  "peak_observed_cp2k_rank_vmhwm_kb": 0,
+  "peak_sampled_cp2k_rank_rss_kb": 0,
+  "preexec_affinity_sha256": "6bcc3948bc5a58ce78377b479dd35a9e59824665401efadfcdd50bcf5a3ec12e",
+  "preexec_singleton_masks": [
+    "128",
+    "129"
+  ],
+  "ranks": 2,
+  "returncode": 0,
+  "run_id": "ch4_spglib_p2_b3_dense",
+  "schema": 1,
+  "started_unix": 1784249841.3336933,
+  "stderr_sha256": "7a7f9e866548a35608b8a55acdcf36865abfc15eb9d1b8091ab5dd5e867bcb66",
+  "variant": "DENSE",
+  "wall_seconds": 5.003724601119757
+}

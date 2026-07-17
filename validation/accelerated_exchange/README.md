@@ -11,14 +11,17 @@ The explicit expanded-full-mesh implementation remains the numerical oracle.
 | `cp2k_kgroup_owner/` | CP2K owner/communicator precursor; full/TR/K290/SPGLIB, shifted, 1D/2D/3D, RKS/UKS, and Linux MPI P=1/2/4 oracle comparisons | No coupled-kernel speedup: save_tblite still has one global stream state |
 | `mixed_radix_fft_20260717/` | Dense-oracle equivalence of separable and mixed-radix FFT regular-mesh exchange transforms for RKS/UKS, shifted/unshifted K290/TR/SPGLIB, 1D/2D/3D, energy, force and stress | Correctness qualification only; the short serial matrix is not a speedup benchmark |
 | `symmetry_phase_cache_20260717/` | Cached-versus-uncached symmetry-star atom phases across RKS/UKS, K290/TR/SPGLIB, shifted meshes and derivative diagnostics | Correctness qualification only; the short serial matrix is not a speedup benchmark |
+| `cp2k_distributed_images_20260717/` | Replicated reduced source plus disjoint nonlinear BvK-image kernels and all-k additive response folding; 30 dense/distributed pairs and six fail-closed cases spanning RKS/UKS, Gamma/shifted, K290/symmetry, 1D/2D/3D, MPI P=1/2/4, forces, and stress | Numerically equivalent to the full-mesh oracle and capable of coupled-kernel parallelism; the archived single-shot timings are not yet a repeated scaling benchmark |
 | `crossmesh_restart/` | Opt-in, metadata-validated regular-mesh density restart; official regression, malformed-file fallback, RKS/UKS, force/stress, density and Linux MPI-2 tests | Reduces SCF iterations in the qualified cases; the interpolated initial guess is not guaranteed N-representable, so default activation awaits a spectral projection or accept/fallback gate |
 
-Genuine k-group scaling requires additive partial k-to-R accumulators to be
-merged before the nonlinear provider kernel is applied.  The exact proposed
-boundary and its validation rules are frozen in
-`cp2k_kgroup_owner/provider_partial_accumulator_abi.md`.  Independently
-finalized group calculations must never be summed because that would omit
-cross-group terms in Brillouin-zone-coupled nonlocal exchange.
+The distributed-image implementation preserves the required global coupling:
+it first merges additive partial k-to-R accumulators, then evaluates disjoint
+subsets of the nonlinear image kernel, and finally sums every image-local
+contribution to the full Bloch response.  Independently finalized k-group
+calculations must still never be summed because that would omit cross-group
+terms in Brillouin-zone-coupled nonlocal exchange.  The provider boundary and
+its validation rules are recorded in
+`cp2k_kgroup_owner/provider_partial_accumulator_abi.md`.
 
 The frozen integrated P=2/P=4 timing matrix and other multi-rank runs launched
 with taskset plus `--bind-to none` are preserved byte-for-byte, but are

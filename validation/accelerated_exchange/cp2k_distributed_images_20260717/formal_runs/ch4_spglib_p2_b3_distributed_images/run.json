@@ -1,0 +1,73 @@
+{
+  "affinity_sha256": "9746e97c33d85069901e5784aa6d54d51b1d38e7edab1d5fbac184f5f202d194",
+  "batch_size": 3,
+  "bindings_sha256": "2b683ffcf466ec384bc3444273ccf532da74582530a2eff2692b356ecaa5a7a5",
+  "case": "ch4_spglib",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=128,129:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "2",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/gxtb_rank_affinity_proof.sh",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/ch4_spglib_energy_force.inp"
+  ],
+  "cores": [
+    128,
+    129
+  ],
+  "cp2k": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "environment": {
+    "BLIS_NUM_THREADS": "1",
+    "CP2K_GXTB_EXCHANGE_GRADIENT_MODE": "QUALIFY",
+    "CP2K_GXTB_EXCHANGE_IMAGE_BATCH_SIZE": "3",
+    "CP2K_GXTB_EXCHANGE_STREAM_MODE": "KGROUP_PARTIAL_DISTRIBUTED_IMAGES",
+    "CP2K_GXTB_QUALIFICATION_FULLMESH_ORACLE_ITERATION": "1",
+    "GOTO_NUM_THREADS": "1",
+    "GXTB_AFFINITY_DIR": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/formal_runs/ch4_spglib_p2_b3_distributed_images",
+    "GXTB_EXPECTED_CORES": "128,129",
+    "GXTB_EXPECTED_RANKS": "2",
+    "MKL_DYNAMIC": "FALSE",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "expected_nfull": 8,
+  "features": [
+    "RKS",
+    "SPGLIB",
+    "3D"
+  ],
+  "finished_unix": 1784249851.423204,
+  "input": "ch4_spglib_energy_force.inp",
+  "input_sha256": "aa783972109de0fba3bef62cb3a7b6bc2cd0785245a53bd7a58c8a6ac4b3fbf1",
+  "kind": "positive",
+  "observed_rank_pids": [],
+  "observed_singleton_masks": [],
+  "output_sha256": "8700005e7155a7466b490f5ff829dbf044991f7aa9daff1fc457ea6ccda51c3a",
+  "peak_observed_cp2k_rank_vmhwm_kb": 0,
+  "peak_sampled_cp2k_rank_rss_kb": 0,
+  "preexec_affinity_sha256": "777538015a429f25154c99f289648a138520171ed47e31f86dcb4fe7ba7f4a86",
+  "preexec_singleton_masks": [
+    "128",
+    "129"
+  ],
+  "ranks": 2,
+  "returncode": 0,
+  "run_id": "ch4_spglib_p2_b3_distributed_images",
+  "schema": 1,
+  "started_unix": 1784249846.3521268,
+  "stderr_sha256": "2b683ffcf466ec384bc3444273ccf532da74582530a2eff2692b356ecaa5a7a5",
+  "variant": "DISTRIBUTED_IMAGES",
+  "wall_seconds": 5.063835594803095
+}

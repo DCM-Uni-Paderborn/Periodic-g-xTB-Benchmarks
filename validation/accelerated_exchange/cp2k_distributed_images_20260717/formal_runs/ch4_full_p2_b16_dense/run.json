@@ -1,0 +1,73 @@
+{
+  "affinity_sha256": "9746e97c33d85069901e5784aa6d54d51b1d38e7edab1d5fbac184f5f202d194",
+  "batch_size": 16,
+  "bindings_sha256": "e4669fc1d54651081e3702874a278e692703cc5e94371b8285a69366de77325e",
+  "case": "ch4_full",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=132,133:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "2",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/gxtb_rank_affinity_proof.sh",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/ch4_full_energy_force.inp"
+  ],
+  "cores": [
+    132,
+    133
+  ],
+  "cp2k": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "environment": {
+    "BLIS_NUM_THREADS": "1",
+    "CP2K_GXTB_EXCHANGE_GRADIENT_MODE": "DENSE",
+    "CP2K_GXTB_EXCHANGE_IMAGE_BATCH_SIZE": "16",
+    "CP2K_GXTB_EXCHANGE_STREAM_MODE": "LEGACY",
+    "GOTO_NUM_THREADS": "1",
+    "GXTB_AFFINITY_DIR": "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/formal_runs/ch4_full_p2_b16_dense",
+    "GXTB_EXPECTED_CORES": "132,133",
+    "GXTB_EXPECTED_RANKS": "2",
+    "MKL_DYNAMIC": "FALSE",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_DYNAMIC": "FALSE",
+    "OMP_MAX_ACTIVE_LEVELS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "expected_nfull": 8,
+  "features": [
+    "RKS",
+    "FULL_GRID",
+    "3D",
+    "BATCH_GE_NFULL"
+  ],
+  "finished_unix": 1784249856.3352616,
+  "input": "ch4_full_energy_force.inp",
+  "input_sha256": "265deac3a4ee0572ce46fd676f86c27a92a1943b2fabc334631564a52174f0ac",
+  "kind": "positive",
+  "observed_rank_pids": [],
+  "observed_singleton_masks": [],
+  "output_sha256": "e5556f639d946ddeda0d964a905074be9ad30204fdeff142ffc0a3659bb4ef9a",
+  "peak_observed_cp2k_rank_vmhwm_kb": 0,
+  "peak_sampled_cp2k_rank_rss_kb": 0,
+  "preexec_affinity_sha256": "34d132781b13f08b702a71cb6bf06e7994dbff2ec6559ec502760d68b93390d1",
+  "preexec_singleton_masks": [
+    "132",
+    "133"
+  ],
+  "ranks": 2,
+  "returncode": 0,
+  "run_id": "ch4_full_p2_b16_dense",
+  "schema": 1,
+  "started_unix": 1784249851.3094435,
+  "stderr_sha256": "e4669fc1d54651081e3702874a278e692703cc5e94371b8285a69366de77325e",
+  "variant": "DENSE",
+  "wall_seconds": 5.01426456682384
+}

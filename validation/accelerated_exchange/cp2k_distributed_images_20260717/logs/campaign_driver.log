@@ -1,0 +1,41 @@
+PASS: partial importers use only the ownership-tracking partial push APIs
+COMPLETE	ch4_full_p2_b1_dense	6.517s	cores=[148, 149]
+COMPLETE	h2_tr_p4_b2_dense	7.844s	cores=[132, 133, 134, 135]
+COMPLETE	ch4_full_p2_b1_distributed_images	6.421s	cores=[148, 149]
+COMPLETE	h2_tr_p4_b2_distributed_images	6.359s	cores=[132, 133, 134, 135]
+COMPLETE	ch4_full_p2_b16_dense	3.842s	cores=[132, 133]
+COMPLETE	si_shifted_p4_b3_dense	19.471s	cores=[124, 125, 126, 127]
+COMPLETE	ch4_full_p2_b16_distributed_images	3.950s	cores=[132, 133]
+COMPLETE	si_shifted_p2_b3_dense	22.892s	cores=[148, 149]
+COMPLETE	si_shifted_p4_b3_distributed_images	18.855s	cores=[124, 125, 126, 127]
+COMPLETE	ch4_k1_p2_b3_dense	3.310s	cores=[124, 125]
+COMPLETE	ch4_k1_p2_b3_distributed_images	3.483s	cores=[124, 125]
+COMPLETE	si_shifted_p2_b3_distributed_images	25.520s	cores=[148, 149]
+COMPLETE	ch4_spglib_p1_b3_dense	4.328s	cores=[148]
+COMPLETE	ch4_spglib_p1_b3_distributed_images	4.922s	cores=[148]
+COMPLETE	si_shifted_p1_b3_dense	28.526s	cores=[124]
+COMPLETE	si_shifted_p1_b3_distributed_images	33.888s	cores=[124]
+Traceback (most recent call last):
+  File "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/run_distributed_images_campaign.py", line 432, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/run_distributed_images_campaign.py", line 413, in main
+    future.result()
+  File "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/lib/python3.12/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/run_distributed_images_campaign.py", line 364, in run_lane
+    run_pair(args, job, lane)
+  File "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/run_distributed_images_campaign.py", line 284, in run_pair
+    run_variant(args, job, "DENSE", lane)
+  File "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/run_distributed_images_campaign.py", line 265, in run_variant
+    returncode, runtime = run_process(command, env, run_dir, cores)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/run_distributed_images_campaign.py", line 154, in run_process
+    raise RuntimeError(
+RuntimeError: rank affinity mismatch in ar2_1d_p4_b3_dense: observed=[] expected=['140', '141', '142', '143']

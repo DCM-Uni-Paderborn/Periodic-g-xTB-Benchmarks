@@ -1,0 +1,47 @@
+{
+  "affinity_sha256": "9746e97c33d85069901e5784aa6d54d51b1d38e7edab1d5fbac184f5f202d194",
+  "bindings_sha256": "ac1c88c54db04739814558fd16aa915402772f6f46ef72d73282358b22911a68",
+  "case": "nonfinite_forward_result_p2",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=132,133:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "2",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/gxtb_rank_affinity_proof.sh",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/ch4_full_energy_force.inp"
+  ],
+  "cores": [
+    132,
+    133
+  ],
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "diagnostic_count": 1,
+  "expected_diagnostic": "save_tblite KGROUP_PARTIAL_ROOT result failed",
+  "finished_unix": 1784249946.8766441,
+  "injection": "NONFINITE_FORWARD_RESULT",
+  "input": "ch4_full_energy_force.inp",
+  "input_sha256": "265deac3a4ee0572ce46fd676f86c27a92a1943b2fabc334631564a52174f0ac",
+  "kind": "fault",
+  "observed_rank_pids": [],
+  "observed_singleton_masks": [],
+  "output_sha256": "f1ab8e94580a4ff1a9cf421c1f1c7d033cffadc0591f9fabc7ff79e8a0be1925",
+  "peak_observed_cp2k_rank_vmhwm_kb": 0,
+  "peak_sampled_cp2k_rank_rss_kb": 0,
+  "preexec_affinity_sha256": "f63da1388025323d8e92cf58ca67f88d824ac32a7935323066fd5609fc68dec7",
+  "preexec_singleton_masks": [
+    "132",
+    "133"
+  ],
+  "ranks": 2,
+  "returncode": 1,
+  "schema": 1,
+  "started_unix": 1784249943.090198,
+  "stderr_sha256": "ac1c88c54db04739814558fd16aa915402772f6f46ef72d73282358b22911a68",
+  "wall_seconds": 3.7847273433580995
+}

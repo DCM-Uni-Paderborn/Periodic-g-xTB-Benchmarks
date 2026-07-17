@@ -1,0 +1,3 @@
+PASS: partial importers use only the ownership-tracking partial push APIs
+COMPLETE	ch4_full_p2_b3_dense	4.160s	cores=[120, 121]
+COMPLETE	ch4_full_p2_b3_distributed_images	4.848s	cores=[120, 121]

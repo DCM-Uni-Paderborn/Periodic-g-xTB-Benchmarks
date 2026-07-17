@@ -1,0 +1,47 @@
+{
+  "affinity_sha256": "9746e97c33d85069901e5784aa6d54d51b1d38e7edab1d5fbac184f5f202d194",
+  "bindings_sha256": "029eb008ae78a752fa0a06528a14669d5c3c9f22d62607c57af33b1411fc16af",
+  "case": "owner_mode_rejected_p2",
+  "command": [
+    "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/mpirun",
+    "--map-by",
+    "pe-list=140,141:ordered",
+    "--bind-to",
+    "core",
+    "--report-bindings",
+    "-np",
+    "2",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/scripts/gxtb_rank_affinity_proof.sh",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/cp2k_build/bin/cp2k.psmp",
+    "-i",
+    "/home/kuehne88/work/cp2k_gxtb_distributed_images_20260717/campaign/harness/inputs/ch4_full_energy_force.inp"
+  ],
+  "cores": [
+    140,
+    141
+  ],
+  "cp2k_sha256": "28f7b78990ff9675746c016d145b4cdbe1e43fc8e5d4a76e1d7871b843553dce",
+  "diagnostic_count": 1,
+  "expected_diagnostic": "OWNER_MISMATCH qualification requires replicated pull importers",
+  "finished_unix": 1784249946.871115,
+  "injection": "OWNER_MISMATCH",
+  "input": "ch4_full_energy_force.inp",
+  "input_sha256": "265deac3a4ee0572ce46fd676f86c27a92a1943b2fabc334631564a52174f0ac",
+  "kind": "fault",
+  "observed_rank_pids": [],
+  "observed_singleton_masks": [],
+  "output_sha256": "9f1c499b6002df5818ca9341ca11008a7bdac25df45b62f4124c9e00852c75a1",
+  "peak_observed_cp2k_rank_vmhwm_kb": 0,
+  "peak_sampled_cp2k_rank_rss_kb": 0,
+  "preexec_affinity_sha256": "3c74dc950c985977f055d4994fdf7dc4ef982e625195d5b19adddea8e4500475",
+  "preexec_singleton_masks": [
+    "140",
+    "141"
+  ],
+  "ranks": 2,
+  "returncode": 1,
+  "schema": 1,
+  "started_unix": 1784249943.092466,
+  "stderr_sha256": "029eb008ae78a752fa0a06528a14669d5c3c9f22d62607c57af33b1411fc16af",
+  "wall_seconds": 3.776759820058942
+}
