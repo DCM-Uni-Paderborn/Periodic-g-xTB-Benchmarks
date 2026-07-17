@@ -1,0 +1,14 @@
+ad12573cbaa6a3705b93133c714fc206fa94b0647c2826e9efba70ea9fc77e6d  ./MANIFEST.md
+59d0bf8262bd048b5775c9bb168e0bd38a640a224c4bca901ecfa7dbe101fd65  ./README.md
+79ac71643bd0cd7c9d792919c596c1bdd3b7b30b3f93f981bd06690423d7e08e  ./branch-status.txt
+4f468a9b222b747f534d1087eaaf51949a74ad534d4078d2e9dc7c5086f9a13c  ./local-debug-ctest-exchange.log
+2d4afab8dc31cd0b5447c544ac5df4a46b8859b2289aa05426e493e63dd807e1  ./local-debug-exchange.log
+4b73a550fe577547ad3621841cfbb40f27ef2a7d35fae84e2ac8647cf9318335  ./local-release-ctest-exchange.log
+6a72ca998dd065aba047f94d115e3330a315185ccf48edae24dd8a190ccdf4d2  ./local-release-exchange.log
+1d6e2a0b80e17299d8689da4e83dfef8d47442bba67deff7c5fb58c1e41ed10b  ./source-files.sha256
+f2d76d2f14d3f95fbc5bf48aa09f624100cc95a90c1981359e644309354ef09d  ./source-worktree.tar.gz
+311ec00bb78a9b6e4b484198ec6b36fac7648d74639f9a03e70ea857586e05b9  ./terok-linux-debug-exchange.log
+34a8d895f52c4aa7078329bb8af9e0a7bdf3a353799ee5c6b88f3b9fffb60c0c  ./terok-linux-mpi-freedom.log
+1dbf8d22573012ed5da2e6e84e5a28dee967e3a440a840411fab6c794562c761  ./terok-linux-mpi2-release-smoke.log
+bb3283d6014c6a18ccee5b2e48ceb716b76fcd9ae5aef599a87e668bebfe2637  ./terok-linux-release-exchange.log
+c5cbd720ece854753048fe89b56c57ab46c045935d1ba62e318aa86bb866970f  ./worktree.diff.gz
