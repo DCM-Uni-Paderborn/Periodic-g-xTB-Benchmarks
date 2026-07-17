@@ -118,18 +118,23 @@ def acquire_cpu_locks(
     )
     lock_root.mkdir(parents=True, exist_ok=True)
     handles: list[IO[str]] = []
+    current_handle: IO[str] | None = None
     try:
-        for cpu in sorted(cpus):
-            handle = (lock_root / f"cpu-{cpu}.lock").open("a+")
+        for cpu in sorted(set(cpus)):
+            current_handle = (lock_root / f"cpu-{cpu}.lock").open("a+")
             try:
-                fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                fcntl.flock(
+                    current_handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB
+                )
             except BlockingIOError as error:
-                handle.seek(0)
-                holder = handle.read().strip() or "unidentified holder"
-                handle.close()
+                current_handle.seek(0)
+                holder = current_handle.read().strip() or "unidentified holder"
                 raise RuntimeError(
                     f"logical CPU {cpu} is already reserved ({holder})"
                 ) from error
+            handles.append(current_handle)
+            handle = current_handle
+            current_handle = None
             handle.seek(0)
             handle.truncate()
             json.dump(
@@ -144,8 +149,10 @@ def acquire_cpu_locks(
             )
             handle.write("\n")
             handle.flush()
-            handles.append(handle)
-    except Exception:
+            os.fsync(handle.fileno())
+    except BaseException:
+        if current_handle is not None:
+            current_handle.close()
         for handle in handles:
             handle.close()
         raise

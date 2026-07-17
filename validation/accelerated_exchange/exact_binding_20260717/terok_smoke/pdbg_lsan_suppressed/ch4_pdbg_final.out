@@ -18,10 +18,10 @@
  DBCSR| Split modifier for TAS multiplication algorithm                  1.0E+00 (U)
 
 
-  **** **** ******  **  PROGRAM STARTED AT               2026-07-17 04:44:28.222
+  **** **** ******  **  PROGRAM STARTED AT               2026-07-17 05:02:59.293
  ***** ** ***  *** **   PROGRAM STARTED ON                                 terok
  **    ****   ******    PROGRAM STARTED BY                              kuehne88
- ***** **    ** ** **   PROGRAM PROCESS ID                               3669338
+ ***** **    ** ** **   PROGRAM PROCESS ID                               3899516
   **** **  *******  **  PROGRAM STARTED IN /home/kuehne88/work/exact-binding-smo
                                            ke-final-20260717
 
@@ -67,12 +67,12 @@
  MEMORY| system memory details [Kb]
  MEMORY|                        rank 0           min           max       average
  MEMORY| MemTotal            528104804     528104804     528104804     528104804
- MEMORY| MemFree             366155280     366155280     366155280     366155280
+ MEMORY| MemFree             364483520     364483520     364483520     364483520
  MEMORY| Buffers                    20            20            20            20
- MEMORY| Cached              148212036     148212036     148212036     148212036
- MEMORY| Slab                 10302228      10302228      10302228      10302228
- MEMORY| SReclaimable          7769928       7769928       7769928       7769928
- MEMORY| MemLikelyFree       522137264     522137264     522137264     522137264
+ MEMORY| Cached              149841852     149841852     149841852     149841852
+ MEMORY| Slab                 10348052      10348052      10348052      10348052
+ MEMORY| SReclaimable          7805368       7805368       7805368       7805368
+ MEMORY| MemLikelyFree       522130760     522130760     522130760     522130760
 
 
  *** WARNING in environment.F:1095 :: FFT library FFTW3 is not available. ***
@@ -401,14 +401,14 @@
      1 GXTB-Raw    0.10E+01    0.2     0.82979700       -40.4488101775 -4.04E+01
      2 GXTB-Simple 0.20E+00    0.2     0.04788247       -40.4610431014 -1.22E-02
      3 GXTB-Simple 0.20E+00    0.2     0.03337886       -40.4671918126 -6.15E-03
-     4 GXTB-FDIIS  0.10E+01    0.2     0.05524366       -40.4725636158 -5.37E-03
-     5 GXTB-FDIIS  0.10E+01    0.2     0.03381046       -40.4737574771 -1.19E-03
-     6 GXTB-FDIIS  0.10E+01    0.2     0.00193792       -40.4737570582  4.19E-07
-     7 GXTB-FDIIS  0.10E+01    0.2     0.00101935       -40.4737581571 -1.10E-06
-     8 GXTB-FDIIS  0.10E+01    0.2     0.00003683       -40.4737581591 -1.98E-09
-     9 GXTB-FDIIS  0.10E+01    0.2     0.00000779       -40.4737581592 -6.37E-11
-    10 GXTB-FDIIS  0.10E+01    0.2     0.00000010       -40.4737581592 -7.11E-15
-    11 GXTB-FDIIS  0.10E+01    0.2     1.9066E-11       -40.4737581592 -7.11E-15
+     4 GXTB-FDIIS  0.10E+01    0.1     0.05524366       -40.4725636158 -5.37E-03
+     5 GXTB-FDIIS  0.10E+01    0.1     0.03381046       -40.4737574771 -1.19E-03
+     6 GXTB-FDIIS  0.10E+01    0.1     0.00193792       -40.4737570582  4.19E-07
+     7 GXTB-FDIIS  0.10E+01    0.1     0.00101935       -40.4737581571 -1.10E-06
+     8 GXTB-FDIIS  0.10E+01    0.1     0.00003683       -40.4737581591 -1.98E-09
+     9 GXTB-FDIIS  0.10E+01    0.1     0.00000779       -40.4737581592 -6.37E-11
+    10 GXTB-FDIIS  0.10E+01    0.1     0.00000010       -40.4737581592 -7.11E-15
+    11 GXTB-FDIIS  0.10E+01    0.1     1.9066E-11       -40.4737581592 -7.11E-15
 
   *** SCF run converged in    11 steps ***
 
@@ -621,49 +621,49 @@
  -------------------------------------------------------------------------------
  SUBROUTINE                       CALLS  ASD         SELF TIME        TOTAL TIME
                                 MAXIMUM       AVERAGE  MAXIMUM  AVERAGE  MAXIMUM
- CP2K                                 1  1.0    0.009    0.009    2.875    2.876
- qs_forces                            1  2.0    0.001    0.001    2.845    2.845
- qs_energies                          1  3.0    0.002    0.002    2.244    2.244
- scf_env_do_scf                       1  4.0    0.000    0.000    1.714    1.714
- scf_env_do_scf_inner_loop           11  5.0    0.173    0.223    1.714    1.714
- build_tblite_matrices                2  4.0    0.076    0.081    0.651    0.910
- cp_dbcsr_alloc_block_from_nbl    18292  5.1    0.486    0.756    0.557    0.833
- rebuild_ks_matrix                   12  6.8    0.000    0.000    0.697    0.727
- build_tblite_ks_matrix              12  7.8    0.272    0.361    0.697    0.727
- qs_ks_update_qs_env                 11  6.0    0.000    0.000    0.611    0.642
- qs_scf_new_mos_kp                   11  6.0    0.000    0.000    0.510    0.537
- do_general_diag_kp                  11  7.0    0.003    0.003    0.510    0.537
- qs_energies_init_hamiltonians        1  4.0    0.001    0.001    0.337    0.471
- rskp_transform                     464  7.7    0.286    0.451    0.286    0.451
- qs_ks_update_qs_env_forces           1  3.0    0.000    0.000    0.268    0.400
- evaluate_core_matrix_traces         23  6.4    0.000    0.000    0.229    0.361
- calculate_ptrace_kp                 23  7.4    0.004    0.004    0.229    0.361
- dbcsr_dot                         9499  8.4    0.042    0.051    0.225    0.357
- mp_sum_dm                        11296  7.4    0.165    0.311    0.165    0.311
- mp_sum_dv                        85492  7.4    0.207    0.305    0.207    0.305
- mp_sum_d                          9936  9.0    0.153    0.293    0.153    0.293
- qs_scf_ensure_work_matrices          1  4.0    0.000    0.000    0.140    0.280
- mp_sum_iv                           17  4.9    0.140    0.280    0.140    0.280
- mp_alltoall_i22                   1312  9.7    0.100    0.197    0.100    0.197
- dbcsr_desymmetrize_deep            736  8.4    0.008    0.009    0.095    0.159
- dbcsr_iterator_start            114036  7.7    0.109    0.110    0.149    0.150
- kpoint_density_transform            13  7.6    0.003    0.003    0.140    0.142
- dbcsr_iterator_stop             114036  7.7    0.087    0.087    0.122    0.122
- dbcsr_complete_redistribute        576  9.1    0.014    0.015    0.083    0.114
- transform_dmat                     104  8.6    0.063    0.098    0.063    0.098
- copy_fm_to_dbcsr                   208  8.6    0.001    0.001    0.053    0.084
- dbcsr_create_new                 30105  6.4    0.042    0.042    0.074    0.075
+ CP2K                                 1  1.0    0.010    0.010    2.788    2.788
+ qs_forces                            1  2.0    0.001    0.001    2.755    2.755
+ qs_energies                          1  3.0    0.002    0.002    2.188    2.189
+ scf_env_do_scf                       1  4.0    0.000    0.000    1.652    1.652
+ scf_env_do_scf_inner_loop           11  5.0    0.167    0.210    1.652    1.652
+ build_tblite_matrices                2  4.0    0.081    0.087    0.639    0.886
+ cp_dbcsr_alloc_block_from_nbl    18292  5.1    0.467    0.722    0.537    0.798
+ rebuild_ks_matrix                   12  6.8    0.000    0.000    0.682    0.710
+ build_tblite_ks_matrix              12  7.8    0.267    0.347    0.682    0.710
+ qs_ks_update_qs_env                 11  6.0    0.000    0.000    0.601    0.629
+ qs_scf_new_mos_kp                   11  6.0    0.000    0.000    0.485    0.510
+ do_general_diag_kp                  11  7.0    0.003    0.003    0.485    0.509
+ qs_energies_init_hamiltonians        1  4.0    0.001    0.001    0.340    0.477
+ rskp_transform                     464  7.7    0.268    0.417    0.268    0.417
+ qs_ks_update_qs_env_forces           1  3.0    0.000    0.000    0.248    0.366
+ evaluate_core_matrix_traces         23  6.4    0.000    0.000    0.212    0.330
+ calculate_ptrace_kp                 23  7.4    0.004    0.004    0.212    0.330
+ dbcsr_dot                         9499  8.4    0.041    0.048    0.208    0.326
+ mp_sum_iv                           17  4.9    0.143    0.286    0.143    0.286
+ mp_sum_dm                        11296  7.4    0.154    0.286    0.154    0.286
+ qs_scf_ensure_work_matrices          1  4.0    0.000    0.000    0.143    0.286
+ mp_sum_dv                        85492  7.4    0.193    0.275    0.193    0.275
+ mp_sum_d                          9936  9.0    0.138    0.262    0.138    0.262
+ mp_alltoall_i22                   1312  9.7    0.092    0.179    0.092    0.179
+ dbcsr_iterator_start            114036  7.7    0.111    0.113    0.151    0.154
+ dbcsr_desymmetrize_deep            736  8.4    0.008    0.008    0.089    0.147
+ kpoint_density_transform            13  7.6    0.003    0.003    0.134    0.135
+ dbcsr_iterator_stop             114036  7.7    0.083    0.086    0.117    0.120
+ dbcsr_complete_redistribute        576  9.1    0.013    0.014    0.081    0.110
+ transform_dmat                     104  8.6    0.060    0.093    0.060    0.093
+ copy_fm_to_dbcsr                   208  8.6    0.001    0.001    0.050    0.079
+ dbcsr_create_new                 30105  6.4    0.042    0.043    0.076    0.076
  copy_dbcsr_to_fm                   368  7.9    0.003    0.003    0.066    0.066
- dbcsr_reserve_blocks             18501  6.1    0.042    0.047    0.059    0.066
- cp_fm_start_copy_general          1344  7.7    0.015    0.019    0.055    0.061
+ dbcsr_reserve_blocks             18501  6.1    0.042    0.048    0.059    0.066
+ cp_fm_start_copy_general          1344  7.7    0.015    0.018    0.057    0.062
  -------------------------------------------------------------------------------
 
  The number of warnings for this run is : 1
  
  -------------------------------------------------------------------------------
-  **** **** ******  **  PROGRAM ENDED AT                 2026-07-17 04:44:32.885
+  **** **** ******  **  PROGRAM ENDED AT                 2026-07-17 05:03:03.855
  ***** ** ***  *** **   PROGRAM RAN ON                                     terok
  **    ****   ******    PROGRAM RAN BY                                  kuehne88
- ***** **    ** ** **   PROGRAM PROCESS ID                               3669338
+ ***** **    ** ** **   PROGRAM PROCESS ID                               3899516
   **** **  *******  **  PROGRAM STOPPED IN /home/kuehne88/work/exact-binding-smo
                                            ke-final-20260717

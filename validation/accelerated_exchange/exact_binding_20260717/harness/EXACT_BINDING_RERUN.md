@@ -46,3 +46,9 @@ variables, including indirect MCA parameter-file selectors, are removed before
 launch. On a proof failure the complete process group receives `SIGTERM`, then
 `SIGKILL` after the timeout; CPU locks remain held until no live group member
 remains and the launcher has been reaped.
+
+Every successfully flocked handle is registered before lock-file JSON, flush,
+or `fsync`.  A `BaseException` during any of those metadata steps closes both
+the current handle and all earlier handles before propagating the original
+exception and traceback; the Linux harness injects this failure and proves
+immediate same-CPU reacquisition without relying on garbage collection.

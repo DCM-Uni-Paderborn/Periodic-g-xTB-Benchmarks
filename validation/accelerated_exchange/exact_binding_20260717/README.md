@@ -1,18 +1,24 @@
 # Exact MPI rank-binding evidence (2026-07-17)
 
 This directory freezes the external qualification harness and final Terok
-smoke tests of the exact rank-binding implementation in repository commit
-`945bd9e`.  It keeps publication timings separate from historical schema-1
+smoke tests of the exact rank-binding implementation through repository commit
+`f4eae80`.  It keeps publication timings separate from historical schema-1
 runs that used a shared `taskset` mask and therefore cannot prove which CPU
 executed each MPI rank.
 
 ## What was verified
 
-- The selected repository integration suite completed **115/115 tests** on the
+- The selected repository integration suite completed **118/118 tests** on the
   rebased tree.  It covers literal disjoint PE lists, forbidden launcher
   overrides, complete removal of inherited `OMPI_MCA_*`/`PRTE_MCA_*` controls,
   single-PU topology checks, cross-process CPU locks, and two Linux `/proc`
   overlap preflights (pool construction and immediately before launch).
+- Lock acquisition is fail-safe under `BaseException`: the currently flocked
+  handle is registered before JSON metadata, flush, or `fsync`, and every
+  post-acquisition constructor step remains inside one cleanup region. Injected
+  failures at `json.dump`, `flush`, `fsync`, and the final `threading.Lock`
+  retained their tracebacks while the same CPU was immediately reacquired,
+  without garbage collection.
 - Rank identity and singleton masks are sampled throughout the process
   lifetime.  Sequential same-rank/same-mask PID generations are accepted, but
   rank migration, a successor mask change, an unranked CP2K process, or two
@@ -20,13 +26,13 @@ executed each MPI rank.
   and their sample indices are persisted.  Record revalidation reconstructs
   every rank, mask, PID-generation, and gate summary from the child-process
   evidence and reparses the hashed Open MPI binding log.
-- The standalone Linux harness completed **11/11 tests** on `terok`; the raw
+- The standalone Linux harness completed **12/12 tests** on `terok`; the raw
   transcript is `harness/terok_unit_test_transcript.txt`.
 - An injected live process named `cp2k.inject`, with no MPI environment and
   allowed mask 224, was rejected before launch on CPU 224.  The raw negative
   transcript is `harness/live_overlap_negative_transcript.txt`.
 - The final two-rank Release CP2K `ENERGY_FORCE` smoke ran from
-  `2026-07-17T02:44:12Z` to `02:44:16Z`.  Rank 0 remained on CPU 222 and rank 1
+  `2026-07-17T03:02:46Z` to `03:02:50Z`.  Rank 0 remained on CPU 222 and rank 1
   on CPU 223 for all samples.  CP2K returned zero, both reservation/overlap
   gates and the Open MPI binding report passed, and the record is
   `production_scaling_eligible`.
@@ -35,7 +41,7 @@ executed each MPI rank.
 
 The unsuppressed LeakSanitizer diagnostic is deliberately retained as negative
 evidence.  It returned CP2K code 23 because of known MPI/PMIx teardown leaks.
-During sample 100, rank 1 had concurrently live PIDs 3669529 and 3669592,
+During sample 99, rank 1 had concurrently live PIDs 3899691 and 3899739,
 although both masks remained exactly CPU 221.  The temporal duplicate-rank gate
 therefore failed and the record is `timing_non_scaling`.  This is intentional:
 only non-overlapping sequential generations may be combined.

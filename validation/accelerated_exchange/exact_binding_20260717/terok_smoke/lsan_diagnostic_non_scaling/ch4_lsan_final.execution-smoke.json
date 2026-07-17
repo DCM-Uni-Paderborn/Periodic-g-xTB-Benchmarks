@@ -28,12 +28,12 @@
         {
           "ompi_comm_world_rank": 1,
           "pids": [
-            3669529,
-            3669592
+            3899691,
+            3899739
           ]
         }
       ],
-      "sample_index": 100
+      "sample_index": 99
     }
   ],
   "contract": {
@@ -79,12 +79,12 @@
   "cp2k_sha256_at_launch": "8cdecb1e925ef1a2e6391da7298bd720d7bf4f335ab8d405127097db9e53033d",
   "cross_process_cpu_reservation_gate": true,
   "expected_cp2k_rank_count": 2,
-  "finished_at_utc": "2026-07-17T02:44:52.053011+00:00",
+  "finished_at_utc": "2026-07-17T03:03:18.698156+00:00",
   "hostname": "terok",
   "input": "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_full_energy_force.inp",
   "input_sha256_at_launch": "265deac3a4ee0572ce46fd676f86c27a92a1943b2fabc334631564a52174f0ac",
   "launcher_log": "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_lsan_final.out.launcher.log",
-  "launcher_log_sha256": "254ff8d1b703f4d5125b0855971d4e62b070cacd328599de4c5a01df6c3074ac",
+  "launcher_log_sha256": "8d789a11d41e5205c1e89c9a004e6c3a8cb21a407bea2763205d3e65cccd5841",
   "live_compute_overlap_preflight_gate": true,
   "live_compute_overlap_preflight_owners": [],
   "mpi_bind_to": "core",
@@ -111,9 +111,9 @@
       "executable": "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/prte",
       "is_cp2k_rank": false,
       "ompi_comm_world_rank": null,
-      "pid": 3669525,
-      "ppid": 3669524,
-      "sample_count": 111,
+      "pid": 3899687,
+      "ppid": 3899676,
+      "sample_count": 109,
       "state": "S (sleeping)"
     },
     {
@@ -136,10 +136,10 @@
         0
       ],
       "ompi_comm_world_rank": 0,
-      "pid": 3669528,
-      "ppid": 3669525,
+      "pid": 3899690,
+      "ppid": 3899687,
       "rank_identity_changed_ever": false,
-      "sample_count": 99,
+      "sample_count": 97,
       "state": "R (running)"
     },
     {
@@ -162,10 +162,10 @@
         1
       ],
       "ompi_comm_world_rank": 1,
-      "pid": 3669529,
-      "ppid": 3669525,
+      "pid": 3899691,
+      "ppid": 3899687,
       "rank_identity_changed_ever": false,
-      "sample_count": 99,
+      "sample_count": 96,
       "state": "R (running)"
     },
     {
@@ -188,8 +188,8 @@
         1
       ],
       "ompi_comm_world_rank": 1,
-      "pid": 3669592,
-      "ppid": 3669529,
+      "pid": 3899739,
+      "ppid": 3899691,
       "rank_identity_changed_ever": false,
       "sample_count": 1,
       "state": "R (running)"
@@ -200,27 +200,27 @@
   "observed_cp2k_rank_evidence": [
     {
       "all_samples_match_assigned_singleton": true,
-      "canonical_pid": 3669528,
+      "canonical_pid": 3899690,
       "concurrent_duplicate_pid_ever": false,
       "observed_cpu_masks": [
         "220"
       ],
       "ompi_comm_world_rank": 0,
       "pid_generations": [
-        3669528
+        3899690
       ]
     },
     {
       "all_samples_match_assigned_singleton": false,
-      "canonical_pid": 3669529,
+      "canonical_pid": 3899691,
       "concurrent_duplicate_pid_ever": true,
       "observed_cpu_masks": [
         "221"
       ],
       "ompi_comm_world_rank": 1,
       "pid_generations": [
-        3669529,
-        3669592
+        3899691,
+        3899739
       ]
     }
   ],
@@ -234,19 +234,19 @@
   ],
   "observed_cp2k_rank_pid_generations": [
     [
-      3669528
+      3899690
     ],
     [
-      3669529,
-      3669592
+      3899691,
+      3899739
     ]
   ],
   "observed_cp2k_rank_pids": [
-    3669528,
-    3669529
+    3899690,
+    3899691
   ],
   "output": "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_lsan_final.out",
-  "pid": 3669524,
+  "pid": 3899676,
   "rank_count_matches": true,
   "rank_ids_exactly_0_to_n_minus_1": true,
   "rank_masks_complete": true,
@@ -259,7 +259,7 @@
   "return_code": 23,
   "runtime_affinity_gate": false,
   "schema_version": 2,
-  "started_at_utc": "2026-07-17T02:44:46.335449+00:00",
+  "started_at_utc": "2026-07-17T03:03:13.087778+00:00",
   "thread_environment": {
     "MKL_NUM_THREADS": "1",
     "OMP_DYNAMIC": "FALSE",

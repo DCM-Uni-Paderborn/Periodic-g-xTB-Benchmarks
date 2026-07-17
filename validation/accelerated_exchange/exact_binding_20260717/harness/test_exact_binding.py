@@ -9,6 +9,7 @@ import tempfile
 import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parent
@@ -82,6 +83,30 @@ class ExactBindingTests(unittest.TestCase):
             finally:
                 for handle in first:
                     handle.close()
+
+    def test_lock_metadata_baseexception_releases_current_handle(self) -> None:
+        class InjectedMetadataFailure(BaseException):
+            pass
+
+        with tempfile.TemporaryDirectory() as tmp:
+            lock_root = Path(tmp)
+            retained: list[BaseException] = []
+            with mock.patch.object(
+                runner.json,
+                "dump",
+                side_effect=InjectedMetadataFailure("injected json.dump"),
+            ):
+                try:
+                    runner.acquire_cpu_locks((1000001,), lock_root)
+                except InjectedMetadataFailure as error:
+                    retained.append(error)
+                else:
+                    self.fail("injected lock-metadata BaseException was swallowed")
+            self.assertIsNotNone(retained[0].__traceback__)
+            handles = runner.acquire_cpu_locks((1000001,), lock_root)
+            for handle in handles:
+                handle.close()
+            retained.clear()
 
     def test_live_overlap_preflight_catches_cp2k_without_rank_environment(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

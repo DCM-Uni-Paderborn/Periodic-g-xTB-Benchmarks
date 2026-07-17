@@ -64,12 +64,12 @@
   "cp2k_sha256_at_launch": "44f7d651f88272272dde73b8fb59c9f0c0b37850256fd3ed165c9e1cbcab8129",
   "cross_process_cpu_reservation_gate": true,
   "expected_cp2k_rank_count": 2,
-  "finished_at_utc": "2026-07-17T02:44:16.870317+00:00",
+  "finished_at_utc": "2026-07-17T03:02:50.238533+00:00",
   "hostname": "terok",
   "input": "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_full_energy_force.inp",
   "input_sha256_at_launch": "265deac3a4ee0572ce46fd676f86c27a92a1943b2fabc334631564a52174f0ac",
   "launcher_log": "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_release_final.out.launcher.log",
-  "launcher_log_sha256": "694622ba913b8da8f29f0ab388631f3bed81e66713412ab097c7ab5905e40c6d",
+  "launcher_log_sha256": "6128e762890fa8111f3a8a4b6c1104b37b7714b544a5373e4daa54998807da29",
   "live_compute_overlap_preflight_gate": true,
   "live_compute_overlap_preflight_owners": [],
   "mpi_bind_to": "core",
@@ -96,9 +96,9 @@
       "executable": "/home/kuehne88/work/codex-gxtb-pbc-20260714T1038Z-18d37c-1449feb/env/bin/prte",
       "is_cp2k_rank": false,
       "ompi_comm_world_rank": null,
-      "pid": 3669117,
-      "ppid": 3669100,
-      "sample_count": 83,
+      "pid": 3899360,
+      "ppid": 3899359,
+      "sample_count": 82,
       "state": "S (sleeping)"
     },
     {
@@ -121,10 +121,10 @@
         0
       ],
       "ompi_comm_world_rank": 0,
-      "pid": 3669120,
-      "ppid": 3669117,
+      "pid": 3899364,
+      "ppid": 3899360,
       "rank_identity_changed_ever": false,
-      "sample_count": 76,
+      "sample_count": 75,
       "state": "S (sleeping)"
     },
     {
@@ -147,8 +147,8 @@
         1
       ],
       "ompi_comm_world_rank": 1,
-      "pid": 3669121,
-      "ppid": 3669117,
+      "pid": 3899365,
+      "ppid": 3899360,
       "rank_identity_changed_ever": false,
       "sample_count": 75,
       "state": "S (sleeping)"
@@ -159,26 +159,26 @@
   "observed_cp2k_rank_evidence": [
     {
       "all_samples_match_assigned_singleton": true,
-      "canonical_pid": 3669120,
+      "canonical_pid": 3899364,
       "concurrent_duplicate_pid_ever": false,
       "observed_cpu_masks": [
         "222"
       ],
       "ompi_comm_world_rank": 0,
       "pid_generations": [
-        3669120
+        3899364
       ]
     },
     {
       "all_samples_match_assigned_singleton": true,
-      "canonical_pid": 3669121,
+      "canonical_pid": 3899365,
       "concurrent_duplicate_pid_ever": false,
       "observed_cpu_masks": [
         "223"
       ],
       "ompi_comm_world_rank": 1,
       "pid_generations": [
-        3669121
+        3899365
       ]
     }
   ],
@@ -192,18 +192,18 @@
   ],
   "observed_cp2k_rank_pid_generations": [
     [
-      3669120
+      3899364
     ],
     [
-      3669121
+      3899365
     ]
   ],
   "observed_cp2k_rank_pids": [
-    3669120,
-    3669121
+    3899364,
+    3899365
   ],
   "output": "/home/kuehne88/work/exact-binding-smoke-final-20260717/ch4_release_final.out",
-  "pid": 3669100,
+  "pid": 3899359,
   "rank_count_matches": true,
   "rank_ids_exactly_0_to_n_minus_1": true,
   "rank_masks_complete": true,
@@ -216,7 +216,7 @@
   "return_code": 0,
   "runtime_affinity_gate": true,
   "schema_version": 2,
-  "started_at_utc": "2026-07-17T02:44:12.594194+00:00",
+  "started_at_utc": "2026-07-17T03:02:46.007298+00:00",
   "thread_environment": {
     "MKL_NUM_THREADS": "1",
     "OMP_DYNAMIC": "FALSE",
