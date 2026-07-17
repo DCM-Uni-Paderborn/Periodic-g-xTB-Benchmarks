@@ -20,8 +20,9 @@ METHODS = (*PUBLISHED_METHODS, "GXTB")
 BUSY_RETURN_CODE = 75
 JOB_STAMP_NAME = "job_provenance.json"
 GXTB_PROVENANCE_NAME = "build_provenance_gxtb.json"
+REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CAMPAIGN_MANIFEST = (
-    Path(__file__).resolve().parents[2]
+    REPOSITORY_ROOT
     / "campaigns"
     / "gxtb-pbc-v1-20260714"
     / "build_manifest.json"
@@ -60,6 +61,92 @@ def sha256_file(path: Path) -> str:
     path = path.resolve(strict=True)
     stat = path.stat()
     return _sha256_cached(str(path), stat.st_size, stat.st_mtime_ns)
+
+
+def _repository_relative_path(path: Path) -> str | None:
+    """Return a stable repository-relative spelling when *path* is in this checkout."""
+
+    try:
+        return str(path.resolve().relative_to(REPOSITORY_ROOT.resolve()))
+    except ValueError:
+        return None
+
+
+def _resolve_hash_bound_repository_path(
+    record: Mapping[str, object],
+    *,
+    label: str,
+) -> Path:
+    """Resolve a moved repository artifact without weakening its content pin.
+
+    Absolute paths remain authoritative while they exist.  A missing path may
+    be relocated into the current checkout only when the record carries a
+    SHA256 and either an explicit repository-relative path or a legacy path
+    below a known benchmark-repository directory.  Unhashed workflow paths and
+    arbitrary external artifacts are deliberately not relocated here.
+    """
+
+    expected = str(record.get("file_sha256", "")).lower()
+    if not re.fullmatch(r"[0-9a-f]{64}", expected):
+        raise ValueError(f"{label} record has no valid SHA256")
+    raw = str(record.get("path", ""))
+    if not raw:
+        raise ValueError(f"{label} record has no path")
+
+    candidates: list[Path] = []
+
+    def add_candidate(candidate: Path) -> None:
+        resolved = candidate.expanduser().resolve()
+        if resolved not in candidates:
+            candidates.append(resolved)
+
+    recorded = Path(raw)
+    recorded_path = (
+        recorded if recorded.is_absolute() else REPOSITORY_ROOT / recorded
+    ).expanduser().resolve()
+    if recorded_path.is_file():
+        if sha256_file(recorded_path) == expected:
+            return recorded_path
+        raise ValueError(
+            f"current {label} fingerprint differs from the frozen X23b provenance: "
+            f"{recorded_path}"
+        )
+    candidates.append(recorded_path)
+
+    relative_value = record.get("repository_relative_path")
+    if relative_value:
+        relative = Path(str(relative_value))
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValueError(f"{label} has an invalid repository-relative path")
+        add_candidate(REPOSITORY_ROOT / relative)
+    elif recorded.is_absolute():
+        # Compatibility with provenance written before repository-relative
+        # paths were recorded.  Only the suffix below a recognized repository
+        # root is eligible, and its bytes must still match the frozen hash.
+        for marker in ("Periodic-g-xTB-Benchmarks", "Periodic-GFN2-Benchmarks"):
+            if marker in recorded.parts:
+                index = recorded.parts.index(marker)
+                suffix = Path(*recorded.parts[index + 1 :])
+                if suffix.parts and ".." not in suffix.parts:
+                    add_candidate(REPOSITORY_ROOT / suffix)
+                break
+
+    mismatched: list[Path] = []
+    for candidate in candidates:
+        if not candidate.is_file():
+            continue
+        if sha256_file(candidate) == expected:
+            return candidate
+        mismatched.append(candidate)
+    if mismatched:
+        raise ValueError(
+            f"current {label} fingerprint differs from the frozen X23b provenance: "
+            + ", ".join(str(path) for path in mismatched)
+        )
+    raise ValueError(
+        f"{label} is missing; checked hash-bound paths: "
+        + ", ".join(str(path) for path in candidates)
+    )
 
 
 def _fingerprint(payload: Mapping[str, object]) -> str:
@@ -149,7 +236,10 @@ def load_campaign_identity(benchmark_root: Path) -> dict[str, object]:
         )
     ):
         raise ValueError(f"GXTB campaign manifest record is missing from {path}")
-    manifest_path = _resolve_frozen_campaign_manifest(benchmark_root, manifest_record)
+    manifest_path = _resolve_hash_bound_repository_path(
+        manifest_record,
+        label="campaign manifest",
+    )
     manifest = json.loads(manifest_path.read_text())
     declared = _identity_from_manifest_declarations(manifest, manifest_path)
     observed = {
@@ -687,6 +777,9 @@ def _campaign_from_manifest(
         "campaign_state": manifest["campaign_state"],
         "authority": "single source of truth for the frozen build artifacts",
     }
+    repository_relative = _repository_relative_path(manifest_path)
+    if repository_relative is not None:
+        manifest_record["repository_relative_path"] = repository_relative
     return identity, cp2k_record, save_record, manifest_record
 
 
@@ -865,12 +958,11 @@ def update_gxtb_provenance(
             )
         ):
             raise ValueError("invalid frozen GXTB campaign manifest record")
-        frozen_manifest_path = Path(str(frozen_manifest["path"])).resolve(strict=True)
+        frozen_manifest_path = _resolve_hash_bound_repository_path(
+            frozen_manifest,
+            label="campaign manifest",
+        )
         frozen_manifest_sha = str(frozen_manifest["file_sha256"]).lower()
-        if sha256_file(frozen_manifest_path) != frozen_manifest_sha:
-            raise ValueError(
-                "current campaign manifest fingerprint differs from the frozen X23b provenance"
-            )
         if candidate_manifest is not None and (
             Path(str(candidate_manifest["path"])).resolve() != frozen_manifest_path
             or str(candidate_manifest["file_sha256"]).lower() != frozen_manifest_sha

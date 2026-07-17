@@ -1318,6 +1318,61 @@ class GXTBManifestTests(unittest.TestCase):
 
 
 class GXTBProvenanceTests(unittest.TestCase):
+    def test_existing_recorded_manifest_path_remains_authoritative(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            repository = base / "Periodic-g-xTB-Benchmarks"
+            relocated = repository / "campaigns" / "test" / "build_manifest.json"
+            relocated.parent.mkdir(parents=True)
+            relocated.write_text("frozen bytes\n")
+            recorded = base / "recorded" / "build_manifest.json"
+            recorded.parent.mkdir()
+            recorded.write_text("modified bytes\n")
+            with mock.patch.object(common, "REPOSITORY_ROOT", repository):
+                with self.assertRaisesRegex(ValueError, "fingerprint differs"):
+                    common._resolve_hash_bound_repository_path(
+                        {
+                            "path": str(recorded),
+                            "repository_relative_path": str(relocated.relative_to(repository)),
+                            "file_sha256": common.sha256_file(relocated),
+                        },
+                        label="campaign manifest",
+                    )
+
+    def test_campaign_loader_relocates_legacy_repo_path_only_with_matching_hash(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            repository = base / "Periodic-g-xTB-Benchmarks"
+            manifest_dir = repository / "campaigns" / "test-campaign"
+            manifest_dir.mkdir(parents=True)
+            _, _, _, _, generated = fake_campaign_artifacts(base)
+            manifest = manifest_dir / "build_manifest.json"
+            generated.replace(manifest)
+            identity, _ = common.declared_campaign_identity(manifest)
+            benchmark = repository / "X23b"
+            (benchmark / "data").mkdir(parents=True)
+            provenance = benchmark / "data" / common.GXTB_PROVENANCE_NAME
+            provenance.write_text(
+                json.dumps(
+                    {
+                        "campaign_identity": identity,
+                        "campaign_manifest": {
+                            "path": (
+                                "/missing/Periodic-GFN2-Benchmarks/"
+                                "campaigns/test-campaign/build_manifest.json"
+                            ),
+                            "file_sha256": common.sha256_file(manifest),
+                        },
+                    }
+                )
+                + "\n"
+            )
+            with mock.patch.object(common, "REPOSITORY_ROOT", repository):
+                self.assertEqual(common.load_campaign_identity(benchmark), identity)
+                manifest.write_text(manifest.read_text() + "\n")
+                with self.assertRaisesRegex(ValueError, "fingerprint differs"):
+                    common.load_campaign_identity(benchmark)
+
     def test_gxtb_build_artifacts_are_mandatory(self) -> None:
         with self.assertRaisesRegex(ValueError, "--cp2k-source"):
             common.require_gxtb_build_artifacts(

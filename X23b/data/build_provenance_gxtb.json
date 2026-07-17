@@ -20,7 +20,8 @@
     "campaign_id": "gxtb-pbc-v1-20260714",
     "campaign_state": "production_ready",
     "file_sha256": "13bf208d7dca238241297936ef12be7a0ab77ac8fc99e8646bda447d687d669c",
-    "path": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/campaigns/gxtb-pbc-v1-20260714/build_manifest.json"
+    "path": "/Users/tkuehne/Documents/g-xTB/Periodic-g-xTB-Benchmarks/campaigns/gxtb-pbc-v1-20260714/build_manifest.json",
+    "repository_relative_path": "campaigns/gxtb-pbc-v1-20260714/build_manifest.json"
   },
   "cp2k": {
     "cmake_cache_sha256": "ec13707340edd43be9bddf70edf1fd8e1848d1cee50e11e1c4f1274959ea2346",
@@ -135,6 +136,6 @@
     "publication_tables_updated": false
   },
   "workflow_paths": {
-    "experimental_k222_preflight_root": "/Users/tkuehne/Documents/g-xTB/Periodic-GFN2-Benchmarks/X23b/runs/gxtb_native/experimental_k222_preflight"
+    "experimental_k222_preflight_root": "/Users/tkuehne/Documents/g-xTB/Periodic-g-xTB-Benchmarks/X23b/runs/gxtb_native/experimental_k222_preflight"
   }
 }
