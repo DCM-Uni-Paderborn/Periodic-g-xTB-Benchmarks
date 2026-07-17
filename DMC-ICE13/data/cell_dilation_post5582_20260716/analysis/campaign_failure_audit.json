@@ -1,0 +1,25 @@
+{
+  "excluded_from_energy_tables": [
+    {
+      "campaign": "initial full-model legacy SCC_MIXER location",
+      "count": 22,
+      "reason": "post-#5582 input parser rejects SCC_MIXER inside TBLITE; corrected production is separate and complete"
+    },
+    {
+      "campaign": "initial component smokes with long PARAM path",
+      "count": 3,
+      "reason": "CP2K input string exceeded 80 characters; identical parameters under short paths subsequently passed"
+    },
+    {
+      "campaign": "no_acp",
+      "case": "XIV scale 4 periodic",
+      "reason": "TBLITE potential mixer did not converge in 250 iterations; no energy difference is reported"
+    },
+    {
+      "campaign": "no_exchange_no_acp",
+      "count": 11,
+      "reason": "CP2K aborts before SCC step 1 with 'Missing complete g-xTB k-mesh map before potential mixing'; this is an integration-path assumption, not a model result",
+      "scope": "all periodic cases; all 11 corresponding 0D cases ended normally"
+    }
+  ]
+}

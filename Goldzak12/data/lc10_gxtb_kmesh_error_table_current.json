@@ -1,0 +1,1246 @@
+{
+  "artifact": "LC10 g-xTB errors vs native k mesh, current fail-closed state",
+  "campaign_fingerprint_sha256": "8edfa0417321680d8f22b648863b3d3e008ed2368596fc31250328bcb807cf55",
+  "mesh_rows": [
+    {
+      "exact_n": 0,
+      "exact_solids": [],
+      "exact_subset_metrics": null,
+      "frontier_complete": false,
+      "frontier_mesh_counts": {},
+      "frontier_metrics": null,
+      "mesh": "k111",
+      "note": "not computed",
+      "uniform_complete": false
+    },
+    {
+      "exact_n": 0,
+      "exact_solids": [],
+      "exact_subset_metrics": null,
+      "frontier_complete": false,
+      "frontier_mesh_counts": {},
+      "frontier_metrics": null,
+      "mesh": "k222",
+      "note": "not computed",
+      "uniform_complete": false
+    },
+    {
+      "exact_n": 10,
+      "exact_solids": [
+        "C",
+        "Si",
+        "SiC",
+        "BN",
+        "BP",
+        "AlN",
+        "AlP",
+        "MgS",
+        "LiF",
+        "LiCl"
+      ],
+      "exact_subset_metrics": {
+        "a0_error_A": {
+          "mae": 0.19526558393000015,
+          "maxae": 0.3470679838999997,
+          "me": -0.19526558393000015,
+          "rmse": 0.22145431144005584
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.6889106606943002,
+          "maxae": 1.224226746547,
+          "me": 0.6889106606943002,
+          "rmse": 0.778448672088032
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 66.46977390037848,
+          "maxae": 118.11992423482656,
+          "me": 66.46977390037848,
+          "rmse": 75.10887866736341
+        },
+        "n": 10
+      },
+      "frontier_complete": true,
+      "frontier_mesh_counts": {
+        "k333": 10
+      },
+      "frontier_metrics": {
+        "a0_error_A": {
+          "mae": 0.19526558393000015,
+          "maxae": 0.3470679838999997,
+          "me": -0.19526558393000015,
+          "rmse": 0.22145431144005584
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.6889106606943002,
+          "maxae": 1.224226746547,
+          "me": 0.6889106606943002,
+          "rmse": 0.778448672088032
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 66.46977390037848,
+          "maxae": 118.11992423482656,
+          "me": 66.46977390037848,
+          "rmse": 75.10887866736341
+        },
+        "n": 10
+      },
+      "mesh": "k333",
+      "note": null,
+      "uniform_complete": true
+    },
+    {
+      "exact_n": 10,
+      "exact_solids": [
+        "C",
+        "Si",
+        "SiC",
+        "BN",
+        "BP",
+        "AlN",
+        "AlP",
+        "MgS",
+        "LiF",
+        "LiCl"
+      ],
+      "exact_subset_metrics": {
+        "a0_error_A": {
+          "mae": 0.16384382993000002,
+          "maxae": 0.28257364610000035,
+          "me": -0.16331768679000008,
+          "rmse": 0.18858340069716506
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.42303165697940004,
+          "maxae": 0.8971935370550002,
+          "me": 0.37961285931200006,
+          "rmse": 0.47470796723990105
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 40.81634992233156,
+          "maxae": 86.56601640163893,
+          "me": 36.62707280899768,
+          "rmse": 45.80235588072322
+        },
+        "n": 10
+      },
+      "frontier_complete": true,
+      "frontier_mesh_counts": {
+        "k444": 10
+      },
+      "frontier_metrics": {
+        "a0_error_A": {
+          "mae": 0.16384382993000002,
+          "maxae": 0.28257364610000035,
+          "me": -0.16331768679000008,
+          "rmse": 0.18858340069716506
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.42303165697940004,
+          "maxae": 0.8971935370550002,
+          "me": 0.37961285931200006,
+          "rmse": 0.47470796723990105
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 40.81634992233156,
+          "maxae": 86.56601640163893,
+          "me": 36.62707280899768,
+          "rmse": 45.80235588072322
+        },
+        "n": 10
+      },
+      "mesh": "k444",
+      "note": null,
+      "uniform_complete": true
+    },
+    {
+      "exact_n": 10,
+      "exact_solids": [
+        "C",
+        "Si",
+        "SiC",
+        "BN",
+        "BP",
+        "AlN",
+        "AlP",
+        "MgS",
+        "LiF",
+        "LiCl"
+      ],
+      "exact_subset_metrics": {
+        "a0_error_A": {
+          "mae": 0.14938570977000004,
+          "maxae": 0.27167937400000053,
+          "me": -0.1466134533700001,
+          "rmse": 0.17229058326000588
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.3311753062217001,
+          "maxae": 0.8157921129619998,
+          "me": 0.2717567661247001,
+          "rmse": 0.38059524283409496
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 31.953559411839628,
+          "maxae": 78.71197296271538,
+          "me": 26.220541836298374,
+          "rmse": 36.72185840939947
+        },
+        "n": 10
+      },
+      "frontier_complete": true,
+      "frontier_mesh_counts": {
+        "k555": 10
+      },
+      "frontier_metrics": {
+        "a0_error_A": {
+          "mae": 0.14938570977000004,
+          "maxae": 0.27167937400000053,
+          "me": -0.1466134533700001,
+          "rmse": 0.17229058326000588
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.3311753062217001,
+          "maxae": 0.8157921129619998,
+          "me": 0.2717567661247001,
+          "rmse": 0.38059524283409496
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 31.953559411839628,
+          "maxae": 78.71197296271538,
+          "me": 26.220541836298374,
+          "rmse": 36.72185840939947
+        },
+        "n": 10
+      },
+      "mesh": "k555",
+      "note": null,
+      "uniform_complete": true
+    },
+    {
+      "exact_n": 10,
+      "exact_solids": [
+        "C",
+        "Si",
+        "SiC",
+        "BN",
+        "BP",
+        "AlN",
+        "AlP",
+        "MgS",
+        "LiF",
+        "LiCl"
+      ],
+      "exact_subset_metrics": {
+        "a0_error_A": {
+          "mae": 0.1413934715799999,
+          "maxae": 0.26825506240000063,
+          "me": -0.13774078944,
+          "rmse": 0.1645710984610719
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.30370941505800003,
+          "maxae": 0.7992316194880003,
+          "me": 0.24020512663020016,
+          "rmse": 0.3568756987108043
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 29.30350378084734,
+          "maxae": 77.11412824975062,
+          "me": 23.1762714206366,
+          "rmse": 34.43327031685027
+        },
+        "n": 10
+      },
+      "frontier_complete": true,
+      "frontier_mesh_counts": {
+        "k666": 10
+      },
+      "frontier_metrics": {
+        "a0_error_A": {
+          "mae": 0.1413934715799999,
+          "maxae": 0.26825506240000063,
+          "me": -0.13774078944,
+          "rmse": 0.1645710984610719
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.30370941505800003,
+          "maxae": 0.7992316194880003,
+          "me": 0.24020512663020016,
+          "rmse": 0.3568756987108043
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 29.30350378084734,
+          "maxae": 77.11412824975062,
+          "me": 23.1762714206366,
+          "rmse": 34.43327031685027
+        },
+        "n": 10
+      },
+      "mesh": "k666",
+      "note": null,
+      "uniform_complete": true
+    },
+    {
+      "exact_n": 9,
+      "exact_solids": [
+        "C",
+        "Si",
+        "SiC",
+        "BN",
+        "BP",
+        "AlN",
+        "AlP",
+        "LiF",
+        "LiCl"
+      ],
+      "exact_subset_metrics": {
+        "a0_error_A": {
+          "mae": 0.12858030780000018,
+          "maxae": 0.2673569734000001,
+          "me": -0.12421256422222242,
+          "rmse": 0.1521133024875992
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.24084001832744453,
+          "maxae": 0.35561388798400007,
+          "me": 0.16916433691300023,
+          "rmse": 0.2581885710618856
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 23.237529156907552,
+          "maxae": 34.31152408979781,
+          "me": 16.32187723047034,
+          "rmse": 24.911410029348858
+        },
+        "n": 9
+      },
+      "frontier_complete": true,
+      "frontier_mesh_counts": {
+        "k666": 1,
+        "k777": 9
+      },
+      "frontier_metrics": {
+        "a0_error_A": {
+          "mae": 0.1397973371300001,
+          "maxae": 0.2673569734000001,
+          "me": -0.13586636791000012,
+          "rmse": 0.16315850056713738
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.2966791784435001,
+          "maxae": 0.7992316194880003,
+          "me": 0.23217106517050023,
+          "rmse": 0.35195500076461717
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 28.62518906619186,
+          "maxae": 77.11412824975062,
+          "me": 22.401102332398366,
+          "rmse": 33.95849514123391
+        },
+        "n": 10
+      },
+      "mesh": "k777",
+      "note": "MgS excluded SCC-root fail-closed",
+      "uniform_complete": false
+    },
+    {
+      "exact_n": 0,
+      "exact_solids": [],
+      "exact_subset_metrics": null,
+      "frontier_complete": true,
+      "frontier_mesh_counts": {
+        "k666": 1,
+        "k777": 9
+      },
+      "frontier_metrics": {
+        "a0_error_A": {
+          "mae": 0.1397973371300001,
+          "maxae": 0.2673569734000001,
+          "me": -0.13586636791000012,
+          "rmse": 0.16315850056713738
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.2966791784435001,
+          "maxae": 0.7992316194880003,
+          "me": 0.23217106517050023,
+          "rmse": 0.35195500076461717
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 28.62518906619186,
+          "maxae": 77.11412824975062,
+          "me": 22.401102332398366,
+          "rmse": 33.95849514123391
+        },
+        "n": 10
+      },
+      "mesh": "k888",
+      "note": "no validated own-minimum values; frontier carried forward",
+      "uniform_complete": false
+    },
+    {
+      "exact_n": 0,
+      "exact_solids": [],
+      "exact_subset_metrics": null,
+      "frontier_complete": true,
+      "frontier_mesh_counts": {
+        "k666": 1,
+        "k777": 9
+      },
+      "frontier_metrics": {
+        "a0_error_A": {
+          "mae": 0.1397973371300001,
+          "maxae": 0.2673569734000001,
+          "me": -0.13586636791000012,
+          "rmse": 0.16315850056713738
+        },
+        "ecoh_error_eV_per_atom": {
+          "mae": 0.2966791784435001,
+          "maxae": 0.7992316194880003,
+          "me": 0.23217106517050023,
+          "rmse": 0.35195500076461717
+        },
+        "ecoh_error_kJmol_per_atom": {
+          "mae": 28.62518906619186,
+          "maxae": 77.11412824975062,
+          "me": 22.401102332398366,
+          "rmse": 33.95849514123391
+        },
+        "n": 10
+      },
+      "mesh": "k999",
+      "note": "no validated own-minimum values; frontier carried forward",
+      "uniform_complete": false
+    }
+  ],
+  "method": "GXTB",
+  "missing_or_blocked": {
+    "MgS_k777": "SCC-root review required; no automatic exclusion",
+    "k111": "not computed",
+    "k222": "not computed",
+    "k888": "90/99 EOS complete; no validated own-minimum values yet",
+    "k999": "0/99 speculative EOS complete; conditionally eligible per system only"
+  },
+  "per_solid": [
+    {
+      "solid": "C",
+      "steps": [
+        {
+          "coarse_mesh": "k333",
+          "delta_a0_A": 0.010339929799999759,
+          "delta_abs_a0_error_A": -0.010339929799999759,
+          "delta_abs_ecoh_error_kJmol_per_atom": -33.60309466075796,
+          "delta_ecoh_kJmol_per_atom": -33.60309466075796,
+          "dense_mesh": "k444"
+        },
+        {
+          "coarse_mesh": "k444",
+          "delta_a0_A": 0.009002430100000236,
+          "delta_abs_a0_error_A": -0.009002430100000236,
+          "delta_abs_ecoh_error_kJmol_per_atom": -15.913228603845603,
+          "delta_ecoh_kJmol_per_atom": -15.913228603845605,
+          "dense_mesh": "k555"
+        },
+        {
+          "coarse_mesh": "k555",
+          "delta_a0_A": 0.005340323199999997,
+          "delta_abs_a0_error_A": -0.005340323199999997,
+          "delta_abs_ecoh_error_kJmol_per_atom": -5.828610475172255,
+          "delta_ecoh_kJmol_per_atom": -5.828610475172254,
+          "dense_mesh": "k666"
+        },
+        {
+          "coarse_mesh": "k666",
+          "delta_a0_A": 0.0022064682999998197,
+          "delta_abs_a0_error_A": -0.0022064682999998197,
+          "delta_abs_ecoh_error_kJmol_per_atom": -1.8046851650274682,
+          "delta_ecoh_kJmol_per_atom": -1.8046851650274673,
+          "dense_mesh": "k777"
+        }
+      ],
+      "trends": {
+        "a0_abs_error": "nonincreasing",
+        "a0_value": "nondecreasing",
+        "ecoh_abs_error": "nonincreasing",
+        "ecoh_value": "nonincreasing"
+      },
+      "values": [
+        {
+          "a0_A": 3.4694009051,
+          "a0_error_A": -0.08359909489999984,
+          "ecoh_eV_per_atom": 8.295622050671,
+          "ecoh_error_kJmol_per_atom": 71.9415911974549,
+          "mesh": "k333"
+        },
+        {
+          "a0_A": 3.4797408349,
+          "a0_error_A": -0.07325916510000008,
+          "ecoh_eV_per_atom": 7.947350516322,
+          "ecoh_error_kJmol_per_atom": 38.33849653669694,
+          "mesh": "k444"
+        },
+        {
+          "a0_A": 3.488743265,
+          "a0_error_A": -0.06425673499999984,
+          "ecoh_eV_per_atom": 7.78242152397,
+          "ecoh_error_kJmol_per_atom": 22.425267932851334,
+          "mesh": "k555"
+        },
+        {
+          "a0_A": 3.4940835882,
+          "a0_error_A": -0.058916411799999846,
+          "ecoh_eV_per_atom": 7.722012233284,
+          "ecoh_error_kJmol_per_atom": 16.59665745767908,
+          "mesh": "k666"
+        },
+        {
+          "a0_A": 3.4962900565,
+          "a0_error_A": -0.056709943500000026,
+          "ecoh_eV_per_atom": 7.703307989589,
+          "ecoh_error_kJmol_per_atom": 14.79197229265161,
+          "mesh": "k777"
+        }
+      ]
+    },
+    {
+      "solid": "Si",
+      "steps": [
+        {
+          "coarse_mesh": "k333",
+          "delta_a0_A": 0.06971347770000058,
+          "delta_abs_a0_error_A": -0.06971347770000058,
+          "delta_abs_ecoh_error_kJmol_per_atom": -15.8505727604975,
+          "delta_ecoh_kJmol_per_atom": -15.8505727604975,
+          "dense_mesh": "k444"
+        },
+        {
+          "coarse_mesh": "k444",
+          "delta_a0_A": 0.011577711900000232,
+          "delta_abs_a0_error_A": -0.011577711900000232,
+          "delta_abs_ecoh_error_kJmol_per_atom": -4.4664854103858715,
+          "delta_ecoh_kJmol_per_atom": -4.466485410385874,
+          "dense_mesh": "k555"
+        },
+        {
+          "coarse_mesh": "k555",
+          "delta_a0_A": 0.0034888883999997233,
+          "delta_abs_a0_error_A": -0.0034888883999997233,
+          "delta_abs_ecoh_error_kJmol_per_atom": -0.9893638708834622,
+          "delta_ecoh_kJmol_per_atom": -0.9893638708834618,
+          "dense_mesh": "k666"
+        },
+        {
+          "coarse_mesh": "k666",
+          "delta_a0_A": 0.000874386099999569,
+          "delta_abs_a0_error_A": -0.000874386099999569,
+          "delta_abs_ecoh_error_kJmol_per_atom": -0.20144781120574962,
+          "delta_ecoh_kJmol_per_atom": -0.20144781120574973,
+          "dense_mesh": "k777"
+        }
+      ],
+      "trends": {
+        "a0_abs_error": "nonincreasing",
+        "a0_value": "nondecreasing",
+        "ecoh_abs_error": "nonincreasing",
+        "ecoh_value": "nonincreasing"
+      },
+      "values": [
+        {
+          "a0_A": 5.1896466742,
+          "a0_error_A": -0.23135332580000068,
+          "ecoh_eV_per_atom": 5.230910553826,
+          "ecoh_error_kJmol_per_atom": 51.22508111367203,
+          "mesh": "k333"
+        },
+        {
+          "a0_A": 5.2593601519,
+          "a0_error_A": -0.1616398481000001,
+          "ecoh_eV_per_atom": 5.06663094353,
+          "ecoh_error_kJmol_per_atom": 35.374508353174534,
+          "mesh": "k444"
+        },
+        {
+          "a0_A": 5.2709378638,
+          "a0_error_A": -0.15006213619999986,
+          "ecoh_eV_per_atom": 5.020339084321,
+          "ecoh_error_kJmol_per_atom": 30.908022942788662,
+          "mesh": "k555"
+        },
+        {
+          "a0_A": 5.2744267522,
+          "a0_error_A": -0.14657324780000014,
+          "ecoh_eV_per_atom": 5.010085050375,
+          "ecoh_error_kJmol_per_atom": 29.9186590719052,
+          "mesh": "k666"
+        },
+        {
+          "a0_A": 5.2753011383,
+          "a0_error_A": -0.14569886170000057,
+          "ecoh_eV_per_atom": 5.007997190938,
+          "ecoh_error_kJmol_per_atom": 29.71721126069945,
+          "mesh": "k777"
+        }
+      ]
+    },
+    {
+      "solid": "SiC",
+      "steps": [
+        {
+          "coarse_mesh": "k333",
+          "delta_a0_A": 0.01787758539999995,
+          "delta_abs_a0_error_A": -0.012616154000000712,
+          "delta_abs_ecoh_error_kJmol_per_atom": -21.815874930404302,
+          "delta_ecoh_kJmol_per_atom": -21.8158749304043,
+          "dense_mesh": "k444"
+        },
+        {
+          "coarse_mesh": "k444",
+          "delta_a0_A": 0.011230566300000078,
+          "delta_abs_a0_error_A": 0.011230566300000078,
+          "delta_abs_ecoh_error_kJmol_per_atom": -7.555603298461584,
+          "delta_ecoh_kJmol_per_atom": -7.555603298461584,
+          "dense_mesh": "k555"
+        },
+        {
+          "coarse_mesh": "k555",
+          "delta_a0_A": 0.0044021286999997855,
+          "delta_abs_a0_error_A": 0.0044021286999997855,
+          "delta_abs_ecoh_error_kJmol_per_atom": -2.0878998861174924,
+          "delta_ecoh_kJmol_per_atom": -2.0878998861174933,
+          "dense_mesh": "k666"
+        },
+        {
+          "coarse_mesh": "k666",
+          "delta_a0_A": 0.001391435400000418,
+          "delta_abs_a0_error_A": 0.001391435400000418,
+          "delta_abs_ecoh_error_kJmol_per_atom": -0.5276991557909874,
+          "delta_ecoh_kJmol_per_atom": -0.5276991557909861,
+          "dense_mesh": "k777"
+        }
+      ],
+      "trends": {
+        "a0_abs_error": "nonmonotonic",
+        "a0_value": "nondecreasing",
+        "ecoh_abs_error": "nonincreasing",
+        "ecoh_value": "nonincreasing"
+      },
+      "values": [
+        {
+          "a0_A": 4.3317531303,
+          "a0_error_A": -0.015246869700000332,
+          "ecoh_eV_per_atom": 6.92366435072,
+          "ecoh_error_kJmol_per_atom": 43.771955551725036,
+          "mesh": "k333"
+        },
+        {
+          "a0_A": 4.3496307157,
+          "a0_error_A": 0.0026307156999996195,
+          "ecoh_eV_per_atom": 6.697558740154,
+          "ecoh_error_kJmol_per_atom": 21.956080621320734,
+          "mesh": "k444"
+        },
+        {
+          "a0_A": 4.360861282,
+          "a0_error_A": 0.013861281999999697,
+          "ecoh_eV_per_atom": 6.619250430153,
+          "ecoh_error_kJmol_per_atom": 14.40047732285915,
+          "mesh": "k555"
+        },
+        {
+          "a0_A": 4.3652634107,
+          "a0_error_A": 0.018263410699999483,
+          "ecoh_eV_per_atom": 6.597610872718,
+          "ecoh_error_kJmol_per_atom": 12.312577436741657,
+          "mesh": "k666"
+        },
+        {
+          "a0_A": 4.3666548461,
+          "a0_error_A": 0.0196548460999999,
+          "ecoh_eV_per_atom": 6.59214165637,
+          "ecoh_error_kJmol_per_atom": 11.78487828095067,
+          "mesh": "k777"
+        }
+      ]
+    },
+    {
+      "solid": "BN",
+      "steps": [
+        {
+          "coarse_mesh": "k333",
+          "delta_a0_A": 0.015163315900000196,
+          "delta_abs_a0_error_A": -0.015163315900000196,
+          "delta_abs_ecoh_error_kJmol_per_atom": -41.247321362359806,
+          "delta_ecoh_kJmol_per_atom": -41.247321362359806,
+          "dense_mesh": "k444"
+        },
+        {
+          "coarse_mesh": "k444",
+          "delta_a0_A": 0.011368908799999744,
+          "delta_abs_a0_error_A": -0.011368908799999744,
+          "delta_abs_ecoh_error_kJmol_per_atom": -19.00377038501648,
+          "delta_ecoh_kJmol_per_atom": -19.00377038501648,
+          "dense_mesh": "k555"
+        },
+        {
+          "coarse_mesh": "k555",
+          "delta_a0_A": 0.03368546140000017,
+          "delta_abs_a0_error_A": -0.03368546140000017,
+          "delta_abs_ecoh_error_kJmol_per_atom": -7.380476432874524,
+          "delta_ecoh_kJmol_per_atom": -7.380476432874523,
+          "dense_mesh": "k666"
+        },
+        {
+          "coarse_mesh": "k666",
+          "delta_a0_A": 0.004393265800000101,
+          "delta_abs_a0_error_A": -0.004393265800000101,
+          "delta_abs_ecoh_error_kJmol_per_atom": -2.2531333944877012,
+          "delta_ecoh_kJmol_per_atom": -2.253133394487704,
+          "dense_mesh": "k777"
+        }
+      ],
+      "trends": {
+        "a0_abs_error": "nonincreasing",
+        "a0_value": "nondecreasing",
+        "ecoh_abs_error": "nonincreasing",
+        "ecoh_value": "nonincreasing"
+      },
+      "values": [
+        {
+          "a0_A": 3.4116778673,
+          "a0_error_A": -0.18132213270000008,
+          "ecoh_eV_per_atom": 7.778193188136,
+          "ecoh_error_kJmol_per_atom": 98.24070792299385,
+          "mesh": "k333"
+        },
+        {
+          "a0_A": 3.4268411832,
+          "a0_error_A": -0.1661588167999999,
+          "ecoh_eV_per_atom": 7.350694826938,
+          "ecoh_error_kJmol_per_atom": 56.99338656063404,
+          "mesh": "k444"
+        },
+        {
+          "a0_A": 3.438210092,
+          "a0_error_A": -0.15478990800000014,
+          "ecoh_eV_per_atom": 7.153734626182,
+          "ecoh_error_kJmol_per_atom": 37.98961617561756,
+          "mesh": "k555"
+        },
+        {
+          "a0_A": 3.4718955534,
+          "a0_error_A": -0.12110444659999997,
+          "ecoh_eV_per_atom": 7.07724137824,
+          "ecoh_error_kJmol_per_atom": 30.60913974274304,
+          "mesh": "k666"
+        },
+        {
+          "a0_A": 3.4762888192,
+          "a0_error_A": -0.11671118079999987,
+          "ecoh_eV_per_atom": 7.053889296168,
+          "ecoh_error_kJmol_per_atom": 28.356006348255338,
+          "mesh": "k777"
+        }
+      ]
+    },
+    {
+      "solid": "BP",
+      "steps": [
+        {
+          "coarse_mesh": "k333",
+          "delta_a0_A": 0.018819642400000447,
+          "delta_abs_a0_error_A": -0.018819642400000447,
+          "delta_abs_ecoh_error_kJmol_per_atom": -23.254768626014563,
+          "delta_ecoh_kJmol_per_atom": -23.25476862601456,
+          "dense_mesh": "k444"
+        },
+        {
+          "coarse_mesh": "k444",
+          "delta_a0_A": 0.012768842999999919,
+          "delta_abs_a0_error_A": -0.012768842999999919,
+          "delta_abs_ecoh_error_kJmol_per_atom": -8.250739317201411,
+          "delta_ecoh_kJmol_per_atom": -8.250739317201411,
+          "dense_mesh": "k555"
+        },
+        {
+          "coarse_mesh": "k555",
+          "delta_a0_A": 0.0050816036999998815,
+          "delta_abs_a0_error_A": -0.0050816036999998815,
+          "delta_abs_ecoh_error_kJmol_per_atom": -2.2257784095825954,
+          "delta_ecoh_kJmol_per_atom": -2.225778409582596,
+          "dense_mesh": "k666"
+        },
+        {
+          "coarse_mesh": "k666",
+          "delta_a0_A": 0.0015394643999995239,
+          "delta_abs_a0_error_A": -0.0015394643999995239,
+          "delta_abs_ecoh_error_kJmol_per_atom": -0.5335515469397372,
+          "delta_ecoh_kJmol_per_atom": -0.5335515469397377,
+          "dense_mesh": "k777"
+        }
+      ],
+      "trends": {
+        "a0_abs_error": "nonincreasing",
+        "a0_value": "nondecreasing",
+        "ecoh_abs_error": "nonincreasing",
+        "ecoh_value": "nonincreasing"
+      },
+      "values": [
+        {
+          "a0_A": 4.42417018,
+          "a0_error_A": -0.1008298200000004,
+          "ecoh_eV_per_atom": 5.630808785421,
+          "ecoh_error_kJmol_per_atom": 47.35584867038364,
+          "mesh": "k333"
+        },
+        {
+          "a0_A": 4.4429898224,
+          "a0_error_A": -0.08201017759999996,
+          "ecoh_eV_per_atom": 5.389790092587,
+          "ecoh_error_kJmol_per_atom": 24.101080044369073,
+          "mesh": "k444"
+        },
+        {
+          "a0_A": 4.4557586654,
+          "a0_error_A": -0.06924133460000004,
+          "ecoh_eV_per_atom": 5.30427720544,
+          "ecoh_error_kJmol_per_atom": 15.850340727167662,
+          "mesh": "k555"
+        },
+        {
+          "a0_A": 4.4608402691,
+          "a0_error_A": -0.06415973090000016,
+          "ecoh_eV_per_atom": 5.281208637808,
+          "ecoh_error_kJmol_per_atom": 13.624562317585067,
+          "mesh": "k666"
+        },
+        {
+          "a0_A": 4.4623797335,
+          "a0_error_A": -0.06262026650000063,
+          "ecoh_eV_per_atom": 5.2756787657,
+          "ecoh_error_kJmol_per_atom": 13.09101077064533,
+          "mesh": "k777"
+        }
+      ]
+    },
+    {
+      "solid": "AlN",
+      "steps": [
+        {
+          "coarse_mesh": "k333",
+          "delta_a0_A": 0.03690671140000035,
+          "delta_abs_a0_error_A": -0.03690671140000035,
+          "delta_abs_ecoh_error_kJmol_per_atom": 16.780940300498138,
+          "delta_ecoh_kJmol_per_atom": -25.11183083284073,
+          "dense_mesh": "k444"
+        },
+        {
+          "coarse_mesh": "k444",
+          "delta_a0_A": 0.022188845099999632,
+          "delta_abs_a0_error_A": -0.022188845099999632,
+          "delta_abs_ecoh_error_kJmol_per_atom": 7.7187023110368465,
+          "delta_ecoh_kJmol_per_atom": -7.7187023110368465,
+          "dense_mesh": "k555"
+        },
+        {
+          "coarse_mesh": "k555",
+          "delta_a0_A": 0.007913721400000462,
+          "delta_abs_a0_error_A": -0.007913721400000462,
+          "delta_abs_ecoh_error_kJmol_per_atom": 1.9710739233474328,
+          "delta_ecoh_kJmol_per_atom": -1.971073923347433,
+          "dense_mesh": "k666"
+        },
+        {
+          "coarse_mesh": "k666",
+          "delta_a0_A": 0.002392197599999868,
+          "delta_abs_a0_error_A": -0.002392197599999868,
+          "delta_abs_ecoh_error_kJmol_per_atom": 0.4842718679137654,
+          "delta_ecoh_kJmol_per_atom": -0.4842718679137649,
+          "dense_mesh": "k777"
+        }
+      ],
+      "trends": {
+        "a0_abs_error": "nonincreasing",
+        "a0_value": "nondecreasing",
+        "ecoh_abs_error": "nondecreasing",
+        "ecoh_value": "nonincreasing"
+      },
+      "values": [
+        {
+          "a0_A": 4.2339265004,
+          "a0_error_A": -0.13407349960000037,
+          "ecoh_eV_per_atom": 5.893171797977,
+          "ecoh_error_kJmol_per_atom": 4.1654452661712975,
+          "mesh": "k333"
+        },
+        {
+          "a0_A": 4.2708332118,
+          "a0_error_A": -0.09716678820000002,
+          "ecoh_eV_per_atom": 5.632906011663,
+          "ecoh_error_kJmol_per_atom": -20.946385566669434,
+          "mesh": "k444"
+        },
+        {
+          "a0_A": 4.2930220569,
+          "a0_error_A": -0.07497794310000039,
+          "ecoh_eV_per_atom": 5.552907299515,
+          "ecoh_error_kJmol_per_atom": -28.66508787770628,
+          "mesh": "k555"
+        },
+        {
+          "a0_A": 4.3009357783,
+          "a0_error_A": -0.06706422169999993,
+          "ecoh_eV_per_atom": 5.532478557861,
+          "ecoh_error_kJmol_per_atom": -30.636161801053714,
+          "mesh": "k666"
+        },
+        {
+          "a0_A": 4.3033279759,
+          "a0_error_A": -0.06467202410000006,
+          "ecoh_eV_per_atom": 5.527459433635,
+          "ecoh_error_kJmol_per_atom": -31.12043366896748,
+          "mesh": "k777"
+        }
+      ]
+    },
+    {
+      "solid": "AlP",
+      "steps": [
+        {
+          "coarse_mesh": "k333",
+          "delta_a0_A": 0.020861516800000146,
+          "delta_abs_a0_error_A": -0.020861516800000146,
+          "delta_abs_ecoh_error_kJmol_per_atom": -16.264880925608374,
+          "delta_ecoh_kJmol_per_atom": -16.264880925608374,
+          "dense_mesh": "k444"
+        },
+        {
+          "coarse_mesh": "k444",
+          "delta_a0_A": 0.010894272099999824,
+          "delta_abs_a0_error_A": -0.010894272099999824,
+          "delta_abs_ecoh_error_kJmol_per_atom": -4.417692504588148,
+          "delta_ecoh_kJmol_per_atom": -4.41769250458815,
+          "dense_mesh": "k555"
+        },
+        {
+          "coarse_mesh": "k555",
+          "delta_a0_A": 0.0034243115999998963,
+          "delta_abs_a0_error_A": -0.0034243115999998963,
+          "delta_abs_ecoh_error_kJmol_per_atom": -0.9778500585303398,
+          "delta_ecoh_kJmol_per_atom": -0.9778500585303397,
+          "dense_mesh": "k666"
+        },
+        {
+          "coarse_mesh": "k666",
+          "delta_a0_A": 0.0008980890000005459,
+          "delta_abs_a0_error_A": -0.0008980890000005459,
+          "delta_abs_ecoh_error_kJmol_per_atom": -0.20462411094430522,
+          "delta_ecoh_kJmol_per_atom": -0.20462411094430538,
+          "dense_mesh": "k777"
+        }
+      ],
+      "trends": {
+        "a0_abs_error": "nonincreasing",
+        "a0_value": "nondecreasing",
+        "ecoh_abs_error": "nonincreasing",
+        "ecoh_value": "nonincreasing"
+      },
+      "values": [
+        {
+          "a0_A": 5.1445648371,
+          "a0_error_A": -0.3034351629000005,
+          "ecoh_eV_per_atom": 4.68015219665,
+          "ecoh_error_kJmol_per_atom": 35.71425762994804,
+          "mesh": "k333"
+        },
+        {
+          "a0_A": 5.1654263539,
+          "a0_error_A": -0.28257364610000035,
+          "ecoh_eV_per_atom": 4.51157858481,
+          "ecoh_error_kJmol_per_atom": 19.449376704339663,
+          "mesh": "k444"
+        },
+        {
+          "a0_A": 5.176320626,
+          "a0_error_A": -0.27167937400000053,
+          "ecoh_eV_per_atom": 4.465792428434,
+          "ecoh_error_kJmol_per_atom": 15.031684199751515,
+          "mesh": "k555"
+        },
+        {
+          "a0_A": 5.1797449376,
+          "a0_error_A": -0.26825506240000063,
+          "ecoh_eV_per_atom": 4.455657726744,
+          "ecoh_error_kJmol_per_atom": 14.053834141221175,
+          "mesh": "k666"
+        },
+        {
+          "a0_A": 5.1806430266,
+          "a0_error_A": -0.2673569734000001,
+          "ecoh_eV_per_atom": 4.45353694728,
+          "ecoh_error_kJmol_per_atom": 13.84921003027687,
+          "mesh": "k777"
+        }
+      ]
+    },
+    {
+      "solid": "MgS",
+      "steps": [
+        {
+          "coarse_mesh": "k333",
+          "delta_a0_A": 0.03725925959999987,
+          "delta_abs_a0_error_A": -0.03725925959999987,
+          "delta_abs_ecoh_error_kJmol_per_atom": -31.553907833187623,
+          "delta_ecoh_kJmol_per_atom": -31.553907833187626,
+          "dense_mesh": "k444"
+        },
+        {
+          "coarse_mesh": "k444",
+          "delta_a0_A": 0.022216396300000163,
+          "delta_abs_a0_error_A": -0.022216396300000163,
+          "delta_abs_ecoh_error_kJmol_per_atom": -7.854043438923554,
+          "delta_ecoh_kJmol_per_atom": -7.854043438923545,
+          "dense_mesh": "k555"
+        },
+        {
+          "coarse_mesh": "k555",
+          "delta_a0_A": 0.006865711000000552,
+          "delta_abs_a0_error_A": -0.006865711000000552,
+          "delta_abs_ecoh_error_kJmol_per_atom": -1.5978447129647577,
+          "delta_ecoh_kJmol_per_atom": -1.5978447129647564,
+          "dense_mesh": "k666"
+        }
+      ],
+      "trends": {
+        "a0_abs_error": "nonincreasing",
+        "a0_value": "nondecreasing",
+        "ecoh_abs_error": "nonincreasing",
+        "ecoh_value": "nonincreasing"
+      },
+      "values": [
+        {
+          "a0_A": 4.880908032,
+          "a0_error_A": -0.30709196799999994,
+          "ecoh_eV_per_atom": 5.264226746547,
+          "ecoh_error_kJmol_per_atom": 118.11992423482656,
+          "mesh": "k333"
+        },
+        {
+          "a0_A": 4.9181672916,
+          "a0_error_A": -0.26983270840000007,
+          "ecoh_eV_per_atom": 4.937193537055,
+          "ecoh_error_kJmol_per_atom": 86.56601640163893,
+          "mesh": "k444"
+        },
+        {
+          "a0_A": 4.9403836879,
+          "a0_error_A": -0.2476163120999999,
+          "ecoh_eV_per_atom": 4.855792112962,
+          "ecoh_error_kJmol_per_atom": 78.71197296271538,
+          "mesh": "k555"
+        },
+        {
+          "a0_A": 4.9472493989,
+          "a0_error_A": -0.24075060109999935,
+          "ecoh_eV_per_atom": 4.839231619488,
+          "ecoh_error_kJmol_per_atom": 77.11412824975062,
+          "mesh": "k666"
+        }
+      ]
+    },
+    {
+      "solid": "LiF",
+      "steps": [
+        {
+          "coarse_mesh": "k333",
+          "delta_a0_A": 0.020655006599999748,
+          "delta_abs_a0_error_A": -0.020655006599999748,
+          "delta_abs_ecoh_error_kJmol_per_atom": -54.15922865619823,
+          "delta_ecoh_kJmol_per_atom": -54.15922865619824,
+          "dense_mesh": "k444"
+        },
+        {
+          "coarse_mesh": "k444",
+          "delta_a0_A": 0.018964072600000215,
+          "delta_abs_a0_error_A": -0.018964072600000215,
+          "delta_abs_ecoh_error_kJmol_per_atom": -20.26344798131594,
+          "delta_ecoh_kJmol_per_atom": -20.263447981315945,
+          "dense_mesh": "k555"
+        },
+        {
+          "coarse_mesh": "k555",
+          "delta_a0_A": 0.008573969700000017,
+          "delta_abs_a0_error_A": -0.008573969700000017,
+          "delta_abs_ecoh_error_kJmol_per_atom": -5.735651725549488,
+          "delta_ecoh_kJmol_per_atom": -5.735651725549487,
+          "dense_mesh": "k666"
+        },
+        {
+          "coarse_mesh": "k666",
+          "delta_a0_A": 0.00282548409999972,
+          "delta_abs_a0_error_A": -0.00282548409999972,
+          "delta_abs_ecoh_error_kJmol_per_atom": -1.4429820655972136,
+          "delta_ecoh_kJmol_per_atom": -1.4429820655972123,
+          "dense_mesh": "k777"
+        }
+      ],
+      "trends": {
+        "a0_abs_error": "nonincreasing",
+        "a0_value": "nondecreasing",
+        "ecoh_abs_error": "nonincreasing",
+        "ecoh_value": "nonincreasing"
+      },
+      "values": [
+        {
+          "a0_A": 3.7243640182,
+          "a0_error_A": -0.24863598179999968,
+          "ecoh_eV_per_atom": 5.661351873571,
+          "ecoh_error_kJmol_per_atom": 115.91283451845868,
+          "mesh": "k333"
+        },
+        {
+          "a0_A": 3.7450190248,
+          "a0_error_A": -0.22798097519999994,
+          "ecoh_eV_per_atom": 5.100031023403,
+          "ecoh_error_kJmol_per_atom": 61.75360586226045,
+          "mesh": "k444"
+        },
+        {
+          "a0_A": 3.7639830974,
+          "a0_error_A": -0.20901690259999972,
+          "ecoh_eV_per_atom": 4.890015184359,
+          "ecoh_error_kJmol_per_atom": 41.49015788094451,
+          "mesh": "k555"
+        },
+        {
+          "a0_A": 3.7725570671,
+          "a0_error_A": -0.2004429328999997,
+          "ecoh_eV_per_atom": 4.830569343221,
+          "ecoh_error_kJmol_per_atom": 35.75450615539502,
+          "mesh": "k666"
+        },
+        {
+          "a0_A": 3.7753825512,
+          "a0_error_A": -0.19761744879999998,
+          "ecoh_eV_per_atom": 4.815613887984,
+          "ecoh_error_kJmol_per_atom": 34.31152408979781,
+          "mesh": "k777"
+        }
+      ]
+    },
+    {
+      "solid": "LiCl",
+      "steps": [
+        {
+          "coarse_mesh": "k333",
+          "delta_a0_A": 0.07188252579999954,
+          "delta_abs_a0_error_A": -0.07188252579999954,
+          "delta_abs_ecoh_error_kJmol_per_atom": -35.56553032593888,
+          "delta_ecoh_kJmol_per_atom": -35.56553032593887,
+          "dense_mesh": "k444"
+        },
+        {
+          "coarse_mesh": "k444",
+          "delta_a0_A": 0.03683028799999999,
+          "delta_abs_a0_error_A": -0.03683028799999999,
+          "delta_abs_ecoh_error_kJmol_per_atom": -8.621596476217654,
+          "delta_ecoh_kJmol_per_atom": -8.621596476217656,
+          "dense_mesh": "k555"
+        },
+        {
+          "coarse_mesh": "k555",
+          "delta_a0_A": 0.009950520200000312,
+          "delta_abs_a0_error_A": -0.009950520200000312,
+          "delta_abs_ecoh_error_kJmol_per_atom": -1.6481546615953846,
+          "delta_ecoh_kJmol_per_atom": -1.6481546615953822,
+          "dense_mesh": "k666"
+        },
+        {
+          "coarse_mesh": "k666",
+          "delta_a0_A": 0.0022234245999994684,
+          "delta_abs_a0_error_A": -0.0022234245999994684,
+          "delta_abs_ecoh_error_kJmol_per_atom": -0.29929576447538153,
+          "delta_ecoh_kJmol_per_atom": -0.2992957644753831,
+          "dense_mesh": "k777"
+        }
+      ],
+      "trends": {
+        "a0_abs_error": "nonincreasing",
+        "a0_value": "nondecreasing",
+        "ecoh_abs_error": "nonincreasing",
+        "ecoh_value": "nonincreasing"
+      },
+      "values": [
+        {
+          "a0_A": 4.7249320161,
+          "a0_error_A": -0.3470679838999997,
+          "ecoh_eV_per_atom": 4.391005063424,
+          "ecoh_error_kJmol_per_atom": 78.25009289815074,
+          "mesh": "k333"
+        },
+        {
+          "a0_A": 4.7968145419,
+          "a0_error_A": -0.27518545810000017,
+          "ecoh_eV_per_atom": 4.022394316658,
+          "ecoh_error_kJmol_per_atom": 42.68456257221186,
+          "mesh": "k444"
+        },
+        {
+          "a0_A": 4.8336448299,
+          "a0_error_A": -0.23835517010000018,
+          "ecoh_eV_per_atom": 3.933037765911,
+          "ecoh_error_kJmol_per_atom": 34.062966095994206,
+          "mesh": "k555"
+        },
+        {
+          "a0_A": 4.8435953501,
+          "a0_error_A": -0.22840464989999987,
+          "ecoh_eV_per_atom": 3.915955846563,
+          "ecoh_error_kJmol_per_atom": 32.41481143439882,
+          "mesh": "k666"
+        },
+        {
+          "a0_A": 4.8458187747,
+          "a0_error_A": -0.2261812253000004,
+          "ecoh_eV_per_atom": 3.912853864553,
+          "ecoh_error_kJmol_per_atom": 32.11551566992344,
+          "mesh": "k777"
+        }
+      ]
+    }
+  ],
+  "publication_status": "provisional",
+  "schema_version": 1,
+  "scientific_payload_sha256": "812425ec46ed8a2b9ff9f4b00af8443e4fc72f1b0d7c52ea684513a974b25065",
+  "sources": {
+    "k3_k6_values": {
+      "path": "/home/kuehne88/work/lc10-adaptive-post5582-20260714-379a56d/Goldzak12/data/lc10_independent_eos_k_values.csv",
+      "sha256": "44ada2fbbcb120ddeac0f81f001942bf7f1afd9593a48e4c6468dfc367194cea"
+    },
+    "k7_decisions": {
+      "path": "/home/kuehne88/work/lc10-k777-nine-eval-20260715T1800/Goldzak12/data/lc10_k777_vs_k666_interim_decisions.json",
+      "sha256": "9264bba05e70b3d4454fb8d2d838e75497a1b2574ae60bacbfed7b1a1c93432a"
+    },
+    "references": {
+      "path": "/home/kuehne88/work/lc10-k888-nine-20260715T1810/Goldzak12/data/reference_goldzak2022.csv",
+      "sha256": "9cd6d545aa5a4e870a1be38ccfadda01996b44d5c0ed83224b2e5c5ac2f975e4"
+    }
+  },
+  "systems": [
+    "C",
+    "Si",
+    "SiC",
+    "BN",
+    "BP",
+    "AlN",
+    "AlP",
+    "MgS",
+    "LiF",
+    "LiCl"
+  ],
+  "updated_at_utc": "2026-07-15T17:08:00.205581+00:00",
+  "validation_policy": {
+    "k333_to_k666": "campaign-stamped independent SP at own EOS minimum",
+    "k777": "hash-recorded independent SP; MgS rejected fail-closed",
+    "k888_k999": "excluded until own-minimum values and cross-mesh gate complete"
+  }
+}

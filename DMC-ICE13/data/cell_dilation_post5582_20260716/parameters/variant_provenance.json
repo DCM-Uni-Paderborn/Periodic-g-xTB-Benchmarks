@@ -1,0 +1,27 @@
+{
+  "source": "/private/tmp/gxtb_full.toml",
+  "variants": {
+    "gxtb_frozen_qvszp.toml": {
+      "arrays_changed": 318,
+      "change": "set every coeffs_env array entry to zero without changing array lengths",
+      "interpretation": "freeze q-vSZP coefficient response to effective charge/environment",
+      "values_changed": 1598
+    },
+    "gxtb_no_acp.toml": {
+      "change": "remove top-level [acp] model marker while retaining the otherwise unchanged parameter export",
+      "interpretation": "ACP-free schema-supported calculator diagnostic"
+    },
+    "gxtb_no_anisotropic_multipole.toml": {
+      "change": "remove complete top-level [multipole] parameter block",
+      "interpretation": "anisotropic multipole-free diagnostic; NOT a switch for all periodic electrostatics or images"
+    },
+    "gxtb_no_exchange.toml": {
+      "change": "remove complete top-level [exchange] parameter block",
+      "interpretation": "exchange-free schema-supported calculator diagnostic"
+    },
+    "gxtb_no_exchange_no_acp.toml": {
+      "change": "remove both top-level [exchange] and [acp] model blocks",
+      "interpretation": "two-component interaction diagnostic; not a separately parameterized physical model"
+    }
+  }
+}
