@@ -1,0 +1,52 @@
+COMPLETE	ch4_k290_p2_streamed	4.718s	PE=192,193
+COMPLETE	ch4_k290_p2_qualify	4.923s	PE=196,197
+COMPLETE	ch4_k290_p2_dense	5.046s	PE=188,189
+COMPLETE	ch4_k290_p1_dense	5.033s	PE=176
+COMPLETE	ch4_k290_p1_qualify	5.317s	PE=184
+COMPLETE	ch4_spglib_p1_dense	5.417s	PE=200
+COMPLETE	ch4_spglib_p1_streamed	5.386s	PE=204
+COMPLETE	ch4_k290_p1_streamed	5.675s	PE=180
+COMPLETE	ch4_spglib_p1_qualify	4.727s	PE=192
+COMPLETE	ch4_spglib_p2_dense	4.441s	PE=196,197
+COMPLETE	ch4_spglib_p2_streamed	4.527s	PE=188,189
+COMPLETE	ch4_spglib_p2_qualify	4.495s	PE=176,177
+COMPLETE	h2_tr_p2_dense	6.411s	PE=180,181
+COMPLETE	h2_tr_p1_dense	7.174s	PE=184
+COMPLETE	h2_tr_p1_qualify	7.315s	PE=204
+COMPLETE	h2_tr_p1_streamed	7.695s	PE=200
+COMPLETE	h2_tr_p2_streamed	6.186s	PE=192,193
+COMPLETE	h2_tr_p4_dense	5.790s	PE=188,189,190,191
+COMPLETE	h2_tr_p4_streamed	5.723s	PE=176,177,178,179
+COMPLETE	h2_tr_p2_qualify	6.353s	PE=196,197
+COMPLETE	o2_uks_tr_p1_dense	2.817s	PE=184
+COMPLETE	o2_uks_tr_p1_streamed	2.823s	PE=204
+COMPLETE	o2_uks_tr_p1_qualify	2.795s	PE=200
+COMPLETE	o2_uks_tr_p2_dense	2.934s	PE=192,193
+COMPLETE	h2_tr_p4_qualify	5.776s	PE=180,181,182,183
+COMPLETE	o2_uks_tr_p2_streamed	3.178s	PE=188,189
+COMPLETE	o2_uks_tr_p2_qualify	2.915s	PE=176,177
+FATAL: could not prove exactly ranks 0..3: {3906902: {'pid': 3906902, 'rank': 0, 'state': 'R (running)', 'cpus_allowed_list': '196', 'sample_count': 86, 'observed_rank_ids': [0], 'observed_cpu_masks': ['196'], 'current_sample_matches_assigned_singleton': True, 'rank_identity_changed_ever': False, 'affinity_violation_ever': False}, 3906903: {'pid': 3906903, 'rank': None, 'state': 'R (running)', 'cpus_allowed_list': '197', 'sample_count': 86, 'observed_rank_ids': [1, None], 'observed_cpu_masks': ['197'], 'current_sample_matches_assigned_singleton': False, 'rank_identity_changed_ever': True, 'affinity_violation_ever': True}, 3906904: {'pid': 3906904, 'rank': 2, 'state': 'S (sleeping)', 'cpus_allowed_list': '198', 'sample_count': 85, 'observed_rank_ids': [2], 'observed_cpu_masks': ['198'], 'current_sample_matches_assigned_singleton': True, 'rank_identity_changed_ever': False, 'affinity_violation_ever': False}, 3906905: {'pid': 3906905, 'rank': 3, 'state': 'S (sleeping)', 'cpus_allowed_list': '199', 'sample_count': 85, 'observed_rank_ids': [3], 'observed_cpu_masks': ['199'], 'current_sample_matches_assigned_singleton': True, 'rank_identity_changed_ever': False, 'affinity_violation_ever': False}}
+Traceback (most recent call last):
+  File "/home/kuehne88/work/gxtb-exact-star-matrix-fullbuild-20260717/harness/run_test_matrix.py", line 794, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/home/kuehne88/work/gxtb-exact-star-matrix-fullbuild-20260717/harness/run_test_matrix.py", line 781, in main
+    print(future.result(), flush=True)
+          ~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/kuehne88/work/gxtb-exact-star-matrix-fullbuild-20260717/harness/run_test_matrix.py", line 657, in run_one
+    ordered_rank_proof(
+    ~~~~~~~~~~~~~~~~~~^
+        observed, ranks, pe_cpus, duplicate_rank_ids
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/kuehne88/work/gxtb-exact-star-matrix-fullbuild-20260717/harness/run_test_matrix.py", line 457, in ordered_rank_proof
+    raise RuntimeError(f"could not prove exactly ranks 0..{ranks - 1}: {observed}")
+RuntimeError: could not prove exactly ranks 0..3: {3906902: {'pid': 3906902, 'rank': 0, 'state': 'R (running)', 'cpus_allowed_list': '196', 'sample_count': 86, 'observed_rank_ids': [0], 'observed_cpu_masks': ['196'], 'current_sample_matches_assigned_singleton': True, 'rank_identity_changed_ever': False, 'affinity_violation_ever': False}, 3906903: {'pid': 3906903, 'rank': None, 'state': 'R (running)', 'cpus_allowed_list': '197', 'sample_count': 86, 'observed_rank_ids': [1, None], 'observed_cpu_masks': ['197'], 'current_sample_matches_assigned_singleton': False, 'rank_identity_changed_ever': True, 'affinity_violation_ever': True}, 3906904: {'pid': 3906904, 'rank': 2, 'state': 'S (sleeping)', 'cpus_allowed_list': '198', 'sample_count': 85, 'observed_rank_ids': [2], 'observed_cpu_masks': ['198'], 'current_sample_matches_assigned_singleton': True, 'rank_identity_changed_ever': False, 'affinity_violation_ever': False}, 3906905: {'pid': 3906905, 'rank': 3, 'state': 'S (sleeping)', 'cpus_allowed_list': '199', 'sample_count': 85, 'observed_rank_ids': [3], 'observed_cpu_masks': ['199'], 'current_sample_matches_assigned_singleton': True, 'rank_identity_changed_ever': False, 'affinity_violation_ever': False}}
