@@ -598,6 +598,20 @@ def run_candidate(
         continuation=restart is not None,
     )
     completed = all(value is True for value in gates.values())
+    if (
+        execution_pool is not None
+        and (
+            observation is None
+            or observation.get("runtime_affinity_gate") is not True
+        )
+    ):
+        completed = False
+        if return_code == 0:
+            return_code = 97
+        base.job_stamp_path(out).unlink(missing_ok=True)
+        raise RuntimeError(
+            f"MPI rank-affinity proof failed for {ref.solid}/{mode}/{scale:.8f}"
+        )
     write_job_stamp_atomic(
         out,
         signature,
@@ -607,11 +621,16 @@ def run_candidate(
     execution_provenance = None
     if execution_pool is not None:
         assert observation is not None
-        execution_provenance = execution_pool.write_record(
-            out,
-            observation,
-            base.job_stamp_path(out),
-        )
+        stamp = base.job_stamp_path(out)
+        try:
+            execution_provenance = execution_pool.write_record(
+                out,
+                observation,
+                stamp,
+            )
+        except Exception:
+            stamp.unlink(missing_ok=True)
+            raise
     payload: dict[str, object] = {
         "schema_version": SCHEMA_VERSION,
         "diagnostic": "lc12_gxtb_multistart",
@@ -742,9 +761,24 @@ def main() -> int:
     parser.add_argument("--cold-workers", type=int, default=1)
     parser.add_argument("--mpi-ranks-per-job", type=int, default=1)
     parser.add_argument("--mpi-launcher", type=Path)
-    parser.add_argument("--mpi-launcher-arg", action="append", default=[])
-    parser.add_argument("--cpu-set", action="append", default=[])
-    parser.add_argument("--taskset", default="taskset")
+    parser.add_argument(
+        "--mpi-launcher-arg",
+        action="append",
+        default=[],
+        help=(
+            "reserved compatibility option; production execution rejects every "
+            "user-supplied MPI launcher argument"
+        ),
+    )
+    parser.add_argument(
+        "--pe-list",
+        action="append",
+        default=[],
+        help=(
+            "literal ordered CPU list for one worker (for example 96,97,98,99); "
+            "repeat exactly once per --cold-workers worker"
+        ),
+    )
     parser.add_argument("--retry-failed", action="store_true")
     args = parser.parse_args()
     if args.threads < 1 or args.cold_workers < 1 or args.mpi_ranks_per_job < 1:
@@ -770,7 +804,7 @@ def main() -> int:
         execution_requested = bool(
             args.mpi_launcher
             or args.mpi_launcher_arg
-            or args.cpu_set
+            or args.pe_list
             or args.mpi_ranks_per_job != 1
         )
         execution_pool = None
@@ -796,8 +830,7 @@ def main() -> int:
                 threads_per_rank=args.threads,
                 mpi_launcher=args.mpi_launcher,
                 mpi_launcher_args=args.mpi_launcher_arg,
-                cpu_sets=args.cpu_set,
-                taskset=args.taskset,
+                pe_lists=args.pe_list,
             )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         parser.error(str(exc))

@@ -33,11 +33,40 @@ and response matrices, `O(nred n^2 s)`, and `FULL_GRID` has `nred = K`. The stre
 `O(B n^2 s)`. Existing CP2K k-point/real-space output matrices, real and integer provider metadata,
 immutable caches, and compiler temporaries are outside the complex-element counter above.
 
-The helper scripts are:
+The reusable helper scripts now launch every MPI rank with an explicit ordered
+PE list, `--bind-to core`, and `--report-bindings`; inherited OMPI/PRTE binding
+overrides are removed. They accept no hardcoded CPU range: the caller must pass
+an explicit reservation (`run_linux_matrix.sh` requires 49 distinct CPUs;
+`run_linux_mode_rss.sh` requires two). The sampler checks every requested CPU
+against its current allowed set, reads `OMPI_COMM_WORLD_RANK` and the singleton
+mask from `/proc`, parses the complete binding report, and changes a nominally
+successful return code to 97 if any proof is absent or inconsistent. The
+scripts also hold one host-local `flock` per requested logical CPU for their
+full lifetime, so two independent production launchers cannot reserve the same
+CPU. A Linux `/proc` preflight also blocks overlap with live non-zombie CP2K or
+MPI ranks from non-locking launchers. Sequential same-rank/same-mask process
+generations are aggregated, whereas concurrent duplicate ranks, rank migration,
+and successor mask changes are sticky failures. A separate writer lock prevents concurrent truncation of an evidence
+directory. Earlier affinity violations remain sticky across all samples and
+cannot be hidden by a later corrected mask. The
+proof, command, masks, launcher-log path/hash, and timing classification are in
+`rusage.json` and covered by each run's `SHA256SUMS`. Parallel compiler workers
+may share their build reservation; this singleton rule concerns CP2K MPI ranks.
+An SMT core that yields a multi-logical-CPU mask under `--bind-to core` fails
+the same gate and requires a separately qualified policy.
+The frozen 2026-07-16 raw archives themselves are not rewritten. The helper
+scripts are:
 
 - `run_linux_matrix.sh`: disjoint CPU sets, MPI `P=1,2,4`, and the full correctness matrix;
-- `run_with_rss.py`: 20-ms `/proc` sampling of the complete process-tree resident set;
+- `run_with_rss.py`: 20-ms `/proc` sampling plus fail-closed MPI-rank affinity proof;
 - `run_linux_mode_rss.sh`: like-for-like dense/streamed process-level RSS comparison.
+
+For example, after reserving disjoint available CPUs explicitly:
+
+```bash
+./scripts/run_linux_matrix.sh "$ORDERED_49_CPU_RESERVATION"
+./scripts/run_linux_mode_rss.sh "$ORDERED_2_CPU_RESERVATION"
+```
 
 ## Frozen sources and build
 
@@ -68,12 +97,22 @@ incremental Terok rebuild retained the byte-identical `cp2k.pdbg` hash shown abo
 review correction changed comments and this README only; no executable statement changed, so the
 numerical evidence still applies to the reviewed source.
 
-## Linux MPI result matrix
+## Linux MPI numerical-equivalence matrix
+
+The frozen matrix below predates the ordered-PE-list correction and used an
+outer taskset together with `--bind-to none`. Consequently all P=2 and P=4
+wall-time/RSS entries (and any speedups inferred from them) are
+**legacy/non-scaling**: each rank inherited the same multi-CPU mask rather than
+a unique rank CPU. The raw files and hashes remain unchanged. Their
+energy/Fock/force/stress and streamed-versus-dense equivalence tests remain
+valid, because CPU affinity changes scheduling, not the mathematical result.
+New timing or scaling claims require rerunning the updated helper and passing
+rank-numbered singleton-mask validation.
 
 All 21 runs returned zero, printed `PROGRAM ENDED`, and printed the bounded qualification record.
 The 39 derivative evaluations all satisfied the exact provider high-water formula.
 
-| Reference case        | Coverage                                  |    P=1 wall / tree RSS |    P=2 wall / tree RSS |    P=4 wall / tree RSS |
+| Reference case        | Coverage                                  | P=1 legacy wall / RSS | P=2 legacy/non-scaling | P=4 legacy/non-scaling |
 | --------------------- | ----------------------------------------- | ---------------------: | ---------------------: | ---------------------: |
 | K290 RKS 3D FD        | K290, force, stress                       |  62.899 s / 220032 KiB |  55.628 s / 410976 KiB |  53.915 s / 791080 KiB |
 | Shifted SPGLIB RKS 3D | shifted mesh, SPGLIB, force, stress       |  40.782 s / 626464 KiB | 32.989 s / 1096852 KiB | 24.400 s / 2002620 KiB |
@@ -90,7 +129,7 @@ Across every rank count and case, the largest streamed-versus-dense residuals we
 - direct stress derivative: `3.46944695195361e-18`.
 
 The largest finite-difference sum was `1.30618e-7` for stress and `2.0e-8` for force; the printed
-force relative error was `0.00%`. The RSS values above are sums over each complete process tree, so
+force relative error was `0.00%`. The legacy RSS values above are sums over each complete process tree, so
 their near-linear increase with `P` reflects replicated CP2K rank state rather than a larger
 per-rank streamed transaction. The maximum single-process RSS over the matrix was 603144 KiB.
 
@@ -141,11 +180,12 @@ Two failures are retained but are not mixed into the positive statistics:
 
 ## Scope statement
 
-This matrix proves correctness and fixed-`B` provider ownership for the selectable CP2K consumer,
+This matrix proves numerical correctness and fixed-`B` provider ownership for the selectable CP2K consumer,
 and proves that the streamed consumer does not materialize an additional expanded full-star mesh.
 It does not prove `K`-independent total CP2K memory: the irreducible CP2K matrices remain resident,
 and `FULL_GRID` makes that set the complete mesh. It also does not by itself establish distributed
 nonlocal-exchange scaling across k groups: in this path the provider transaction remains replicated
 per participating MPI rank. True k-group decomposition and partial-k-to-R accumulator merging
 require a separate provider/CP2K qualification and must not be inferred from the P=1/2/4 correctness
-runs above.
+runs above. It does not provide scaling evidence because the frozen P=2/P=4
+launcher used the now-rejected shared-mask policy.

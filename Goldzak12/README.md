@@ -92,10 +92,11 @@ only the complete three-method by LC10 bundle.
 
 On Terok, use the shared fail-closed MPI/affinity path.  The manifest hash must
 come from the completed build qualification; do not compute and accept a new
-value inside the launch command.  Repeat `--solid` and `--cpu-set` as needed;
-the number of CPU sets must equal `--jobs`, the sets must be disjoint, and each
-must contain at least `MPI ranks times OpenMP threads` CPUs.  This compact
-two-worker example demonstrates the exact CLI spelling:
+value inside the launch command.  Repeat `--solid` and `--pe-list` as needed;
+the number of ordered PE lists must equal `--jobs`, the lists must be disjoint,
+and each must contain exactly one explicit logical CPU per MPI rank.  Production
+MPI requires one OpenMP thread per rank.  This compact two-worker example
+demonstrates the exact CLI spelling:
 
 ```bash
 MANIFEST=campaigns/gxtb-pbc-v1-post5582-20260714/build_manifest.json
@@ -110,10 +111,23 @@ python3 Goldzak12/scripts/run_goldzak12_k_convergence.py \
   --save-tblite-source /path/to/clean/save_tblite-pbc \
   --jobs 2 --mpi-ranks-per-job 8 --threads 1 \
   --mpi-launcher "$MPI" \
-  --mpi-launcher-arg=--bind-to --mpi-launcher-arg=none \
-  --taskset /usr/bin/taskset --cpu-set 96-103 --cpu-set 104-111 \
-  --stop-after-convergence
+  --pe-list 96,97,98,99,100,101,102,103 \
+  --pe-list 104,105,106,107,108,109,110,111 \
+  --eos-mesh k444 --energy-mesh k333 --energy-mesh k444 \
+  --energy-mesh k555 --result-mesh k555 --stop-after-eos
 ```
+
+Each logical CPU is additionally protected by a host-local `flock` for the
+life of the driver. Independent production invocations therefore cannot reuse
+the same CPU.  A Linux `/proc` preflight additionally rejects overlap with live
+non-zombie CP2K/MPI ranks from non-locking launchers, both when the pool is
+created and immediately before launch. Runtime verification is sticky across
+all `/proc` samples; sequential same-rank/same-mask sanitizer PID generations
+are aggregated, while concurrent duplicate ranks, rank migration, and changed
+successor masks fail closed.  Resume stamps bind the direct/MPI mode, rank
+count, thread settings, and exact execution-contract hash. User-supplied MPI
+launcher arguments are rejected; the driver alone injects mapping, binding,
+rank count, and binding reports.
 
 Single-mesh diagnostics and g-XTB input contract
 ------------------------------------------------
@@ -198,13 +212,22 @@ and `VECLIB_MAXIMUM_THREADS` to 1 and sets `OMP_WAIT_POLICY=PASSIVE`; CP2K's
 outer `OMP_NUM_THREADS` remains controlled by `--threads`.
 
 `scripts/benchmark_execution.py` leaves the scientific job-stamp schema and
-matcher unchanged.  It writes an additive atomic `*.execution.json` record
-that binds the exact taskset mask, launcher hash and command, `--bind-to none`,
-observed CP2K child/rank PIDs and kernel CPU masks, input hash, output hash, and
-scientific-stamp hash.  Kernel-normalized equivalent CPU-set spellings are
-compared as sets.  A completed scientific output with missing or invalid
-execution evidence is never deleted or rerun implicitly; the driver stops and
-requires explicit review before `--force` can replace it.
+matcher unchanged.  It writes an additive atomic schema-v2
+`*.execution.json` record that binds the launcher hash and exact command,
+Open MPI's injected `--map-by pe-list=...:ordered --bind-to core
+--report-bindings` policy, the hash of the preserved launcher/binding log, and
+the input, output, and scientific-stamp hashes.  Rank identity comes from
+`OMPI_COMM_WORLD_RANK`, not PID order; every `/proc` mask must be the singleton
+CPU assigned to that rank. Sequential process generations retain their full
+PID history in the record and may be combined only when rank and singleton mask
+are unchanged and no two generation PIDs are concurrently live.  Binding/mapping CLI overrides, `--bind-to none`,
+outer taskset, duplicate CPUs, wrong list lengths, unavailable CPUs, and
+multi-threaded MPI ranks fail closed.  Schema-v1 shared-taskset records remain
+readable and their numerical energies/forces/stresses retain provenance, but
+their timings are explicitly `legacy_timing_non_scaling` and cannot enter a
+scaling comparison. On an SMT host where `--bind-to core` exposes more than
+one logical CPU in a rank mask, the singleton gate also fails closed; such a
+machine needs a separately qualified binding policy rather than an exception.
 
 The separate fixed-geometry diagnostic single points are never launched
 implicitly. `--stop-after-convergence` completes the adaptive independent-EOS
@@ -303,8 +326,8 @@ python3 Goldzak12/scripts/run_gxtb_multistart_branches.py \
   --save-tblite-source /path/to/clean/save_tblite-pbc \
   --cold-workers 2 --mpi-ranks-per-job 8 --threads 1 \
   --mpi-launcher /path/to/qualified/environment/bin/mpirun \
-  --mpi-launcher-arg=--bind-to --mpi-launcher-arg=none \
-  --taskset /usr/bin/taskset --cpu-set 112-119 --cpu-set 120-127
+  --pe-list 112,113,114,115,116,117,118,119 \
+  --pe-list 120,121,122,123,124,125,126,127
 
 python3 Goldzak12/scripts/classify_gxtb_multistart_branches.py \
   --campaign-root Goldzak12/runs/gxtb_multistart_branches/FINGERPRINT

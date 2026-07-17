@@ -12,6 +12,15 @@ CP2K k-point groups.  The dense complete-mesh path is retained as the numerical 
 
 ## Test design
 
+**Timing-status correction.** The frozen P=2/P=4 launches used the historical
+outer-taskset/`--bind-to none` policy, which gave every rank the same inherited
+multi-CPU mask. The 36 timing records and their `timing_summary.tsv` are
+therefore retained unchanged as `legacy_timing_non_scaling` provenance and
+must not be used for speedup or scalability claims. The numerical
+energy/Fock/force/stress equivalence and path-robustness conclusions remain
+valid. A timing matrix must be rerun with one explicit ordered PE per rank,
+`--bind-to core --report-bindings`, and verified singleton `/proc` masks.
+
 The warm-up/reference archive contains 15 successful Release runs:
 
 - `P = 1, 2, 4` for DENSE, BATCHED with streamed reverse, KGROUP_OWNER with streamed reverse, and
@@ -35,8 +44,8 @@ difference was `2.40355431e-16` hartree/bohr.  The largest stress-component diff
 `6.63103935e-10` bar and occurred only in an off-diagonal component at roundoff; every diagonal
 stress component was identical at printed precision.  See `invariance_summary.tsv`.
 
-`timing_summary.tsv` reports the median, minimum, maximum, and median absolute deviation from the
-three measured repetitions.  Whole-process RSS differences are negligible for this small case,
+`timing_summary.tsv` reports the historical median, minimum, maximum, and median absolute deviation
+from the three measured repetitions, but is not scaling-eligible. Whole-process RSS differences are negligible for this small case,
 because replicated CP2K state dominates.  BATCHED has visible transaction overhead here, whereas
 KGROUP_OWNER and the separable transform are within the observed end-to-end variability of DENSE.
 In particular, the relatively broad `P = 4` ranges preclude a speedup claim.  The provider kernel

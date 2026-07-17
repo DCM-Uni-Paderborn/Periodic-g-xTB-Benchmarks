@@ -504,6 +504,27 @@ def retry_input(inp: Path, iterations: int, memory: int, damping: float, label: 
     return path
 
 
+def cp2k_execution_command_contract(
+    threads: int,
+    execution_pool: execution.ExecutionPool | None,
+) -> dict[str, object]:
+    return {
+        "driver": "cp2k",
+        "omp_threads": threads,
+        "mpi_ranks_per_job": (
+            execution_pool.mpi_ranks_per_job if execution_pool is not None else 1
+        ),
+        "execution_mode": (
+            "openmpi_ordered_pe_list" if execution_pool is not None else "direct"
+        ),
+        "execution_contract_sha256": (
+            str(execution_pool.contract_sha256)
+            if execution_pool is not None
+            else None
+        ),
+    }
+
+
 def run_jobs(
     specs: list[tuple[str, Path, Path, bool]],
     cp2k: Path,
@@ -520,12 +541,13 @@ def run_jobs(
             "campaign_bind_all_methods requires a validated campaign fingerprint"
         )
     cp2k_identity = base.executable_fingerprint(cp2k)
+    command_contract = cp2k_execution_command_contract(threads, execution_pool)
 
     def signature(spec: tuple[str, Path, Path, bool]) -> dict[str, object]:
         return base.job_signature(
             cp2k,
             spec[1],
-            command_contract={"driver": "cp2k", "omp_threads": threads},
+            command_contract=command_contract,
             executable_identity=cp2k_identity,
             campaign_fingerprint=campaign_fingerprint,
         )
@@ -580,21 +602,35 @@ def run_jobs(
         else:
             code, observation = execution_pool.run_cp2k(cp2k, inp, out)
         ok = usable_output_ok(out, method, require_opt=require_opt)
+        if (
+            execution_pool is not None
+            and (
+                observation is None
+                or observation.get("runtime_affinity_gate") is not True
+            )
+        ):
+            ok = False
+            if code == 0:
+                code = 97
         strategy = "native_gxtb_fdiis" if method == "GXTB" else "default_tblite_mixer"
         write_strategy(out, strategy, ok)
         if method == "GXTB" or campaign_bind_all_methods:
+            stamp = base.job_stamp_path(out)
+            if execution_pool is not None and not ok:
+                stamp.unlink(missing_ok=True)
+                return label, code, ok, spec
             base.write_job_stamp(out, signature(spec), completed=ok, return_code=code)
             if execution_pool is not None:
                 assert observation is not None
-                execution_pool.write_record(
-                    out,
-                    observation,
-                    base.job_stamp_path(out),
-                )
+                try:
+                    execution_pool.write_record(out, observation, stamp)
+                except Exception:
+                    stamp.unlink(missing_ok=True)
+                    raise
         return label, code, ok, spec
 
     parallel_label = (
-        f", MPI ranks/job={execution_pool.mpi_ranks_per_job}, exact taskset pool"
+        f", MPI ranks/job={execution_pool.mpi_ranks_per_job}, exact ordered PE-list pool"
         if execution_pool is not None
         else ""
     )
@@ -1898,15 +1934,20 @@ def main() -> int:
         "--mpi-launcher-arg",
         action="append",
         default=[],
-        help="argument passed before -np; production MPI execution requires exactly --bind-to none",
+        help=(
+            "reserved compatibility option; production execution rejects every "
+            "user-supplied MPI launcher argument"
+        ),
     )
     parser.add_argument(
-        "--cpu-set",
+        "--pe-list",
         action="append",
         default=[],
-        help="taskset CPU mask; repeat exactly once per --jobs worker",
+        help=(
+            "literal ordered CPU list (for example 96,97,98,99); repeat exactly "
+            "once per --jobs worker"
+        ),
     )
-    parser.add_argument("--taskset", default="taskset")
     parser.add_argument("--force", action="store_true")
     parser.add_argument(
         "--stop-after-eos",
@@ -2014,7 +2055,7 @@ def main() -> int:
     execution_requested = bool(
         args.mpi_launcher
         or args.mpi_launcher_arg
-        or args.cpu_set
+        or args.pe_list
         or args.mpi_ranks_per_job != 1
     )
     execution_pool: execution.ExecutionPool | None = None
@@ -2042,8 +2083,7 @@ def main() -> int:
                 threads_per_rank=args.threads,
                 mpi_launcher=args.mpi_launcher,
                 mpi_launcher_args=args.mpi_launcher_arg,
-                cpu_sets=args.cpu_set,
-                taskset=args.taskset,
+                pe_lists=args.pe_list,
             )
         except (OSError, ValueError) as exc:
             parser.error(str(exc))

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import inspect
 import json
 import math
 import shutil
@@ -833,6 +834,7 @@ class DMC13RunnerSafetyTests(unittest.TestCase):
             runner.stamp_path(job).write_text(json.dumps(stamp))
             self.assertTrue(runner.stamp_valid(job, identity))
 
+            reusable_stamp = dict(stamp)
             for field in (
                 "mpi_ranks_per_job",
                 "threads_per_job",
@@ -846,10 +848,13 @@ class DMC13RunnerSafetyTests(unittest.TestCase):
             ):
                 stamp.pop(field)
             runner.stamp_path(job).write_text(json.dumps(stamp))
-            self.assertTrue(runner.stamp_valid(job, identity))
+            self.assertFalse(runner.stamp_valid(job, identity))
+            self.assertTrue(runner.scientific_stamp_valid(job, identity))
+            runner.stamp_path(job).write_text(json.dumps(reusable_stamp))
 
             input_path.write_bytes(source_bytes + b"central mutation\n")
             self.assertFalse(runner.stamp_valid(job, identity))
+            self.assertFalse(runner.scientific_stamp_valid(job, identity))
             input_path.write_bytes(source_bytes)
             self.assertTrue(runner.stamp_valid(job, identity))
             frozen.write_bytes(frozen_bytes + b"local mutation\n")
@@ -922,7 +927,6 @@ class DMC13RunnerSafetyTests(unittest.TestCase):
             )
             stamp = json.loads(runner.stamp_path(job).read_text())
             self.assertEqual(stamp["mpi_ranks_per_job"], 1)
-            self.assertIsNone(stamp["mpi_launcher"])
             self.assertEqual(stamp["threads_per_job"], 3)
             self.assertEqual(stamp["omp_num_threads"], 3)
             self.assertEqual(stamp["omp_schedule"], "static")
@@ -931,7 +935,126 @@ class DMC13RunnerSafetyTests(unittest.TestCase):
             self.assertIsNone(stamp["omp_proc_bind"])
             self.assertIsNone(stamp["omp_places"])
             self.assertEqual(stamp["blas_threads"], 1)
-            self.assertTrue(runner.stamp_valid(job, identity))
+            self.assertTrue(runner.stamp_valid(job, identity, 3, 1, None))
+
+    def test_mpi_job_uses_execution_pool_and_records_rank_count(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            input_path = root / "source.inp"
+            input_path.write_text("&GLOBAL\n&END GLOBAL\n")
+            run_dir = root / "run"
+            cp2k = root / "fake-cp2k"
+            cp2k.write_text("binary\n")
+            job = runner.Job("gamma", "GFN1", "Ih", input_path, run_dir, "result.out")
+            identity = fake_production_identity(root, cp2k)
+
+            class FakePool:
+                mpi_ranks_per_job = 2
+                contract_sha256 = "fixture-contract"
+
+                def __init__(self) -> None:
+                    self.run_calls = 0
+                    self.write_calls = 0
+
+                def record_issue(self, _output: Path, _stamp: Path) -> str | None:
+                    return "missing v2 execution record"
+
+                def run_cp2k(
+                    self, _cp2k: Path, _inp: Path, output: Path
+                ) -> tuple[int, dict[str, object]]:
+                    self.run_calls += 1
+                    output.write_text(
+                        "SCF run converged\n"
+                        "ENERGY| Total FORCE_EVAL ( QS ) energy [a.u.] -1.0\n"
+                        "PROGRAM ENDED\n"
+                    )
+                    return 0, {"runtime_affinity_gate": True}
+
+                def write_record(
+                    self,
+                    _output: Path,
+                    observation: dict[str, object],
+                    _stamp: Path,
+                ) -> dict[str, str]:
+                    self.write_calls += 1
+                    self.assert_affinity(observation)
+                    return {"path": "execution.json", "sha256": "fixture"}
+
+                @staticmethod
+                def assert_affinity(observation: dict[str, object]) -> None:
+                    if observation.get("runtime_affinity_gate") is not True:
+                        raise AssertionError("missing affinity proof")
+
+            pool = FakePool()
+            _, returncode = runner.run_job(
+                identity,
+                job,
+                False,
+                threading.Event(),
+                threads_per_job=1,
+                execution_pool=pool,  # type: ignore[arg-type]
+            )
+
+            self.assertEqual(returncode, 0)
+            self.assertEqual((pool.run_calls, pool.write_calls), (1, 1))
+            stamp = json.loads(runner.stamp_path(job).read_text())
+            self.assertEqual(stamp["mpi_ranks_per_job"], 2)
+            self.assertEqual(stamp["threads_per_job"], 1)
+            self.assertEqual(stamp["execution_mode"], "openmpi_ordered_pe_list")
+            self.assertEqual(stamp["execution_contract_sha256"], "fixture-contract")
+            self.assertEqual(stamp["omp_proc_bind"], "true")
+            self.assertEqual(stamp["omp_places"], "cores")
+            self.assertTrue(
+                runner.stamp_valid(job, identity, 1, 2, "fixture-contract")
+            )
+            self.assertFalse(runner.stamp_valid(job, identity))
+
+    def test_failed_mpi_affinity_proof_never_writes_scientific_stamp(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            input_path = root / "source.inp"
+            input_path.write_text("&GLOBAL\n&END GLOBAL\n")
+            run_dir = root / "run"
+            cp2k = root / "fake-cp2k"
+            cp2k.write_text("binary\n")
+            job = runner.Job("gamma", "GFN1", "Ih", input_path, run_dir, "result.out")
+            identity = fake_production_identity(root, cp2k)
+
+            class FailedProofPool:
+                mpi_ranks_per_job = 2
+                contract_sha256 = "fixture-contract"
+
+                @staticmethod
+                def record_issue(_output: Path, _stamp: Path) -> str | None:
+                    return "missing v2 execution record"
+
+                @staticmethod
+                def run_cp2k(
+                    _cp2k: Path, _inp: Path, output: Path
+                ) -> tuple[int, dict[str, object]]:
+                    output.write_text(
+                        "SCF run converged\n"
+                        "ENERGY| Total FORCE_EVAL ( QS ) energy [a.u.] -1.0\n"
+                        "PROGRAM ENDED\n"
+                    )
+                    return 0, {"runtime_affinity_gate": False}
+
+                @staticmethod
+                def write_record(*_args: object) -> dict[str, str]:
+                    raise AssertionError("failed affinity proof must not be finalized")
+
+            _, returncode = runner.run_job(
+                identity,
+                job,
+                False,
+                threading.Event(),
+                threads_per_job=1,
+                execution_pool=FailedProofPool(),  # type: ignore[arg-type]
+            )
+
+            self.assertEqual(returncode, 97)
+            self.assertTrue((run_dir / job.output_name).is_file())
+            self.assertFalse(runner.stamp_path(job).exists())
 
     def test_positive_int_rejects_nonpositive_thread_counts(self) -> None:
         self.assertEqual(runner.positive_int("4"), 4)
@@ -947,123 +1070,61 @@ class DMC13RunnerSafetyTests(unittest.TestCase):
         self.assertEqual(parallelism["nominal_cores"], 15)
         self.assertEqual(parallelism["mpi_ranks_per_job"], 1)
         self.assertEqual(parallelism["blas_threads"], 1)
-        self.assertEqual(parallelism["cpu_sets"], [])
-        self.assertEqual(parallelism["mpi_launcher_args"], [])
 
-    def test_cpu_sets_must_be_sized_and_pairwise_disjoint(self) -> None:
-        parsed = runner.validate_cpu_sets(["64-71", "80-87"], 2, 4, 2)
-        self.assertEqual([len(cpus) for cpus in parsed], [8, 8])
-        parallelism = runner.execution_parallelism(
-            2,
-            2,
-            4,
-            "/opt/mpi/bin/mpirun",
-            ["64-71", "80-87"],
-            ["--bind-to", "none"],
+    def test_exact_mpi_parallelism_records_rank_budget(self) -> None:
+        parallelism = runner.execution_parallelism(2, 2, 4)
+        self.assertEqual(parallelism["jobs"], 2)
+        self.assertEqual(parallelism["threads_per_job"], 2)
+        self.assertEqual(parallelism["mpi_ranks_per_job"], 4)
+        self.assertEqual(parallelism["nominal_cores"], 16)
+
+    def test_legacy_shared_cpu_set_override_is_not_exposed(self) -> None:
+        parameters = inspect.signature(runner.run_job).parameters
+        self.assertNotIn("cpu_set", parameters)
+        self.assertNotIn("taskset", parameters)
+        self.assertFalse(hasattr(runner, "validate_cpu_sets"))
+
+    def test_execution_expectation_is_derived_only_from_validated_pool(self) -> None:
+        direct = runner.argparse.Namespace(threads_per_job=3, execution_pool=None)
+        self.assertEqual(runner.execution_expectation_from_args(direct), (3, 1, None))
+
+        class ValidatedPool:
+            mpi_ranks_per_job = 4
+            contract_sha256 = "exact-contract"
+
+        mpi = runner.argparse.Namespace(
+            threads_per_job=1,
+            execution_pool=ValidatedPool(),
         )
-        self.assertEqual(parallelism["cpu_set_sizes"], [8, 8])
-        self.assertIs(parallelism["cpu_sets_disjoint"], True)
-        self.assertEqual(parallelism["mpi_launcher_args"], ["--bind-to", "none"])
-        with self.assertRaisesRegex(ValueError, "overlap"):
-            runner.validate_cpu_sets(["0-7", "7-14"], 2, 4, 2)
-        with self.assertRaisesRegex(ValueError, "contains 4 CPUs"):
-            runner.validate_cpu_sets(["0-3", "8-15"], 2, 4, 2)
-        with self.assertRaisesRegex(ValueError, "exactly one"):
-            runner.validate_cpu_sets(["0-7"], 2, 4, 2)
+        self.assertEqual(
+            runner.execution_expectation_from_args(mpi),
+            (1, 4, "exact-contract"),
+        )
 
-    def test_mpi_job_launches_requested_ranks_and_records_budget(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            input_path = root / "source.inp"
-            input_path.write_text("&GLOBAL\n&END GLOBAL\n")
-            run_dir = root / "run"
-            cp2k = root / "fake-cp2k"
-            cp2k.write_text(
-                "#!/bin/sh\n"
-                "while [ \"$#\" -gt 0 ]; do\n"
-                "  if [ \"$1\" = \"-o\" ]; then shift; out=\"$1\"; fi\n"
-                "  shift\n"
-                "done\n"
-                "printf '%s\\n' 'SCF run converged' "
-                "'ENERGY| Total FORCE_EVAL ( QS ) energy [a.u.] -1.0' "
-                "'PROGRAM ENDED' > \"$out\"\n"
-            )
-            cp2k.chmod(cp2k.stat().st_mode | 0o111)
-            launcher = root / "fake-mpiexec"
-            launcher.write_text(
-                "#!/bin/sh\n"
-                "printf '%s\\n' \"$1\" \"$2\" > mpi-launch.txt\n"
-                "shift 2\n"
-                "exec \"$@\"\n"
-            )
-            launcher.chmod(launcher.stat().st_mode | 0o111)
-            job = runner.Job("gamma", "GFN1", "Ih", input_path, run_dir, "result.out")
-            identity = fake_production_identity(root, cp2k)
+    def test_aggregate_timing_requires_every_included_schema_v2_rc0_record(self) -> None:
+        eligible = {
+            "completed_and_hash_validated": True,
+            "timing_classification": "production_scaling_eligible",
+            "execution_record_schema_version": 2,
+            "execution_return_code": 0,
+        }
+        summary = runner.aggregate_execution_timing([dict(eligible)], [])
+        self.assertEqual(summary["timing_classification"], "production_scaling_eligible")
+        self.assertTrue(summary["all_included_timings_schema_v2_revalidated_and_rc0"])
 
-            _, returncode = runner.run_job(
-                identity,
-                job,
-                False,
-                threading.Event(),
-                threads_per_job=2,
-                mpi_ranks_per_job=4,
-                mpi_launcher=launcher,
-            )
-
-            self.assertEqual(returncode, 0)
-            self.assertEqual((run_dir / "mpi-launch.txt").read_text().splitlines(), ["-np", "4"])
-            stamp = json.loads(runner.stamp_path(job).read_text())
-            self.assertEqual(stamp["mpi_ranks_per_job"], 4)
-            self.assertEqual(stamp["threads_per_job"], 2)
-            self.assertEqual(stamp["mpi_launcher"], str(launcher.resolve()))
-            parallelism = runner.execution_parallelism(2, 2, 4, launcher.resolve())
-            self.assertEqual(parallelism["nominal_cores"], 16)
-
-    def test_job_affinity_is_applied_and_recorded(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            input_path = root / "source.inp"
-            input_path.write_text("&GLOBAL\n&END GLOBAL\n")
-            run_dir = root / "run"
-            cp2k = root / "fake-cp2k"
-            cp2k.write_text(
-                "#!/bin/sh\n"
-                "while [ \"$#\" -gt 0 ]; do\n"
-                "  if [ \"$1\" = \"-o\" ]; then shift; out=\"$1\"; fi\n"
-                "  shift\n"
-                "done\n"
-                "printf '%s\\n' 'SCF run converged' "
-                "'ENERGY| Total FORCE_EVAL ( QS ) energy [a.u.] -1.0' "
-                "'PROGRAM ENDED' > \"$out\"\n"
-            )
-            cp2k.chmod(cp2k.stat().st_mode | 0o111)
-            taskset = root / "fake-taskset"
-            taskset.write_text(
-                "#!/bin/sh\n"
-                "printf '%s\\n' \"$1\" \"$2\" > affinity.txt\n"
-                "shift 2\n"
-                "exec \"$@\"\n"
-            )
-            taskset.chmod(taskset.stat().st_mode | 0o111)
-            job = runner.Job("gamma", "GFN1", "Ih", input_path, run_dir, "result.out")
-            identity = fake_production_identity(root, cp2k)
-
-            _, returncode = runner.run_job(
-                identity,
-                job,
-                False,
-                threading.Event(),
-                threads_per_job=2,
-                cpu_set="64-65",
-                taskset=taskset,
-            )
-
-            self.assertEqual(returncode, 0)
-            self.assertEqual((run_dir / "affinity.txt").read_text().splitlines(), ["-c", "64-65"])
-            stamp = json.loads(runner.stamp_path(job).read_text())
-            self.assertEqual(stamp["cpu_set"], "64-65")
-            self.assertEqual(stamp["cpu_set_size"], 2)
-            self.assertEqual(stamp["taskset"], str(taskset.resolve()))
+        for mutation, failures in (
+            ({"timing_classification": "legacy_timing_non_scaling"}, []),
+            ({"execution_record_schema_version": 1}, []),
+            ({"execution_return_code": 1}, []),
+            ({}, [(mock.Mock(), 1)]),
+        ):
+            with self.subTest(mutation=mutation, failures=bool(failures)):
+                record = {**eligible, **mutation}
+                summary = runner.aggregate_execution_timing([record], failures)
+                self.assertEqual(summary["timing_classification"], "timing_non_scaling")
+                self.assertFalse(
+                    summary["all_included_timings_schema_v2_revalidated_and_rc0"]
+                )
 
     def test_write_stamp_refuses_source_frozen_input_mismatch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

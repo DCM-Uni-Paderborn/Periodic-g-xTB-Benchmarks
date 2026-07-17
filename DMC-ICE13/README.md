@@ -147,6 +147,55 @@ python3 scripts/run_dmc13_kpoint_jobs.py \
   --jobs 4
 ```
 
+For MPI production on Terok, each worker instead receives a literal ordered
+PE list with exactly one unique logical CPU per MPI rank.  The runner injects
+Open MPI's `--map-by pe-list=...:ordered --bind-to core --report-bindings`,
+sets one OpenMP and BLAS thread per rank, removes inherited OMPI/PRTE binding
+overrides, and verifies rank-numbered singleton masks through `/proc` before it
+can finalize a schema-v2 execution record.  It also holds one host-local
+`flock` per requested logical CPU, so a second independently started
+production driver fails before launch instead of sharing that CPU. Earlier
+misbound samples remain sticky even if a later sample looks correct.  After
+locking and again immediately before each launch, a Linux `/proc` preflight
+also rejects selected CPUs already present in any live non-zombie CP2K or MPI
+rank mask, including jobs started by older non-locking launchers.  Sequential
+same-rank/same-mask PID generations created during sanitizer teardown are
+folded into one rank proof; concurrently live duplicate ranks, rank migration,
+or any successor mask change remain fatal. Extra MPI
+launcher arguments are not accepted because Open MPI aliases, appfiles, and
+MCA parameter files could otherwise bypass the immutable mapping contract. For
+example:
+
+```bash
+python3 scripts/run_dmc13_kpoint_jobs.py \
+  --root DMC-ICE13 \
+  --cp2k /path/to/cp2k.psmp \
+  --tblite /path/to/tblite \
+  --tblite-static-library /path/to/lib/libtblite.a \
+  --cp2k-source /path/to/cp2k-source \
+  --tblite-source /path/to/save_tblite-source \
+  --method GXTB --jobs 2 --threads-per-job 1 \
+  --mpi-ranks-per-job 4 --mpi-launcher /path/to/mpirun \
+  --pe-list 96,97,98,99 --pe-list 100,101,102,103
+```
+
+If a physical core exposes multiple hardware threads and `--bind-to core`
+therefore produces a non-singleton `/proc` mask, the run is rejected. No SMT
+exception is inferred from the requested PE list.
+
+Resume is bound to the exact execution mode, MPI-rank count, thread settings,
+and execution-contract hash. A direct invocation therefore cannot silently
+reuse an MPI-produced stamp, or vice versa. Aggregate timing provenance is
+scaling-eligible only if every included job has return code zero and a fully
+revalidated schema-v2 execution sidecar; mixed, legacy, and failed populations
+are classified `timing_non_scaling`.
+
+The older shell launchers and any schema-v1 taskset/`--bind-to none` records
+are retained unchanged as historical raw provenance.  Their energies, forces,
+and stresses remain usable after the normal hash and scientific validation,
+but all multi-rank timings from that shared-mask policy are classified
+`legacy_timing_non_scaling` and must not be used in speedup or scaling plots.
+
 This production runner is intentionally g-xTB-only: `--method GXTB` must be
 given exactly once, so it cannot regenerate or overwrite the frozen GFN1/GFN2
 inputs and results.  It additionally requires the exact additive analysis

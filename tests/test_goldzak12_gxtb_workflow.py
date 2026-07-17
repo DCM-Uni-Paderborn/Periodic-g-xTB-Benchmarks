@@ -392,6 +392,65 @@ class Goldzak12GXTBAtomTests(unittest.TestCase):
 
 
 class Goldzak12GXTBMixerAndPruneTests(unittest.TestCase):
+    def test_direct_resume_contract_cannot_match_an_mpi_stamp(self) -> None:
+        class Pool:
+            mpi_ranks_per_job = 2
+            contract_sha256 = "fixture-contract"
+
+        mpi = eos.cp2k_execution_command_contract(1, Pool())  # type: ignore[arg-type]
+        direct = eos.cp2k_execution_command_contract(1, None)
+        self.assertNotEqual(mpi, direct)
+        self.assertEqual(mpi["execution_mode"], "openmpi_ordered_pe_list")
+        self.assertEqual(direct["execution_mode"], "direct")
+        self.assertEqual(mpi["execution_contract_sha256"], "fixture-contract")
+        self.assertIsNone(direct["execution_contract_sha256"])
+
+    def test_failed_affinity_proof_cannot_leave_reusable_scientific_stamp(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            executable = root / "cp2k"
+            executable.write_bytes(b"cp2k")
+            inp = root / "job.inp"
+            out = root / "job.out"
+            inp.write_text(
+                base.solid_input(
+                    base.REFERENCES[0], "GXTB", "ENERGY", "k444", 3.553, "job"
+                )
+            )
+            campaign = fake_campaign(cp2k_executable_sha=base.sha256(executable))
+
+            class FailedProofPool:
+                mpi_ranks_per_job = 2
+                contract_sha256 = "fixture-contract"
+
+                @staticmethod
+                def record_issue(_output: Path, _stamp: Path) -> str | None:
+                    return "missing v2 execution record"
+
+                @staticmethod
+                def run_cp2k(
+                    _cp2k: Path, _input: Path, output: Path
+                ) -> tuple[int, dict[str, object]]:
+                    output.write_text("PROGRAM ENDED\n")
+                    return 0, {"runtime_affinity_gate": False}
+
+                @staticmethod
+                def write_record(*_args: object) -> dict[str, str]:
+                    raise AssertionError("failed proof must not be finalized")
+
+            with self.assertRaisesRegex(RuntimeError, "CP2K job.*failed"):
+                eos.run_jobs(
+                    [("eos GXTB C k444 s1p000", inp, out, False)],
+                    executable,
+                    1,
+                    1,
+                    False,
+                    campaign_fingerprint=campaign,
+                    execution_pool=FailedProofPool(),  # type: ignore[arg-type]
+                )
+            self.assertTrue(out.is_file())
+            self.assertFalse(base.job_stamp_path(out).exists())
+
     def test_execution_record_is_additive_and_pool_only_runs_pending_jobs(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -410,12 +469,19 @@ class Goldzak12GXTBMixerAndPruneTests(unittest.TestCase):
             signature = base.job_signature(
                 executable,
                 inp,
-                command_contract={"driver": "cp2k", "omp_threads": 1},
+                command_contract={
+                    "driver": "cp2k",
+                    "omp_threads": 1,
+                    "mpi_ranks_per_job": 2,
+                    "execution_mode": "openmpi_ordered_pe_list",
+                    "execution_contract_sha256": "fixture-contract",
+                },
                 campaign_fingerprint=campaign,
             )
 
             class FakePool:
                 mpi_ranks_per_job = 2
+                contract_sha256 = "fixture-contract"
 
                 def __init__(self) -> None:
                     self.complete = False
@@ -430,7 +496,7 @@ class Goldzak12GXTBMixerAndPruneTests(unittest.TestCase):
                 ) -> tuple[int, dict[str, object]]:
                     self.run_calls += 1
                     output.write_text("PROGRAM ENDED\n")
-                    return 0, {"separate": True}
+                    return 0, {"runtime_affinity_gate": True}
 
                 def write_record(
                     self,
