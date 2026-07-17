@@ -160,18 +160,41 @@ def acquire_cpu_locks(
 
 
 def live_compute_cpu_owners(
-    cpus: Sequence[int], proc_root: Path = Path("/proc")
+    cpus: Sequence[int],
+    proc_root: Path = Path("/proc"),
+    *,
+    ignore_process_identities: dict[int, int] | None = None,
 ) -> list[dict]:
     selected = set(cpus)
+    ignored_identities = dict(ignore_process_identities or {})
     if not selected or not proc_root.is_dir():
         return []
     owners = []
     for entry in proc_root.iterdir():
-        if not entry.name.isdigit() or int(entry.name) == os.getpid():
+        if not entry.name.isdigit():
+            continue
+        pid = int(entry.name)
+        if pid == os.getpid():
             continue
         try:
+            initial_stat_state, initial_starttime = linux_proc_stat_identity(
+                (entry / "stat").read_text(errors="replace")
+            )
             status = (entry / "status").read_text(errors="replace")
-        except (FileNotFoundError, PermissionError, ProcessLookupError, OSError):
+        except (FileNotFoundError, ProcessLookupError):
+            continue
+        except (PermissionError, OSError, ValueError):
+            if pid in ignored_identities:
+                owners.append({
+                    "pid": pid,
+                    "name": "",
+                    "state": "",
+                    "cpus_allowed_list": "",
+                    "overlap": sorted(selected),
+                    "cp2k_process": False,
+                    "mpi_rank_process": False,
+                    "process_identity_status": "initial_identity_unreadable",
+                })
             continue
         fields = {
             key: value.strip()
@@ -179,16 +202,13 @@ def live_compute_cpu_owners(
             if ":" in line
             for key, value in (line.split(":", 1),)
         }
-        if fields.get("State", "").startswith(("Z", "X")):
-            continue
+        state = fields.get("State", "")
         try:
             overlap = selected & parse_linux_cpu_list(
                 fields.get("Cpus_allowed_list", "")
             )
         except ValueError:
-            continue
-        if not overlap:
-            continue
+            overlap = set()
         name = fields.get("Name", "")
         is_cp2k = name.casefold().startswith("cp2k")
         try:
@@ -200,17 +220,60 @@ def live_compute_cpu_owners(
         except (FileNotFoundError, PermissionError, ProcessLookupError, OSError):
             environment_keys = set()
         is_mpi_rank = bool(environment_keys & MPI_RANK_ENVIRONMENT_KEYS)
-        if is_cp2k or is_mpi_rank:
-            owners.append(
-                {
-                    "pid": int(entry.name),
+        try:
+            final_stat_state, final_starttime = linux_proc_stat_identity(
+                (entry / "stat").read_text(errors="replace")
+            )
+        except (FileNotFoundError, ProcessLookupError):
+            continue
+        except (PermissionError, OSError, ValueError):
+            if overlap or pid in ignored_identities:
+                owners.append({
+                    "pid": pid,
                     "name": name,
+                    "state": state,
                     "cpus_allowed_list": fields.get("Cpus_allowed_list", ""),
-                    "overlap": sorted(overlap),
+                    "overlap": sorted(selected),
                     "cp2k_process": is_cp2k,
                     "mpi_rank_process": is_mpi_rank,
-                }
-            )
+                    "process_identity_status": "final_identity_unreadable",
+                })
+            continue
+        if final_starttime != initial_starttime:
+            owners.append({
+                "pid": pid,
+                "name": name,
+                "state": state,
+                "cpus_allowed_list": fields.get("Cpus_allowed_list", ""),
+                "overlap": sorted(selected),
+                "cp2k_process": is_cp2k,
+                "mpi_rank_process": is_mpi_rank,
+                "process_identity_status": "pid_reused_during_scan",
+                "initial_process_starttime": initial_starttime,
+                "final_process_starttime": final_starttime,
+            })
+            continue
+        if ignored_identities.get(pid) == initial_starttime:
+            continue
+        if (
+            state.startswith(("Z", "X"))
+            or initial_stat_state in {"Z", "X"}
+            or final_stat_state in {"Z", "X"}
+            or not overlap
+            or not (is_cp2k or is_mpi_rank)
+        ):
+            continue
+        owners.append({
+            "pid": pid,
+            "name": name,
+            "state": state,
+            "cpus_allowed_list": fields.get("Cpus_allowed_list", ""),
+            "overlap": sorted(overlap),
+            "cp2k_process": is_cp2k,
+            "mpi_rank_process": is_mpi_rank,
+            "process_starttime": initial_starttime,
+            "process_identity_status": "stable",
+        })
     return sorted(owners, key=lambda owner: owner["pid"])
 
 
@@ -298,7 +361,9 @@ def _signal_process_group(process_group: int, sig: signal.Signals) -> None:
 
 
 def terminate_and_reap_process_group(
-    process: subprocess.Popen, term_timeout: float = 30.0
+    process: subprocess.Popen,
+    term_timeout: float = 30.0,
+    tracked_rank_starttimes: dict[int, int] | None = None,
 ) -> None:
     """TERM, then KILL, and retain the caller's locks until no rank is live.
 
@@ -307,43 +372,161 @@ def terminate_and_reap_process_group(
     retaining the launcher process and its locks until the kernel can reap it.
     """
     process_group = process.pid
+    tracked = dict(tracked_rank_starttimes or {})
+
+    def live_tracked_ranks() -> set[int]:
+        live: set[int] = set()
+        for pid, starttime in tracked.items():
+            resolution = process_terminal_resolution(pid, starttime)
+            if resolution is None or resolution == "identity_unreadable":
+                live.add(pid)
+        return live
+
+    def signal_tracked_ranks(sig: signal.Signals) -> None:
+        for pid in live_tracked_ranks():
+            try:
+                os.kill(pid, sig)
+            except ProcessLookupError:
+                pass
+
     _signal_process_group(process_group, signal.SIGTERM)
+    signal_tracked_ranks(signal.SIGTERM)
     deadline = time.monotonic() + term_timeout
     while time.monotonic() < deadline:
         process.poll()
         if process.returncode is not None and not live_process_group_members(
             process_group
-        ):
+        ) and not live_tracked_ranks():
             process.wait()
             return
         time.sleep(0.05)
 
     _signal_process_group(process_group, signal.SIGKILL)
+    signal_tracked_ranks(signal.SIGKILL)
     while True:
         process.poll()
         live_members = live_process_group_members(process_group)
-        if process.returncode is not None and not live_members:
+        live_ranks = live_tracked_ranks()
+        if process.returncode is not None and not live_members and not live_ranks:
             process.wait()
             return
         if live_members:
             _signal_process_group(process_group, signal.SIGKILL)
+        if live_ranks:
+            signal_tracked_ranks(signal.SIGKILL)
         time.sleep(0.05)
 
 
-def rank_snapshot(pid: int) -> dict | None:
-    root = Path("/proc") / str(pid)
+def linux_proc_stat_identity(stat_text: str) -> tuple[str, int]:
+    closing_parenthesis = stat_text.rfind(")")
+    if closing_parenthesis < 0:
+        raise ValueError("malformed Linux /proc PID stat record")
+    fields = stat_text[closing_parenthesis + 1 :].split()
+    if len(fields) <= 19:
+        raise ValueError("truncated Linux /proc PID stat record")
+    return fields[0], int(fields[19])
+
+
+def linux_process_starttime(
+    pid: int, proc_root: Path = Path("/proc")
+) -> int | None:
     try:
-        if (root / "exe").resolve(strict=True) != CP2K:
-            return None
-        status = (root / "status").read_text(errors="replace")
-        environment = {
-            key.decode(errors="replace"): value.decode(errors="replace")
-            for item in (root / "environ").read_bytes().split(b"\0")
-            if item and b"=" in item
-            for key, value in (item.split(b"=", 1),)
-        }
-    except (FileNotFoundError, PermissionError, ProcessLookupError, OSError):
+        _, starttime = linux_proc_stat_identity(
+            (proc_root / str(pid) / "stat").read_text(errors="replace")
+        )
+    except (
+        FileNotFoundError,
+        PermissionError,
+        ProcessLookupError,
+        OSError,
+        ValueError,
+    ):
         return None
+    return starttime
+
+
+def rank_snapshot(pid: int, proc_root: Path = Path("/proc")) -> dict | None:
+    root = proc_root / str(pid)
+    try:
+        stat_state, process_starttime = linux_proc_stat_identity(
+            (root / "stat").read_text(errors="replace")
+        )
+        initial_executable = (root / "exe").resolve(strict=True)
+        initial_status = (root / "status").read_text(errors="replace")
+        arguments = [
+            item.decode(errors="replace")
+            for item in (root / "cmdline").read_bytes().split(b"\0")
+            if item
+        ]
+    except (
+        FileNotFoundError,
+        PermissionError,
+        ProcessLookupError,
+        OSError,
+        ValueError,
+    ):
+        return None
+    try:
+        environment_bytes = (root / "environ").read_bytes()
+    except (FileNotFoundError, PermissionError, ProcessLookupError, OSError):
+        environment_bytes = b""
+        environment_read_status = "unreadable"
+    else:
+        environment_read_status = "available" if environment_bytes else "empty"
+    try:
+        final_status = (root / "status").read_text(errors="replace")
+        final_executable = (root / "exe").resolve(strict=True)
+        final_stat_state, final_process_starttime = linux_proc_stat_identity(
+            (root / "stat").read_text(errors="replace")
+        )
+    except FileNotFoundError:
+        process_identity_status = "disappeared_after_sample"
+        snapshot_consistency_status = "process_disappeared"
+        status = initial_status
+        executable = initial_executable
+    except (PermissionError, ProcessLookupError, OSError, ValueError):
+        process_identity_status = "identity_unreadable_after_sample"
+        snapshot_consistency_status = "final_identity_unreadable"
+        status = initial_status
+        executable = initial_executable
+    else:
+        initial_fields = {
+            key: value.strip()
+            for line in initial_status.splitlines()
+            if ":" in line
+            for key, value in (line.split(":", 1),)
+        }
+        final_fields = {
+            key: value.strip()
+            for line in final_status.splitlines()
+            if ":" in line
+            for key, value in (line.split(":", 1),)
+        }
+        status = final_status
+        executable = final_executable
+        if final_process_starttime != process_starttime:
+            process_identity_status = "pid_reused_during_sample"
+            snapshot_consistency_status = "pid_reused"
+        elif final_executable != initial_executable:
+            process_identity_status = "executable_changed_during_sample"
+            snapshot_consistency_status = "executable_changed"
+        elif final_fields.get("Cpus_allowed_list") != initial_fields.get(
+            "Cpus_allowed_list"
+        ):
+            process_identity_status = "cpu_mask_changed_during_sample"
+            snapshot_consistency_status = "cpu_mask_changed"
+        else:
+            stat_state = final_stat_state
+            process_identity_status = (
+                "terminal_state" if stat_state in {"Z", "X"} else "stable"
+            )
+            snapshot_consistency_status = "consistent"
+    environment = {
+        key.decode(errors="replace"): value.decode(errors="replace")
+        for item in environment_bytes.split(b"\0")
+        if item and b"=" in item
+        for key, value in (item.split(b"=", 1),)
+    }
     allowed_text = next(
         (
             line.split(":", 1)[1].strip()
@@ -360,80 +543,385 @@ def rank_snapshot(pid: int) -> dict | None:
         ),
         "",
     )
-    try:
-        rank = int(environment["OMPI_COMM_WORLD_RANK"])
-    except (KeyError, ValueError):
-        rank = None
+    rank = None
+    rank_value = environment.get("OMPI_COMM_WORLD_RANK")
+    if environment_read_status != "available":
+        rank_observation_status = f"environment_{environment_read_status}"
+    elif rank_value is None:
+        rank_observation_status = "explicit_missing"
+    else:
+        try:
+            rank = int(rank_value)
+        except ValueError:
+            rank_observation_status = "explicit_invalid"
+        else:
+            rank_observation_status = "explicit"
     return {
         "pid": pid,
         "rank": rank,
+        "raw_rank": rank,
         "state": state,
+        "stat_state": stat_state,
+        "process_starttime": process_starttime,
+        "process_identity_status": process_identity_status,
+        "snapshot_consistency_status": snapshot_consistency_status,
+        "rank_observation_status": rank_observation_status,
         "cpus_allowed_list": allowed_text,
+        "executable": str(executable),
+        "arguments": arguments,
+        "is_cp2k_rank": executable == CP2K,
     }
 
 
 def accumulate_rank_snapshot(
     previous: dict | None, snapshot: dict, expected_cpus: Sequence[int]
 ) -> dict:
-    rank = snapshot.get("rank")
+    accumulated = dict(snapshot)
+    sample_count = int(previous.get("sample_count", 0)) + 1 if previous else 1
+    if snapshot.get("is_cp2k_rank") is False:
+        if previous and previous.get("is_cp2k_rank") is True:
+            retained = dict(previous)
+            retained.update({
+                "sample_count": sample_count,
+                "last_observed_executable": snapshot.get("executable"),
+                "last_observed_process_identity_status": snapshot.get(
+                    "process_identity_status"
+                ),
+                "executable_changed_ever": True,
+                "current_sample_matches_assigned_singleton": False,
+                "affinity_violation_ever": True,
+            })
+            prior_starttime = previous.get("process_starttime")
+            current_starttime = snapshot.get("process_starttime")
+            if (
+                isinstance(prior_starttime, int)
+                and not isinstance(prior_starttime, bool)
+                and isinstance(current_starttime, int)
+                and not isinstance(current_starttime, bool)
+                and prior_starttime != current_starttime
+            ) or snapshot.get("process_identity_status") == "pid_reused_during_sample":
+                retained["process_starttime_changed_ever"] = True
+            return retained
+        return accumulated
+    raw_rank = snapshot.get("rank")
+    observation_status = snapshot.get("rank_observation_status")
+    if not isinstance(observation_status, str):
+        observation_status = (
+            "explicit"
+            if isinstance(raw_rank, int) and not isinstance(raw_rank, bool)
+            else "explicit_missing"
+        )
     mask_text = str(snapshot.get("cpus_allowed_list", ""))
     try:
         mask = parse_linux_cpu_list(mask_text)
     except ValueError:
         mask = set()
+    previous_rank = previous.get("rank") if previous else None
+    previous_pending = bool(
+        previous and previous.get("rank_environment_unavailable_pending")
+    )
+    previous_starttime = previous.get("process_starttime") if previous else None
+    current_starttime = snapshot.get("process_starttime")
+    starttimes_comparable = bool(
+        previous
+        and isinstance(previous_starttime, int)
+        and not isinstance(previous_starttime, bool)
+        and isinstance(current_starttime, int)
+        and not isinstance(current_starttime, bool)
+    )
+    identity_status = snapshot.get("process_identity_status", "stable")
+    same_process_identity = bool(
+        starttimes_comparable
+        and snapshot.get("pid") == previous.get("pid")
+        and current_starttime == previous_starttime
+        and previous.get("process_starttime_changed_ever") is not True
+        and identity_status
+        in {"stable", "terminal_state", "disappeared_after_sample"}
+    )
+    unavailable_environment = observation_status in {
+        "environment_empty",
+        "environment_unreadable",
+    }
+    previous_rank_proven = bool(
+        previous
+        and isinstance(previous_rank, int)
+        and not isinstance(previous_rank, bool)
+        and previous.get("observed_rank_ids") == [previous_rank]
+        and previous.get("rank_identity_changed_ever") is not True
+        and previous.get("affinity_violation_ever") is not True
+    )
+    retain_pending_rank = bool(
+        unavailable_environment
+        and previous_rank_proven
+        and same_process_identity
+        and 0 <= int(previous_rank) < len(expected_cpus)
+        and mask == {expected_cpus[int(previous_rank)]}
+    )
+    rank = previous_rank if retain_pending_rank else raw_rank
+    accumulated["rank"] = rank
+    accumulated["raw_rank"] = raw_rank
+    accumulated["rank_identity_source"] = (
+        "pending_terminal_environment_loss"
+        if retain_pending_rank
+        else "explicit_environment"
+        if observation_status == "explicit"
+        else "unproven"
+    )
     sample_matches = (
         isinstance(rank, int)
+        and not isinstance(rank, bool)
         and 0 <= rank < len(expected_cpus)
         and mask == {expected_cpus[rank]}
     )
     rank_history = list(previous.get("observed_rank_ids", [])) if previous else []
     mask_history = list(previous.get("observed_cpu_masks", [])) if previous else []
-    if rank not in rank_history:
-        rank_history.append(rank)
+    status_history = (
+        list(previous.get("observed_rank_observation_statuses", []))
+        if previous
+        else []
+    )
+    state_history = list(previous.get("observed_process_states", [])) if previous else []
+    starttime_history = (
+        list(previous.get("observed_process_starttimes", [])) if previous else []
+    )
+    if observation_status == "explicit" and raw_rank not in rank_history:
+        rank_history.append(raw_rank)
     if mask_text not in mask_history:
         mask_history.append(mask_text)
+    if observation_status not in status_history:
+        status_history.append(observation_status)
+    state_text = str(snapshot.get("state", ""))
+    if state_text and state_text not in state_history:
+        state_history.append(state_text)
+    if current_starttime is not None and current_starttime not in starttime_history:
+        starttime_history.append(current_starttime)
+    process_starttime_changed = bool(
+        identity_status == "pid_reused_during_sample"
+        or previous
+        and starttimes_comparable
+        and current_starttime != previous_starttime
+    )
+    process_snapshot_inconsistent = identity_status not in {
+        "stable",
+        "terminal_state",
+        "disappeared_after_sample",
+    }
+    explicit_rank_reappeared_after_loss = bool(
+        previous_pending and observation_status == "explicit"
+    )
     rank_identity_changed = bool(
         previous
+        and not retain_pending_rank
         and any(
-            isinstance(prior_rank, int) and prior_rank != rank
+            observation_status != "explicit"
+            or isinstance(prior_rank, int) and prior_rank != raw_rank
             for prior_rank in previous.get("observed_rank_ids", [])
         )
     )
-    return {
-        **snapshot,
-        "sample_count": int(previous.get("sample_count", 0)) + 1 if previous else 1,
+    environment_events = (
+        [dict(event) for event in previous.get("rank_environment_events", [])]
+        if previous
+        else []
+    )
+    if unavailable_environment:
+        environment_events.append({
+            "sample_index": sample_count,
+            "pid": snapshot.get("pid"),
+            "process_starttime": current_starttime,
+            "state": state_text,
+            "cpus_allowed_list": mask_text,
+            "environment_status": observation_status,
+            "terminal_resolution": (
+                "pending" if retain_pending_rank else "rejected_unproven"
+            ),
+        })
+    elif explicit_rank_reappeared_after_loss:
+        for event in environment_events:
+            if event.get("terminal_resolution") == "pending":
+                event["terminal_resolution"] = "explicit_rank_reappeared"
+    terminal_at_sample = identity_status in {
+        "terminal_state",
+        "disappeared_after_sample",
+    }
+    process_reappeared_after_terminal = bool(
+        previous
+        and previous.get("process_terminally_confirmed") is True
+        and not terminal_at_sample
+    )
+    if terminal_at_sample:
+        process_terminal_confirmation = (
+            f"terminal_state_{snapshot.get('stat_state')}"
+            if identity_status == "terminal_state"
+            else "process_disappeared"
+        )
+        process_terminally_confirmed = True
+    else:
+        process_terminal_confirmation = (
+            previous.get("process_terminal_confirmation") if previous else None
+        )
+        process_terminally_confirmed = bool(
+            previous and previous.get("process_terminally_confirmed")
+        )
+    if retain_pending_rank and terminal_at_sample:
+        resolution = (
+            f"terminal_state_{snapshot.get('stat_state')}"
+            if identity_status == "terminal_state"
+            else "process_disappeared"
+        )
+        for event in environment_events:
+            if event.get("terminal_resolution") == "pending":
+                event["terminal_resolution"] = resolution
+        pending_environment_loss = False
+        terminally_confirmed = True
+        terminal_confirmation = resolution
+    else:
+        pending_environment_loss = retain_pending_rank
+        terminally_confirmed = bool(
+            previous and previous.get("rank_environment_terminally_confirmed")
+        )
+        terminal_confirmation = (
+            previous.get("rank_environment_terminal_confirmation")
+            if previous
+            else None
+        )
+    accumulated.update({
+        "sample_count": sample_count,
         "observed_rank_ids": rank_history,
         "observed_cpu_masks": mask_history,
+        "observed_rank_observation_statuses": status_history,
+        "observed_process_states": state_history,
+        "observed_process_starttimes": starttime_history,
         "current_sample_matches_assigned_singleton": sample_matches,
+        "process_starttime_changed_ever": bool(
+            (previous and previous.get("process_starttime_changed_ever"))
+            or process_starttime_changed
+        ),
+        "process_terminally_confirmed": process_terminally_confirmed,
+        "process_terminal_confirmation": process_terminal_confirmation,
+        "process_reappeared_after_terminal_ever": bool(
+            (previous and previous.get("process_reappeared_after_terminal_ever"))
+            or process_reappeared_after_terminal
+        ),
+        "executable_changed_ever": bool(
+            (previous and previous.get("executable_changed_ever"))
+            or identity_status == "executable_changed_during_sample"
+        ),
+        "cpu_mask_changed_during_sample_ever": bool(
+            (previous and previous.get("cpu_mask_changed_during_sample_ever"))
+            or identity_status == "cpu_mask_changed_during_sample"
+        ),
+        "snapshot_unavailable_ever": bool(
+            previous and previous.get("snapshot_unavailable_ever")
+        ),
         "rank_identity_changed_ever": bool(
             (previous and previous.get("rank_identity_changed_ever"))
             or rank_identity_changed
+            or explicit_rank_reappeared_after_loss
         ),
+        "rank_environment_unavailable_ever": bool(
+            (previous and previous.get("rank_environment_unavailable_ever"))
+            or unavailable_environment
+        ),
+        "rank_environment_unavailable_sample_count": int(
+            previous.get("rank_environment_unavailable_sample_count", 0)
+            if previous
+            else 0
+        ) + int(unavailable_environment),
+        "rank_environment_unavailable_pending": pending_environment_loss,
+        "rank_environment_terminally_confirmed": terminally_confirmed,
+        "rank_environment_terminal_confirmation": terminal_confirmation,
+        "rank_environment_events": environment_events,
         "affinity_violation_ever": bool(
             (previous and previous.get("affinity_violation_ever"))
             or not sample_matches
             or rank_identity_changed
+            or process_starttime_changed
+            or process_snapshot_inconsistent
+            or process_reappeared_after_terminal
+            or explicit_rank_reappeared_after_loss
         ),
-    }
+    })
+    return accumulated
 
 
-def sample_rank_affinity(
-    launcher_pid: int, observed: dict[int, dict], expected_cpus: Sequence[int]
-) -> dict[int, list[int]]:
-    current = []
-    for pid in sorted(descendants(launcher_pid)):
-        snapshot = rank_snapshot(pid)
-        if snapshot is not None:
-            current.append(snapshot)
-            observed[pid] = accumulate_rank_snapshot(
-                observed.get(pid), snapshot, expected_cpus
-            )
+def process_terminal_resolution(
+    pid: int, expected_starttime: int, proc_root: Path = Path("/proc")
+) -> str | None:
+    root = proc_root / str(pid)
+    if not root.is_dir():
+        return "process_disappeared"
+    try:
+        state, starttime = linux_proc_stat_identity(
+            (root / "stat").read_text(errors="replace")
+        )
+    except FileNotFoundError:
+        return "process_disappeared"
+    except (PermissionError, ProcessLookupError, OSError, ValueError):
+        return "identity_unreadable"
+    if starttime != expected_starttime:
+        return "pid_reused"
+    if state in {"Z", "X"}:
+        return f"terminal_state_{state}"
+    return None
+
+
+def resolve_pending_rank_environment(record: dict, resolution: str) -> None:
+    terminal = resolution == "process_disappeared" or resolution.startswith(
+        "terminal_state_"
+    )
+    events = [dict(event) for event in record.get("rank_environment_events", [])]
+    for event in events:
+        if event.get("terminal_resolution") == "pending":
+            event["terminal_resolution"] = resolution
+    record["rank_environment_events"] = events
+    record["rank_environment_unavailable_pending"] = False
+    record["rank_environment_terminally_confirmed"] = terminal
+    record["rank_environment_terminal_confirmation"] = resolution
+    resolve_rank_process_lifetime(record, resolution)
+    if not terminal:
+        record["rank_identity_changed_ever"] = True
+
+
+def resolve_rank_process_lifetime(record: dict, resolution: str) -> None:
+    terminal = resolution == "process_disappeared" or resolution.startswith(
+        "terminal_state_"
+    )
+    record["process_terminally_confirmed"] = terminal
+    record["process_terminal_confirmation"] = resolution
+    if not terminal:
+        record["affinity_violation_ever"] = True
+        record["current_sample_matches_assigned_singleton"] = False
+        if resolution == "pid_reused":
+            record["process_starttime_changed_ever"] = True
+
+
+def observed_rank_process_is_still_live(
+    pid: int, record: dict, proc_root: Path = Path("/proc")
+) -> bool:
+    starttime = record.get("process_starttime")
+    if isinstance(starttime, int) and not isinstance(starttime, bool):
+        resolution = process_terminal_resolution(pid, starttime, proc_root)
+    else:
+        resolution = "identity_unreadable"
+    if resolution is None:
+        record["snapshot_unavailable_ever"] = True
+        record["current_sample_matches_assigned_singleton"] = False
+        record["affinity_violation_ever"] = True
+        return True
+    if record.get("rank_environment_unavailable_pending"):
+        resolve_pending_rank_environment(record, resolution)
+    else:
+        resolve_rank_process_lifetime(record, resolution)
+    return False
+
+
+def concurrent_rank_pid_groups(current: Sequence[dict]) -> dict[int, list[int]]:
     rank_pids: dict[int, set[int]] = {}
     for snapshot in current:
         if str(snapshot.get("state", "")).startswith(("Z", "X")):
             continue
         rank = snapshot.get("rank")
-        if isinstance(rank, int):
+        if isinstance(rank, int) and not isinstance(rank, bool):
             rank_pids.setdefault(rank, set()).add(int(snapshot["pid"]))
     return {
         rank: sorted(pids)
@@ -442,11 +930,75 @@ def sample_rank_affinity(
     }
 
 
+def runtime_external_owners(
+    launcher_pid: int,
+    launcher_starttime: int,
+    observed: dict[int, dict],
+    expected_cpus: Sequence[int],
+) -> list[dict]:
+    own_identities = {launcher_pid: launcher_starttime}
+    for pid, item in observed.items():
+        starttime = item.get("process_starttime")
+        if (
+            item.get("is_cp2k_rank") is True
+            and item.get("process_terminally_confirmed") is not True
+            and isinstance(starttime, int)
+            and not isinstance(starttime, bool)
+            and process_terminal_resolution(pid, starttime) is None
+        ):
+            own_identities[pid] = starttime
+    return live_compute_cpu_owners(
+        expected_cpus, ignore_process_identities=own_identities
+    )
+
+
+def tracked_rank_starttimes(observed: dict[int, dict]) -> dict[int, int]:
+    identities: dict[int, int] = {}
+    for pid, item in observed.items():
+        starttime = item.get("process_starttime")
+        if (
+            item.get("is_cp2k_rank") is True
+            and isinstance(starttime, int)
+            and not isinstance(starttime, bool)
+        ):
+            identities[pid] = starttime
+    return identities
+
+
+def sample_rank_affinity(
+    launcher_pid: int, observed: dict[int, dict], expected_cpus: Sequence[int]
+) -> dict[int, list[int]]:
+    current = []
+    tracked_rank_pids = {
+        pid
+        for pid, item in observed.items()
+        if item.get("is_cp2k_rank") is True
+        and item.get("process_terminally_confirmed") is not True
+    }
+    for pid in sorted(descendants(launcher_pid) | tracked_rank_pids):
+        snapshot = rank_snapshot(pid)
+        if snapshot is None:
+            tracked = observed.get(pid)
+            if tracked and tracked.get("is_cp2k_rank") is True:
+                if observed_rank_process_is_still_live(pid, tracked):
+                    current.append(tracked)
+            continue
+        if snapshot.get("is_cp2k_rank") is not True and pid not in observed:
+            continue
+        observed[pid] = accumulate_rank_snapshot(
+            observed.get(pid), snapshot, expected_cpus
+        )
+        current.append(observed[pid])
+    return concurrent_rank_pid_groups(current)
+
+
 def ordered_rank_proof(
     observed: dict[int, dict],
     ranks: int,
     expected_cpus: Sequence[int],
     concurrent_duplicate_rank_ids: set[int] | None = None,
+    *,
+    final: bool = True,
 ) -> list[dict]:
     groups: dict[int, list[dict]] = {}
     for item in observed.values():
@@ -467,11 +1019,30 @@ def ordered_rank_proof(
             }
         )
         exact = (
-            mask_history == [str(expected_cpus[rank])]
+            len(generations) == 1
+            and mask_history == [str(expected_cpus[rank])]
             and rank not in duplicates
             and all(
                 item.get("affinity_violation_ever") is False
                 and item.get("rank_identity_changed_ever") is not True
+                and item.get("process_starttime_changed_ever") is not True
+                and (
+                    not final
+                    or item.get("process_terminally_confirmed") is True
+                )
+                and item.get("process_reappeared_after_terminal_ever") is not True
+                and item.get("executable_changed_ever") is not True
+                and item.get("cpu_mask_changed_during_sample_ever") is not True
+                and item.get("snapshot_unavailable_ever") is not True
+                and (
+                    not final
+                    or item.get("rank_environment_unavailable_pending") is not True
+                )
+                and (
+                    not final
+                    or item.get("rank_environment_unavailable_ever") is not True
+                    or item.get("rank_environment_terminally_confirmed") is True
+                )
                 and item.get("current_sample_matches_assigned_singleton") is True
                 for item in generations
             )
@@ -500,9 +1071,13 @@ def ordered_rank_proof(
 
 
 def prove_initial_rank_affinity(
-    process: subprocess.Popen, ranks: int, expected_cpus: Sequence[int]
+    process: subprocess.Popen,
+    launcher_starttime: int,
+    observed: dict[int, dict],
+    ranks: int,
+    expected_cpus: Sequence[int],
+    runtime_overlap_samples: list[dict],
 ) -> tuple[dict[int, dict], set[int], list[dict], int]:
-    observed: dict[int, dict] = {}
     duplicate_rank_ids: set[int] = set()
     duplicate_rank_samples: list[dict] = []
     sample_index = 0
@@ -512,6 +1087,17 @@ def prove_initial_rank_affinity(
         duplicate_groups = sample_rank_affinity(
             process.pid, observed, expected_cpus
         )
+        external_owners = runtime_external_owners(
+            process.pid, launcher_starttime, observed, expected_cpus
+        )
+        if external_owners:
+            runtime_overlap_samples.append({
+                "sample_index": sample_index,
+                "owners": external_owners,
+            })
+            raise RuntimeError(
+                f"external live CP2K/MPI CPU overlap: {external_owners}"
+            )
         duplicate_rank_ids.update(duplicate_groups)
         if duplicate_groups:
             duplicate_rank_samples.append({
@@ -524,7 +1110,13 @@ def prove_initial_rank_affinity(
         if any(item.get("affinity_violation_ever") for item in observed.values()):
             raise RuntimeError(f"rank affinity mismatch before initial proof: {observed}")
         try:
-            ordered_rank_proof(observed, ranks, expected_cpus, duplicate_rank_ids)
+            ordered_rank_proof(
+                observed,
+                ranks,
+                expected_cpus,
+                duplicate_rank_ids,
+                final=False,
+            )
             return (
                 observed,
                 duplicate_rank_ids,
@@ -549,7 +1141,9 @@ def reported_binding_rank_ids(text: str) -> list[int]:
     )
 
 
-def run_one(job: tuple[dict, int, str], slot: int) -> str:
+def _run_one_inner(
+    job: tuple[dict, int, str], slot: int, lifecycle: dict
+) -> str:
     case, ranks, variant = job
     run_id = f"{case['name']}_p{ranks}_{variant.lower()}"
     run_dir = RUN_ROOT / run_id
@@ -620,6 +1214,8 @@ def run_one(job: tuple[dict, int, str], slot: int) -> str:
         "started_unix": time.time(),
         "timing_classification": "timing_pending_full_revalidation",
     }
+    lifecycle["run_dir"] = run_dir
+    lifecycle["runtime_overlap_samples"] = []
     (run_dir / "run.json").write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
     output_path = run_dir / "cp2k.out"
     launcher_log_path = run_dir / "launcher.log"
@@ -633,38 +1229,108 @@ def run_one(job: tuple[dict, int, str], slot: int) -> str:
             stderr=launcher_log,
             start_new_session=True,
         )
-        try:
-            (
+        lifecycle["process"] = process
+        launcher_starttime = linux_process_starttime(process.pid)
+        if Path("/proc").is_dir() and launcher_starttime is None:
+            raise RuntimeError(
+                "could not prove the MPI launcher PID/starttime identity"
+            )
+        lifecycle["launcher_starttime"] = launcher_starttime
+        runtime_overlap_samples = lifecycle["runtime_overlap_samples"]
+        observed: dict[int, dict] = {}
+        lifecycle["observed"] = observed
+        (
+            observed,
+            duplicate_rank_ids,
+            duplicate_rank_samples,
+            affinity_sample_index,
+        ) = prove_initial_rank_affinity(
+            process,
+            int(launcher_starttime or 0),
+            observed,
+            ranks,
+            pe_cpus,
+            runtime_overlap_samples,
+        )
+        while process.poll() is None:
+            affinity_sample_index += 1
+            duplicate_groups = sample_rank_affinity(
+                process.pid, observed, pe_cpus
+            )
+            external_owners = runtime_external_owners(
+                process.pid,
+                int(launcher_starttime or 0),
                 observed,
+                pe_cpus,
+            )
+            if external_owners:
+                runtime_overlap_samples.append({
+                    "sample_index": affinity_sample_index,
+                    "owners": external_owners,
+                })
+                raise RuntimeError(
+                    f"external live CP2K/MPI CPU overlap: {external_owners}"
+                )
+            duplicate_rank_ids.update(duplicate_groups)
+            if duplicate_groups:
+                duplicate_rank_samples.append({
+                    "sample_index": affinity_sample_index,
+                    "rank_pid_groups": [
+                        {"rank": rank, "pids": pids}
+                        for rank, pids in duplicate_groups.items()
+                    ],
+                })
+            ordered_rank_proof(
+                observed,
+                ranks,
+                pe_cpus,
                 duplicate_rank_ids,
-                duplicate_rank_samples,
-                affinity_sample_index,
-            ) = prove_initial_rank_affinity(process, ranks, pe_cpus)
-            while process.poll() is None:
-                affinity_sample_index += 1
-                duplicate_groups = sample_rank_affinity(
-                    process.pid, observed, pe_cpus
-                )
-                duplicate_rank_ids.update(duplicate_groups)
-                if duplicate_groups:
-                    duplicate_rank_samples.append({
-                        "sample_index": affinity_sample_index,
-                        "rank_pid_groups": [
-                            {"rank": rank, "pids": pids}
-                            for rank, pids in duplicate_groups.items()
-                        ],
-                    })
-                ordered_rank_proof(
-                    observed, ranks, pe_cpus, duplicate_rank_ids
-                )
-                time.sleep(0.01)
-        except Exception:
-            terminate_and_reap_process_group(process)
-            raise
+                final=False,
+            )
+            time.sleep(0.01)
         returncode = process.wait()
     wall = time.perf_counter() - started
+    for pid, item in observed.items():
+        if item.get("process_terminally_confirmed") is True:
+            continue
+        starttime = item.get("process_starttime")
+        if isinstance(starttime, int) and not isinstance(starttime, bool):
+            resolution = process_terminal_resolution(pid, starttime)
+        else:
+            resolution = "identity_unreadable"
+        resolution = resolution or "launcher_ended_while_process_live"
+        if item.get("rank_environment_unavailable_pending"):
+            resolve_pending_rank_environment(item, resolution)
+        else:
+            resolve_rank_process_lifetime(item, resolution)
+    live_after_launcher = {
+        pid
+        for pid, item in observed.items()
+        if item.get("process_terminally_confirmed") is not True
+    }
+    live_group_members = live_process_group_members(process.pid)
+    if live_after_launcher or live_group_members:
+        terminate_and_reap_process_group(
+            process,
+            tracked_rank_starttimes=tracked_rank_starttimes(observed),
+        )
+        returncode = 97
+        for pid, item in observed.items():
+            if item.get("process_terminally_confirmed") is True:
+                continue
+            starttime = item.get("process_starttime")
+            resolution = (
+                process_terminal_resolution(pid, starttime)
+                if isinstance(starttime, int) and not isinstance(starttime, bool)
+                else "identity_unreadable"
+            )
+            resolution = resolution or "process_still_live_after_group_cleanup"
+            if item.get("rank_environment_unavailable_pending"):
+                resolve_pending_rank_environment(item, resolution)
+            else:
+                resolve_rank_process_lifetime(item, resolution)
     affinity = ordered_rank_proof(
-        observed, ranks, pe_cpus, duplicate_rank_ids
+        observed, ranks, pe_cpus, duplicate_rank_ids, final=True
     )
     launcher_text = launcher_log_path.read_text(errors="replace")
     binding_ranks = reported_binding_rank_ids(launcher_text)
@@ -672,6 +1338,7 @@ def run_one(job: tuple[dict, int, str], slot: int) -> str:
         binding_ranks == list(range(ranks))
         and len(affinity) == ranks
         and all(item.get("affinity_violation_ever") is False for item in affinity)
+        and not lifecycle["runtime_overlap_samples"]
     )
     if returncode == 0 and not runtime_affinity_gate:
         returncode = 97
@@ -699,6 +1366,12 @@ def run_one(job: tuple[dict, int, str], slot: int) -> str:
         "launcher_log": launcher_log_path.name,
         "launcher_log_sha256": sha256(launcher_log_path),
         "runtime_affinity_gate": runtime_affinity_gate,
+        "live_compute_overlap_runtime_gate": not lifecycle[
+            "runtime_overlap_samples"
+        ],
+        "live_compute_overlap_runtime_samples": lifecycle[
+            "runtime_overlap_samples"
+        ],
         "timing_classification": (
             "production_scaling_eligible"
             if returncode == 0 and runtime_affinity_gate
@@ -718,6 +1391,41 @@ def run_one(job: tuple[dict, int, str], slot: int) -> str:
     if variant == "QUALIFY" and "GXTB-QUALIFICATION_ONLY MIXER-STAR" not in text:
         raise RuntimeError(f"{run_id}: missing qualification marker")
     return f"COMPLETE\t{run_id}\t{wall:.3f}s\tPE={pe_list}"
+
+
+def run_one(job: tuple[dict, int, str], slot: int) -> str:
+    """Run one isolated case and drain every spawned task on any failure."""
+    lifecycle: dict = {}
+    try:
+        return _run_one_inner(job, slot, lifecycle)
+    except BaseException as error:
+        process = lifecycle.get("process")
+        if process is not None:
+            terminate_and_reap_process_group(
+                process,
+                tracked_rank_starttimes=tracked_rank_starttimes(
+                    lifecycle.get("observed", {})
+                ),
+            )
+        run_dir = lifecycle.get("run_dir")
+        if isinstance(run_dir, Path):
+            record_path = run_dir / "run.json"
+            try:
+                record = json.loads(record_path.read_text())
+            except (FileNotFoundError, OSError, json.JSONDecodeError):
+                record = {}
+            samples = lifecycle.get("runtime_overlap_samples", [])
+            record.update({
+                "returncode": 97,
+                "live_compute_overlap_runtime_gate": not samples,
+                "live_compute_overlap_runtime_samples": samples,
+                "timing_classification": "timing_non_scaling",
+                "monitor_failure": f"{type(error).__name__}: {error}",
+            })
+            record_path.write_text(
+                json.dumps(record, indent=2, sort_keys=True) + "\n"
+            )
+        raise
 
 
 def main() -> int:

@@ -37,15 +37,31 @@ MPI-rank masks that overlap the requested CPUs.  The exact launcher contract is
 --report-bindings -np <ranks> <cp2k> -i <absolute-input>`; no user-supplied MPI
 arguments are accepted.  Each rank is monitored by `OMPI_COMM_WORLD_RANK`
 throughout its lifetime and cross-checked against the complete Open MPI binding
-report.  Sequential same-rank/same-mask PID generations are aggregated.  Rank
-migration, changed successor masks, unranked CP2K processes, and concurrently
-live duplicate-rank PIDs remain sticky failures.  Raw child histories and any
+report.  Exactly one immutable `(PID,starttime)` generation is required for
+each rank; any successor generation, rank migration, unranked CP2K process, or
+concurrently live duplicate-rank PID remains a sticky failure.  Raw child histories and any
 temporal duplicate-rank samples are persisted; the verifier reconstructs every
 aggregate before accepting timing evidence. All inherited `OMPI_MCA_*` and `PRTE_MCA_*`
 variables, including indirect MCA parameter-file selectors, are removed before
-launch. On a proof failure the complete process group receives `SIGTERM`, then
-`SIGKILL` after the timeout; CPU locks remain held until no live group member
-remains and the launcher has been reaped.
+launch.  During every sample, the same hostwide overlap scan is repeated;
+only exact, pre/post-revalidated `(PID,starttime)` identities of the launcher
+and proven ranks are excluded.  On a proof or monitor failure the complete
+process group and any directly tracked escaped ranks receive `SIGTERM`, then
+`SIGKILL` after the timeout.  CPU locks remain held until no live group member
+or tracked rank remains and the launcher has been reaped.
+
+Linux may clear or make `/proc/<pid>/environ` unreadable during task teardown.
+That observation is not treated as an unranked process and is not ignored.  It
+enters a provisional terminal state only after one explicit rank was proven,
+provided `(PID, /proc/<pid>/stat:starttime)` and the assigned singleton CPU mask
+are unchanged and no prior violation exists.  The retained effective rank is
+still used for concurrent duplicate detection, and the PID is followed
+directly if it drops out of the launcher descendant list.  Final acceptance
+requires the same task to reach `Z`/`X` or disappear plus the complete launcher
+binding report.  A live task after launcher exit, PID reuse, changed mask,
+nonempty environment with missing/invalid rank, or a later readable rank all
+fail sticky.  The verifier reconstructs the ordered environment-loss events,
+start time, raw rank, and terminal resolution.
 
 Every successfully flocked handle is registered before lock-file JSON, flush,
 or `fsync`.  A `BaseException` during any of those metadata steps closes both

@@ -1,0 +1,42 @@
+Host: terok
+Date: 2026-07-17 CEST
+Staging directory: /home/kuehne88/work/gxtb-production-binding-review-20260717
+No CP2K matrix calculation was launched.
+The unittest module/class suffixes were removed from the verbose lines below;
+test names, statuses, count, and elapsed time are unchanged.
+
+$ python3 -m unittest -v tests.test_benchmark_execution
+test_affinity_violation_is_sticky_across_rank_samples ... ok
+test_all_inherited_ompi_prte_mca_environment_is_removed ... ok
+test_cleanup_also_drains_tracked_rank_outside_launcher_group ... ok
+test_concurrently_live_duplicate_rank_and_rank_migration_fail_sticky ... ok
+test_cross_process_cpu_reservation_fails_closed_on_overlap ... ok
+test_openmpi5_binding_report_is_recognized_case_insensitively ... ok
+test_ordered_pe_lists_must_be_literal_exact_and_disjoint ... ok
+test_pe_list_length_and_thread_count_fail_closed ... ok
+test_pool_constructor_releases_reservations_after_late_failure ... ok
+test_pool_contract_injects_ordered_core_binding_without_taskset ... ok
+test_pool_releases_current_lock_after_metadata_baseexception ... ok
+test_pool_releases_locks_after_final_initialization_baseexception ... ok
+test_post_popen_baseexception_drains_group_before_reusing_pe_list ... ok
+test_proc_stat_parser_and_stable_rank_snapshot ... ok
+test_procfs_preflight_rejects_live_cp2k_overlap_and_ignores_zombie ... ok
+test_rank_environment_loss_rejects_nonterminal_and_identity_anomalies ... ok
+test_rank_generation_aggregation_rejects_successors_and_mask_change ... ok
+test_rank_processes_are_ordered_by_ompi_rank_not_pid ... ok
+test_record_accepts_external_output_and_rejects_artifact_tamper ... ok
+test_record_rejects_command_and_cp2k_binary_tamper ... ok
+test_reservation_metadata_flush_and_fsync_baseexceptions_release_lock ... ok
+test_runtime_owner_exclusion_revalidates_pid_starttime ... ok
+test_schema_v1_remains_readable_but_timing_is_non_scaling ... ok
+test_schema_v2_record_requires_per_rank_singletons_and_hashed_log ... ok
+test_smt_core_topology_fails_before_launch ... ok
+test_terminal_environment_loss_is_pending_then_strictly_resolved ... ok
+test_terminal_environment_loss_preserves_duplicate_rank_detection ... ok
+test_terminal_resolver_requires_same_process_identity ... ok
+test_user_launcher_arguments_cannot_override_binding ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 2.669s
+
+OK

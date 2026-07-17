@@ -75,6 +75,270 @@ def expanded_cases() -> list[dict]:
     return result
 
 
+def validate_rank_process_provenance(
+    item: dict, rank: int, expected_executable: str
+) -> None:
+    """Require one immutable, terminally resolved Linux task per rank."""
+    required_fields = {
+        "pid",
+        "rank",
+        "raw_rank",
+        "rank_identity_source",
+        "rank_observation_status",
+        "is_cp2k_rank",
+        "executable",
+        "arguments",
+        "sample_count",
+        "process_starttime",
+        "observed_process_starttimes",
+        "process_identity_status",
+        "snapshot_consistency_status",
+        "stat_state",
+        "state",
+        "observed_process_states",
+        "observed_rank_observation_statuses",
+        "process_terminally_confirmed",
+        "process_terminal_confirmation",
+        "current_sample_matches_assigned_singleton",
+        "affinity_violation_ever",
+        "rank_identity_changed_ever",
+        "process_starttime_changed_ever",
+        "process_reappeared_after_terminal_ever",
+        "executable_changed_ever",
+        "cpu_mask_changed_during_sample_ever",
+        "snapshot_unavailable_ever",
+    }
+    if not required_fields.issubset(item):
+        raise RuntimeError("missing CP2K rank process provenance")
+    pid = item.get("pid")
+    raw_rank = item.get("raw_rank")
+    starttime = item.get("process_starttime")
+    sample_count = item.get("sample_count")
+    statuses = item.get("observed_rank_observation_statuses")
+    states = item.get("observed_process_states")
+    confirmation = item.get("process_terminal_confirmation")
+    arguments = item.get("arguments")
+    argument_zero_matches = False
+    if (
+        isinstance(arguments, list)
+        and arguments
+        and all(isinstance(argument, str) for argument in arguments)
+    ):
+        try:
+            argument_zero_matches = (
+                str(Path(arguments[0]).resolve(strict=True))
+                == expected_executable
+            )
+        except (FileNotFoundError, OSError):
+            argument_zero_matches = False
+    terminal_confirmation = confirmation == "process_disappeared" or (
+        isinstance(confirmation, str)
+        and confirmation in {"terminal_state_Z", "terminal_state_X"}
+    )
+    unavailable = item.get("rank_environment_unavailable_ever") is True
+    sticky_failure_fields = (
+        "affinity_violation_ever",
+        "rank_identity_changed_ever",
+        "process_starttime_changed_ever",
+        "process_reappeared_after_terminal_ever",
+        "executable_changed_ever",
+        "cpu_mask_changed_during_sample_ever",
+        "snapshot_unavailable_ever",
+    )
+    if (
+        item.get("is_cp2k_rank") is not True
+        or not isinstance(pid, int)
+        or isinstance(pid, bool)
+        or pid <= 0
+        or item.get("rank") != rank
+        or item.get("executable") != expected_executable
+        or not argument_zero_matches
+        or not isinstance(sample_count, int)
+        or isinstance(sample_count, bool)
+        or sample_count < 1
+        or not isinstance(starttime, int)
+        or isinstance(starttime, bool)
+        or starttime < 0
+        or item.get("observed_process_starttimes") != [starttime]
+        or any(
+            not isinstance(value, int) or isinstance(value, bool)
+            for value in item.get("observed_process_starttimes", [])
+        )
+        or any(item.get(field) is not False for field in sticky_failure_fields)
+        or item.get("process_terminally_confirmed") is not True
+        or not terminal_confirmation
+        or item.get("process_identity_status")
+        not in {"stable", "terminal_state", "disappeared_after_sample"}
+        or item.get("snapshot_consistency_status")
+        not in {"consistent", "process_disappeared"}
+        or not isinstance(item.get("stat_state"), str)
+        or not re.fullmatch(r"[RSDZTtXIWP]", str(item.get("stat_state")))
+        or not isinstance(item.get("state"), str)
+        or not re.fullmatch(
+            r"[RSDZTtXIWP](?:\s+\([^\r\n]*\))?", str(item.get("state"))
+        )
+        or not isinstance(states, list)
+        or not states
+        or any(
+            not isinstance(state, str)
+            or not re.fullmatch(r"[RSDZTtXIWP](?:\s+\([^\r\n]*\))?", state)
+            for state in states
+        )
+        or len(states) != len(set(states))
+        or len(states) > sample_count
+        or item.get("state") not in states
+        or not isinstance(statuses, list)
+        or not statuses
+        or any(not isinstance(status, str) for status in statuses)
+        or len(statuses) != len(set(statuses))
+        or len(statuses) > sample_count
+        or statuses[0] != "explicit"
+        or item.get("rank_observation_status") != statuses[-1]
+    ):
+        raise RuntimeError("invalid CP2K rank process provenance")
+
+    if unavailable:
+        if (
+            raw_rank is not None
+            or item.get("rank_identity_source")
+            != "pending_terminal_environment_loss"
+        ):
+            raise RuntimeError("invalid CP2K rank process provenance")
+    elif (
+        raw_rank != rank
+        or isinstance(raw_rank, bool)
+        or statuses != ["explicit"]
+        or item.get("rank_observation_status") != "explicit"
+        or item.get("rank_identity_source") != "explicit_environment"
+    ):
+        raise RuntimeError("invalid CP2K rank process provenance")
+
+    identity_status = item.get("process_identity_status")
+    consistency_status = item.get("snapshot_consistency_status")
+    stat_state = item.get("stat_state")
+    if (
+        identity_status == "disappeared_after_sample"
+        and (
+            confirmation != "process_disappeared"
+            or consistency_status != "process_disappeared"
+        )
+    ) or (
+        identity_status == "terminal_state"
+        and (
+            confirmation != f"terminal_state_{stat_state}"
+            or consistency_status != "consistent"
+        )
+    ) or (
+        identity_status == "stable" and consistency_status != "consistent"
+    ) or (
+        identity_status == "stable" and stat_state in {"Z", "X"}
+    ):
+        raise RuntimeError("inconsistent CP2K rank terminal provenance")
+
+
+def validate_rank_environment_evidence(item: dict, expected_mask: str) -> None:
+    required_fields = {
+        "rank_environment_unavailable_ever",
+        "rank_environment_unavailable_pending",
+        "rank_environment_terminally_confirmed",
+        "rank_environment_terminal_confirmation",
+        "rank_environment_unavailable_sample_count",
+        "rank_environment_events",
+    }
+    if not required_fields.issubset(item):
+        raise RuntimeError("missing terminal rank-environment evidence")
+    unavailable_sample_count = item.get(
+        "rank_environment_unavailable_sample_count"
+    )
+    if not isinstance(unavailable_sample_count, int) or isinstance(
+        unavailable_sample_count, bool
+    ):
+        raise RuntimeError("invalid terminal rank-environment sample count")
+    unavailable = item.get("rank_environment_unavailable_ever") is True
+    if not unavailable:
+        if (
+            item.get("rank_environment_unavailable_ever") is not False
+            or item.get("rank_environment_unavailable_pending") is not False
+            or item.get("rank_environment_terminally_confirmed") is not False
+            or item.get("rank_environment_terminal_confirmation") is not None
+            or item.get("rank_environment_unavailable_sample_count") != 0
+            or item.get("rank_environment_events") != []
+        ):
+            raise RuntimeError("inconsistent terminal rank-environment evidence")
+        return
+
+    pid = item.get("pid")
+    sample_count = item.get("sample_count")
+    starttime = item.get("process_starttime")
+    statuses = item.get("observed_rank_observation_statuses")
+    events = item.get("rank_environment_events")
+    confirmation = item.get("rank_environment_terminal_confirmation")
+    terminal_confirmation = confirmation == "process_disappeared" or (
+        isinstance(confirmation, str)
+        and confirmation in {"terminal_state_Z", "terminal_state_X"}
+    )
+    if (
+        not isinstance(pid, int)
+        or isinstance(pid, bool)
+        or not isinstance(sample_count, int)
+        or isinstance(sample_count, bool)
+        or not isinstance(starttime, int)
+        or isinstance(starttime, bool)
+        or item.get("observed_process_starttimes") != [starttime]
+        or item.get("process_starttime_changed_ever") is not False
+        or item.get("rank_environment_unavailable_pending") is not False
+        or item.get("rank_environment_terminally_confirmed") is not True
+        or not terminal_confirmation
+        or confirmation != item.get("process_terminal_confirmation")
+        or item.get("rank_identity_source")
+        != "pending_terminal_environment_loss"
+        or item.get("raw_rank") is not None
+        or not isinstance(statuses, list)
+        or not statuses
+        or statuses[0] != "explicit"
+        or not isinstance(events, list)
+        or not events
+        or item.get("rank_environment_unavailable_sample_count") != len(events)
+    ):
+        raise RuntimeError("invalid terminal rank-environment evidence")
+
+    expected_statuses = ["explicit"]
+    previous_sample_index = 0
+    for event in events:
+        if not isinstance(event, dict):
+            raise RuntimeError("invalid terminal rank-environment evidence")
+        event_status = event.get("environment_status")
+        event_sample_index = event.get("sample_index")
+        if (
+            not isinstance(event_sample_index, int)
+            or isinstance(event_sample_index, bool)
+            or event_sample_index <= previous_sample_index
+            or event_sample_index > sample_count
+            or event_sample_index < 2
+            or not isinstance(event.get("pid"), int)
+            or isinstance(event.get("pid"), bool)
+            or event.get("pid") != pid
+            or not isinstance(event.get("process_starttime"), int)
+            or isinstance(event.get("process_starttime"), bool)
+            or event.get("process_starttime") != starttime
+            or event.get("cpus_allowed_list") != expected_mask
+            or event_status not in {"environment_empty", "environment_unreadable"}
+            or event.get("terminal_resolution") != confirmation
+            or event.get("state") not in item.get("observed_process_states", [])
+        ):
+            raise RuntimeError("invalid terminal rank-environment event sequence")
+        previous_sample_index = event_sample_index
+        if event_status not in expected_statuses:
+            expected_statuses.append(str(event_status))
+    if statuses != expected_statuses:
+        raise RuntimeError("invalid terminal rank-environment status history")
+    if (
+        events[-1].get("sample_index") != sample_count
+        or events[-1].get("state") != item.get("state")
+    ):
+        raise RuntimeError("invalid terminal rank-environment final sample")
+
+
 def revalidated_rank_evidence(
     metadata: dict, ranks: int, expected_cpus: tuple[int, ...]
 ) -> list[dict]:
@@ -139,6 +403,12 @@ def revalidated_rank_evidence(
     duplicate_ids = metadata.get("concurrent_duplicate_rank_ids_ever")
     if (
         not isinstance(duplicate_ids, list)
+        or any(
+            not isinstance(rank, int)
+            or isinstance(rank, bool)
+            or not 0 <= rank < ranks
+            for rank in duplicate_ids
+        )
         or duplicate_ids != sorted(derived_duplicate_ids)
         or metadata.get("concurrent_duplicate_rank_processes_ever")
         is not bool(derived_duplicate_ids)
@@ -146,26 +416,33 @@ def revalidated_rank_evidence(
         raise RuntimeError("inconsistent concurrent-rank summary")
 
     groups: dict[int, list[dict]] = {}
+    expected_executable = str(Path(str(metadata.get("cp2k", ""))).resolve())
     for item in children:
         rank = item.get("rank")
         if not isinstance(rank, int) or isinstance(rank, bool) or not 0 <= rank < ranks:
             raise RuntimeError("invalid observed MPI rank identity")
         expected_mask = str(expected_cpus[rank])
+        validate_rank_process_provenance(item, rank, expected_executable)
+        validate_rank_environment_evidence(item, expected_mask)
         if (
             item.get("observed_rank_ids") != [rank]
+            or any(
+                not isinstance(value, int) or isinstance(value, bool)
+                for value in item.get("observed_rank_ids", [])
+            )
             or item.get("observed_cpu_masks") != [expected_mask]
             or item.get("cpus_allowed_list") != expected_mask
             or not isinstance(item.get("sample_count"), int)
             or isinstance(item.get("sample_count"), bool)
             or item["sample_count"] < 1
             or item.get("current_sample_matches_assigned_singleton") is not True
-            or item.get("rank_identity_changed_ever") is not False
-            or item.get("affinity_violation_ever") is not False
         ):
             raise RuntimeError("invalid singleton rank-affinity child history")
         groups.setdefault(rank, []).append(item)
     if sorted(groups) != list(range(ranks)):
         raise RuntimeError("logical MPI rank set is incomplete")
+    if any(len(generations) != 1 for generations in groups.values()):
+        raise RuntimeError("multiple MPI rank PID generations are not scaling-eligible")
 
     recomputed: list[dict] = []
     for rank in range(ranks):
@@ -257,6 +534,21 @@ def checked_run(case: dict, variant: str) -> tuple[dict, str]:
             raise RuntimeError(f"rank-evidence revalidation failed: {run_dir}") from error
         if affinity != recomputed_affinity:
             raise RuntimeError(f"derived rank-affinity summary mismatch: {run_dir}")
+        if any(
+            not isinstance(item, dict)
+            or not isinstance(item.get("rank"), int)
+            or isinstance(item.get("rank"), bool)
+            or not isinstance(item.get("pid"), int)
+            or isinstance(item.get("pid"), bool)
+            or not isinstance(item.get("pid_generations"), list)
+            or len(item["pid_generations"]) != 1
+            or any(
+                not isinstance(pid, int) or isinstance(pid, bool)
+                for pid in item["pid_generations"]
+            )
+            for item in affinity
+        ):
+            raise RuntimeError(f"invalid derived rank-affinity field types: {run_dir}")
         if [item.get("rank") for item in affinity] != list(range(case["ranks"])):
             raise RuntimeError(f"MPI rank ordering mismatch: {run_dir}")
         if any(
@@ -274,6 +566,12 @@ def checked_run(case: dict, variant: str) -> tuple[dict, str]:
             raise RuntimeError(f"CPU reservation gate failed: {run_dir}")
         if metadata.get("live_compute_overlap_preflight_gate") is not True:
             raise RuntimeError(f"live CPU-overlap preflight failed: {run_dir}")
+        if metadata.get("live_compute_overlap_preflight_owners") != []:
+            raise RuntimeError(f"live CPU-overlap preflight owners recorded: {run_dir}")
+        if metadata.get("live_compute_overlap_runtime_gate") is not True:
+            raise RuntimeError(f"runtime live CPU-overlap gate failed: {run_dir}")
+        if metadata.get("live_compute_overlap_runtime_samples") != []:
+            raise RuntimeError(f"runtime live CPU-overlap was recorded: {run_dir}")
         if metadata.get("concurrent_duplicate_rank_processes_ever") is not False:
             raise RuntimeError(f"concurrently live duplicate MPI rank: {run_dir}")
         pid_generations = metadata.get("observed_cp2k_rank_pid_generations")
@@ -283,14 +581,16 @@ def checked_run(case: dict, variant: str) -> tuple[dict, str]:
             or any(
                 item.get("pid_generations") != pid_generations[index]
                 or not isinstance(pid_generations[index], list)
-                or not pid_generations[index]
+                or len(pid_generations[index]) != 1
+                or any(
+                    not isinstance(pid, int) or isinstance(pid, bool)
+                    for pid in pid_generations[index]
+                )
                 for index, item in enumerate(affinity)
             )
         ):
             raise RuntimeError(f"invalid MPI rank PID-generation proof: {run_dir}")
-        if metadata.get("observed_cp2k_process_generation_count") != sum(
-            len(generations) for generations in pid_generations
-        ):
+        if metadata.get("observed_cp2k_process_generation_count") != case["ranks"]:
             raise RuntimeError(f"MPI rank process-generation count mismatch: {run_dir}")
         launcher = Path(metadata.get("mpi_launcher", ""))
         if not launcher.is_file() or metadata.get("mpi_launcher_sha256") != sha256(launcher):
