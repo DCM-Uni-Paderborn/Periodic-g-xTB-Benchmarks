@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import inspect
 import json
+import os
 import sys
 import tempfile
+import threading
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -27,6 +31,10 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
         state: str = "R (running)",
         stat_state: str = "R",
     ) -> dict[str, object]:
+        thread_process_status = {
+            "terminal_state": "terminal_process",
+            "disappeared_after_sample": "process_disappeared_after_sample",
+        }.get(identity_status, "live")
         return {
             "pid": pid,
             "is_cp2k_rank": True,
@@ -40,6 +48,25 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
             "stat_state": stat_state,
             "executable": "/tmp/cp2k.psmp",
             "arguments": ["/tmp/cp2k.psmp"],
+            "thread_affinity_evidence_source": (
+                execution.THREAD_AFFINITY_EVIDENCE_SOURCE
+            ),
+            "thread_affinity_scan_status": "consistent",
+            "thread_affinity_scan_issues": [],
+            "thread_affinity_process_status": thread_process_status,
+            "live_thread_affinity": [
+                {
+                    "tid": pid,
+                    "thread_starttime": starttime,
+                    "observed_thread_starttimes": [starttime],
+                    "state": state,
+                    "stat_state": stat_state,
+                    "cpus_allowed_list": cpu,
+                    "observed_cpu_masks": [cpu],
+                    "live": stat_state not in {"Z", "X"},
+                    "identity_status": "stable",
+                }
+            ],
         }
 
     def valid_record_fixture(
@@ -241,6 +268,49 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
             ],
         )
 
+    def test_poisoned_binding_and_preload_environment_is_hermetic(self) -> None:
+        poisoned = {
+            "OMPI_MCA_hwloc_base_binding_policy": "none",
+            "PRTE_MCA_rmaps_default_mapping_policy": "slot",
+            "PMIX_MCA_gds": "hash",
+            "HWLOC_XMLFILE": "/tmp/foreign-topology.xml",
+            "GOMP_CPU_AFFINITY": "0-255",
+            "KMP_AFFINITY": "disabled",
+            "OMP_NUM_THREADS": "99",
+            "OMP_PLACES": "threads",
+            "LD_PRELOAD": "/tmp/repin.so",
+            "LD_AUDIT": "/tmp/audit.so",
+            "I_MPI_PIN_PROCESSOR_LIST": "0",
+            "MV2_ENABLE_AFFINITY": "0",
+            "SLURM_CPU_BIND": "none",
+            "LD_LIBRARY_PATH": "/pinned/cp2k/provider",
+            "PATH": "/usr/bin:/bin",
+        }
+        sanitized, removed, library_path_preserved = (
+            execution.sanitized_launch_environment(poisoned)
+        )
+        expected_removed = set(poisoned) - {"LD_LIBRARY_PATH", "PATH"}
+        self.assertEqual(set(removed), expected_removed)
+        self.assertTrue(library_path_preserved)
+        self.assertEqual(
+            sanitized["LD_LIBRARY_PATH"], "/pinned/cp2k/provider"
+        )
+        self.assertEqual(sanitized["PATH"], "/usr/bin:/bin")
+        self.assertEqual(
+            {key: sanitized[key] for key in execution.SANCTIONED_THREAD_ENVIRONMENT},
+            execution.SANCTIONED_THREAD_ENVIRONMENT,
+        )
+        self.assertEqual(
+            [
+                key
+                for key in execution.mpi_control_environment_keys(sanitized)
+                if key not in execution.SANCTIONED_THREAD_ENVIRONMENT
+            ],
+            [],
+        )
+        self.assertNotIn("LD_PRELOAD", sanitized)
+        self.assertNotIn("LD_AUDIT", sanitized)
+
     def test_openmpi5_binding_report_is_recognized_case_insensitively(self) -> None:
         text = (
             "[terok:48321] Rank 0 bound to package 1[core 36[hwt 0]]\n"
@@ -267,22 +337,12 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
     def test_affinity_violation_is_sticky_across_rank_samples(self) -> None:
         bad = execution._accumulate_process_snapshot(
             None,
-            {
-                "pid": 10,
-                "is_cp2k_rank": True,
-                "ompi_comm_world_rank": 0,
-                "cpus_allowed_list": "48-49",
-            },
+            self.rank_sample(pid=10, rank=0, cpu="48-49"),
             (48, 49),
         )
         corrected = execution._accumulate_process_snapshot(
             bad,
-            {
-                "pid": 10,
-                "is_cp2k_rank": True,
-                "ompi_comm_world_rank": 0,
-                "cpus_allowed_list": "48",
-            },
+            self.rank_sample(pid=10, rank=0, cpu="48"),
             (48, 49),
         )
         self.assertTrue(bad["affinity_violation_ever"])
@@ -314,6 +374,14 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                 pool.contract["cross_process_cpu_reservation"],
                 "flock_per_logical_cpu",
             )
+            self.assertEqual(
+                pool.contract["pool_close_policy"],
+                "reject_while_run_admitted_or_active",
+            )
+            self.assertEqual(
+                pool.contract["binding_environment_scrub_contract"],
+                execution.binding_environment_scrub_contract(),
+            )
             pool.close()
 
     def test_cross_process_cpu_reservation_fails_closed_on_overlap(self) -> None:
@@ -329,6 +397,277 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
             second = execution.acquire_cpu_reservation_locks((48,), root)
             for handle in second:
                 handle.close()
+
+    def test_close_rejects_while_run_is_active_and_preserves_reservations(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            started = root / "launcher.started"
+            release = root / "launcher.release"
+            launcher = root / "mpirun"
+            launcher.write_text(
+                f"#!{sys.executable}\n"
+                "import time\n"
+                "from pathlib import Path\n"
+                f"Path({str(started)!r}).touch()\n"
+                f"release = Path({str(release)!r})\n"
+                "while not release.exists():\n"
+                "    time.sleep(0.01)\n"
+                "raise SystemExit(1)\n"
+            )
+            launcher.chmod(0o755)
+            cp2k = root / "cp2k.psmp"
+            cp2k.write_text("#!/bin/sh\nexit 0\n")
+            cp2k.chmod(0o755)
+            inp = root / "job.inp"
+            inp.write_text("&GLOBAL\n&END GLOBAL\n")
+            out = root / "job.out"
+            lock_root = root / "cpu-locks"
+            pool = execution.ExecutionPool(
+                concurrent_jobs=1,
+                mpi_ranks_per_job=1,
+                threads_per_rank=1,
+                mpi_launcher=launcher,
+                mpi_launcher_args=[],
+                pe_lists=["1000031"],
+                check_current_affinity=False,
+                cpu_reservation_lock_root=lock_root,
+            )
+            outcome: list[object] = []
+
+            def run() -> None:
+                try:
+                    outcome.append(pool.run_cp2k(cp2k, inp, out))
+                except BaseException as error:
+                    outcome.append(error)
+
+            worker = threading.Thread(target=run)
+            worker.start()
+            deadline = time.monotonic() + 5.0
+            while not started.exists() and time.monotonic() < deadline:
+                time.sleep(0.01)
+            try:
+                self.assertTrue(started.exists())
+                with self.assertRaisesRegex(RuntimeError, "cannot release"):
+                    pool.close()
+                self.assertFalse(pool._closed)
+                self.assertTrue(
+                    all(
+                        not handle.closed for handle in pool._reservation_handles
+                    )
+                )
+                with self.assertRaisesRegex(ValueError, "already reserved"):
+                    execution.acquire_cpu_reservation_locks(
+                        (1000031,), lock_root
+                    )
+            finally:
+                release.touch()
+                worker.join(timeout=5.0)
+                if worker.is_alive():
+                    self.fail("active run did not finish after launcher release")
+                pool.close()
+            self.assertEqual(len(outcome), 1)
+            self.assertIsInstance(outcome[0], tuple)
+            reacquired = execution.acquire_cpu_reservation_locks(
+                (1000031,), lock_root
+            )
+            for handle in reacquired:
+                handle.close()
+
+    def test_queue_to_active_lock_baseexception_restores_exact_ownership(
+        self,
+    ) -> None:
+        class InjectedTransitionFailure(BaseException):
+            pass
+
+        class FailSecondEntryLock:
+            def __init__(self, lock) -> None:
+                self.lock = lock
+                self.entries = 0
+
+            def __enter__(self):
+                self.entries += 1
+                if self.entries == 2:
+                    raise InjectedTransitionFailure("injected transition lock")
+                self.lock.acquire()
+                return self
+
+            def __exit__(self, exc_type, exc_value, traceback) -> None:
+                self.lock.release()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            launcher = root / "mpirun"
+            launcher.write_text("#!/bin/sh\nexit 0\n")
+            launcher.chmod(0o755)
+            cp2k = root / "cp2k.psmp"
+            cp2k.write_text("#!/bin/sh\nexit 0\n")
+            cp2k.chmod(0o755)
+            inp = root / "job.inp"
+            inp.write_text("&GLOBAL\n&END GLOBAL\n")
+            pool = execution.ExecutionPool(
+                concurrent_jobs=1,
+                mpi_ranks_per_job=1,
+                threads_per_rank=1,
+                mpi_launcher=launcher,
+                mpi_launcher_args=[],
+                pe_lists=["1000032"],
+                check_current_affinity=False,
+                cpu_reservation_lock_root=root / "cpu-locks",
+            )
+            pool._lifecycle_lock = FailSecondEntryLock(pool._lifecycle_lock)
+            try:
+                with self.assertRaisesRegex(
+                    InjectedTransitionFailure, "transition lock"
+                ):
+                    pool.run_cp2k(cp2k, inp, root / "job.out")
+                self.assertEqual(pool._admitted_runs, 0)
+                self.assertEqual(pool._active, set())
+                self.assertEqual(pool._available.qsize(), 1)
+                restored = pool._available.get_nowait()
+                self.assertEqual(restored, "1000032")
+                pool._available.put_nowait(restored)
+                self.assertTrue(
+                    all(not handle.closed for handle in pool._reservation_handles)
+                )
+            finally:
+                pool.close()
+
+    def test_active_add_baseexception_restores_exact_ownership(self) -> None:
+        class InjectedActiveFailure(BaseException):
+            pass
+
+        class AddThenFailSet(set):
+            def add(self, item) -> None:
+                super().add(item)
+                raise InjectedActiveFailure("injected active.add")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            launcher = root / "mpirun"
+            launcher.write_text("#!/bin/sh\nexit 0\n")
+            launcher.chmod(0o755)
+            cp2k = root / "cp2k.psmp"
+            cp2k.write_text("#!/bin/sh\nexit 0\n")
+            cp2k.chmod(0o755)
+            inp = root / "job.inp"
+            inp.write_text("&GLOBAL\n&END GLOBAL\n")
+            pool = execution.ExecutionPool(
+                concurrent_jobs=1,
+                mpi_ranks_per_job=1,
+                threads_per_rank=1,
+                mpi_launcher=launcher,
+                mpi_launcher_args=[],
+                pe_lists=["1000033"],
+                check_current_affinity=False,
+                cpu_reservation_lock_root=root / "cpu-locks",
+            )
+            pool._active = AddThenFailSet()
+            try:
+                with self.assertRaisesRegex(
+                    InjectedActiveFailure, "active.add"
+                ):
+                    pool.run_cp2k(cp2k, inp, root / "job.out")
+                self.assertEqual(pool._admitted_runs, 0)
+                self.assertEqual(pool._active, set())
+                self.assertEqual(pool._available.qsize(), 1)
+                restored = pool._available.get_nowait()
+                self.assertEqual(restored, "1000033")
+                pool._available.put_nowait(restored)
+                self.assertTrue(
+                    all(not handle.closed for handle in pool._reservation_handles)
+                )
+            finally:
+                pool.close()
+
+    def test_trace_baseexception_after_queue_get_does_not_leak_pe_list(
+        self,
+    ) -> None:
+        class InjectedPostGetFailure(BaseException):
+            pass
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            launcher = root / "mpirun"
+            launcher.write_text("#!/bin/sh\nexit 1\n")
+            launcher.chmod(0o755)
+            cp2k = root / "cp2k.psmp"
+            cp2k.write_text("#!/bin/sh\nexit 0\n")
+            cp2k.chmod(0o755)
+            inp = root / "job.inp"
+            inp.write_text("&GLOBAL\n&END GLOBAL\n")
+            pool = execution.ExecutionPool(
+                concurrent_jobs=1,
+                mpi_ranks_per_job=1,
+                threads_per_rank=1,
+                mpi_launcher=launcher,
+                mpi_launcher_args=[],
+                pe_lists=["1000034"],
+                check_current_affinity=False,
+                cpu_reservation_lock_root=root / "cpu-locks",
+            )
+            source, first_line = inspect.getsourcelines(
+                execution.ExecutionPool.run_cp2k
+            )
+            get_offset = next(
+                offset
+                for offset, line in enumerate(source)
+                if "pe_list = self._available.get()" in line
+            )
+            first_post_get_line = first_line + get_offset + 1
+            target_code = execution.ExecutionPool.run_cp2k.__code__
+            injected = False
+
+            def inject_after_get(frame, event, argument):
+                nonlocal injected
+                if (
+                    not injected
+                    and frame.f_code is target_code
+                    and event == "line"
+                    and frame.f_lineno == first_post_get_line
+                    and frame.f_locals.get("pe_list") == "1000034"
+                ):
+                    injected = True
+                    raise InjectedPostGetFailure(
+                        "first line event after Queue.get return"
+                    )
+                return inject_after_get
+
+            previous_trace = sys.gettrace()
+            try:
+                sys.settrace(inject_after_get)
+                with self.assertRaisesRegex(
+                    InjectedPostGetFailure, "after Queue.get"
+                ):
+                    pool.run_cp2k(cp2k, inp, root / "faulted.out")
+            finally:
+                sys.settrace(previous_trace)
+            try:
+                self.assertTrue(injected)
+                self.assertEqual(pool._admitted_runs, 0)
+                self.assertEqual(pool._available.qsize(), 1)
+                self.assertEqual(pool._active, set())
+                outcome: list[tuple[int, dict[str, object]]] = []
+
+                def subsequent_run() -> None:
+                    outcome.append(
+                        pool.run_cp2k(cp2k, inp, root / "subsequent.out")
+                    )
+
+                worker = threading.Thread(target=subsequent_run)
+                worker.start()
+                worker.join(timeout=5.0)
+                self.assertFalse(worker.is_alive(), "PE-list token was leaked")
+                self.assertEqual(len(outcome), 1)
+                self.assertEqual(
+                    outcome[0][1]["assigned_ordered_pe_list"], "1000034"
+                )
+                self.assertEqual(pool._admitted_runs, 0)
+                self.assertEqual(pool._available.qsize(), 1)
+                self.assertEqual(pool._active, set())
+            finally:
+                pool.close()
 
     def test_pool_constructor_releases_reservations_after_late_failure(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -700,35 +1039,13 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
     ) -> None:
         parent = execution._accumulate_process_snapshot(
             None,
-            {
-                "pid": 100,
-                "is_cp2k_rank": True,
-                "ompi_comm_world_rank": 0,
-                "cpus_allowed_list": "48",
-                "process_starttime": 1000,
-                "process_identity_status": "stable",
-                "snapshot_consistency_status": "consistent",
-                "rank_observation_status": "explicit",
-                "state": "R (running)",
-                "stat_state": "R",
-            },
+            self.rank_sample(pid=100, rank=0, cpu="48", starttime=1000),
             (48, 49),
         )
         execution._resolve_rank_process_lifetime(parent, "process_disappeared")
         successor = execution._accumulate_process_snapshot(
             None,
-            {
-                "pid": 101,
-                "is_cp2k_rank": True,
-                "ompi_comm_world_rank": 0,
-                "cpus_allowed_list": "48",
-                "process_starttime": 1001,
-                "process_identity_status": "stable",
-                "snapshot_consistency_status": "consistent",
-                "rank_observation_status": "explicit",
-                "state": "R (running)",
-                "stat_state": "R",
-            },
+            self.rank_sample(pid=101, rank=0, cpu="48", starttime=1001),
             (48, 49),
         )
         execution._resolve_rank_process_lifetime(successor, "process_disappeared")
@@ -742,18 +1059,7 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
 
         wrong_successor = execution._accumulate_process_snapshot(
             None,
-            {
-                "pid": 102,
-                "is_cp2k_rank": True,
-                "ompi_comm_world_rank": 0,
-                "cpus_allowed_list": "49",
-                "process_starttime": 1002,
-                "process_identity_status": "stable",
-                "snapshot_consistency_status": "consistent",
-                "rank_observation_status": "explicit",
-                "state": "R (running)",
-                "stat_state": "R",
-            },
+            self.rank_sample(pid=102, rank=0, cpu="49", starttime=1002),
             (48, 49),
         )
         execution._resolve_rank_process_lifetime(
@@ -781,22 +1087,12 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
         )
         first = execution._accumulate_process_snapshot(
             None,
-            {
-                "pid": 100,
-                "is_cp2k_rank": True,
-                "ompi_comm_world_rank": 0,
-                "cpus_allowed_list": "48",
-            },
+            self.rank_sample(pid=100, rank=0, cpu="48"),
             (48, 49),
         )
         migrated = execution._accumulate_process_snapshot(
             first,
-            {
-                "pid": 100,
-                "is_cp2k_rank": True,
-                "ompi_comm_world_rank": 1,
-                "cpus_allowed_list": "49",
-            },
+            self.rank_sample(pid=100, rank=1, cpu="49"),
             (48, 49),
         )
         self.assertIs(migrated["rank_identity_changed_ever"], True)
@@ -824,6 +1120,10 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
             (process / "cmdline").write_bytes(str(cp2k).encode() + b"\0")
             (process / "environ").write_bytes(b"OMPI_COMM_WORLD_RANK=1\0")
             (process / "exe").symlink_to(cp2k)
+            task = process / "task" / "123"
+            task.mkdir(parents=True)
+            (task / "stat").write_text(stat)
+            (task / "status").write_text((process / "status").read_text())
             snapshot = execution._linux_process_snapshot(
                 123, cp2k, root / "proc"
             )
@@ -833,6 +1133,8 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
             self.assertEqual(snapshot["process_starttime"], 424242)
             self.assertEqual(snapshot["process_identity_status"], "stable")
             self.assertEqual(snapshot["snapshot_consistency_status"], "consistent")
+            self.assertEqual(snapshot["thread_affinity_scan_status"], "consistent")
+            self.assertTrue(execution._thread_affinity_sample_matches(snapshot, 197))
 
             initial_status = (process / "status").read_text()
             changed_status = initial_status.replace(
@@ -884,6 +1186,229 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                 "executable_changed",
             )
             self.assertIs(changed_executable["is_cp2k_rank"], True)
+
+    def test_repinned_child_thread_is_detected_and_remains_sticky(self) -> None:
+        def stat(tid: int, starttime: int) -> str:
+            return f"{tid} (cp2k-thread) " + " ".join(
+                ["R", *("0" for _ in range(18)), str(starttime)]
+            )
+
+        def status(cpu: int) -> str:
+            return (
+                "Name:\tcp2k-thread\n"
+                "State:\tR (running)\n"
+                f"Cpus_allowed_list:\t{cpu}\n"
+            )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            cp2k = root / "cp2k.psmp"
+            cp2k.write_text("#!/bin/sh\nexit 0\n")
+            cp2k.chmod(0o755)
+            process = root / "proc" / "123"
+            process.mkdir(parents=True)
+            (process / "stat").write_text(stat(123, 424242))
+            (process / "status").write_text(
+                "Name:\tcp2k.psmp\n"
+                "State:\tR (running)\n"
+                "PPid:\t1\n"
+                "Cpus_allowed_list:\t197\n"
+            )
+            (process / "cmdline").write_bytes(str(cp2k).encode() + b"\0")
+            (process / "environ").write_bytes(b"OMPI_COMM_WORLD_RANK=1\0")
+            (process / "exe").symlink_to(cp2k)
+            for tid, starttime, cpu in (
+                (123, 424242, 197),
+                (124, 424250, 198),
+            ):
+                task = process / "task" / str(tid)
+                task.mkdir(parents=True)
+                (task / "stat").write_text(stat(tid, starttime))
+                (task / "status").write_text(status(cpu))
+
+            poisoned = execution._linux_process_snapshot(
+                123, cp2k, root / "proc"
+            )
+            assert poisoned is not None
+            self.assertEqual(poisoned["thread_affinity_scan_status"], "consistent")
+            accumulated = execution._accumulate_process_snapshot(
+                None, poisoned, (196, 197)
+            )
+            self.assertIs(
+                accumulated["current_sample_matches_assigned_singleton"], True
+            )
+            self.assertIs(accumulated["current_thread_affinity_sample_exact"], False)
+            self.assertIs(accumulated["thread_affinity_violation_ever"], True)
+            self.assertIs(accumulated["affinity_violation_ever"], True)
+            self.assertEqual(
+                accumulated["observed_thread_cpu_masks"], ["197", "198"]
+            )
+
+            (process / "task" / "124" / "status").write_text(status(197))
+            corrected = execution._linux_process_snapshot(
+                123, cp2k, root / "proc"
+            )
+            assert corrected is not None
+            accumulated = execution._accumulate_process_snapshot(
+                accumulated, corrected, (196, 197)
+            )
+            self.assertIs(accumulated["current_thread_affinity_sample_exact"], True)
+            self.assertIs(accumulated["thread_affinity_violation_ever"], True)
+            self.assertIs(accumulated["all_thread_affinity_samples_exact"], False)
+            self.assertIs(accumulated["affinity_violation_ever"], True)
+
+    def test_terminal_process_does_not_launder_tid_reuse(self) -> None:
+        def stat(tid: int, state: str, starttime: int) -> str:
+            return f"{tid} (cp2k-thread) " + " ".join(
+                [state, *("0" for _ in range(18)), str(starttime)]
+            )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            cp2k = root / "cp2k.psmp"
+            cp2k.write_text("#!/bin/sh\nexit 0\n")
+            cp2k.chmod(0o755)
+            process = root / "proc" / "123"
+            task = process / "task" / "123"
+            task.mkdir(parents=True)
+            process_status = (
+                "Name:\tcp2k.psmp\n"
+                "State:\tR (running)\n"
+                "PPid:\t1\n"
+                "Cpus_allowed_list:\t197\n"
+            )
+            (process / "stat").write_text(stat(123, "R", 424242))
+            (process / "status").write_text(process_status)
+            (process / "cmdline").write_bytes(str(cp2k).encode() + b"\0")
+            (process / "environ").write_bytes(b"OMPI_COMM_WORLD_RANK=0\0")
+            (process / "exe").symlink_to(cp2k)
+            (task / "stat").write_text(stat(123, "R", 424242))
+            (task / "status").write_text(process_status)
+            real_read_text = Path.read_text
+            process_stats = iter(
+                (stat(123, "R", 424242), stat(123, "Z", 424242))
+            )
+            thread_stats = iter(
+                (stat(123, "R", 424242), stat(123, "Z", 424243))
+            )
+
+            def reused_tid(path: Path, *args, **kwargs):
+                if path == process / "stat":
+                    return next(process_stats)
+                if path == task / "stat":
+                    return next(thread_stats)
+                return real_read_text(path, *args, **kwargs)
+
+            with mock.patch.object(Path, "read_text", reused_tid):
+                snapshot = execution._linux_process_snapshot(
+                    123, cp2k, root / "proc"
+                )
+            assert snapshot is not None
+            self.assertEqual(
+                snapshot["thread_affinity_process_status"], "terminal_process"
+            )
+            self.assertEqual(
+                snapshot["thread_affinity_scan_status"],
+                "tid_reused_during_sample",
+            )
+            self.assertEqual(
+                snapshot["thread_affinity_scan_issues"],
+                ["tid_reused_during_sample"],
+            )
+            self.assertFalse(
+                execution._thread_affinity_sample_matches(snapshot, 197)
+            )
+            accumulated = execution._accumulate_process_snapshot(
+                None, snapshot, (197,)
+            )
+            self.assertEqual(
+                accumulated["thread_affinity_scan_issues_ever"],
+                ["tid_reused_during_sample"],
+            )
+            self.assertIs(accumulated["thread_affinity_violation_ever"], True)
+
+    def test_process_disappearance_does_not_launder_thread_set_race(self) -> None:
+        def stat(tid: int, starttime: int) -> str:
+            return f"{tid} (cp2k-thread) " + " ".join(
+                ["R", *("0" for _ in range(18)), str(starttime)]
+            )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            cp2k = root / "cp2k.psmp"
+            cp2k.write_text("#!/bin/sh\nexit 0\n")
+            cp2k.chmod(0o755)
+            process = root / "proc" / "123"
+            leader = process / "task" / "123"
+            newcomer = process / "task" / "124"
+            leader.mkdir(parents=True)
+            newcomer.mkdir(parents=True)
+            process_status = (
+                "Name:\tcp2k.psmp\n"
+                "State:\tR (running)\n"
+                "PPid:\t1\n"
+                "Cpus_allowed_list:\t197\n"
+            )
+            (process / "stat").write_text(stat(123, 424242))
+            (process / "status").write_text(process_status)
+            (process / "cmdline").write_bytes(str(cp2k).encode() + b"\0")
+            (process / "environ").write_bytes(b"OMPI_COMM_WORLD_RANK=0\0")
+            (process / "exe").symlink_to(cp2k)
+            for task, tid, starttime in (
+                (leader, 123, 424242),
+                (newcomer, 124, 424250),
+            ):
+                (task / "stat").write_text(stat(tid, starttime))
+                (task / "status").write_text(process_status)
+            real_iterdir = Path.iterdir
+            task_scans = iter(([leader], [leader, newcomer]))
+
+            def changing_task_set(path: Path):
+                if path == process / "task":
+                    return iter(next(task_scans))
+                return real_iterdir(path)
+
+            real_read_text = Path.read_text
+            process_stat_reads = 0
+
+            def disappearing_process(path: Path, *args, **kwargs):
+                nonlocal process_stat_reads
+                if path == process / "stat":
+                    process_stat_reads += 1
+                    if process_stat_reads == 2:
+                        raise FileNotFoundError(path)
+                return real_read_text(path, *args, **kwargs)
+
+            with mock.patch.object(
+                Path, "iterdir", changing_task_set
+            ), mock.patch.object(Path, "read_text", disappearing_process):
+                snapshot = execution._linux_process_snapshot(
+                    123, cp2k, root / "proc"
+                )
+            assert snapshot is not None
+            self.assertEqual(
+                snapshot["thread_affinity_process_status"],
+                "process_disappeared_after_sample",
+            )
+            self.assertEqual(
+                snapshot["thread_affinity_scan_status"],
+                "thread_set_changed_during_sample",
+            )
+            self.assertEqual(
+                snapshot["thread_affinity_scan_issues"],
+                ["thread_set_changed_during_sample"],
+            )
+            self.assertFalse(
+                execution._thread_affinity_sample_matches(snapshot, 197)
+            )
+            accumulated = execution._accumulate_process_snapshot(
+                None, snapshot, (197,)
+            )
+            self.assertEqual(
+                accumulated["thread_affinity_scan_issues_ever"],
+                ["thread_set_changed_during_sample"],
+            )
+            self.assertIs(accumulated["thread_affinity_violation_ever"], True)
 
     def test_terminal_environment_loss_is_pending_then_strictly_resolved(self) -> None:
         assigned = (196, 197, 198, 199)
@@ -1239,6 +1764,11 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                 "mpi_launcher_sha256": execution.sha256(launcher),
                 "mpi_launcher_args": [],
                 "ordered_pe_lists": ["48,49"],
+                "binding_environment_scrub_contract": (
+                    execution.binding_environment_scrub_contract()
+                ),
+                "pool_close_policy": "reject_while_run_admitted_or_active",
+                "rank_affinity_observation": "linux_proc_per_task_tid_starttime",
             }
             command = [
                 str(launcher),
@@ -1265,6 +1795,16 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                 "return_code": 0,
                 "runtime_affinity_gate": True,
                 "cross_process_cpu_reservation_gate": True,
+                "binding_environment_scrub_gate": True,
+                "residual_binding_environment_keys": [],
+                "ld_library_path_preserved": True,
+                "thread_environment": dict(
+                    execution.SANCTIONED_THREAD_ENVIRONMENT
+                ),
+                "removed_mpi_binding_environment_keys": [
+                    "LD_PRELOAD",
+                    "OMP_NUM_THREADS",
+                ],
                 "live_compute_overlap_preflight_gate": True,
                 "mpi_bind_to": "core",
                 "timing_classification": "production_scaling_eligible",
@@ -1279,6 +1819,8 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                 "live_compute_overlap_preflight_owners": [],
                 "live_compute_overlap_runtime_gate": True,
                 "live_compute_overlap_runtime_samples": [],
+                "local_affinity_violation_gate": True,
+                "local_affinity_violation_samples": [],
                 "observed_child_processes": [
                     {
                         "pid": 900,
@@ -1317,6 +1859,37 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                         "current_sample_matches_assigned_singleton": True,
                         "rank_identity_changed_ever": False,
                         "affinity_violation_ever": False,
+                        "thread_affinity_evidence_source": (
+                            execution.THREAD_AFFINITY_EVIDENCE_SOURCE
+                        ),
+                        "thread_affinity_scan_status": "consistent",
+                        "thread_affinity_scan_issues": [],
+                        "thread_affinity_process_status": "live",
+                        "live_thread_affinity": [
+                            {
+                                "tid": 900,
+                                "thread_starttime": 9000,
+                                "observed_thread_starttimes": [9000],
+                                "state": "R (running)",
+                                "stat_state": "R",
+                                "cpus_allowed_list": "48",
+                                "observed_cpu_masks": ["48"],
+                                "live": True,
+                                "identity_status": "stable",
+                            }
+                        ],
+                        "thread_affinity_sample_count": 2,
+                        "thread_affinity_scan_statuses": ["consistent"],
+                        "thread_affinity_evidence_sources": [
+                            execution.THREAD_AFFINITY_EVIDENCE_SOURCE
+                        ],
+                        "thread_affinity_scan_issues_ever": [],
+                        "thread_affinity_process_statuses": ["live"],
+                        "observed_thread_cpu_masks": ["48"],
+                        "observed_thread_identities": ["900:9000"],
+                        "current_thread_affinity_sample_exact": True,
+                        "all_thread_affinity_samples_exact": True,
+                        "thread_affinity_violation_ever": False,
                     },
                     {
                         "pid": 100,
@@ -1355,6 +1928,37 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                         "current_sample_matches_assigned_singleton": True,
                         "rank_identity_changed_ever": False,
                         "affinity_violation_ever": False,
+                        "thread_affinity_evidence_source": (
+                            execution.THREAD_AFFINITY_EVIDENCE_SOURCE
+                        ),
+                        "thread_affinity_scan_status": "consistent",
+                        "thread_affinity_scan_issues": [],
+                        "thread_affinity_process_status": "live",
+                        "live_thread_affinity": [
+                            {
+                                "tid": 100,
+                                "thread_starttime": 1000,
+                                "observed_thread_starttimes": [1000],
+                                "state": "S (sleeping)",
+                                "stat_state": "S",
+                                "cpus_allowed_list": "49",
+                                "observed_cpu_masks": ["49"],
+                                "live": True,
+                                "identity_status": "stable",
+                            }
+                        ],
+                        "thread_affinity_sample_count": 2,
+                        "thread_affinity_scan_statuses": ["consistent"],
+                        "thread_affinity_evidence_sources": [
+                            execution.THREAD_AFFINITY_EVIDENCE_SOURCE
+                        ],
+                        "thread_affinity_scan_issues_ever": [],
+                        "thread_affinity_process_statuses": ["live"],
+                        "observed_thread_cpu_masks": ["49"],
+                        "observed_thread_identities": ["100:1000"],
+                        "current_thread_affinity_sample_exact": True,
+                        "all_thread_affinity_samples_exact": True,
+                        "thread_affinity_violation_ever": False,
                     },
                 ],
                 "observed_cp2k_rank_pid_generations": [[900], [100]],
@@ -1407,6 +2011,57 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                 ),
                 "production_scaling_eligible",
             )
+            prior_v2_contract = json.loads(json.dumps(contract))
+            for field in (
+                "binding_environment_scrub_contract",
+                "pool_close_policy",
+                "rank_affinity_observation",
+            ):
+                prior_v2_contract.pop(field)
+            prior_v2_record = json.loads(json.dumps(record))
+            prior_v2_record["contract"] = prior_v2_contract
+            prior_v2_record["contract_sha256"] = execution.canonical_sha256(
+                prior_v2_contract
+            )
+            for field in (
+                "binding_environment_scrub_gate",
+                "residual_binding_environment_keys",
+                "ld_library_path_preserved",
+                "thread_environment",
+                "removed_mpi_binding_environment_keys",
+                "local_affinity_violation_gate",
+                "local_affinity_violation_samples",
+            ):
+                prior_v2_record.pop(field)
+            thread_fields = (
+                "thread_affinity_evidence_source",
+                "thread_affinity_scan_status",
+                "thread_affinity_scan_issues",
+                "thread_affinity_process_status",
+                "live_thread_affinity",
+                "thread_affinity_sample_count",
+                "thread_affinity_scan_statuses",
+                "thread_affinity_evidence_sources",
+                "thread_affinity_scan_issues_ever",
+                "thread_affinity_process_statuses",
+                "observed_thread_cpu_masks",
+                "observed_thread_identities",
+                "current_thread_affinity_sample_exact",
+                "all_thread_affinity_samples_exact",
+                "thread_affinity_violation_ever",
+            )
+            for child in prior_v2_record["observed_child_processes"]:
+                for field in thread_fields:
+                    child.pop(field)
+            path.write_text(
+                json.dumps(prior_v2_record, indent=2, sort_keys=True) + "\n"
+            )
+            self.assertIsNone(
+                execution.recorded_execution_issue(
+                    path, prior_v2_contract, out, stamp
+                )
+            )
+            path.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
             for field, invalid, message in (
                 ("observed_cp2k_rank_ids", [1, 0], "rank ordering"),
                 ("observed_cp2k_rank_masks", ["48", "48"], "CPU-mask"),
@@ -1426,6 +2081,16 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                     True,
                     "duplicate-rank evidence",
                 ),
+                (
+                    "binding_environment_scrub_gate",
+                    False,
+                    "environment scrub gate",
+                ),
+                (
+                    "local_affinity_violation_gate",
+                    False,
+                    "local rank/thread affinity gate",
+                ),
             ):
                 with self.subTest(field=field):
                     broken = dict(record)
@@ -1434,6 +2099,52 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                     self.assertIn(
                         message,
                         execution.recorded_execution_issue(path, contract, out, stamp) or "",
+                    )
+            for name, mutate, message in (
+                (
+                    "thread-environment",
+                    lambda item: item["thread_environment"].update(
+                        {"OMP_NUM_THREADS": "2"}
+                    ),
+                    "thread environment",
+                ),
+                (
+                    "foreign-removed-key",
+                    lambda item: item.update(
+                        {
+                            "removed_mpi_binding_environment_keys": [
+                                "LD_PRELOAD",
+                                "PATH",
+                            ]
+                        }
+                    ),
+                    "removed binding-environment key evidence",
+                ),
+                (
+                    "duplicate-removed-key",
+                    lambda item: item.update(
+                        {
+                            "removed_mpi_binding_environment_keys": [
+                                "LD_PRELOAD",
+                                "LD_PRELOAD",
+                            ]
+                        }
+                    ),
+                    "removed binding-environment key evidence",
+                ),
+            ):
+                with self.subTest(environment_evidence=name):
+                    broken = json.loads(json.dumps(record))
+                    mutate(broken)
+                    path.write_text(
+                        json.dumps(broken, indent=2, sort_keys=True) + "\n"
+                    )
+                    self.assertIn(
+                        message,
+                        execution.recorded_execution_issue(
+                            path, contract, out, stamp
+                        )
+                        or "",
                     )
             broken = dict(record)
             broken["command"] = [*command, "--bind-to", "none"]
@@ -1526,6 +2237,29 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                     ),
                     "process provenance",
                 ),
+                (
+                    "child-thread-repinned",
+                    lambda item: item["observed_child_processes"][0][
+                        "live_thread_affinity"
+                    ][0].update(
+                        {
+                            "cpus_allowed_list": "49",
+                            "observed_cpu_masks": ["48", "49"],
+                        }
+                    ),
+                    "thread-affinity evidence",
+                ),
+                (
+                    "sticky-thread-scan-issue",
+                    lambda item: item["observed_child_processes"][0].update(
+                        {
+                            "thread_affinity_scan_issues_ever": [
+                                "thread_set_changed_during_sample"
+                            ]
+                        }
+                    ),
+                    "thread-affinity evidence",
+                ),
             ):
                 with self.subTest(tamper=name):
                     broken = json.loads(json.dumps(record))
@@ -1552,6 +2286,14 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                     "observed_process_starttimes": [9010],
                 }
             )
+            successor["live_thread_affinity"][0].update(
+                {
+                    "tid": 901,
+                    "thread_starttime": 9010,
+                    "observed_thread_starttimes": [9010],
+                }
+            )
+            successor["observed_thread_identities"] = ["901:9010"]
             broken["observed_child_processes"].append(successor)
             path.write_text(json.dumps(broken, indent=2, sort_keys=True) + "\n")
             self.assertIn(

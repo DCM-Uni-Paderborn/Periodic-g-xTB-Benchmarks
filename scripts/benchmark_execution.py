@@ -43,6 +43,42 @@ OPENMP_THREAD_ENVIRONMENT = {
     "OMP_DYNAMIC": "FALSE",
     "OMP_WAIT_POLICY": "PASSIVE",
 }
+SANCTIONED_THREAD_ENVIRONMENT = {
+    **OPENMP_THREAD_ENVIRONMENT,
+    **BLAS_THREAD_ENVIRONMENT,
+}
+INHERITED_BINDING_ENVIRONMENT_PREFIXES = (
+    "OMPI_MCA_",
+    "PRTE_MCA_",
+    "PMIX_MCA_",
+    "HWLOC_",
+    "GOMP_",
+    "KMP_",
+    "OMP_",
+)
+INHERITED_BINDING_ENVIRONMENT_KEYS = frozenset(
+    {
+        "LD_AUDIT",
+        "LD_PRELOAD",
+        "I_MPI_PIN",
+        "I_MPI_PIN_DOMAIN",
+        "I_MPI_PIN_ORDER",
+        "I_MPI_PIN_PROCESSOR_LIST",
+        "I_MPI_PIN_RESPECT_CPUSET",
+        "MPICH_CPU_BINDING_POLICY",
+        "MPICH_RANK_REORDER_METHOD",
+        "MV2_CPU_BINDING_POLICY",
+        "MV2_CPU_MAPPING",
+        "MV2_ENABLE_AFFINITY",
+        "SLURM_CPU_BIND",
+        "SLURM_CPU_BIND_LIST",
+        "SLURM_CPU_BIND_TYPE",
+    }
+)
+THREAD_AFFINITY_EVIDENCE_SOURCE = "linux_proc_task_status"
+THREAD_AFFINITY_ACCEPTED_PROCESS_STATUSES = frozenset(
+    {"live", "process_disappeared_after_sample", "terminal_process"}
+)
 
 
 def default_cpu_reservation_lock_root() -> Path:
@@ -100,17 +136,71 @@ def acquire_cpu_reservation_locks(
 
 
 def mpi_control_environment_keys(environment: Mapping[str, str]) -> list[str]:
-    """Return every inherited Open MPI/PRRTE MCA control variable.
+    """Return inherited variables that can perturb placement or preloading.
 
-    Scrubbing only names containing ``hwloc`` or ``rmaps`` is insufficient:
-    MCA parameter-file selectors can inject those settings indirectly.  The
-    production command supplies its complete placement contract explicitly, so
-    no inherited OMPI/PRRTE MCA variable is permitted.
+    The production command supplies its complete placement contract explicitly.
+    Consequently, MPI/PMIx MCA controls, topology overrides, OpenMP runtime
+    placement controls, vendor affinity controls, and loader injection are all
+    removed before the narrow sanctioned thread environment is installed.
+    ``LD_LIBRARY_PATH`` is deliberately not part of this set because the pinned
+    CP2K/provider runtime may require it.
     """
     return sorted(
         key
         for key in environment
-        if key.startswith(("OMPI_MCA_", "PRTE_MCA_"))
+        if key in INHERITED_BINDING_ENVIRONMENT_KEYS
+        or key.startswith(INHERITED_BINDING_ENVIRONMENT_PREFIXES)
+    )
+
+
+def sanitized_launch_environment(
+    environment: Mapping[str, str],
+) -> tuple[dict[str, str], list[str], bool]:
+    """Build a hermetic rank environment while preserving library discovery."""
+    sanitized = dict(environment)
+    removed = mpi_control_environment_keys(sanitized)
+    for key in removed:
+        sanitized.pop(key, None)
+    sanitized.update(SANCTIONED_THREAD_ENVIRONMENT)
+    residual = [
+        key
+        for key in mpi_control_environment_keys(sanitized)
+        if key not in SANCTIONED_THREAD_ENVIRONMENT
+    ]
+    if residual:
+        raise RuntimeError(
+            "binding/preload environment survived sanitization: "
+            + ", ".join(residual)
+        )
+    library_path_preserved = sanitized.get("LD_LIBRARY_PATH") == environment.get(
+        "LD_LIBRARY_PATH"
+    ) and ("LD_LIBRARY_PATH" in sanitized) == ("LD_LIBRARY_PATH" in environment)
+    if not library_path_preserved:
+        raise RuntimeError("LD_LIBRARY_PATH changed during environment sanitization")
+    return sanitized, removed, library_path_preserved
+
+
+def binding_environment_scrub_contract() -> dict[str, object]:
+    """Return the immutable environment policy embedded in execution records."""
+    return {
+        "removed_prefixes": list(INHERITED_BINDING_ENVIRONMENT_PREFIXES),
+        "removed_exact_keys": sorted(INHERITED_BINDING_ENVIRONMENT_KEYS),
+        "sanctioned_thread_environment": dict(SANCTIONED_THREAD_ENVIRONMENT),
+        "preserved_exact_keys": ["LD_LIBRARY_PATH"],
+    }
+
+
+def _contract_requires_hardened_binding_evidence(
+    contract: Mapping[str, object],
+) -> bool:
+    """Distinguish new schema-v2 records without invalidating older evidence."""
+    return (
+        contract.get("binding_environment_scrub_contract")
+        == binding_environment_scrub_contract()
+        and contract.get("pool_close_policy")
+        == "reject_while_run_admitted_or_active"
+        and contract.get("rank_affinity_observation")
+        == "linux_proc_per_task_tid_starttime"
     )
 
 
@@ -970,6 +1060,90 @@ def _rank_environment_evidence_issue(
     return None
 
 
+def _thread_affinity_evidence_issue(
+    item: Mapping[str, object], assigned_mask: str, path: Path
+) -> str | None:
+    """Revalidate sticky per-thread Linux affinity evidence for one rank."""
+    required = {
+        "thread_affinity_evidence_source",
+        "thread_affinity_scan_status",
+        "thread_affinity_scan_issues",
+        "thread_affinity_process_status",
+        "live_thread_affinity",
+        "thread_affinity_sample_count",
+        "thread_affinity_scan_statuses",
+        "thread_affinity_evidence_sources",
+        "thread_affinity_scan_issues_ever",
+        "thread_affinity_process_statuses",
+        "observed_thread_cpu_masks",
+        "observed_thread_identities",
+        "current_thread_affinity_sample_exact",
+        "all_thread_affinity_samples_exact",
+        "thread_affinity_violation_ever",
+    }
+    if not required.issubset(item):
+        return f"missing CP2K thread-affinity evidence in {path}"
+    try:
+        assigned = parse_cpu_set(assigned_mask)
+    except ValueError:
+        return f"invalid assigned CPU in thread-affinity evidence in {path}"
+    if len(assigned) != 1:
+        return f"invalid assigned CPU in thread-affinity evidence in {path}"
+    expected_cpu = next(iter(assigned))
+    sample_count = item.get("sample_count")
+    thread_sample_count = item.get("thread_affinity_sample_count")
+    statuses = item.get("thread_affinity_scan_statuses")
+    sources = item.get("thread_affinity_evidence_sources")
+    masks = item.get("observed_thread_cpu_masks")
+    identities = item.get("observed_thread_identities")
+    pid = item.get("pid")
+    process_starttime = item.get("process_starttime")
+    process_statuses = item.get("thread_affinity_process_statuses")
+    if (
+        not isinstance(sample_count, int)
+        or isinstance(sample_count, bool)
+        or not isinstance(thread_sample_count, int)
+        or isinstance(thread_sample_count, bool)
+        or thread_sample_count != sample_count
+        or not isinstance(statuses, list)
+        or not statuses
+        or statuses != ["consistent"]
+        or item.get("thread_affinity_scan_status") not in statuses
+        or item.get("thread_affinity_scan_issues") != []
+        or item.get("thread_affinity_scan_issues_ever") != []
+        or not isinstance(process_statuses, list)
+        or not process_statuses
+        or process_statuses != list(dict.fromkeys(process_statuses))
+        or any(
+            status not in THREAD_AFFINITY_ACCEPTED_PROCESS_STATUSES
+            for status in process_statuses
+        )
+        or item.get("thread_affinity_process_status") not in process_statuses
+        or sources != [THREAD_AFFINITY_EVIDENCE_SOURCE]
+        or not isinstance(masks, list)
+        or masks != [assigned_mask]
+        or not isinstance(identities, list)
+        or not identities
+        or identities != list(dict.fromkeys(identities))
+        or not isinstance(pid, int)
+        or isinstance(pid, bool)
+        or not isinstance(process_starttime, int)
+        or isinstance(process_starttime, bool)
+        or f"{pid}:{process_starttime}" not in identities
+        or any(
+            not isinstance(identity, str)
+            or re.fullmatch(r"[0-9]+:[0-9]+", identity) is None
+            for identity in identities
+        )
+        or item.get("current_thread_affinity_sample_exact") is not True
+        or item.get("all_thread_affinity_samples_exact") is not True
+        or item.get("thread_affinity_violation_ever") is not False
+        or not _thread_affinity_sample_matches(item, expected_cpu)
+    ):
+        return f"invalid CP2K thread-affinity evidence in {path}"
+    return None
+
+
 def recorded_execution_issue(
     path: Path,
     expected_contract: Mapping[str, object],
@@ -991,6 +1165,18 @@ def recorded_execution_issue(
         return f"execution record schema mismatch in {path}"
     if record.get("contract") != expected_contract:
         return f"execution contract mismatch in {path}"
+    hardened_binding_evidence = _contract_requires_hardened_binding_evidence(
+        expected_contract
+    )
+    hardening_declarations = {
+        "binding_environment_scrub_contract",
+        "pool_close_policy",
+        "rank_affinity_observation",
+    }
+    if hardening_declarations.intersection(expected_contract) and not (
+        hardened_binding_evidence
+    ):
+        return f"invalid hardened binding contract in {path}"
     expected_contract_sha = canonical_sha256(dict(expected_contract))
     if record.get("contract_sha256") != expected_contract_sha:
         return f"execution contract hash mismatch in {path}"
@@ -1047,6 +1233,43 @@ def recorded_execution_issue(
         return f"execution return code is not zero in {path}"
     if record.get("cross_process_cpu_reservation_gate") is not True:
         return f"cross-process CPU reservation gate failed in {path}"
+    if hardened_binding_evidence:
+        scrub_contract = expected_contract.get(
+            "binding_environment_scrub_contract"
+        )
+        if not isinstance(scrub_contract, Mapping):
+            return f"invalid binding-environment contract in {path}"
+        sanctioned_environment = scrub_contract.get(
+            "sanctioned_thread_environment"
+        )
+        if (
+            not isinstance(sanctioned_environment, dict)
+            or not all(
+                isinstance(key, str) and isinstance(value, str)
+                for key, value in sanctioned_environment.items()
+            )
+            or record.get("thread_environment") != sanctioned_environment
+        ):
+            return f"thread environment does not reconstruct from contract in {path}"
+        removed_environment = record.get(
+            "removed_mpi_binding_environment_keys"
+        )
+        if (
+            not isinstance(removed_environment, list)
+            or any(not isinstance(key, str) for key in removed_environment)
+            or removed_environment != sorted(set(removed_environment))
+            or mpi_control_environment_keys(
+                {key: "removed" for key in removed_environment}
+            )
+            != removed_environment
+        ):
+            return f"invalid removed binding-environment key evidence in {path}"
+        if record.get("binding_environment_scrub_gate") is not True:
+            return f"binding/preload environment scrub gate failed in {path}"
+        if record.get("residual_binding_environment_keys") != []:
+            return f"binding/preload environment survived scrubbing in {path}"
+        if record.get("ld_library_path_preserved") is not True:
+            return f"LD_LIBRARY_PATH preservation gate failed in {path}"
     if record.get("live_compute_overlap_preflight_gate") is not True:
         return f"live CP2K/MPI CPU-overlap preflight failed in {path}"
     if record.get("mpi_bind_to") != "core":
@@ -1167,6 +1390,12 @@ def recorded_execution_issue(
         )
         if environment_issue is not None:
             return environment_issue
+        if hardened_binding_evidence:
+            thread_issue = _thread_affinity_evidence_issue(
+                item, assigned_mask, path
+            )
+            if thread_issue is not None:
+                return thread_issue
         observed_rank_ids = item.get("observed_rank_ids")
         if (
             not isinstance(observed_rank_ids, list)
@@ -1296,6 +1525,14 @@ def recorded_execution_issue(
         return f"runtime live CP2K/MPI overlap gate failed in {path}"
     if record.get("live_compute_overlap_runtime_samples") != []:
         return f"runtime live CP2K/MPI overlap was recorded in {path}"
+    if hardened_binding_evidence:
+        if record.get("local_affinity_violation_gate") is not True:
+            return f"runtime local rank/thread affinity gate failed in {path}"
+        if record.get("local_affinity_violation_samples") != []:
+            return (
+                "runtime local rank/thread affinity violation was recorded in "
+                f"{path}"
+            )
     return _common_artifact_issue(record, path, output, scientific_job_stamp)
 
 
@@ -1329,6 +1566,135 @@ def _linux_process_starttime(
     return starttime
 
 
+def _status_fields(status_text: str) -> dict[str, str]:
+    return {
+        key: value.strip()
+        for line in status_text.splitlines()
+        if ":" in line
+        for key, value in (line.split(":", 1),)
+    }
+
+
+def _linux_thread_affinity_snapshot(
+    pid: int,
+    process_starttime: int,
+    proc_root: Path = Path("/proc"),
+) -> tuple[list[dict[str, object]], str]:
+    """Read every Linux task affinity with TID/starttime race detection."""
+    task_root = proc_root / str(pid) / "task"
+    try:
+        initial_tids = sorted(
+            int(entry.name) for entry in task_root.iterdir() if entry.name.isdigit()
+        )
+    except (FileNotFoundError, PermissionError, ProcessLookupError, OSError):
+        return [], "task_directory_unreadable"
+    if not initial_tids:
+        return [], "task_directory_empty"
+
+    records: list[dict[str, object]] = []
+    issues: list[str] = []
+    for tid in initial_tids:
+        task = task_root / str(tid)
+        try:
+            initial_stat_state, initial_starttime = _linux_proc_stat_identity(
+                (task / "stat").read_text(errors="replace")
+            )
+            initial_fields = _status_fields(
+                (task / "status").read_text(errors="replace")
+            )
+        except FileNotFoundError:
+            issues.append("thread_disappeared_before_sample")
+            continue
+        except (PermissionError, ProcessLookupError, OSError, ValueError):
+            issues.append("thread_identity_unreadable_before_sample")
+            continue
+
+        initial_mask = initial_fields.get("Cpus_allowed_list", "")
+        masks = [initial_mask] if initial_mask else []
+        try:
+            final_fields = _status_fields(
+                (task / "status").read_text(errors="replace")
+            )
+            final_stat_state, final_starttime = _linux_proc_stat_identity(
+                (task / "stat").read_text(errors="replace")
+            )
+        except FileNotFoundError:
+            issues.append("thread_disappeared_during_sample")
+            records.append(
+                {
+                    "tid": tid,
+                    "thread_starttime": initial_starttime,
+                    "observed_thread_starttimes": [initial_starttime],
+                    "state": initial_fields.get("State", ""),
+                    "stat_state": initial_stat_state,
+                    "cpus_allowed_list": initial_mask,
+                    "observed_cpu_masks": masks,
+                    "live": initial_stat_state not in {"Z", "X"},
+                    "identity_status": "disappeared_during_sample",
+                }
+            )
+            continue
+        except (PermissionError, ProcessLookupError, OSError, ValueError):
+            issues.append("thread_identity_unreadable_after_sample")
+            records.append(
+                {
+                    "tid": tid,
+                    "thread_starttime": initial_starttime,
+                    "observed_thread_starttimes": [initial_starttime],
+                    "state": initial_fields.get("State", ""),
+                    "stat_state": initial_stat_state,
+                    "cpus_allowed_list": initial_mask,
+                    "observed_cpu_masks": masks,
+                    "live": initial_stat_state not in {"Z", "X"},
+                    "identity_status": "identity_unreadable_after_sample",
+                }
+            )
+            continue
+
+        final_mask = final_fields.get("Cpus_allowed_list", "")
+        if final_mask and final_mask not in masks:
+            masks.append(final_mask)
+        identity_status = "stable"
+        if final_starttime != initial_starttime:
+            identity_status = "tid_reused_during_sample"
+            issues.append(identity_status)
+        elif final_mask != initial_mask:
+            identity_status = "cpu_mask_changed_during_sample"
+            issues.append(identity_status)
+        if tid == pid and initial_starttime != process_starttime:
+            identity_status = "leader_starttime_mismatch"
+            issues.append(identity_status)
+        records.append(
+            {
+                "tid": tid,
+                "thread_starttime": initial_starttime,
+                "observed_thread_starttimes": sorted(
+                    {initial_starttime, final_starttime}
+                ),
+                "state": final_fields.get("State", ""),
+                "stat_state": final_stat_state,
+                "cpus_allowed_list": final_mask,
+                "observed_cpu_masks": masks,
+                "live": final_stat_state not in {"Z", "X"},
+                "identity_status": identity_status,
+            }
+        )
+
+    try:
+        final_tids = sorted(
+            int(entry.name) for entry in task_root.iterdir() if entry.name.isdigit()
+        )
+    except (FileNotFoundError, PermissionError, ProcessLookupError, OSError):
+        final_tids = []
+        issues.append("task_directory_unreadable_after_sample")
+    if final_tids != initial_tids:
+        issues.append("thread_set_changed_during_sample")
+    if pid not in initial_tids:
+        issues.append("leader_thread_missing")
+    status = "+".join(sorted(set(issues))) if issues else "consistent"
+    return records, status
+
+
 def _linux_process_snapshot(
     pid: int, cp2k: Path, proc_root: Path = Path("/proc")
 ) -> dict[str, object] | None:
@@ -1359,6 +1725,15 @@ def _linux_process_snapshot(
         environment_read_status = "unreadable"
     else:
         environment_read_status = "available" if environment_bytes else "empty"
+    thread_affinity, thread_affinity_scan_status = _linux_thread_affinity_snapshot(
+        pid, process_starttime, proc_root
+    )
+    thread_affinity_scan_issues = (
+        []
+        if thread_affinity_scan_status == "consistent"
+        else thread_affinity_scan_status.split("+")
+    )
+    thread_affinity_process_status = "live"
     try:
         final_status = (root / "status").read_text(errors="replace")
         final_executable = str((root / "exe").resolve(strict=True))
@@ -1370,6 +1745,7 @@ def _linux_process_snapshot(
         snapshot_consistency_status = "process_disappeared"
         status = initial_status
         executable = initial_executable
+        thread_affinity_process_status = "process_disappeared_after_sample"
     except (PermissionError, ProcessLookupError, OSError, ValueError):
         process_identity_status = "identity_unreadable_after_sample"
         snapshot_consistency_status = "final_identity_unreadable"
@@ -1407,6 +1783,8 @@ def _linux_process_snapshot(
                 "terminal_state" if stat_state in {"Z", "X"} else "stable"
             )
             snapshot_consistency_status = "consistent"
+            if stat_state in {"Z", "X"}:
+                thread_affinity_process_status = "terminal_process"
     environment_items = environment_bytes.split(b"\0")
     environment = {
         key.decode(errors="replace"): value.decode(errors="replace")
@@ -1469,6 +1847,11 @@ def _linux_process_snapshot(
         "ompi_comm_world_rank": mpi_rank,
         "rank_observation_status": rank_observation_status,
         "is_cp2k_rank": is_cp2k_rank,
+        "thread_affinity_evidence_source": THREAD_AFFINITY_EVIDENCE_SOURCE,
+        "thread_affinity_scan_status": thread_affinity_scan_status,
+        "thread_affinity_scan_issues": thread_affinity_scan_issues,
+        "thread_affinity_process_status": thread_affinity_process_status,
+        "live_thread_affinity": thread_affinity,
     }
 
 
@@ -1481,7 +1864,13 @@ def _linux_descendants(root_pid: int) -> set[int]:
         children_path = Path("/proc") / str(parent) / "task" / str(parent) / "children"
         try:
             children = [int(value) for value in children_path.read_text().split()]
-        except (FileNotFoundError, PermissionError, ProcessLookupError, OSError, ValueError):
+        except (
+            FileNotFoundError,
+            PermissionError,
+            ProcessLookupError,
+            OSError,
+            ValueError,
+        ):
             children = []
         for child in children:
             if child not in found:
@@ -1650,6 +2039,79 @@ def _concurrent_live_rank_pid_groups(
     }
 
 
+def _thread_affinity_sample_matches(
+    snapshot: Mapping[str, object], expected_cpu: int
+) -> bool:
+    """Require one stable, singleton affinity proof for every captured task."""
+    scan_issues = snapshot.get("thread_affinity_scan_issues")
+    if scan_issues is None:
+        scan_issues = (
+            []
+            if snapshot.get("thread_affinity_scan_status") == "consistent"
+            else [snapshot.get("thread_affinity_scan_status")]
+        )
+    if (
+        snapshot.get("thread_affinity_evidence_source")
+        != THREAD_AFFINITY_EVIDENCE_SOURCE
+        or snapshot.get("thread_affinity_scan_status") != "consistent"
+        or scan_issues != []
+        or snapshot.get("thread_affinity_process_status", "live")
+        not in THREAD_AFFINITY_ACCEPTED_PROCESS_STATUSES
+    ):
+        return False
+    records = snapshot.get("live_thread_affinity")
+    if not isinstance(records, list) or not all(
+        isinstance(record, dict) for record in records
+    ):
+        return False
+    if not records:
+        return False
+    pid = snapshot.get("pid")
+    process_starttime = snapshot.get("process_starttime")
+    leader_proven = False
+    for record in records:
+        tid = record.get("tid")
+        starttime = record.get("thread_starttime")
+        observed_starttimes = record.get("observed_thread_starttimes")
+        masks = record.get("observed_cpu_masks")
+        if (
+            not isinstance(tid, int)
+            or isinstance(tid, bool)
+            or not isinstance(starttime, int)
+            or isinstance(starttime, bool)
+            or not isinstance(observed_starttimes, list)
+            or not observed_starttimes
+            or any(
+                not isinstance(value, int) or isinstance(value, bool)
+                for value in observed_starttimes
+            )
+            or starttime not in observed_starttimes
+            or not isinstance(masks, list)
+            or not masks
+            or not isinstance(record.get("live"), bool)
+            or not isinstance(record.get("identity_status"), str)
+        ):
+            return False
+        try:
+            normalized_masks = [parse_cpu_set(str(mask)) for mask in masks]
+            current_mask = parse_cpu_set(str(record.get("cpus_allowed_list", "")))
+        except ValueError:
+            return False
+        if any(mask != {expected_cpu} for mask in normalized_masks):
+            return False
+        if current_mask != {expected_cpu}:
+            return False
+        if record.get("identity_status") != "stable":
+            return False
+        if (
+            tid == pid
+            and starttime == process_starttime
+            and record.get("identity_status") == "stable"
+        ):
+            leader_proven = True
+    return leader_proven
+
+
 def _aggregate_cp2k_rank_generations(
     observed: Mapping[int, Mapping[str, object]],
     assigned_cpus: Sequence[int],
@@ -1691,6 +2153,11 @@ def _aggregate_cp2k_rank_generations(
                 and record.get("process_reappeared_after_terminal_ever") is not True
                 and record.get("executable_changed_ever") is not True
                 and record.get("cpu_mask_changed_during_sample_ever") is not True
+                and (
+                    "thread_affinity_evidence_source" not in record
+                    or record.get("thread_affinity_violation_ever") is False
+                    and record.get("all_thread_affinity_samples_exact") is True
+                )
                 and record.get("snapshot_unavailable_ever") is not True
                 and record.get("rank_environment_unavailable_pending") is not True
                 and (
@@ -1809,6 +2276,9 @@ def _accumulate_process_snapshot(
         and same_process_identity
         and 0 <= int(previous_rank) < len(assigned_cpus)
         and mask == {assigned_cpus[int(previous_rank)]}
+        and _thread_affinity_sample_matches(
+            snapshot, assigned_cpus[int(previous_rank)]
+        )
     )
 
     rank = previous_rank if retain_pending_rank else raw_rank
@@ -1827,6 +2297,12 @@ def _accumulate_process_snapshot(
         and 0 <= rank < len(assigned_cpus)
         and mask == {assigned_cpus[rank]}
     )
+    thread_sample_matches = bool(
+        isinstance(rank, int)
+        and not isinstance(rank, bool)
+        and 0 <= rank < len(assigned_cpus)
+        and _thread_affinity_sample_matches(snapshot, assigned_cpus[rank])
+    )
     rank_history = list(previous.get("observed_rank_ids", [])) if previous else []
     mask_history = list(previous.get("observed_cpu_masks", [])) if previous else []
     status_history = (
@@ -1838,6 +2314,83 @@ def _accumulate_process_snapshot(
     starttime_history = (
         list(previous.get("observed_process_starttimes", [])) if previous else []
     )
+    thread_status_history = (
+        list(previous.get("thread_affinity_scan_statuses", []))
+        if previous
+        else []
+    )
+    thread_source_history = (
+        list(previous.get("thread_affinity_evidence_sources", []))
+        if previous
+        else []
+    )
+    thread_issue_history = (
+        list(previous.get("thread_affinity_scan_issues_ever", []))
+        if previous
+        else []
+    )
+    thread_process_status_history = (
+        list(previous.get("thread_affinity_process_statuses", []))
+        if previous
+        else []
+    )
+    thread_mask_history = (
+        list(previous.get("observed_thread_cpu_masks", []))
+        if previous
+        else []
+    )
+    thread_identity_history = (
+        list(previous.get("observed_thread_identities", []))
+        if previous
+        else []
+    )
+    thread_status = str(snapshot.get("thread_affinity_scan_status", "missing"))
+    thread_source = str(snapshot.get("thread_affinity_evidence_source", "missing"))
+    raw_thread_issues = snapshot.get("thread_affinity_scan_issues")
+    if isinstance(raw_thread_issues, list) and all(
+        isinstance(issue, str) for issue in raw_thread_issues
+    ):
+        thread_issues = list(raw_thread_issues)
+    elif raw_thread_issues is None and thread_status == "consistent":
+        thread_issues = []
+    else:
+        thread_issues = ["invalid_or_missing_thread_scan_issue_evidence"]
+    thread_process_status = str(
+        snapshot.get("thread_affinity_process_status", "live")
+    )
+    if thread_status not in thread_status_history:
+        thread_status_history.append(thread_status)
+    if thread_source not in thread_source_history:
+        thread_source_history.append(thread_source)
+    for issue in thread_issues:
+        if issue not in thread_issue_history:
+            thread_issue_history.append(issue)
+    if thread_process_status not in thread_process_status_history:
+        thread_process_status_history.append(thread_process_status)
+    accumulated["thread_affinity_scan_issues"] = thread_issues
+    accumulated["thread_affinity_process_status"] = thread_process_status
+    thread_records = snapshot.get("live_thread_affinity")
+    if isinstance(thread_records, list):
+        for thread_record in thread_records:
+            if not isinstance(thread_record, Mapping):
+                continue
+            tid = thread_record.get("tid")
+            thread_starttime = thread_record.get("thread_starttime")
+            if (
+                isinstance(tid, int)
+                and not isinstance(tid, bool)
+                and isinstance(thread_starttime, int)
+                and not isinstance(thread_starttime, bool)
+            ):
+                identity = f"{tid}:{thread_starttime}"
+                if identity not in thread_identity_history:
+                    thread_identity_history.append(identity)
+            masks = thread_record.get("observed_cpu_masks")
+            if isinstance(masks, list):
+                for thread_mask in masks:
+                    thread_mask_text = str(thread_mask)
+                    if thread_mask_text not in thread_mask_history:
+                        thread_mask_history.append(thread_mask_text)
     if observation_status == "explicit" and raw_rank not in rank_history:
         rank_history.append(raw_rank)
     if mask_text not in mask_history:
@@ -1952,6 +2505,25 @@ def _accumulate_process_snapshot(
             "observed_process_states": state_history,
             "observed_process_starttimes": starttime_history,
             "current_sample_matches_assigned_singleton": sample_matches,
+            "thread_affinity_sample_count": int(
+                previous.get("thread_affinity_sample_count", 0) if previous else 0
+            )
+            + 1,
+            "thread_affinity_scan_statuses": thread_status_history,
+            "thread_affinity_evidence_sources": thread_source_history,
+            "thread_affinity_scan_issues_ever": thread_issue_history,
+            "thread_affinity_process_statuses": thread_process_status_history,
+            "observed_thread_cpu_masks": thread_mask_history,
+            "observed_thread_identities": thread_identity_history,
+            "current_thread_affinity_sample_exact": thread_sample_matches,
+            "all_thread_affinity_samples_exact": bool(
+                (previous is None or previous.get("all_thread_affinity_samples_exact"))
+                and thread_sample_matches
+            ),
+            "thread_affinity_violation_ever": bool(
+                (previous and previous.get("thread_affinity_violation_ever"))
+                or not thread_sample_matches
+            ),
             "process_starttime_changed_ever": bool(
                 (previous and previous.get("process_starttime_changed_ever"))
                 or process_starttime_changed
@@ -1995,6 +2567,7 @@ def _accumulate_process_snapshot(
             "affinity_violation_ever": bool(
                 (previous and previous.get("affinity_violation_ever"))
                 or not sample_matches
+                or not thread_sample_matches
                 or rank_identity_changed
                 or process_starttime_changed
                 or process_snapshot_inconsistent
@@ -2164,8 +2737,14 @@ class ExecutionPool:
                 "openmp_environment": dict(OPENMP_THREAD_ENVIRONMENT),
                 "blas_environment": dict(BLAS_THREAD_ENVIRONMENT),
                 "removed_mpi_binding_environment_key_policy": (
-                    "all inherited OMPI_MCA_*/PRTE_MCA_* control variables"
+                    "all inherited placement, topology, threading, and preload "
+                    "override variables"
                 ),
+                "binding_environment_scrub_contract": (
+                    binding_environment_scrub_contract()
+                ),
+                "pool_close_policy": "reject_while_run_admitted_or_active",
+                "rank_affinity_observation": "linux_proc_per_task_tid_starttime",
             }
             contract_sha256 = canonical_sha256(contract)
 
@@ -2181,7 +2760,8 @@ class ExecutionPool:
             self.cpu_reservation_lock_root = reservation_lock_root
             self._available = available_queue
             self._active: set[str] = set()
-            self._active_lock = threading.Lock()
+            self._lifecycle_lock = threading.Lock()
+            self._admitted_runs = 0
             self.contract = contract
             self.contract_sha256 = contract_sha256
             self._reservation_handles = reservation_handles
@@ -2194,15 +2774,46 @@ class ExecutionPool:
             raise
 
     def close(self) -> None:
-        if getattr(self, "_closed", True):
+        lifecycle_lock = getattr(self, "_lifecycle_lock", None)
+        if lifecycle_lock is None:
             return
-        for handle in self._reservation_handles:
-            handle.close()
-        self._reservation_handles = []
-        self._closed = True
+        with lifecycle_lock:
+            if getattr(self, "_closed", True) and not getattr(
+                self, "_reservation_handles", []
+            ):
+                return
+            if self._admitted_runs or self._active:
+                raise RuntimeError(
+                    "cannot release CPU reservations while CP2K runs are "
+                    "admitted or active"
+                )
+            # Make admission fail closed before the first individual lock is
+            # released.  Close every handle even if one close reports an error;
+            # failed handles remain owned so a later close can retry them.
+            self._closed = True
+            handles = self._reservation_handles
+            self._reservation_handles = []
+            first_error: BaseException | None = None
+            for handle in handles:
+                try:
+                    handle.close()
+                except BaseException as error:
+                    self._reservation_handles.append(handle)
+                    if first_error is None:
+                        first_error = error
+            if first_error is not None:
+                raise RuntimeError(
+                    "failed to release every CPU reservation; the execution "
+                    "pool remains closed"
+                ) from first_error
 
     def __del__(self) -> None:
-        self.close()
+        try:
+            self.close()
+        except Exception:
+            # Destructors cannot safely report lifecycle misuse.  In particular,
+            # never release reservations from here while a run is admitted.
+            pass
 
     def run_cp2k(
         self,
@@ -2210,20 +2821,28 @@ class ExecutionPool:
         inp: Path,
         out: Path,
     ) -> tuple[int, dict[str, object]]:
-        if self._closed:
-            raise RuntimeError("execution pool CPU reservations were already released")
-        cp2k = cp2k.resolve(strict=True)
-        if not cp2k.is_file() or not os.access(cp2k, os.X_OK):
-            raise ValueError(f"CP2K executable is not executable: {cp2k}")
-        pe_list = self._available.get()
-        with self._active_lock:
-            if pe_list in self._active:
-                self._available.put(pe_list)
-                raise RuntimeError(f"ordered PE list was allocated twice: {pe_list}")
-            self._active.add(pe_list)
+        admission_owned = False
+        pe_list: str | None = None
         proc: subprocess.Popen[bytes] | None = None
         observed: dict[int, dict[str, object]] = {}
+        with self._lifecycle_lock:
+            if self._closed:
+                raise RuntimeError(
+                    "execution pool CPU reservations were already released"
+                )
+            self._admitted_runs += 1
+            admission_owned = True
         try:
+            cp2k = cp2k.resolve(strict=True)
+            if not cp2k.is_file() or not os.access(cp2k, os.X_OK):
+                raise ValueError(f"CP2K executable is not executable: {cp2k}")
+            pe_list = self._available.get()
+            with self._lifecycle_lock:
+                if pe_list in self._active:
+                    raise RuntimeError(
+                        f"ordered PE list was allocated twice: {pe_list}"
+                    )
+                self._active.add(pe_list)
             assigned_cpus = parse_ordered_pe_list(pe_list)
             require_no_live_compute_overlap(assigned_cpus)
             live_overlap_preflight_gate = True
@@ -2242,12 +2861,19 @@ class ExecutionPool:
             main_log = inp.parent / "mainLog.out"
             if main_log.exists():
                 main_log.unlink()
-            env = os.environ.copy()
-            env.update(BLAS_THREAD_ENVIRONMENT)
-            env.update(OPENMP_THREAD_ENVIRONMENT)
-            removed_binding_environment = mpi_control_environment_keys(env)
-            for key in removed_binding_environment:
-                env.pop(key, None)
+            (
+                env,
+                removed_binding_environment,
+                library_path_preserved,
+            ) = sanitized_launch_environment(os.environ)
+            residual_binding_environment = [
+                key
+                for key in mpi_control_environment_keys(env)
+                if key not in SANCTIONED_THREAD_ENVIRONMENT
+            ]
+            binding_environment_scrub_gate = bool(
+                not residual_binding_environment and library_path_preserved
+            )
             command = [
                 str(self.mpi_launcher),
                 *self.mpi_launcher_args,
@@ -2268,6 +2894,7 @@ class ExecutionPool:
             concurrent_duplicate_rank_ids_ever: set[int] = set()
             concurrent_duplicate_rank_samples: list[dict[str, object]] = []
             live_overlap_runtime_samples: list[dict[str, object]] = []
+            local_affinity_violation_samples: list[dict[str, object]] = []
             affinity_sample_index = 0
             with log_path.open("wb") as launcher_log:
                 proc = subprocess.Popen(
@@ -2354,7 +2981,36 @@ class ExecutionPool:
                                 ],
                             }
                         )
-                    if external_owners:
+                    local_affinity_violations = [
+                        {
+                            "pid": record.get("pid"),
+                            "rank": record.get("ompi_comm_world_rank"),
+                            "leader_mask": record.get("cpus_allowed_list"),
+                            "thread_scan_status": record.get(
+                                "thread_affinity_scan_status"
+                            ),
+                            "thread_masks": record.get(
+                                "observed_thread_cpu_masks", []
+                            ),
+                        }
+                        for record in snapshots_this_sample
+                        if record.get("is_cp2k_rank") is True
+                        and (
+                            record.get("current_sample_matches_assigned_singleton")
+                            is not True
+                            or record.get("current_thread_affinity_sample_exact")
+                            is not True
+                            or record.get("affinity_violation_ever") is True
+                        )
+                    ]
+                    if local_affinity_violations:
+                        local_affinity_violation_samples.append(
+                            {
+                                "sample_index": affinity_sample_index,
+                                "ranks": local_affinity_violations,
+                            }
+                        )
+                    if external_owners or local_affinity_violations:
                         _terminate_and_reap_process_group(
                             proc, tracked_rank_starttimes=(
                                 _tracked_rank_process_starttimes(observed)
@@ -2464,8 +3120,10 @@ class ExecutionPool:
                 and all_rank_samples_exact
                 and binding_report_complete
                 and cross_process_reservation_gate
+                and binding_environment_scrub_gate
                 and live_overlap_preflight_gate
                 and not live_overlap_runtime_samples
+                and not local_affinity_violation_samples
             )
             observation: dict[str, object] = {
                 "schema_version": SCHEMA_VERSION,
@@ -2491,6 +3149,9 @@ class ExecutionPool:
                     **BLAS_THREAD_ENVIRONMENT,
                 },
                 "removed_mpi_binding_environment_keys": removed_binding_environment,
+                "binding_environment_scrub_gate": binding_environment_scrub_gate,
+                "residual_binding_environment_keys": residual_binding_environment,
+                "ld_library_path_preserved": library_path_preserved,
                 "launcher_log": str(log_path.resolve()),
                 "launcher_log_sha256": sha256(log_path),
                 "reported_binding_rank_ids": reported_binding_rank_ids,
@@ -2502,6 +3163,8 @@ class ExecutionPool:
                 "live_compute_overlap_preflight_owners": [],
                 "live_compute_overlap_runtime_gate": not live_overlap_runtime_samples,
                 "live_compute_overlap_runtime_samples": live_overlap_runtime_samples,
+                "local_affinity_violation_gate": not local_affinity_violation_samples,
+                "local_affinity_violation_samples": local_affinity_violation_samples,
                 "observed_child_processes": sorted(
                     observed.values(), key=lambda record: int(record["pid"])
                 ),
@@ -2555,9 +3218,23 @@ class ExecutionPool:
                 )
             raise
         finally:
-            with self._active_lock:
-                self._active.remove(pe_list)
-            self._available.put(pe_list)
+            if admission_owned:
+                # The admission count keeps close() from releasing the process-
+                # wide reservation locks until cleanup is complete.  Reclaim
+                # Queue ownership and Active membership under the same lock so
+                # another waiter cannot observe a half-transition, including
+                # when BaseException interrupts Queue -> Active.
+                with self._lifecycle_lock:
+                    try:
+                        if pe_list is not None:
+                            self._active.discard(pe_list)
+                            # Once put_nowait returns, Queue ownership itself is
+                            # authoritative; no second local ownership flag can
+                            # introduce a post-transfer update window.
+                            self._available.put_nowait(pe_list)
+                    finally:
+                        self._admitted_runs -= 1
+                        admission_owned = False
 
     def write_record(
         self,
