@@ -1,27 +1,24 @@
-# Repository scope and provenance
+# Repository and branch scope
 
-This repository was initialized from revision
-`8aa717992a0b8cccc9db3c418df4235b00fedeb0` of
-`DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks` so that benchmark geometries and
-reference data retain their git provenance.
+The public repository is split by paper responsibility:
 
-The repository boundary is now:
+- `main` is the Part-I branch. It owns the periodic g-xTB application
+  benchmarks, integration validation, paper-facing tables/figures, and the
+  retained technical molecular-crystal development archive.
+- `part-II` is the acceleration branch. Its tip contains only reference-oracle
+  comparisons, force/stress validation, timing/memory data, scaling tests, and
+  exact provenance for accelerated Brillouin-zone-coupled nonlocal exchange.
 
-- `Periodic-GFN2-Benchmarks`: canonical periodic GFN1/GFN2 paper material,
-  including complete method-owned inputs and result datasets;
-- `Periodic-g-xTB-Benchmarks`: all g-xTB Part-I/Part-II inputs, workflows,
-  validation gates, and provisional/final results. Only compact GFN values
-  required by explicit cross-method comparisons remain here.
+Part-II evidence is self-contained. Inputs mentioned through historical paths
+inside immutable manifests are also stored in the corresponding campaign or
+validation archive; no Part-I benchmark directory is required to reproduce a
+Part-II check.
 
-The verified source revision and byte-identical removal inventory are recorded
-in `GFN_BASELINE_SOURCE.md`. Shared structures and non-GFN reference data stay
-in both repositories where they are needed to make each benchmark usable.
+Complete GFN1-xTB and GFN2-xTB method-owned benchmark inputs and results are
+canonical in
+[`DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks`](https://github.com/DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks).
+They are not duplicated on `part-II`.
 
-The g-xTB migration was made before any g-xTB commit or branch was pushed to
-the public GFN2 repository. That repository therefore requires no history
-rewrite; its remote `main` remains the unchanged source revision above.
-
-Raw HPC working directories are not repositories and may temporarily retain
-their original directory names. Publication artifacts record content hashes
-and build identities rather than treating those transient paths as canonical
-provenance.
+Removing Part-I datasets from this branch is lossless: their current versions
+remain on `main`, and all earlier branch snapshots remain reachable through
+Git history.

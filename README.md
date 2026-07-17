@@ -1,121 +1,71 @@
-# Periodic g-xTB Benchmarks
+# Periodic g-xTB in CP2K: Part II validation data
 
-This public repository collects the paper-relevant inputs, validation gates,
-curated output data, analysis scripts, and figures for the periodic g-xTB
-implementation in CP2K with save_tblite.
+This branch contains the reproducibility record for *Periodic g-xTB in CP2K.
+II. Accelerated and Scalable Brillouin-Zone-Coupled Nonlocal Exchange*.
+Application-accuracy benchmarks and other Part-I material live on `main`; they
+are intentionally not duplicated here.
 
-Complete GFN1-xTB/GFN2-xTB inputs and result datasets are not duplicated here.
-Their canonical public home is
-[`DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks`](https://github.com/DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks).
-Only compact values needed for explicit g-xTB comparisons are retained; the
-verified split and source revision are recorded in
-[`GFN_BASELINE_SOURCE.md`](GFN_BASELINE_SOURCE.md). All g-xTB workflows,
-inputs, results, and Part-I/Part-II paper artifacts belong exclusively here.
+Every optimized path is tested against the explicit expanded-full-mesh
+implementation. That reference remains selectable as the numerical oracle.
+An SCC endpoint alone is insufficient: energy, Fock response, overlap adjoint,
+forces, and stress must agree before timing or memory results are accepted.
 
 ## Contents
 
-- `DMC-ICE13/`: phase-wise adaptive native-Bloch k-point convergence for
-  periodic g-xTB relative ice-polymorph energies, with compact GFN1/GFN2 and
-  diffusion Monte Carlo comparison values.
-- `X23b/`: correctness-gated g-xTB molecular-crystal workflow covering
-  molecular optimization, shifted-k preflights, force/stress finite
-  differences, native-Bloch cell optimization, and final k-point energies.
-- `Goldzak12/`: LC12 source calculations and the fixed LC10 paper subset
-  (C, Si, SiC, BN, BP, AlN, AlP, MgS, LiF, and LiCl), including equations of
-  state, cohesive energies, literature comparisons, and SCC-root diagnostics.
-- `campaigns/`: immutable g-xTB build, protocol, and qualification manifests.
-- `validation/`: molecular, primitive-cell/supercell, symmetry, force, and
-  stress regression inputs for the CP2K/save_tblite bridge. The canonical
-  artifact digests removed from the manuscript and Supplementary Material are
-  stored in `validation/paper_artifact_sha256.json`. The complete post-#5582
-  analytical-force/stress qualification, including raw outputs and its
-  discarded CPU-affinity diagnostic, is frozen in
-  `validation/gxtb_derivative_regtests_post5582_20260716/`. The corresponding
-  full-grid/K290/SPGLIB, force, and periodic-virial gates for representative
-  one- and two-dimensional PBC are in
-  `validation/gxtb_partial_pbc_post5582_20260716/`.
-- `patches/`: local CP2K and tblite patches used for the final benchmark
-  revision.
-- `scripts/`: helper scripts used for the final k-point, cell-optimization,
-  and CP2K-native-vs-tblite-CLI checks.
-- `scripts/finalize_paper_benchmark_bundle.py`: fail-closed aggregation of the
-  three completed benchmark-specific publication bundles into one CSV, JSON
-  lineage record, and set of TeX number macros under `paper/`. The JSON and
-  TeX exports additionally contain like-for-like g-XTB-minus-GFN1 and
-  g-XTB-minus-GFN2 deltas, error ratios, and percentage changes. The LC result
-  is emitted only for the exact LC10 set shared by GFN1-xTB, GFN2-xTB, and
-  g-XTB; method-specific LC12 coverage is never exported or compared.
-- `CODE_PATCHES.md`: compact implementation provenance retained where it is
-  also relevant to the g-xTB integration.
+- `campaigns/exchange-acceleration-20260716/`: machine-readable module and
+  case matrix, raw outputs, deterministic comparisons, and exact source/build
+  provenance for the reference and accelerated paths.
+- `campaigns/cp2k-batched-exchange-runtime-20260716T160444Z/`: bounded
+  image-batch correctness and memory/work trade-off tests.
+- `campaigns/gxtb-exchange-distributed-separable-dft-20260716T170019Z/`:
+  distributed image-range and separable direct-transform qualification.
+- `validation/accelerated_exchange/`: immutable reference-equivalence,
+  force/stress, 0D--3D PBC, K290/SPGLIB/time-reversal, MPI, cache, transform,
+  restart, timing, and memory archives with SHA-256 manifests.
+- `scripts/benchmark_execution.py`: fail-closed CPU reservation and affinity
+  helper used for reproducible timing runs.
+- `tests/`: repository-level archive, derivation, and CPU-affinity checks.
 
-Routine generated CP2K working directories, raw standard-output files, and
-optional diagnostic plots are not tracked. Explicitly named immutable
-qualification archives are the exception: they retain the raw evidence needed
-to reproduce a paper table or diagnose an invalidated launch. All other runs
-can be recreated from the versioned inputs and scripts.
+The retained acceleration components cover streamed symmetry-star
+contractions, bounded provider image batches, invariant phase/symmetry caches,
+regular-mesh dense-oracle and separable/mixed-radix transforms, distributed
+image kernels and MPI ownership, and metadata-validated cross-mesh restarts.
+Each component has an independent qualification boundary; a component-level
+result is never promoted to an end-to-end scaling claim.
 
-## Current g-xTB campaign
+## Acceptance order
 
-The active campaign is deliberately fail-closed: provisional numbers are not
-promoted to paper summaries until the stored build identity, raw artifacts,
-k-point convergence, symmetry, force/stress, and cross-build gates pass.
-Current production calculations use post-#5582 CP2K source revision
-`28df9380abb3...` with save_tblite revision `257ba442684c...`. See
-`campaigns/gxtb-pbc-v1-post5582-20260714/` for the complete machine-readable
-identity and the frozen energy, ACP, partial-periodicity, force, and stress
-qualification gates.
+1. fixed-matrix expansion, transform, foldback, and adjoint identities;
+2. identical-input energy, Fock, overlap-adjoint, force, and stress agreement;
+3. converged-state identity and analytical derivatives versus finite
+   differences;
+4. shifted/unshifted meshes, RKS/UKS, 0D--3D PBC, time reversal, K290 and
+   SPGLIB reduction, and multiple MPI layouts;
+5. timing and peak/aggregate memory only after all applicable correctness
+   gates pass.
 
-DMC-ICE13 has completed its phase-wise convergence protocol. LC10 remains
-provisional until the independently fitted LiF endpoint passes, and X23b is
-paused outside the present paper scope. The publication finalizers refuse
-incomplete or unhashed data.
+The physical Brillouin-zone sum is unchanged. Streaming, caching,
+transform factorization, and distribution alter storage, ordering, and
+communication only; they do not replace transformed star members by scalar
+weights or omit cross-k-point exchange terms.
 
-After the DMC-ICE13, X23b, and LC12 finalizers have all succeeded, create the
-single manuscript-facing bundle with
+## Repository checks
+
+Run the self-contained standard-library checks with:
 
 ```bash
-python3 scripts/finalize_paper_benchmark_bundle.py
+python3 -m unittest discover -s tests
 ```
 
-The command deletes stale aggregate outputs and fails without emitting a
-replacement if any child bundle is incomplete, has changed hashes, lacks the
-three-method comparison, or has inconsistent coverage.
+Each immutable archive also documents its own checksum and regeneration
+commands. Start with `validation/accelerated_exchange/README.md` and the three
+campaign READMEs above. Historical source paths in manifests are provenance
+strings only; all inputs used for the retained Part-II tests are archived
+inside this branch.
 
-## External GFN1/GFN2 comparison source
+## Scope boundary
 
-The comparison calculations use DCM-Uni-Paderborn CP2K development trunk revision
-`faf9aae91266170dfee8a9f7171a5135bc5eb368` with tblite support. The tblite
-build combines `main` revision `eb50bbfbe1c0869e2e18c9b7cc13144e5130b6df`
-with PR 350 head `8c5e56255dc0f7001615489f24162ed770888d8b` in local merge
-`8a9d09474b93d25c044d6f46ce920750c7fe4cf7`; PR 343 is already in the base.
-The frozen CP2K and tblite executable SHA-256 hashes are
-`f2b8e6e516b60d49af722997dd0bf06c10b54b2a2a221f786e5eaea38cccd8a5`
-and `d50145af569a6ce4ea4e73e68d1cb004c3ca240105deb941c0244b7d431ed47f`.
-
-The raw inputs and complete result tables for these values are in the canonical
-GFN repository linked above. Primary aggregate comparison values retained here
-are:
-
-| Benchmark | Setup | Method | MAE |
-|---|---|---|---:|
-| DMC-ICE13 relative energies | native Bloch 3x3x3 | GFN1-xTB | 8.005255 kJ mol-1 |
-| DMC-ICE13 relative energies | native Bloch 3x3x3 | GFN2-xTB | 3.462919 kJ mol-1 |
-| X23b lattice energies | k333 SP on native Bloch k222 cell opt | GFN1-xTB | 11.345702 kJ mol-1 |
-| X23b lattice energies | k333 SP on native Bloch k222 cell opt | GFN2-xTB | 14.092104 kJ mol-1 |
-| X23b cell volumes | native Bloch k222 cell opt | GFN1-xTB | 7.514116 percent |
-| X23b cell volumes | native Bloch k222 cell opt | GFN2-xTB | 5.842296 percent |
-| LC10 lattice constants | exact common set, k444 EOS | GFN1-xTB | 0.145118 A |
-| LC10 lattice constants | exact common set, k444 EOS | GFN2-xTB | 0.062410 A |
-| LC10 cohesive energies | exact common set, k555 on k444 EOS minima | GFN1-xTB | 1.543851 eV atom-1 |
-| LC10 cohesive energies | exact common set, k555 on k444 EOS minima | GFN2-xTB | 1.299325 eV atom-1 |
-
-All production k-point calculations use native Bloch sampling with full
-SPGLIB symmetry reduction. The completed production counts are 156/156 for
-DMC-ICE13, 46/46 for X23b k222 cell optimization, and 46/46 each for the
-X23b k333 and k444 final-geometry single points.
-
-The new LC10 paper table is not populated from those historical rows.  All
-three methods share one post-#5582 CP2K/save_tblite build and independently
-converge both a0 and Ecoh per solid from k333 upward without a fixed maximum
-mesh. One passing adjacent step is sufficient, both thresholds must pass, and
-the denser value is retained; no RMS or two-step gate is applied.
+This branch contains no DMC-ICE13, lattice-constant/cohesive-energy, or
+molecular-crystal application benchmark. Those datasets remain on `main` and
+in Git history. Complete periodic GFN1/GFN2 benchmark data remain canonical in
+[`DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks`](https://github.com/DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks).

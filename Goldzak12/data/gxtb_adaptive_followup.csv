@@ -1,3 +1,0 @@
-solid,method,fit_status,n_requested,n_completed,grid_min_scale,classification,interpretation,suggested_scales,adaptive_investigated,rerun_arguments
-MgO,GXTB,nonmonotonic_branch,11,11,0.82000,requires_adaptive_investigation,numerical EOS/branch investigation required; not a physical failure,0.79000;0.80000;0.84000;0.85000,False,--adaptive-scale MgO=0.79000 --adaptive-scale MgO=0.80000 --adaptive-scale MgO=0.84000 --adaptive-scale MgO=0.85000
-LiH,GXTB,nonmonotonic_branch,11,11,1.00000,requires_adaptive_investigation,numerical EOS/branch investigation required; not a physical failure,0.99000;0.99333;1.00667;1.01000,False,--adaptive-scale LiH=0.99000 --adaptive-scale LiH=0.99333 --adaptive-scale LiH=1.00667 --adaptive-scale LiH=1.01000

@@ -2,6 +2,7 @@ import json
 import hashlib
 import subprocess
 import sys
+import unittest
 from pathlib import Path
 
 
@@ -353,3 +354,17 @@ def test_provider_forward_archive_manifest_is_self_verifying():
     for line in entries:
         expected, relative = line.split(maxsplit=1)
         assert digest(CAMPAIGN / relative) == expected
+
+
+def load_tests(loader, standard_tests, pattern):
+    """Expose the assertion-style campaign checks to unittest discovery."""
+    del loader, standard_tests, pattern
+    suite = unittest.TestSuite()
+    for name, check in sorted(globals().items()):
+        if name.startswith("test_") and callable(check):
+            suite.addTest(unittest.FunctionTestCase(check, description=name))
+    return suite
+
+
+if __name__ == "__main__":
+    unittest.main()
