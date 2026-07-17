@@ -53,20 +53,27 @@ def acquire_cpu_reservation_locks(
     """Reserve each logical CPU across independent benchmark processes."""
     lock_root.mkdir(parents=True, exist_ok=True)
     handles: list[IO[str]] = []
+    current_handle: IO[str] | None = None
     try:
         for cpu in sorted(set(cpus)):
             path = lock_root / f"cpu-{cpu}.lock"
-            handle = path.open("a+")
+            current_handle = path.open("a+")
             try:
-                fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                fcntl.flock(
+                    current_handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB
+                )
             except BlockingIOError as error:
-                handle.seek(0)
-                holder = handle.read().strip() or "unidentified holder"
-                handle.close()
+                current_handle.seek(0)
+                holder = current_handle.read().strip() or "unidentified holder"
                 raise ValueError(
                     f"logical CPU {cpu} is already reserved by another production "
                     f"launcher ({holder})"
                 ) from error
+            # Register the just-locked file before metadata I/O.  The separate
+            # current_handle reference also covers a BaseException in append.
+            handles.append(current_handle)
+            handle = current_handle
+            current_handle = None
             handle.seek(0)
             handle.truncate()
             json.dump(
@@ -81,8 +88,9 @@ def acquire_cpu_reservation_locks(
             handle.write("\n")
             handle.flush()
             os.fsync(handle.fileno())
-            handles.append(handle)
-    except Exception:
+    except BaseException:
+        if current_handle is not None:
+            current_handle.close()
         for handle in handles:
             handle.close()
         raise
@@ -1228,10 +1236,11 @@ class ExecutionPool:
             cpu_reservation_lock_root or default_cpu_reservation_lock_root()
         ).resolve()
         selected_cpus = [cpu for pe_list in parsed_pe_lists for cpu in pe_list]
-        reservation_handles = acquire_cpu_reservation_locks(
-            selected_cpus, reservation_lock_root
-        )
+        reservation_handles: list[IO[str]] = []
         try:
+            reservation_handles = acquire_cpu_reservation_locks(
+                selected_cpus, reservation_lock_root
+            )
             require_no_live_compute_overlap(selected_cpus)
             available_queue: queue.Queue[str] = queue.Queue()
             for value in normalized_pe_lists:
@@ -1266,25 +1275,30 @@ class ExecutionPool:
                 ),
             }
             contract_sha256 = canonical_sha256(contract)
+
+            # Publish owned handles only after every potentially failing
+            # initialization step.  Until then the local list is the single
+            # cleanup authority for the whole post-acquisition region.
+            self.concurrent_jobs = concurrent_jobs
+            self.mpi_ranks_per_job = mpi_ranks_per_job
+            self.threads_per_rank = threads_per_rank
+            self.mpi_launcher = resolved_launcher
+            self.mpi_launcher_args = normalized_launcher_args
+            self.pe_lists = normalized_pe_lists
+            self.cpu_reservation_lock_root = reservation_lock_root
+            self._available = available_queue
+            self._active: set[str] = set()
+            self._active_lock = threading.Lock()
+            self.contract = contract
+            self.contract_sha256 = contract_sha256
+            self._reservation_handles = reservation_handles
+            self._closed = False
         except BaseException:
             for handle in reservation_handles:
                 handle.close()
+            self._reservation_handles = []
+            self._closed = True
             raise
-
-        self.concurrent_jobs = concurrent_jobs
-        self.mpi_ranks_per_job = mpi_ranks_per_job
-        self.threads_per_rank = threads_per_rank
-        self.mpi_launcher = resolved_launcher
-        self.mpi_launcher_args = normalized_launcher_args
-        self.pe_lists = normalized_pe_lists
-        self.cpu_reservation_lock_root = reservation_lock_root
-        self._reservation_handles = reservation_handles
-        self._closed = False
-        self._available = available_queue
-        self._active: set[str] = set()
-        self._active_lock = threading.Lock()
-        self.contract = contract
-        self.contract_sha256 = contract_sha256
 
     def close(self) -> None:
         if getattr(self, "_closed", True):

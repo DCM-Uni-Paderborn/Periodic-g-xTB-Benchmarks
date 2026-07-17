@@ -330,6 +330,141 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
             for handle in reacquired:
                 handle.close()
 
+    def test_pool_releases_current_lock_after_metadata_baseexception(self) -> None:
+        class InjectedMetadataFailure(BaseException):
+            pass
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            launcher = root / "mpirun"
+            launcher.write_text("#!/bin/sh\nexit 0\n")
+            launcher.chmod(0o755)
+            lock_root = root / "cpu-locks"
+            retained_errors: list[BaseException] = []
+            with mock.patch.object(
+                execution.json,
+                "dump",
+                side_effect=InjectedMetadataFailure("injected json.dump"),
+            ):
+                try:
+                    execution.ExecutionPool(
+                        concurrent_jobs=1,
+                        mpi_ranks_per_job=1,
+                        threads_per_rank=1,
+                        mpi_launcher=launcher,
+                        mpi_launcher_args=[],
+                        pe_lists=["1000001"],
+                        check_current_affinity=False,
+                        cpu_reservation_lock_root=lock_root,
+                    )
+                except InjectedMetadataFailure as error:
+                    retained_errors.append(error)
+                    frame_names: list[str] = []
+                    traceback = error.__traceback__
+                    while traceback is not None:
+                        frame_names.append(traceback.tb_frame.f_code.co_name)
+                        traceback = traceback.tb_next
+                    self.assertIn("acquire_cpu_reservation_locks", frame_names)
+                    self.assertIn("__init__", frame_names)
+                else:
+                    self.fail("injected lock-metadata BaseException was swallowed")
+            self.assertIsNotNone(retained_errors[0].__traceback__)
+            reacquired = execution.acquire_cpu_reservation_locks((1000001,), lock_root)
+            for handle in reacquired:
+                handle.close()
+            retained_errors.clear()
+
+    def test_pool_releases_locks_after_final_initialization_baseexception(self) -> None:
+        class InjectedInitializationFailure(BaseException):
+            pass
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            launcher = root / "mpirun"
+            launcher.write_text("#!/bin/sh\nexit 0\n")
+            launcher.chmod(0o755)
+            lock_root = root / "cpu-locks"
+            real_lock = execution.threading.Lock
+            calls = 0
+            retained_errors: list[BaseException] = []
+
+            def fail_second_lock():
+                nonlocal calls
+                calls += 1
+                if calls == 2:
+                    raise InjectedInitializationFailure("injected second Lock")
+                return real_lock()
+
+            with mock.patch.object(execution.threading, "Lock", fail_second_lock):
+                try:
+                    execution.ExecutionPool(
+                        concurrent_jobs=1,
+                        mpi_ranks_per_job=1,
+                        threads_per_rank=1,
+                        mpi_launcher=launcher,
+                        mpi_launcher_args=[],
+                        pe_lists=["1000011"],
+                        check_current_affinity=False,
+                        cpu_reservation_lock_root=lock_root,
+                    )
+                except InjectedInitializationFailure as error:
+                    retained_errors.append(error)
+                    frame_names: list[str] = []
+                    traceback = error.__traceback__
+                    while traceback is not None:
+                        frame_names.append(traceback.tb_frame.f_code.co_name)
+                        traceback = traceback.tb_next
+                    self.assertIn("__init__", frame_names)
+                    self.assertIn("fail_second_lock", frame_names)
+                else:
+                    self.fail("injected final-initialization BaseException was swallowed")
+            self.assertIsNotNone(retained_errors[0].__traceback__)
+            reacquired = execution.acquire_cpu_reservation_locks((1000011,), lock_root)
+            for handle in reacquired:
+                handle.close()
+            retained_errors.clear()
+
+    def test_reservation_metadata_flush_and_fsync_baseexceptions_release_lock(
+        self,
+    ) -> None:
+        class InjectedMetadataFailure(BaseException):
+            pass
+
+        class FlushFailingHandle:
+            def __init__(self, handle):
+                self._handle = handle
+
+            def flush(self) -> None:
+                raise InjectedMetadataFailure("injected flush")
+
+            def __getattr__(self, name):
+                return getattr(self._handle, name)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            original_open = Path.open
+
+            def flush_failing_open(path, *args, **kwargs):
+                return FlushFailingHandle(original_open(path, *args, **kwargs))
+
+            with mock.patch.object(Path, "open", flush_failing_open):
+                with self.assertRaisesRegex(InjectedMetadataFailure, "flush"):
+                    execution.acquire_cpu_reservation_locks((1000021,), root)
+            reacquired = execution.acquire_cpu_reservation_locks((1000021,), root)
+            for handle in reacquired:
+                handle.close()
+
+            with mock.patch.object(
+                execution.os,
+                "fsync",
+                side_effect=InjectedMetadataFailure("injected fsync"),
+            ):
+                with self.assertRaises(InjectedMetadataFailure):
+                    execution.acquire_cpu_reservation_locks((1000022,), root)
+            reacquired = execution.acquire_cpu_reservation_locks((1000022,), root)
+            for handle in reacquired:
+                handle.close()
+
     def test_procfs_preflight_rejects_live_cp2k_overlap_and_ignores_zombie(
         self,
     ) -> None:
