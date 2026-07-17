@@ -5,6 +5,11 @@ II. Accelerated and Scalable Brillouin-Zone-Coupled Nonlocal Exchange*.
 Application-accuracy benchmarks and other Part-I material live on `main`; they
 are intentionally not duplicated here.
 
+Any benchmark retained on this branch measures a numerical acceleration
+module---for example transform cost, bounded workspace, or MPI scaling---and
+not the predictive accuracy of g-xTB.  DMC13 and LC10 are therefore outside
+the Part-II data model.
+
 Every optimized path is tested against the explicit expanded-full-mesh
 implementation. That reference remains selectable as the numerical oracle.
 An SCC endpoint alone is insufficient: energy, Fock response, overlap adjoint,

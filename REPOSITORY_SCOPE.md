@@ -6,8 +6,11 @@ The public repository is split by paper responsibility:
   benchmarks, integration validation, paper-facing tables/figures, and the
   retained technical molecular-crystal development archive.
 - `part-II` is the acceleration branch. Its tip contains only reference-oracle
-  comparisons, force/stress validation, timing/memory data, scaling tests, and
-  exact provenance for accelerated Brillouin-zone-coupled nonlocal exchange.
+  comparisons, accelerated-path-versus-oracle force/stress equivalence,
+  numerical-method finite-difference checks, timing/memory data, scaling
+  tests, and exact provenance for accelerated Brillouin-zone-coupled nonlocal
+  exchange. Standalone validation of the native reference implementation
+  belongs to Part I.
 
 Part-II evidence is self-contained. Inputs mentioned through historical paths
 inside immutable manifests are also stored in the corresponding campaign or
