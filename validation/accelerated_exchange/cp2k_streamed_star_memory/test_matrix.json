@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "description": "DENSE/STREAMED/QUALIFY mixer symmetry-star storage matrix",
+  "cases": [
+    {"name": "ch4_k290", "input": "ch4_k290_energy_force.inp", "ranks": [1, 2], "nfull": 8, "features": ["RKS", "K290", "3D"]},
+    {"name": "ch4_spglib", "input": "ch4_spglib_energy_force.inp", "ranks": [1, 2], "nfull": 8, "features": ["RKS", "SPGLIB", "3D"]},
+    {"name": "h2_tr", "input": "h2_k311_tr_energy_force_print.inp", "ranks": [1, 2, 4], "nfull": 3, "features": ["RKS", "TIME_REVERSAL", "3D", "P_GT_NRED"]},
+    {"name": "o2_uks_tr", "input": "o2_uks_k311_tr_energy_force.inp", "ranks": [1, 2, 4], "nfull": 3, "features": ["UKS", "TIME_REVERSAL", "3D", "P_GT_NRED"]},
+    {"name": "ar2_1d_tr", "input": "ar2_1d_energy_force_print.inp", "ranks": [1, 2, 4], "nfull": 3, "features": ["RKS", "TIME_REVERSAL", "1D", "P_GT_NRED"]},
+    {"name": "ar4_2d_tr", "input": "ar4_2d_energy_force_print.inp", "ranks": [1, 2, 4], "nfull": 9, "features": ["RKS", "TIME_REVERSAL", "2D"]}
+  ],
+  "gates": {
+    "internal_covariance": 1e-10,
+    "internal_roundtrip": 1e-10,
+    "external_energy_Ha": 1e-9,
+    "external_force_Ha_per_bohr": 1e-7,
+    "external_stress_bar": 1e-1
+  }
+}
