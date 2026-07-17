@@ -1,0 +1,20 @@
+Final release installation prefix:
+/private/tmp/save_tblite_batched_install
+
+SHA-256  path
+80f152c42786696cd5638d711d28a81c6582dbd7b363e2116beba1c5bc6b129b  src/tblite/exchange/transform.f90
+5cc91ae391e41363a90d30a851500190b4d6ec676a2d9cc554972f5cd18ccc5c  src/tblite/exchange/fock.f90
+cd17f21e11b1d3e66bf29026a90c7c0e09cc11928643e6abbfc5974d238028da  src/tblite/cp2k_compat.f90
+3905a69af068703a340b938d0a65c6e71dd7b9740b174f0cac38588fb8005480  test/unit/test_exchange.f90
+645adeb0c9a81317c60f7d29e15bc93797ccc04e1e65f6d954afe74794444ea8  evidence/benchmark_separable_dft.f90
+ff04a54a563c04853fdff2e17714701c6d12370fbe663303a9c37b54611cb471  evidence/separable_dft_benchmark_20260716.tsv
+0bd0976de4f2066f8eefb58eb35dcbf90bc7f5a1ef1bd8468064ec70e24040ce  evidence/separable_dft_qualification_20260716.md
+2ec1a30d937ae96047f94983e43b7dbfca07dc942919c5ec8e162ad96875def7  /private/tmp/save_tblite_batched_install/lib/libtblite.a
+c8461cbfc6fa22fb60c9b3413e30d35f160d0d8eb49992f1486a2d8255e3999b  /private/tmp/save_tblite_batched_install/include/tblite/GNU-16.1.0/tblite_exchange_transform.mod
+393a57bca27990eab47ea5c3797673df0cf04ed91915faca032884f2660208d8  /private/tmp/save_tblite_batched_install/include/tblite/GNU-16.1.0/tblite_cp2k_compat.mod
+
+Qualification after enabling the compact-plan path end to end:
+- Debug/fcheck exchange: 31/31 passed.
+- Debug/fcheck gxtb: 40 passed, 4 expected-failure diagnostics.
+- Release exchange: 31/31 passed.
+- Dense oracle versus separable direct DFT: focused absolute gate <= 1e-11.

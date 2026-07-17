@@ -1,0 +1,10 @@
+case	mesh_or_reduction	periodicity	spin	max_abs_energy_delta_Ha	max_abs_force_delta_Ha_per_bohr	max_abs_stress_delta_bar	status
+ch4_full_debug	2x2x2_full	3D	RKS	7.105427357601002e-15	7.58372569e-17	3.9999940781854093e-07	pass_23_energies
+ch4_spglib	2x2x2_SPGLIB	3D	RKS	7.105427357601002e-15	4.3059202999999984e-17	8.000006346264854e-07	pass
+ch4_k290	2x2x2_K290	3D	RKS	0	1.26441315e-16	4.235174662200001e-12	pass
+ar2_1d	2x1x1_full	1D	RKS	0	0	1.144410498399e-12	pass
+ar4_2d	2x2x1_full	2D	RKS	0	0	0	pass
+si_shifted	2x2x2_shifted_full	3D	RKS	0	1.7318587359999999e-16	1.9317531029700002e-10	pass
+o2_uks_time_reversal	3x1x1_inversion_reduced	3D	UKS	0	0	0	pass
+ch4_distributed_smoke	2x2x2_full_P2_vs_P1	3D	RKS	0	1.532643619e-16	9.999894245993346e-08	pass
+ch4_distributed_plus_separable	2x2x2_full_P2_dense_vs_separable_derivative	3D	RKS	0	1.2929111000000015e-17	1.3388011983072999e-12	pass

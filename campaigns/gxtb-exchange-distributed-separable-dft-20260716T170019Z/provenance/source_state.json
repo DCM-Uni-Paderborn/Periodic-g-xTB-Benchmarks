@@ -1,0 +1,29 @@
+{
+  "archive_repository": {
+    "base_revision": "664cf237272aff616e05a42704f997c160a85cbb",
+    "remote": "https://github.com/DCM-Uni-Paderborn/Periodic-g-xTB-Benchmarks.git"
+  },
+  "cp2k": {
+    "base_revision": "28df9380abb327d56bbf216d2469a1fd8c953fc0",
+    "branch": "gxtb-symmetry-v2-audit",
+    "run_worktree": "/private/tmp/cp2k_gxtb_symmetry_v2",
+    "qualification_source_attribution": "The distributed and separable-consumer raw outputs, exact inputs, and their inner checksum manifests are archived. The uncommitted CP2K worktree continued evolving during the campaign, so the current source diff and executable are deliberately not claimed as byte-exact provenance for every earlier run.",
+    "consumer_inner_manifest": "raw/cp2k_separable_consumer/SHA256SUMS",
+    "current_post_run_diff_sha256_not_run_identity": "99219aaae090d14275b4f0f2074e49a00d7180506537d68c590eb714427d2b28"
+  },
+  "save_tblite": {
+    "base_revision": "257ba442684c39454175e5192c8a2342b4c6380f",
+    "branch": "codex/periodic-exchange-cache",
+    "worktree": "/private/tmp/save_tblite_batched_stream_independent_20260716",
+    "final_worktree_diff_sha256": "db02fd45eca1baaa09cba10a7f986c7504ee5f78c9c61234c9d27b48af744604",
+    "source_hash_authority": "raw/provider/separable_dft_final_sha256_20260716.txt",
+    "installed_library_sha256": "2ec1a30d937ae96047f94983e43b7dbfca07dc942919c5ec8e162ad96875def7"
+  },
+  "source_evidence_origins": [
+    "/private/tmp/gxtb-distributed-qualification-20260716",
+    "/private/tmp/save_tblite_batched_stream_independent_20260716/evidence",
+    "/private/tmp/gxtb-transform-qualification-20260716"
+  ],
+  "cp2k_consumer_archive_copied_utc": "2026-07-16T18:27:48Z",
+  "provenance_caveat": "Absolute source and build paths document the producing workspace but are not expected to exist on another host. SHA-256 values and archived raw files are the portable identities."
+}
