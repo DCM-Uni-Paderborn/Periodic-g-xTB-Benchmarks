@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 MATRIX = json.loads((ROOT / "test_matrix.json").read_text())
 FLOAT = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?"
 QUALIFY_RE = re.compile(
