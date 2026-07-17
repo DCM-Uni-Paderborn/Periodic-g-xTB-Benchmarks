@@ -1,26 +1,24 @@
-# DMC-ICE13 Periodic GFN Benchmark
+# DMC-ICE13 Periodic g-xTB Benchmark
 
-This directory contains CP2K/tblite single-point calculations for the
-DMC-ICE13 ice polymorph benchmark. The calculations compare periodic
-GFN1-xTB and GFN2-xTB relative energies against the diffusion Monte Carlo
-reference values of Della Pia, Zen, Alfe, and Michaelides,
+This directory contains the CP2K/save_tblite g-xTB single-point calculations
+for the DMC-ICE13 ice-polymorph benchmark. Compact comparisons use the
+periodic GFN1-xTB/GFN2-xTB values from the canonical
+[`Periodic-GFN2-Benchmarks`](https://github.com/DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks)
+repository and the diffusion Monte Carlo reference values of Della Pia, Zen,
+Alfe, and Michaelides,
 J. Chem. Phys. 157, 134701 (2022), DOI: 10.1063/5.0102645.
 
 ## Data included
 
 - `poscars/`: POSCAR geometries for the 13 DMC-ICE13 polymorphs.
-- `inputs/`: Gamma-only CP2K input files for GFN1-xTB and GFN2-xTB.
-- `kpoint_inputs/`: explicit native Bloch 1x1x1, 2x2x2, 3x3x3, 4x4x4, and
-  5x5x5 MacDonald k-point CP2K input files.
+- `kpoint_inputs/`: the 78 versioned g-xTB inputs for Gamma and explicit
+  native-Bloch 1x1x1, 2x2x2, 3x3x3, 4x4x4, and 5x5x5 meshes. These also serve
+  as the method-owned templates for denser adaptive meshes.
 - `runs/`: generated Gamma-only CP2K working directories, ignored by Git.
 - `runs_kpoints/`: generated k-point CP2K working directories, ignored by Git.
-- `data/results.json`: raw CP2K total energies, per-water energies, relative
-  energies with respect to ice Ih, and error statistics for the Gamma-only
-  calculations.
-- `data/kpoint_results.json`: raw and relative energies for the k-point
-  dependent calculations.
-- `data/dmc_ice13_relative_energies.csv`: 3x3x3 relative energies and GFN
-  errors used as the primary manuscript values.
+- `data/kpoint_results.json`: retained mixed comparison seed used by the
+  g-xTB plotting/finalization code; complete GFN-owned source data remain in
+  the canonical GFN repository.
 - `data/dmc_ice13_kpoint_stats.csv`: aggregate DMC-ICE13 error statistics as a
   function of k-point mesh.
 - `data/dmc_ice13_kpoint_relative_energies.csv`: phase-resolved relative
@@ -33,26 +31,22 @@ J. Chem. Phys. 157, 134701 (2022), DOI: 10.1063/5.0102645.
 - `data/dmc_ice13_gxtb_phase_vii_kpoint_convergence.csv`: the complete ice-VII
   relative-energy and adjacent-mesh sequence used in the new Supporting
   Information.
-- `data/previous_vs_full_pr350_mae.csv` and the companion Markdown file:
-  explicit comparison with the earlier partial-PR350 manuscript stack.
-- `data/dmc_ice13_relative_mae_comparison.csv`: comparison with the published
-  DFT data from the DMC-ICE13 paper.
 - `data/dmc_ice13_published_dft_absolute_energies.csv`: published DMC and DFT
   absolute lattice energies from the DMC-ICE13 paper, used to compute the
   relative-energy MAE ranking.
 - `data/build_provenance.json`: source revisions, executable and shared-library
-  hashes, patch hashes, build flags, and the completed-calculation count.
-- `data/dmc_ice13_reference_cli_rows.csv` and
-  `data/dmc_ice13_reference_cli_summary.csv`: direct CP2K-native versus tblite
-  CLI energy, gradient, and virial checks for all 26 Gamma calculations.
-- `figures/`: PDF, SVG, and PNG versions of the three DMC-ICE13 plots used in
-  the revised manuscript and Supporting Information.
-- `scripts/`: input generation, extraction, analysis, plotting, and run scripts.
+  hashes, patch hashes, build flags, and the comparison-source identity.
+- `figures/`: g-xTB-specific convergence and comparison figures.
+- `scripts/`: g-xTB input generation, extraction, analysis, plotting, and run
+  scripts. Baseline-only GFN launchers live in the canonical GFN repository.
+
+The exact repository split and canonical GFN source revision are documented in
+[`../GFN_BASELINE_SOURCE.md`](../GFN_BASELINE_SOURCE.md).
 
 The original PDF and Supporting Information are not redistributed here. The
 geometries and DMC reference values are documented through the paper DOI above.
 
-## CP2K setup used
+## External GFN comparison setup
 
 The calculations were run from CP2K development trunk, not from a numbered
 release. The executable reports `2026.1 (Development Version)` and is
@@ -95,12 +89,10 @@ Current aggregate MAEs:
 | 4x4x4 | 8.006494 | 3.461424 |
 | 5x5x5 | 8.006485 | 3.461353 |
 
-## Additive g-xTB production workflow
+## g-xTB production workflow
 
-The follow-on g-xTB benchmark is kept separate from the frozen GFN1-xTB and
-GFN2-xTB paper data above.  Running the g-xTB workflow does not replace the
-versioned GFN result JSON/CSV files, their figures, or their raw run
-directories.
+The complete GFN1-xTB/GFN2-xTB paper data are external. Running this workflow
+creates or updates only method-owned g-xTB paths.
 
 The production contract is:
 
@@ -197,10 +189,10 @@ but all multi-rank timings from that shared-mask policy are classified
 `legacy_timing_non_scaling` and must not be used in speedup or scaling plots.
 
 This production runner is intentionally g-xTB-only: `--method GXTB` must be
-given exactly once, so it cannot regenerate or overwrite the frozen GFN1/GFN2
-inputs and results.  It additionally requires the exact additive analysis
+given exactly once, so it cannot regenerate GFN1/GFN2 inputs or results. It
+additionally requires the exact additive analysis
 prefix `gxtb_spglib` and keeps both generated-input and run roots below this
-DMC-ICE13 directory.  Unprefixed analysis remains restricted to GFN1/GFN2.
+DMC-ICE13 directory.
 
 A result is admitted to analysis only if the output completed with a converged
 SCF, the input satisfies the explicit SPGLIB/implicit-Gamma contract, and the

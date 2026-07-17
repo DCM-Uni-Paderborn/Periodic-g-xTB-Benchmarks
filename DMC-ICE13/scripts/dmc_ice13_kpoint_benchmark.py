@@ -241,7 +241,19 @@ def insert_kpoints(
     return input_text.replace("    &END QS\n", "    &END QS\n" + "\n".join(block) + "\n", 1)
 
 
+def remove_kpoints(input_text: str) -> str:
+    """Remove one CP2K KPOINTS section from a reusable g-xTB template."""
+    return re.sub(
+        r"(?ms)^    &KPOINTS\n.*?^    &END KPOINTS\n",
+        "",
+        input_text,
+        count=1,
+    )
+
+
 def enable_cell_canonicalization(input_text: str) -> str:
+    if "      CANONICALIZE TRUE\n" in input_text:
+        return input_text
     return input_text.replace("    &CELL\n", "    &CELL\n      CANONICALIZE TRUE\n", 1)
 
 
@@ -271,9 +283,10 @@ def prepare_inputs(
     mesh_ids: list[str] | None = None,
     phase_ids: list[str] | None = None,
 ) -> None:
-    # Preserve the historic GFN1/GFN2 default.  GXTB is selected explicitly by
-    # the additive production runner and is written to its own input root.
-    selected = methods or ["GFN1", "GFN2"]
+    # This repository owns g-xTB inputs.  Canonical GFN1/GFN2 inputs live in
+    # DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks and are never regenerated
+    # implicitly here.
+    selected = methods or ["GXTB"]
     selected_meshes = (
         [MESH_BY_ID[mesh_id] for mesh_id in mesh_ids]
         if mesh_ids
@@ -288,11 +301,31 @@ def prepare_inputs(
             out_dir = out_root / mesh_id
             out_dir.mkdir(parents=True, exist_ok=True)
             for phase in selected_phases:
-                template_method = "GFN2" if method == "GXTB" else method
-                base_path = ROOT / "inputs" / f"ice_{phase}_{template_method}.inp"
-                text = base_path.read_text()
                 if method == "GXTB":
-                    text = gxtb_from_gfn2_template(text, phase)
+                    base_path = (
+                        ROOT
+                        / "kpoint_inputs"
+                        / "gamma"
+                        / f"ice_{phase}_GXTB_gamma.inp"
+                    )
+                    text = remove_kpoints(base_path.read_text())
+                    text = re.sub(
+                        rf"(?m)^  PROJECT ice_{re.escape(phase)}_GXTB_gamma$",
+                        f"  PROJECT ice_{phase}_GXTB",
+                        text,
+                        count=1,
+                    )
+                    if not text.startswith(f"# DMC13_GXTB_PROTOCOL {GXTB_PROTOCOL_ID}\n"):
+                        text = f"# DMC13_GXTB_PROTOCOL {GXTB_PROTOCOL_ID}\n" + text
+                else:
+                    base_path = ROOT / "inputs" / f"ice_{phase}_{method}.inp"
+                    if not base_path.exists():
+                        raise FileNotFoundError(
+                            f"{base_path} is not stored in the g-xTB repository; "
+                            "use DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks "
+                            "for GFN1/GFN2 input generation"
+                        )
+                    text = base_path.read_text()
                 text = enable_cell_canonicalization(text)
                 project = f"ice_{phase}_{method}_{mesh_id}"
                 text = text.replace(f"PROJECT ice_{phase}_{method}", f"PROJECT {project}")

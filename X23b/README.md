@@ -1,14 +1,19 @@
-# X23b Periodic GFN Benchmark
+# Archived X23b g-xTB development material
 
-This directory contains CP2K/tblite calculations for the X23b molecular-crystal
-benchmark of Dolgonos, Hoja, and Boese. The reference lattice energies are the
+This directory retains g-xTB-specific CP2K/save_tblite development and
+validation material for the X23b molecular-crystal benchmark of Dolgonos,
+Hoja, and Boese. This technical archive is not part of the current Part I or
+Part II manuscript or their Supporting Information. Complete GFN1/GFN2 inputs,
+tables, and figures are canonical
+in [`Periodic-GFN2-Benchmarks`](https://github.com/DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks)
+and are not duplicated here. The reference lattice energies are the
 recommended experimental back-corrected values from Table 5, and the reference
 cell volumes are the electronic reference volumes from Table 2 of that work.
-The primary relaxed-cell benchmark in the current manuscript revision uses
-native Bloch 2x2x2 CP2K `&KPOINTS` cell optimizations with full SPGLIB
-symmetry reduction. Reported lattice energies are reevaluated on those final
-geometries with a Gamma-centered 3x3x3 mesh. This is neither a Gamma-only cell
-optimization nor a Born-von-Karman supercell calculation.
+The archived production protocol uses native Bloch 2x2x2 CP2K `&KPOINTS` cell
+optimizations with full SPGLIB symmetry reduction. Lattice energies are
+reevaluated on those final geometries with a Gamma-centered 3x3x3 mesh. This is
+neither a Gamma-only cell optimization nor a Born-von-Karman supercell
+calculation.
 
 The crystal structures are taken from the open X23 `refdata` set. Hexamine is
 the only special case: the open experimental CIF contains only heavy atoms, so
@@ -18,20 +23,13 @@ the complete X23 Quantum ESPRESSO crystal input is used for that system.
 
 - `structures/`: P1 CIF crystal structures and gas-phase molecular starting
   geometries.
-- `inputs/`: CP2K input files for crystal single points, gas-phase molecular
+- `inputs/`: g-xTB CP2K inputs for crystal single points, gas-phase molecular
   optimizations, and retained Gamma-point crystal cell optimizations.
 - `runs/`: generated CP2K working directories, ignored by Git.
-- `data/`: metadata, reference values, extracted energies, volume errors, and
-  aggregate statistics, including the DMC-X23 comparison values used for the
-  system-resolved lattice-energy figure. The final-geometry mesh convergence
-  is retained in `x23b_final_geometry_kpoint_{rows,summary}.csv`. The
-  exact source, patch, executable, and protocol record is
-  `data/build_provenance.json`; the
-  `x23b_reference_cli_{gfn1,gfn2}_{rows,summary}.csv` files record direct
-  CP2K-native versus tblite CLI checks on all initial and final Gamma
-  geometries.
-- `figures/`: PDF, SVG, and PNG versions of the three X23b plots used in the
-  revised manuscript and Supporting Information.
+- `data/`: shared metadata/reference values and g-xTB build provenance. The
+  retained `build_provenance.json` is comparison-lineage metadata; method-owned
+  GFN result tables are external.
+- `figures/`: reserved for g-xTB-specific diagnostic figures.
 - `scripts/`: input generation, analysis, plotting, and run scripts.
 
 ## Run Defaults
@@ -52,11 +50,9 @@ MPI/OpenMP execution.
 
 ## Current primary result
 
-The final 23/23 converged X23b relaxed-cell data per method are stored in
-`data/x23b_lattice_energies.csv`, `data/x23b_cell_volumes.csv`, and
-`data/x23b_summary.csv`. The volume rows are `cell_opt,k222`; the manuscript
-lattice-energy rows are `cell_opt_single_point,k333`. The raw k222 energies
-and the k444 convergence checks remain in the same files.
+The compact historical values below come from the canonical GFN repository.
+The complete tables are stored there under `X23b/data/`; they are not local
+g-xTB result files.
 
 | Quantity | Method | ME | MAE | RMSE | MaxAE |
 |---|---|---:|---:|---:|---:|
@@ -69,18 +65,9 @@ The k333-to-k444 mean absolute energy changes on the final geometries are
 0.079329 kJ mol-1 for GFN1-xTB and 0.084265 kJ mol-1 for GFN2-xTB. The
 fixed-reference-geometry single-point rows remain as a separate diagnostic.
 
-Recreate the curated tables and figures after collecting the cell
-optimizations and final-geometry single points:
-
-```bash
-python3 X23b/scripts/x23b_pipeline.py analyse \
-  --cellopt-csv /path/to/x23b_k222_cellopt_results.csv \
-  --final-kpoint-csv X23b/data/x23b_final_geometry_kpoint_rows.csv
-```
-
 ## Additive g-xTB production workflow
 
-`GXTB` is an additive third method.  Its gas molecule, Gamma preoptimization,
+`GXTB` is the method owned by this repository. Its gas molecule, Gamma preoptimization,
 k222 cell, and k333/k444 energies are all method-owned; no GFN1/GFN2 molecular
 energy or geometry is accepted as a source.  The generated CP2K inputs contain
 `METHOD GXTB` and exactly `SCC_MIXER TBLITE`, selecting save_tblite's native
@@ -334,14 +321,18 @@ Full-grid GXTB outputs made before the SPGLIB production path was available are
 retained only as diagnostics. They have no matching production stamp and are
 not eligible for collection, continuation, or publication tables.
 
-### Fail-closed paper artifact
+### Fail-closed historical comparison artifact
 
-The staging analysis above is not a publication boundary. After the final
-direct-ACP k-point build has been validated against the frozen predecessor,
-freeze the GFN1/GFN2/GXTB comparison with:
+The staging analysis above is not an accepted-result boundary. The retained
+finalizer can freeze a provenance-complete GFN1/GFN2/GXTB comparison for future
+technical use after the final direct-ACP k-point build has been validated
+against the frozen predecessor. It is not consumed by the current Part I or
+Part II paper. Run:
 
 ```bash
-python3 X23b/scripts/finalize_x23b_paper_summary.py
+python3 X23b/scripts/finalize_x23b_paper_summary.py \
+  --legacy-rows /path/to/Periodic-GFN2-Benchmarks/X23b/data/x23b_final_geometry_kpoint_rows.csv \
+  --legacy-volumes /path/to/Periodic-GFN2-Benchmarks/X23b/data/x23b_cell_volumes.csv
 ```
 
 The command atomically creates
@@ -358,12 +349,12 @@ the production-ready build manifest, and two additional reviewed artifacts:
   a named reviewer's explicit mean-absolute and maximum-absolute convergence
   thresholds and passing checks for GFN1, GFN2, and GXTB.
 
-Missing, incomplete, rejected, or hash-inconsistent gates remove both paper
-outputs rather than leaving a partial or stale publication bundle. The frozen
-GFN1/GFN2 source tables and `data/build_provenance.json` are read and hashed,
-never rewritten. Non-default gate or output paths can be supplied with
-`--cross-build-approval`, `--kpoint-approval`, `--output-csv`, and
-`--output-json`.
+Missing, incomplete, rejected, or hash-inconsistent gates remove both
+comparison outputs rather than leaving a partial or stale comparison bundle. The
+explicitly supplied canonical GFN1/GFN2 source tables and retained comparison
+lineage in `data/build_provenance.json` are read and hashed, never rewritten.
+Non-default gate or output paths can be supplied with `--cross-build-approval`,
+`--kpoint-approval`, `--output-csv`, and `--output-json`.
 
 ### Optional fixed-reference SI diagnostic
 
@@ -405,6 +396,7 @@ python3 scripts/run_x23b_reference_cli_checks.py \
 ```
 
 The candidate build and current stamp-validated completion state are recorded in
-`data/build_provenance_gxtb.json`. Curated GFN1/GFN2 tables are not touched by
-the GXTB commands: analysis defaults to/stays in `data/gxtb_staging` until all
-five 23/23 coverage checks have passed and the provenance counts are updated.
+`data/build_provenance_gxtb.json`. Canonical GFN1/GFN2 tables are external and
+are not touched by the GXTB commands: analysis defaults to/stays in
+`data/gxtb_staging` until all five 23/23 coverage checks have passed and the
+provenance counts are updated.

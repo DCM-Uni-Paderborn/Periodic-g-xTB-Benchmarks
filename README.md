@@ -1,20 +1,22 @@
 # Periodic g-xTB Benchmarks
 
-This private repository collects the paper-relevant inputs, validation gates,
+This public repository collects the paper-relevant inputs, validation gates,
 curated output data, analysis scripts, and figures for the periodic g-xTB
 implementation in CP2K with save_tblite.
 
-Frozen GFN1-xTB/GFN2-xTB values are retained only as comparison baselines.
-Their canonical public home remains
+Complete GFN1-xTB/GFN2-xTB inputs and result datasets are not duplicated here.
+Their canonical public home is
 [`DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks`](https://github.com/DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks).
-New g-xTB workflows, inputs, results, and paper artifacts belong exclusively
-in this repository.
+Only compact values needed for explicit g-xTB comparisons are retained; the
+verified split and source revision are recorded in
+[`GFN_BASELINE_SOURCE.md`](GFN_BASELINE_SOURCE.md). All g-xTB workflows,
+inputs, results, and Part-I/Part-II paper artifacts belong exclusively here.
 
 ## Contents
 
 - `DMC-ICE13/`: phase-wise adaptive native-Bloch k-point convergence for
-  periodic g-xTB relative ice-polymorph energies, with frozen GFN1/GFN2 and
-  diffusion Monte Carlo comparison data.
+  periodic g-xTB relative ice-polymorph energies, with compact GFN1/GFN2 and
+  diffusion Monte Carlo comparison values.
 - `X23b/`: correctness-gated g-xTB molecular-crystal workflow covering
   molecular optimization, shifted-k preflights, force/stress finite
   differences, native-Bloch cell optimization, and final k-point energies.
@@ -43,8 +45,8 @@ in this repository.
   g-XTB-minus-GFN2 deltas, error ratios, and percentage changes. The LC result
   is emitted only for the exact LC10 set shared by GFN1-xTB, GFN2-xTB, and
   g-XTB; method-specific LC12 coverage is never exported or compared.
-- `FINAL_RESULTS.md`, `CODE_PATCHES.md`, and `paper_revision_numbers.csv`:
-  compact provenance for the current paper revision.
+- `CODE_PATCHES.md`: compact implementation provenance retained where it is
+  also relevant to the g-xTB integration.
 
 Routine generated CP2K working directories, raw standard-output files, and
 optional diagnostic plots are not tracked. Explicitly named immutable
@@ -79,9 +81,9 @@ The command deletes stale aggregate outputs and fails without emitting a
 replacement if any child bundle is incomplete, has changed hashes, lacks the
 three-method comparison, or has inconsistent coverage.
 
-## Frozen GFN1/GFN2 comparison snapshot
+## External GFN1/GFN2 comparison source
 
-The imported comparison calculations use DCM-Uni-Paderborn CP2K development trunk revision
+The comparison calculations use DCM-Uni-Paderborn CP2K development trunk revision
 `faf9aae91266170dfee8a9f7171a5135bc5eb368` with tblite support. The tblite
 build combines `main` revision `eb50bbfbe1c0869e2e18c9b7cc13144e5130b6df`
 with PR 350 head `8c5e56255dc0f7001615489f24162ed770888d8b` in local merge
@@ -90,7 +92,9 @@ The frozen CP2K and tblite executable SHA-256 hashes are
 `f2b8e6e516b60d49af722997dd0bf06c10b54b2a2a221f786e5eaea38cccd8a5`
 and `d50145af569a6ce4ea4e73e68d1cb004c3ca240105deb941c0244b7d431ed47f`.
 
-Primary aggregate results:
+The raw inputs and complete result tables for these values are in the canonical
+GFN repository linked above. Primary aggregate comparison values retained here
+are:
 
 | Benchmark | Setup | Method | MAE |
 |---|---|---|---:|

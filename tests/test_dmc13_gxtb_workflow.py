@@ -652,7 +652,21 @@ class DMC13GXTBInputTests(unittest.TestCase):
             runner.release_runner_lock(second)
 
     def test_native_mixer_has_explicit_iteration_limit(self) -> None:
-        source = (REPOSITORY / "DMC-ICE13" / "inputs" / "ice_Ih_GFN2.inp").read_text()
+        source = """&GLOBAL
+  PROJECT ice_Ih_GFN2
+&END GLOBAL
+&FORCE_EVAL
+  &DFT
+    &QS
+      &XTB
+        &TBLITE
+          METHOD GFN2
+        &END TBLITE
+      &END XTB
+    &END QS
+  &END DFT
+&END FORCE_EVAL
+"""
         text = benchmark.gxtb_from_gfn2_template(source, "Ih")
         self.assertIn(
             f"# DMC13_GXTB_PROTOCOL {benchmark.GXTB_PROTOCOL_ID}", text

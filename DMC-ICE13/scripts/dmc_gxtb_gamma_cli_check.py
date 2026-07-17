@@ -659,7 +659,9 @@ def main() -> int:
         run_dir = args.cli_run_root / phase
         run_dir.mkdir(parents=True, exist_ok=True)
         poscar = run_dir / "POSCAR"
-        labels = coordinate_labels(ROOT / "inputs" / f"ice_{phase}_GFN2.inp")
+        labels = coordinate_labels(
+            ROOT / "kpoint_inputs" / "gamma" / f"ice_{phase}_GXTB_gamma.inp"
+        )
         expected_poscar = poscar_text(phase, geometries[phase], labels)
         expected_poscar_sha256 = hashlib.sha256(expected_poscar.encode()).hexdigest()
         result_json = run_dir / "tblite.json"

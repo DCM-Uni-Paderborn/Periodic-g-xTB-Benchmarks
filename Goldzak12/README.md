@@ -7,6 +7,12 @@ fixed identical ten-system subset `C, Si, SiC, BN, BP, AlN, AlP, MgS, LiF,
 LiCl` for GFN1-xTB, GFN2-xTB, and g-xTB.  LiH and MgO remain diagnostic data
 only and never enter a reported statistic for any of the three methods.
 
+Complete periodic GFN1/GFN2 inputs and paper datasets are maintained in
+[`Periodic-GFN2-Benchmarks`](https://github.com/DCM-Uni-Paderborn/Periodic-GFN2-Benchmarks).
+This directory retains g-xTB data, mixed comparison tables, shared references,
+and a historical LC12 snapshot whose complete contents are not present in the
+cited canonical source revision; see `../GFN_BASELINE_SOURCE.md`.
+
 Publication protocol
 --------------------
 
@@ -47,9 +53,10 @@ note in the manuscript.
 Current versus previous results
 -------------------------------
 
-The values below are the earlier fixed-`k444` GFN1/GFN2 baseline.  They are
-retained for traceability but are not the new adaptive, same-binary LC10 paper
-comparison.  That table is emitted only after the complete campaign passes.
+The values below are compact copies of the earlier fixed-`k444` GFN1/GFN2
+baseline used only for comparison. The complete baseline is canonical in the
+GFN repository. They are not the new adaptive, same-binary LC10 paper
+comparison; that table is emitted only after the complete campaign passes.
 
 | method | fixed coverage | lattice MAE (A) | cohesive-energy MAE (eV/atom) |
 |---|---:|---:|---:|
