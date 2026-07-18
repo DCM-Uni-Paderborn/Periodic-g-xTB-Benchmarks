@@ -36,6 +36,11 @@ J. Chem. Phys. 157, 134701 (2022), DOI: 10.1063/5.0102645.
   relative-energy MAE ranking.
 - `data/build_provenance.json`: source revisions, executable and shared-library
   hashes, patch hashes, build flags, and the comparison-source identity.
+- `reproduction/save_tblite_direct_dmc13/`: self-contained direct
+  `save_tblite` reproduction package for the g-xTB DMC-ICE13 audit.  It
+  contains explicit Gamma-folded `1x1x1` through `4x4x4` supercells with
+  absolute Cartesian coordinates, absolute energies as a function of mesh,
+  hashes, raw reference results, and a resumable CLI driver.
 - `figures/`: g-xTB-specific convergence and comparison figures.
 - `scripts/`: g-xTB input generation, extraction, analysis, plotting, and run
   scripts. Baseline-only GFN launchers live in the canonical GFN repository.
