@@ -70,7 +70,10 @@ def main() -> int:
         labels = gamma_check.coordinate_labels(
             ROOT / "kpoint_inputs" / "gamma" / f"ice_{phase}_GXTB_gamma.inp"
         )
-        gamma_check.write_poscar(poscar, phase, geometries[phase], labels)
+        poscar.write_text(
+            gamma_check.poscar_text(phase, geometries[phase], labels),
+            encoding="utf-8",
+        )
         energies: dict[str, float] = {}
         returncodes: dict[str, int] = {}
 
@@ -151,6 +154,10 @@ def main() -> int:
         writer.writeheader()
         writer.writerows(rows)
 
+    try:
+        result_path = args.csv.resolve().relative_to(ROOT.resolve())
+    except ValueError:
+        result_path = args.csv.resolve()
     provenance = {
         "benchmark": "DMC-ICE13 periodic g-xTB SCC-root sensitivity",
         "phases": phases,
@@ -164,7 +171,7 @@ def main() -> int:
             "source": gamma_check.git_metadata(args.tblite_source),
         },
         "result_csv": {
-            "path": str(args.csv.resolve()),
+            "path": str(result_path),
             "sha256": gamma_check.sha256(args.csv),
         },
     }
