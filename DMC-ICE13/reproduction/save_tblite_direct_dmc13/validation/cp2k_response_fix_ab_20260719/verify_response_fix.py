@@ -106,6 +106,10 @@ def compute() -> tuple[list[dict[str, object]], list[dict[str, object]], list[di
     final = cp2k_set("cp2k_final_k222")
     old = cp2k_set("cp2k_old_d933_k222")
     cli = cli_set("cli_final_k222")
+    tight_cli = {
+        phase: cli_energy(RAW / "cli_tight_scc" / phase / "result.json")
+        for phase in ("Ih", "VII")
+    }
 
     parity_rows: list[dict[str, object]] = []
     absolute_deltas = []
@@ -209,6 +213,13 @@ def compute() -> tuple[list[dict[str, object]], list[dict[str, object]], list[di
             sum(value * value for value in absolute_deltas) / len(absolute_deltas)
         ),
         "cli_native_max_abs_relative_delta_kj_mol": max(map(abs, relative_deltas)),
+        "tight_cli_max_abs_energy_change_ha": max(
+            abs(tight_cli[phase] - cli[phase]) for phase in tight_cli
+        ),
+        "tight_cli_native_VII_energy_delta_ha": final["VII"] - tight_cli["VII"],
+        "tight_cli_native_VII_relative_delta_kj_mol": (
+            relative(final, "VII") - relative(tight_cli, "VII")
+        ),
         "pre_response_mae_kj_mol": old_mae,
         "final_mae_kj_mol": final_mae,
         "mae_improvement_kj_mol": old_mae - final_mae,
@@ -239,6 +250,12 @@ def verify_summary(summary: dict[str, object]) -> None:
         raise AssertionError("CLI/native RMS energy delta exceeds 3.2e-8 Ha")
     if float(summary["cli_native_max_abs_relative_delta_kj_mol"]) > 3.0e-5:
         raise AssertionError("CLI/native relative-energy delta exceeds 3.0e-5 kJ/mol")
+    if float(summary["tight_cli_max_abs_energy_change_ha"]) > 1.0e-10:
+        raise AssertionError("tight CLI SCC changes a primitive-cell energy by more than 1e-10 Ha")
+    close(float(summary["tight_cli_native_VII_energy_delta_ha"]),
+          -1.051995468515088e-7, 2.0e-13, "tight CLI/native ice-VII energy delta")
+    close(float(summary["tight_cli_native_VII_relative_delta_kj_mol"]),
+          -2.143273491129e-5, 2.0e-10, "tight CLI/native ice-VII relative delta")
     close(float(summary["pre_response_mae_kj_mol"]),
           90.892218655178, 2.0e-9, "pre-response MAE")
     close(float(summary["final_mae_kj_mol"]),
@@ -340,6 +357,18 @@ def verify_hardening() -> None:
     ):
         if marker not in pre_log:
             raise AssertionError(f"missing pre-refresh regression marker: {marker}")
+
+    for phase in ("Ih", "VII"):
+        tight_output = (RAW / "cli_tight_scc" / phase / "process.out").read_text(
+            encoding="utf-8", errors="replace"
+        )
+        for marker in (
+            "energy convergence             1.0000000000000E-10 Eh",
+            "density convergence            2.0000000000000E-09 e",
+            "[Info] JSON dump of results written to 'result.json'",
+        ):
+            if marker not in tight_output:
+                raise AssertionError(f"missing tight-CLI marker for {phase}: {marker}")
 
 
 def write_manifest() -> None:
