@@ -1,0 +1,10 @@
+{
+  "mesh": "2 x 2 x 2",
+  "phase_count_nonreference": 12,
+  "current_save_tblite_mae_kj_mol_per_water": 88.681375524804,
+  "author_pbc_mae_kj_mol_per_water": 88.706865721959,
+  "author_minus_current_mae_kj_mol_per_water": 0.025490197156,
+  "maximum_absolute_relative_energy_shift_kj_mol_per_water": 0.135477238054,
+  "maximum_shift_phase": "VI",
+  "maximum_linux_minus_macos_energy_Ha_supercell": 1.819e-12
+}

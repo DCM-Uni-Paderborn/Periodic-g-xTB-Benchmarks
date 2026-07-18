@@ -24,3 +24,13 @@ convergence tail.
 absolute-energy differences mean Seidler `pbc` minus current `save_tblite`.
 The archived process outputs, JSON files, executable hashes, structure hashes,
 and integrity manifest provide the complete provenance.
+
+The Linux author-branch repetition in `seidler_pbc_cli_linux` extends the
+`2 x 2 x 2` comparison to all 13 phases.  Its source tree is byte-for-byte
+identical to revision `c932120`, and the three calculations repeated on both
+macOS and Linux agree within `1.9e-12` Hartree for the complete supercell.
+At this deliberately unconverged mesh, the current and author-branch MAEs are
+`88.68138` and `88.70687` kJ mol^-1 per water, respectively.  Thus the provider
+revision changes the full MAE by only `+0.02549` kJ mol^-1 and does not account
+for an accuracy improvement.  `full_k222_relative_comparison.csv` contains the
+phase-resolved evidence.

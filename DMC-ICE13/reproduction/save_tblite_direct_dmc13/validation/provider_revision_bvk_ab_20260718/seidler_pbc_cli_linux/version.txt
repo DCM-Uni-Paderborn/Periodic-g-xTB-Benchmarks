@@ -1,0 +1,4 @@
+tblite version 0.6.0
+ddX support: enabled 
+HDF5 support: disabled
+TREXIO support: disabled

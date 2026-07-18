@@ -109,4 +109,7 @@ explicit `2 x 2 x 2` and `3 x 3 x 3` BvK supercells.  For the difficult ice-VII
 gate, the provider revision changes the Ih-referenced energy by less than
 `0.1` kJ mol^-1 per water at either mesh; it therefore cannot explain the
 earlier large implementation discrepancy or a materially shorter convergence
-tail.
+tail.  An independent Linux repetition covers all 13 phases at `2 x 2 x 2`:
+the author-branch and current-provider MAEs differ by only
+`+0.02549` kJ mol^-1 per water, with the author branch being marginally worse
+at this unconverged mesh.
