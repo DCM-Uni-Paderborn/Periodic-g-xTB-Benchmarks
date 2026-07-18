@@ -1,0 +1,13 @@
+mstore-inorganic_head=be87ef681acd880705d83b8b1f7c19b58ca5ea85
+mstore-inorganic_date=2026-06-24T18:34:58+02:00
+pbc_head=c932120d2580811901de6a1fe3f89b943c251766
+pbc_date=2026-07-16T15:34:56+02:00
+common_ancestor=84274bd621502365ab62fad486162300d5534469
+self_image_fix=30b04691e0afd1e89d7d74977e679a54fc32f288
+self_image_fix_author=Leopold Seidler
+self_image_fix_date=2026-07-10T16:28:41+02:00
+current_integration_source=15915c9
+
+The two Seidler branches diverge after the recorded common ancestor. Neither
+head is an ancestor of the other. The pbc branch contains the self-image fix;
+mstore-inorganic does not.

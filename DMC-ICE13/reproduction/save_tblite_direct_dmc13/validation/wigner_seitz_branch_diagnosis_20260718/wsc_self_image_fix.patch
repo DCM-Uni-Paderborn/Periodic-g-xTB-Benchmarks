@@ -1,0 +1,321 @@
+commit 30b04691e0afd1e89d7d74977e679a54fc32f288
+Author:     Leopold Seidler <seidler118@gmail.com>
+AuthorDate: Fri Jul 10 16:28:41 2026 +0200
+Commit:     Leopold Seidler <seidler118@gmail.com>
+CommitDate: Fri Jul 10 16:28:41 2026 +0200
+
+    fix wsc self-image indexing
+
+diff --git a/src/tblite/wignerseitz.f90 b/src/tblite/wignerseitz.f90
+index 6fe48a2..fef643a 100644
+--- a/src/tblite/wignerseitz.f90
++++ b/src/tblite/wignerseitz.f90
+@@ -88,6 +88,9 @@ subroutine get_pairs(iws, trans, rij, list)
+    logical :: mask(size(list))
+    real(wp) :: dist(size(list)), vec(3), r2
+    integer :: itr, img, pos
++   integer, allocatable :: orig(:)
++
++   allocate(orig(size(list)))
+ 
+    iws = 0
+    img = 0
+@@ -100,6 +103,7 @@ subroutine get_pairs(iws, trans, rij, list)
+       if (r2 < thr) cycle
+       img = img + 1
+       dist(img) = r2
++      orig(img) = itr
+    end do
+ 
+    if (img == 0) return
+@@ -110,7 +114,7 @@ subroutine get_pairs(iws, trans, rij, list)
+    mask(pos) = .false.
+ 
+    iws = 1
+-   list(iws) = pos
++   list(iws) = orig(pos)
+    if (img <= iws) return
+ 
+    do
+@@ -118,7 +122,7 @@ subroutine get_pairs(iws, trans, rij, list)
+       if (abs(dist(pos) - r2) > tol) exit
+       mask(pos) = .false.
+       iws = iws + 1
+-      list(iws) = pos
++      list(iws) = orig(pos)
+    end do
+ 
+ end subroutine get_pairs
+diff --git a/test/unit/test_wignerseitz.f90 b/test/unit/test_wignerseitz.f90
+new file mode 100644
+index 0000000..bb0e228
+--- /dev/null
++++ b/test/unit/test_wignerseitz.f90
+@@ -0,0 +1,266 @@
++! This file is part of tblite.
++! SPDX-License-Identifier: LGPL-3.0-or-later
++!
++! tblite is free software: you can redistribute it and/or modify it under
++! the terms of the GNU Lesser General Public License as published by
++! the Free Software Foundation, either version 3 of the License, or
++! (at your option) any later version.
++!
++! tblite is distributed in the hope that it will be useful,
++! but WITHOUT ANY WARRANTY; without even the implied warranty of
++! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++! GNU Lesser General Public License for more details.
++!
++! You should have received a copy of the GNU Lesser General Public License
++! along with tblite.  If not, see <https://www.gnu.org/licenses/>.
++
++module test_wignerseitz
++   use mctc_env, only : wp
++   use mctc_env_testing, only : new_unittest, unittest_type, error_type, check, &
++      & test_failed
++   use mctc_io, only : structure_type, new
++   use tblite_wignerseitz, only : wignerseitz_cell, new_wignerseitz_cell
++   implicit none
++   private
++
++   public :: collect_wignerseitz
++
++   real(wp), parameter :: tol = 0.01_wp
++
++contains
++
++subroutine collect_wignerseitz(testsuite)
++   type(unittest_type), allocatable, intent(out) :: testsuite(:)
++
++   testsuite = [ &
++      new_unittest("cubic-self-images", test_cubic_self_images), &
++      new_unittest("ortho-self-images", test_ortho_self_images), &
++      new_unittest("skew-self-images", test_skew_self_images), &
++      new_unittest("pair-images", test_pair_images), &
++      new_unittest("no-self-image", test_no_self_image) &
++      ]
++end subroutine collect_wignerseitz
++
++subroutine test_cubic_self_images(error)
++   type(error_type), allocatable, intent(out) :: error
++   type(structure_type) :: mol
++   type(wignerseitz_cell) :: wsc
++   real(wp) :: lattice(3, 3)
++   integer, parameter :: nat = 1
++   integer, parameter :: num(nat) = [1]
++   real(wp), parameter :: xyz(3, nat) = reshape([0.0_wp, 0.0_wp, 0.0_wp], [3, nat])
++
++   lattice = 0.0_wp
++   lattice(1, 1) = 5.0_wp
++   lattice(2, 2) = 5.0_wp
++   lattice(3, 3) = 5.0_wp
++
++   call new(mol, num, xyz, lattice=lattice, periodic=[.true., .true., .true.])
++   call new_wignerseitz_cell(wsc, mol)
++
++   call check_self_images(error, wsc, mol, 1, 1)
++   if (allocated(error)) return
++
++end subroutine test_cubic_self_images
++
++subroutine test_ortho_self_images(error)
++   type(error_type), allocatable, intent(out) :: error
++   type(structure_type) :: mol
++   type(wignerseitz_cell) :: wsc
++   real(wp) :: lattice(3, 3)
++   integer, parameter :: nat = 1
++   integer, parameter :: num(nat) = [1]
++   real(wp), parameter :: xyz(3, nat) = reshape([0.0_wp, 0.0_wp, 0.0_wp], [3, nat])
++
++   lattice = 0.0_wp
++   lattice(1, 1) = 4.0_wp
++   lattice(2, 2) = 6.0_wp
++   lattice(3, 3) = 8.0_wp
++
++   call new(mol, num, xyz, lattice=lattice, periodic=[.true., .true., .true.])
++   call new_wignerseitz_cell(wsc, mol)
++
++   call check_self_images(error, wsc, mol, 1, 1)
++   if (allocated(error)) return
++
++end subroutine test_ortho_self_images
++
++subroutine test_skew_self_images(error)
++   type(error_type), allocatable, intent(out) :: error
++   type(structure_type) :: mol
++   type(wignerseitz_cell) :: wsc
++   real(wp) :: lattice(3, 3)
++   integer, parameter :: nat = 1
++   integer, parameter :: num(nat) = [1]
++   real(wp), parameter :: xyz(3, nat) = reshape([0.0_wp, 0.0_wp, 0.0_wp], [3, nat])
++
++   lattice = 0.0_wp
++   lattice(1, 1) = 5.0_wp
++   lattice(2, 2) = 5.0_wp
++   lattice(3, 3) = 6.0_wp
++   lattice(1, 2) = 1.0_wp
++
++   call new(mol, num, xyz, lattice=lattice, periodic=[.true., .true., .true.])
++   call new_wignerseitz_cell(wsc, mol)
++
++   call check_self_images(error, wsc, mol, 1, 1)
++   if (allocated(error)) return
++
++end subroutine test_skew_self_images
++
++subroutine test_pair_images(error)
++   type(error_type), allocatable, intent(out) :: error
++   type(structure_type) :: mol
++   type(wignerseitz_cell) :: wsc
++   real(wp) :: lattice(3, 3)
++   integer, parameter :: nat = 2
++   integer, parameter :: num(nat) = [1, 1]
++   real(wp), parameter :: xyz(3, nat) = reshape([ &
++      & 0.0_wp, 0.0_wp, 0.0_wp, &
++      & 2.0_wp, 0.0_wp, 0.0_wp], [3, nat])
++
++   lattice = 0.0_wp
++   lattice(1, 1) = 5.0_wp
++   lattice(2, 2) = 5.0_wp
++   lattice(3, 3) = 5.0_wp
++
++   call new(mol, num, xyz, lattice=lattice, periodic=[.true., .true., .true.])
++   call new_wignerseitz_cell(wsc, mol)
++
++   call check_pair_images(error, wsc, mol, 1, 2)
++   if (allocated(error)) return
++
++   call check_pair_images(error, wsc, mol, 2, 1)
++   if (allocated(error)) return
++
++end subroutine test_pair_images
++
++subroutine test_no_self_image(error)
++   type(error_type), allocatable, intent(out) :: error
++   type(structure_type) :: mol
++   type(wignerseitz_cell) :: wsc
++   real(wp) :: lattice(3, 3)
++   integer, parameter :: nat = 1
++   integer, parameter :: num(nat) = [1]
++   real(wp), parameter :: xyz(3, nat) = reshape([0.0_wp, 0.0_wp, 0.0_wp], [3, nat])
++
++   lattice = 0.0_wp
++
++   call new(mol, num, xyz, lattice=lattice, periodic=[.false., .false., .false.])
++   call new_wignerseitz_cell(wsc, mol)
++
++   if (wsc%nimg(1, 1) /= 0) then
++      call test_failed(error, "Nonperiodic system should have 0 self-images")
++      return
++   end if
++
++   if (allocated(wsc%trans)) then
++      if (size(wsc%trans, 2) /= 1) then
++         call test_failed(error, "Nonperiodic system should have 1 translation (origin only)")
++         return
++      end if
++      if (any(abs(wsc%trans(:, 1)) > 100*epsilon(1.0_wp))) then
++         call test_failed(error, "Nonperiodic translation should be zero")
++         return
++      end if
++   end if
++
++end subroutine test_no_self_image
++
++subroutine check_self_images(error, wsc, mol, iat, jat)
++   type(error_type), allocatable, intent(out) :: error
++   type(wignerseitz_cell), intent(in) :: wsc
++   type(structure_type), intent(in) :: mol
++   integer, intent(in) :: iat, jat
++   integer :: img, itr
++   real(wp) :: vec(3), r1, r_min
++   real(wp), parameter :: eps = 100*epsilon(1.0_wp)
++
++   if (wsc%nimg(jat, iat) == 0) then
++      call test_failed(error, "Self-image count is zero for periodic system")
++      return
++   end if
++
++   do img = 1, wsc%nimg(jat, iat)
++      itr = wsc%tridx(img, jat, iat)
++      if (itr < 1 .or. itr > size(wsc%trans, 2)) then
++         write(error%message, '("tridx out of range: img=",I0," itr=",I0," max=",I0)') &
++            & img, itr, size(wsc%trans, 2)
++         return
++      end if
++      vec = wsc%trans(:, itr)
++      r1 = norm2(vec)
++      if (r1 < eps) then
++         call test_failed(error, "Self-image translation is zero (points to origin)")
++         return
++      end if
++   end do
++
++   r_min = huge(1.0_wp)
++   do img = 1, wsc%nimg(jat, iat)
++      itr = wsc%tridx(img, jat, iat)
++      vec = wsc%trans(:, itr)
++      r1 = norm2(vec)
++      if (r1 < r_min) r_min = r1
++   end do
++
++   do itr = 1, size(wsc%trans, 2)
++      vec = wsc%trans(:, itr)
++      r1 = norm2(vec)
++      if (r1 < eps) cycle
++      if (abs(r1 - r_min) < tol) then
++         call check(error, is_image_in_list(wsc, itr, iat, jat), &
++            & "Nearest image not in WSC list")
++         if (allocated(error)) return
++      end if
++   end do
++
++end subroutine check_self_images
++
++subroutine check_pair_images(error, wsc, mol, iat, jat)
++   type(error_type), allocatable, intent(out) :: error
++   type(wignerseitz_cell), intent(in) :: wsc
++   type(structure_type), intent(in) :: mol
++   integer, intent(in) :: iat, jat
++   integer :: img, itr
++   real(wp) :: vec(3), r1
++   real(wp), parameter :: eps = 100*epsilon(1.0_wp)
++
++   if (wsc%nimg(jat, iat) == 0) then
++      call test_failed(error, "Pair image count is zero for periodic system")
++      return
++   end if
++
++   do img = 1, wsc%nimg(jat, iat)
++      itr = wsc%tridx(img, jat, iat)
++      if (itr < 1 .or. itr > size(wsc%trans, 2)) then
++         write(error%message, '("tridx out of range: img=",I0," itr=",I0," max=",I0)') &
++            & img, itr, size(wsc%trans, 2)
++         return
++      end if
++      vec = mol%xyz(:, iat) - mol%xyz(:, jat) - wsc%trans(:, itr)
++      r1 = norm2(vec)
++      if (r1 < eps) then
++         call test_failed(error, "Pair image translation produces zero distance")
++         return
++      end if
++   end do
++
++end subroutine check_pair_images
++
++function is_image_in_list(wsc, itr, iat, jat) result(found)
++   type(wignerseitz_cell), intent(in) :: wsc
++   integer, intent(in) :: itr, iat, jat
++   logical :: found
++   integer :: img
++
++   found = .false.
++   do img = 1, wsc%nimg(jat, iat)
++      if (wsc%tridx(img, jat, iat) == itr) then
++         found = .true.
++         exit
++      end if
++   end do
++end function is_image_in_list
++
++end module test_wignerseitz
+\ No newline at end of file

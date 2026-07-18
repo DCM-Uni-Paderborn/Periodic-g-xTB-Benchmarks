@@ -29,10 +29,13 @@ unconverged grids.  Therefore a smaller (1^3) or (2^3) MAE from one of
 those lines is not evidence for a CP2K-native k-point error.
 
 These values are diagnostic only.  They must not replace the converged
-native-k-point benchmark.  The decisive follow-up is the full `3 x 3 x 3` and
-denser comparison using the exact authors' executable, followed by a
-component-level port only if the difference survives convergence and passes
-energy, force, and stress validation.
+native-k-point benchmark.  The subsequent
+`../wigner_seitz_branch_diagnosis_20260718` gate shows that `authors_exchange`
+is not the final periodic author reference: it retains a Wigner--Seitz
+self-image indexing artifact fixed by Leopold Seidler in the newer `pbc`
+branch.  The final `pbc` executable is compared directly in
+`../provider_revision_bvk_ab_20260718` and agrees closely with the current
+provider.
 
 The selected `2 x 2 x 2` `authors_exchange` results were repeated on Linux.  Ice
 Ih, VII, and XVII agree with the macOS build to within

@@ -130,8 +130,15 @@ separate `mstore-inorganic`, post-March molecular g-xTB, and DCM `main` source
 histories.  On identical Cartesian structures, these histories produce very
 different Gamma and `2 x 2 x 2` DMC-ICE13 MAEs.  The current integration and
 DCM `main` remain close, while the two historical development lines yield much
-smaller coarse-grid MAEs.  This establishes a model/source-revision effect,
-not a CP2K-native k-point discrepancy.  Because both grids are deliberately
-unconverged, the exact authors' executable is also being compared at
-`3 x 3 x 3` and denser meshes before any component is considered for the
-production implementation.
+smaller coarse-grid MAEs.  This establishes a source-revision effect, not a
+CP2K-native k-point discrepancy.
+
+`validation/wigner_seitz_branch_diagnosis_20260718` resolves the dominant
+source-revision effect.  The older `mstore-inorganic` history retained a
+compact-position Wigner--Seitz self-image mapping that fails the cubic,
+orthorhombic, and skew-cell invariants.  Leopold Seidler fixed that mapping in
+the newer, final `pbc` branch.  A controlled two-line A/B build reproduces the
+large coarse-grid shift, whereas changing only the image-distance threshold
+does not.  The apparently improved `mstore-inorganic` MAE is therefore a
+legacy indexing artifact and must not be used as the periodic author
+reference.
