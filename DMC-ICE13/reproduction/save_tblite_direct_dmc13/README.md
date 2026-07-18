@@ -41,9 +41,11 @@ settings, structure hashes, JSON results, and process output.  Set
 `SKIP_EXISTING=1` to resume an interrupted series without repeating completed
 JSON results.
 
-The archived Gamma CP2K inputs used `ACCURACY 0.01`; a direct A/B test showed
-that changing `0.1` to `0.01` has no material effect on the tested relative
-energies.  Set `ACCURACY=0.01` to reproduce that input choice literally.
+The archived Gamma CP2K inputs used `ACCURACY 0.01`.
+`validation/accuracy_sensitivity_20260718` contains the complete direct and
+CP2K-native A/B gate: changing `0.1` to `0.01` alters the tested relative
+energies by less than `6e-8` kJ mol^-1 per water.  Set `ACCURACY=0.01` to
+reproduce that input choice literally.
 
 For a single phase and mesh, the equivalent command is
 
