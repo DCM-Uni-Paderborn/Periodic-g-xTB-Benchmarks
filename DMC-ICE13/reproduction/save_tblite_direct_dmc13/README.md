@@ -124,3 +124,14 @@ tail.  An independent Linux repetition covers all 13 phases at `2 x 2 x 2`:
 the author-branch and current-provider MAEs differ by only
 `+0.02549` kJ mol^-1 per water, with the author branch being marginally worse
 at this unconverged mesh.
+
+`validation/model_revision_coarse_grid_ab_20260718` extends that audit to the
+separate `mstore-inorganic`, post-March molecular g-xTB, and DCM `main` source
+histories.  On identical Cartesian structures, these histories produce very
+different Gamma and `2 x 2 x 2` DMC-ICE13 MAEs.  The current integration and
+DCM `main` remain close, while the two historical development lines yield much
+smaller coarse-grid MAEs.  This establishes a model/source-revision effect,
+not a CP2K-native k-point discrepancy.  Because both grids are deliberately
+unconverged, the exact authors' executable is also being compared at
+`3 x 3 x 3` and denser meshes before any component is considered for the
+production implementation.

@@ -1,0 +1,54 @@
+xTB calculator
+ | self-consistent screened Coulomb + Pauli repulsion
+ | Coulomb electrostatics and tight-binding
+ |  * onsite first-order tight-binding
+ |  * isotropic Klopman-Ohno-Mataga-Nishimoto electrostatics
+ |  * erf-damped anisotropic electrostatics
+ |  * two-body third-order tight-binding
+ |  * onsite fourth-order tight-binding
+ | self-consistent DFT-D4Srev dispersion
+ | Mulliken and onsite Fock exchange + bond-order correlation
+
+core increment energy         -1.1108386755312E+03 Eh
+dispersion energy              1.9377725124579E-02 Eh
+molecular charge               0.0000000000000E+00 e
+number of electrons            1.2799999999920E+02 e
+number of unpaired electrons   0.0000000000000E+00 e
+wavefunction                   restricted
+integral cutoff                2.6907767250513E+01 bohr
+energy convergence             1.0000000000000E-08 Eh
+density convergence            2.0000000000000E-07 e
+
+------------------------------------------------------------
+  cycle        total energy    energy error   density error
+------------------------------------------------------------
+      1     -1224.649091263  -1.1382979E+02   0.0000000E+00
+      2     -1224.750917275  -1.0182601E-01   1.6857114E-02
+      3     -1224.817305558  -6.6388283E-02   1.3608102E-02
+      4     -1224.948801261  -1.3149570E-01   1.0993539E-02
+      5     -1224.949860801  -1.0595408E-03   4.6942845E-04
+      6     -1224.949908675  -4.7873510E-05   1.2270627E-04
+      7     -1224.949908928  -2.5299218E-07   1.4783924E-05
+      8     -1224.949908931  -3.1640042E-09   8.4023244E-07
+      9     -1224.949908931  -3.5682035E-10   2.9078849E-07
+     10     -1224.949908931  -1.4779289E-12   3.3709558E-08
+------------------------------------------------------------
+
+electronic energy             -1.1413061112534E+02 Eh
+total energy                  -1.2249499089314E+03 Eh
+
+Post processing:
+ | Mayer-Wiberg bond orders
+
+ total:                                   0.966 sec
+ - increment                              0.000 sec (  0%)
+ - repulsion                              0.002 sec (  0%)
+ - dispersion                             0.335 sec ( 34%)
+ - coulomb                                0.067 sec (  6%)
+ - exchange                               0.000 sec (  0%)
+ - hamiltonian                            0.065 sec (  6%)
+ - acp                                    0.472 sec ( 48%)
+ - post processing                        0.000 sec (  0%)
+ - scc                                    0.013 sec (  1%)
+
+[Info] JSON dump of results written to '/private/tmp/gxtb-provider-model-ab-20260718/dcm_main/k111/IV/result.json'
