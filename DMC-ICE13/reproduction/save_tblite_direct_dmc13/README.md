@@ -72,14 +72,33 @@ cell, occupation, and k-point inconsistencies directly.
 ## Supplied reference coverage
 
 The current package contains direct `save_tblite` absolute energies for all 13
-phases at Gamma and at `2 x 2 x 2`.  Direct `3 x 3 x 3` checks are supplied for
-Ih, VII, and XVII.  CP2K-native absolute energies are supplied for all phases
-at `2 x 2 x 2` and `3 x 3 x 3`, and for every completed `4 x 4 x 4` run.
+phases at Gamma, `2 x 2 x 2`, and `3 x 3 x 3`.  CP2K-native absolute energies
+are supplied for all phases at `2 x 2 x 2`, `3 x 3 x 3`, and `4 x 4 x 4`.
+Independent direct `4 x 4 x 4` supercell gates are supplied for Ih, VII, and
+XVII.
+
 Empty CSV fields mean "not yet calculated" and are never interpolated or
 replaced by a value from another implementation.
 
 The direct/current and native/current columns agree within
 `1.06e-7` Hartree per primitive cell over the complete `2 x 2 x 2` set.  The
-three independent `3 x 3 x 3` gates agree within `1.03e-7` Hartree per
-primitive cell.  This makes the table suitable as a strict absolute-energy
-comparison for another `save_tblite` build.
+complete 13-phase `3 x 3 x 3` set agrees within `1.03e-7` Hartree per primitive
+cell (RMS `2.96e-8` Hartree).  The three `4 x 4 x 4` gates agree within
+`1.12e-7` Hartree per primitive cell.  This makes the table suitable as a
+strict absolute-energy comparison for another `save_tblite` build.
+
+## Derivative validation
+
+`validation/k222_XVII_derivatives` contains a native-versus-explicit-supercell
+comparison for energy, forces, and stress, together with independent central
+finite differences.  The direct differences are `4.30e-9` Hartree per
+primitive cell for the energy, `2.85e-7` Hartree/bohr for the largest force
+component, and `0.113` bar for the largest stress component.  Raw inputs,
+outputs, gradients, displaced structures, and energies are retained beside the
+machine-readable summaries.
+
+`validation/native_derivative_hardening_20260718` contains the final exact
+hybrid ACP reverse-path gates: a real-space image contraction for self-inverse
+meshes and a direct Bloch-space contraction for genuinely complex meshes.  It
+also archives all force/stress ablations and failed representation trials with
+SHA-256 provenance.
