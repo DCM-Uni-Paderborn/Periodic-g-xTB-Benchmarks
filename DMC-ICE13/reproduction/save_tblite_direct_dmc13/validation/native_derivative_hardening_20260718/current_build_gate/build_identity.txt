@@ -1,0 +1,7 @@
+cp2k_source_revision=8520b2e592cd04d35081ab4ad46d92c606071e23
+cp2k_executable_sha256=e034824111011b1177ed78f77f6049eeae5aca56dd7d96dfa923af0e29495b8d
+compiler=GCC 16.1.0
+build_type=Release
+provider=save_tblite
+provider_install=/private/tmp/save_tblite_acp_projector_cache_install_20260717
+threads=1

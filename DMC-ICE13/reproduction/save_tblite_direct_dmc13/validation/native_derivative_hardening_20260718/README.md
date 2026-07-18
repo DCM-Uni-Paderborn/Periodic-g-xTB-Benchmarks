@@ -27,3 +27,9 @@ diagnostic archive.
 The corresponding CP2K implementation is on `g-xTB-pbc`; exact source
 revisions are intentionally recorded here in the repository rather than in
 the manuscript.
+
+`current_build_gate` repeats the reduced ice-XVII `2 x 2 x 2` energy, force,
+and stress calculation after a fresh CMake reconfiguration of the final
+source revision.  It reproduces the archived production output exactly in
+every printed energy, force, and stress component.  The executable identity,
+raw output, and machine-readable zero-difference summary are retained there.
