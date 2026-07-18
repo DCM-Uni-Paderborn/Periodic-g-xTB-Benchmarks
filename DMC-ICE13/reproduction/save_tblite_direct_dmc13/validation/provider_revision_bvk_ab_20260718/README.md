@@ -24,4 +24,3 @@ convergence tail.
 absolute-energy differences mean Seidler `pbc` minus current `save_tblite`.
 The archived process outputs, JSON files, executable hashes, structure hashes,
 and integrity manifest provide the complete provenance.
-
