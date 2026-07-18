@@ -1,0 +1,31 @@
+ CP2K version 2026.2 (Development Version)
+ Source code revision 8520b2e592
+ cp2kflags: omp parallel scalapack no_statm_access spglib s_dftd3 mctc-lib tblite tblite_gxtb
+ compiler: GCC version 16.1.0
+ compiler options:
+   -I /private/tmp/cp2k_symmetry_fused_exchange_build/src/start -I /pri
+   vate/tmp/cp2k_symmetry_fused_exchange/src -I /private/tmp/cp2k_symme
+   try_fused_exchange_build/src -I /private/tmp/cp2k_symmetry_fused_exc
+   hange/src/base -I /private/tmp/cp2k_symmetry_fused_exchange/src/comm
+   on -I /private/tmp/cp2k_symmetry_fused_exchange/src/motion -I /priva
+   te/tmp/cp2k_symmetry_fused_exchange/src/dbm -I /private/tmp/cp2k_sym
+   metry_fused_exchange_build/src/mod_files -I /private/tmp/save_tblite
+   _acp_projector_cache_install_20260717/include -I /private/tmp/save_t
+   blite_acp_projector_cache_install_20260717/include/tblite/GNU-16.1.0
+    -I /private/tmp/save_tblite_acp_projector_cache_install_20260717/in
+   clude/toml-f/modules -I /private/tmp/save_tblite_acp_projector_cache
+   _install_20260717/include/mctc-lib/modules -I /private/tmp/save_tbli
+   te_acp_projector_cache_install_20260717/include/dftd4/GNU-16.1.0 -I 
+   /private/tmp/save_tblite_acp_projector_cache_install_20260717/includ
+   e/multicharge/GNU-16.1.0 -I /private/tmp/save_tblite_acp_projector_c
+   ache_install_20260717/include/s-dftd3/GNU-16.1.0 -I /opt/homebrew/op
+   t/spglib/include -I /opt/homebrew/opt/dbcsr/include -I /opt/homebrew
+   /Cellar/open-mpi/5.0.9/include -I /opt/homebrew/Cellar/open-mpi/5.0.
+   9/lib -I /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX
+   .platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/vecLib
+   .framework/Headers -mmacosx-version-min=15.0.0 -mlittle-endian -mabi
+   =lp64 -mcpu=apple-m1 -g -O3 -O3 -Wno-deprecated-declarations -Wno-ma
+   ybe-uninitialized -Wuninitialized -Wuse-without-only -std=f2008 -fPI
+   E -ffree-form -fimplicit-none -fno-omit-frame-pointer -fbacktrace -f
+   allow-argument-mismatch -funroll-loops -fopenmp -fpreprocessed -J sr
+   c

@@ -73,19 +73,22 @@ cell, occupation, and k-point inconsistencies directly.
 
 The current package contains direct `save_tblite` absolute energies for all 13
 phases at Gamma, `2 x 2 x 2`, and `3 x 3 x 3`.  CP2K-native absolute energies
-are supplied for all phases at `2 x 2 x 2`, `3 x 3 x 3`, and `4 x 4 x 4`.
+are supplied for all phases at the same three meshes and at `4 x 4 x 4`.
 Independent direct `4 x 4 x 4` supercell gates are supplied for Ih, VII, and
 XVII.
 
 Empty CSV fields mean "not yet calculated" and are never interpolated or
 replaced by a value from another implementation.
 
-The direct/current and native/current columns agree within
-`1.06e-7` Hartree per primitive cell over the complete `2 x 2 x 2` set.  The
-complete 13-phase `3 x 3 x 3` set agrees within `1.03e-7` Hartree per primitive
-cell (RMS `2.96e-8` Hartree).  The three `4 x 4 x 4` gates agree within
-`1.12e-7` Hartree per primitive cell.  This makes the table suitable as a
-strict absolute-energy comparison for another `save_tblite` build.
+The direct/current and native/current columns agree within `2.97e-8` Hartree
+per primitive cell over the complete Gamma set (RMS `1.57e-8` Hartree) and
+within `1.06e-7` Hartree over the complete `2 x 2 x 2` set.  The complete
+13-phase `3 x 3 x 3` set agrees within `1.03e-7` Hartree per primitive cell
+(RMS `2.96e-8` Hartree).  The three `4 x 4 x 4` gates agree within `1.12e-7`
+Hartree per primitive cell.  This makes the table suitable as a strict
+absolute-energy comparison for another `save_tblite` build.  Run
+`tools/verify_absolute_energy_parity.py` to check required coverage, hashes,
+normal termination, and the numerical tolerance.
 
 `validation/kpoint_grid_bvk_oracle_20260718` independently checks the point
 sets themselves.  The complete printed `2 x 2 x 2`, `3 x 3 x 3`, and
