@@ -1,0 +1,652 @@
+ DBCSR| CPU Multiplication driver                                           BLAS (U)
+ DBCSR| Multrec recursion limit                                              512 (U)
+ DBCSR| Multiplication stack size                                           1000 (D)
+ DBCSR| Maximum elements for images                                    UNLIMITED (U)
+ DBCSR| Multiplicative factor virtual images                                   1 (U)
+ DBCSR| Use multiplication densification                                       T (D)
+ DBCSR| Multiplication size stacks                                             3 (U)
+ DBCSR| Use memory pool for CPU allocation                                     F (U)
+ DBCSR| Number of 3D layers                                               SINGLE (U)
+ DBCSR| Use MPI memory allocation                                              F (U)
+ DBCSR| Use RMA algorithm                                                      F (U)
+ DBCSR| Use Communication thread                                               T (U)
+ DBCSR| Communication thread load                                             87 (D)
+ DBCSR| MPI: My process id                                                     0
+ DBCSR| MPI: Number of processes                                               1
+ DBCSR| OMP: Current number of threads                                         1
+ DBCSR| OMP: Max number of threads                                             1
+ DBCSR| Split modifier for TAS multiplication algorithm                  1.0E+00 (U)
+
+
+  **** **** ******  **  PROGRAM STARTED AT               2026-07-19 01:03:03.343
+ ***** ** ***  *** **   PROGRAM STARTED ON                                 terok
+ **    ****   ******    PROGRAM STARTED BY                              kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                               3284564
+  **** **  *******  **  PROGRAM STARTED IN /home/kuehne88/work/gxtb-response-har
+                                           dening-20260719/focused-tests/h2o_den
+                                           sity
+
+ CP2K| version string:                 CP2K version 2026.2 (Development Version)
+ CP2K| source code revision number:                                    8520b2e59
+ CP2K| cp2kflags: omp parallel scalapack spglib s_dftd3 mctc-lib tblite tblite_g
+ CP2K|            xtb
+ CP2K| is freely available from                            https://www.cp2k.org/
+ CP2K| Program compiled at                                   2026-07-19 00:53:04
+ CP2K| Program compiled on                                                 terok
+ CP2K| Program compiled for                                               x86_64
+ CP2K| Data directory path    /home/kuehne88/work/gxtb-response-hardening-202607
+ CP2K| Input file name        /home/kuehne88/work/gxtb-response-hardening-202607
+
+ GLOBAL| Force Environment number                                              1
+ GLOBAL| Basis set file name                                           BASIS_SET
+ GLOBAL| Potential file name                                           POTENTIAL
+ GLOBAL| MM Potential file name                                     MM_POTENTIAL
+ GLOBAL| Coordinate file name                                      __STD_INPUT__
+ GLOBAL| Method name                                                        CP2K
+ GLOBAL| Project name                             H2O_gxtb_kp_cp2k_density_mixer
+ GLOBAL| Run type                                                         ENERGY
+ GLOBAL| FFT library                                                       FFTW3
+ GLOBAL| Diagonalization library                                       ScaLAPACK
+ GLOBAL| Cholesky decomposition library                                ScaLAPACK
+ GLOBAL| DGEMM library                                                      BLAS
+ GLOBAL| Direct generalized diagonalization requested                          F
+ GLOBAL| Orthonormality check for eigenvectors                          DISABLED
+ GLOBAL| Matrix multiplication library                                 ScaLAPACK
+ GLOBAL| All-to-all communication in single precision                          F
+ GLOBAL| FFTs using library dependent lengths                                  F
+ GLOBAL| Grid backend                                                       AUTO
+ GLOBAL| Global print level                                                  LOW
+ GLOBAL| MPI I/O enabled                                                       T
+ GLOBAL| Total number of message passing processes                             1
+ GLOBAL| Number of distributed systems (nodes)                                 1
+ GLOBAL| Number of threads for this process                                    1
+ GLOBAL| This output is from process                                           0
+ GLOBAL| OpenMP stack size per thread (OMP_STACKSIZE)                    default
+ GLOBAL| CPU model name                                       AMD EPYC Processor
+ GLOBAL| CPUID                                                              1002
+
+ MEMORY| system memory details [Kb]
+ MEMORY|                        rank 0           min           max       average
+ MEMORY| MemTotal            528104804     528104804     528104804     528104804
+ MEMORY| MemFree             287644444     287644444     287644444     287644444
+ MEMORY| Buffers                    20            20            20            20
+ MEMORY| Cached                7561592       7561592       7561592       7561592
+ MEMORY| Slab                  1878108       1878108       1878108       1878108
+ MEMORY| SReclaimable           576540        576540        576540        576540
+ MEMORY| MemLikelyFree       295782596     295782596     295782596     295782596
+
+
+ *** WARNING in environment.F:1098 :: FFT library FFTW3 is not available. ***
+ *** Trying FFT library FFTSG.                                            ***
+
+
+ GENERATE|  Preliminary Number of Bonds generated:                             0
+ GENERATE|  Achieved consistency in connectivity generation.
+
+
+                  #####   #####        #     #   #     #       #          
+                 #     # #     #      #    ##### #     #   # #####  ####  
+                 #     # #           #       #   ###   #       #   #    # 
+                 #     #  #####     #        #   #  #  #   #   #   ###### 
+                 #   # #       #   #         #   #   # #   #   #   #      
+                 #    #  #     #  #          #   #  #  # # #   #    #   # 
+                  #### #  #####  #           #   ###   ##  #   #     ###  
+
+                                     g-xTB   
+                                 Version 0.0                       
+                            Johann V. Pototschnig                  
+
+                tblite provider: SAVE
+                tblite source revision: 15915c9435644eb257178ca8f8bf7220c38b1a84
+                g-xTB support: enabled
+
+
+ TOTAL NUMBERS AND MAXIMUM NUMBERS
+
+  Total number of            - Atomic kinds:                                   2
+                             - Atoms:                                          3
+                             - Shell sets:                                     4
+                             - Shells:                                         4
+                             - Primitive Cartesian functions:                 28
+                             - Cartesian basis functions:                      6
+                             - Spherical basis functions:                      6
+
+  Maximum angular momentum of the orbital basis functions:                     1
+
+
+ SCF PARAMETERS         Density guess:                                     MOPAC
+                        --------------------------------------------------------
+                        max_scf:                                             150
+                        max_scf_history:                                       0
+                        max_diis:                                              4
+                        --------------------------------------------------------
+                        eps_scf:                                        1.00E-07
+                        eps_scf_history:                                0.00E+00
+                        eps_diis:                                       0.00E+00
+                        eps_eigval:                                     1.00E-05
+                        --------------------------------------------------------
+                        level_shift [a.u.]:                             0.000000
+                        added MOs                                         2    0
+                        --------------------------------------------------------
+                        Mixing method:                           DIRECT_P_MIXING
+                        --------------------------------------------------------
+                        No outer SCF
+
+ *** WARNING in qs_scf_initialization.F:761 :: the DIIS scheme is ***
+ *** disabled, since EPS_DIIS < EPS_SCF                           ***
+
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 P_Mix/Diag. 0.20E+00    0.0     2.00000000       -76.4094048466 -7.64E+01
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 P_Mix/Diag. 0.20E+00    0.0     1.60000000       -76.4302006771 -2.08E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 P_Mix/Diag. 0.20E+00    0.0     1.28000000       -76.4467676315 -1.66E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 P_Mix/Diag. 0.20E+00    0.0     1.02400000       -76.4595035824 -1.27E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 P_Mix/Diag. 0.20E+00    0.0     0.81920000       -76.4689916681 -9.49E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 P_Mix/Diag. 0.20E+00    0.0     0.65536000       -76.4758849375 -6.89E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 P_Mix/Diag. 0.20E+00    0.0     0.52428800       -76.4808004494 -4.92E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 P_Mix/Diag. 0.20E+00    0.0     0.45011702       -76.4842601237 -3.46E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 P_Mix/Diag. 0.20E+00    0.0     0.39643584       -76.4866740619 -2.41E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 P_Mix/Diag. 0.20E+00    0.0     0.34784013       -76.4883491122 -1.68E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 P_Mix/Diag. 0.20E+00    0.0     0.30407172       -76.4895076176 -1.16E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 P_Mix/Diag. 0.20E+00    0.0     0.26487317       -76.4903073994 -8.00E-04
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 P_Mix/Diag. 0.20E+00    0.0     0.22996680       -76.4908590395 -5.52E-04
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 P_Mix/Diag. 0.20E+00    0.0     0.19905198       -76.4912394091 -3.80E-04
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=15
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=15
+    15 P_Mix/Diag. 0.20E+00    0.0     0.17181123       -76.4915016960 -2.62E-04
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=16
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=16
+    16 P_Mix/Diag. 0.20E+00    0.0     0.14791945       -76.4916826050 -1.81E-04
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=17
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=17
+    17 P_Mix/Diag. 0.20E+00    0.0     0.12705322       -76.4918074318 -1.25E-04
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=18
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=18
+    18 P_Mix/Diag. 0.20E+00    0.0     0.10889869       -76.4918936000 -8.62E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=19
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=19
+    19 P_Mix/Diag. 0.20E+00    0.0     0.09315748       -76.4919531098 -5.95E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=20
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=20
+    20 P_Mix/Diag. 0.20E+00    0.0     0.07955080       -76.4919942282 -4.11E-05
+
+ *** WARNING in kpoint_restart_transfer.F:670 :: Projecting inconsistent ***
+ *** modulo-grid aliases onto the canonical k-point restart density.     ***
+
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=21
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=21
+    21 P_Mix/Diag. 0.20E+00    0.0     0.06782180       -76.4920226521 -2.84E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=22
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=22
+    22 P_Mix/Diag. 0.20E+00    0.0     0.05773662       -76.4920423097 -1.97E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=23
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=23
+    23 P_Mix/Diag. 0.20E+00    0.0     0.04908446       -76.4920559103 -1.36E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=24
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=24
+    24 P_Mix/Diag. 0.20E+00    0.0     0.04167687       -76.4920653243 -9.41E-06
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=25
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=25
+    25 P_Mix/Diag. 0.20E+00    0.0     0.03534661       -76.4920718429 -6.52E-06
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=26
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=26
+    26 P_Mix/Diag. 0.20E+00    0.0     0.02994614       -76.4920763583 -4.52E-06
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=27
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=27
+    27 P_Mix/Diag. 0.20E+00    0.0     0.02534599       -76.4920794872 -3.13E-06
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=28
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=28
+    28 P_Mix/Diag. 0.20E+00    0.0     0.02143308       -76.4920816561 -2.17E-06
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=29
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=29
+    29 P_Mix/Diag. 0.20E+00    0.0     0.01810905       -76.4920831600 -1.50E-06
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=30
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=30
+    30 P_Mix/Diag. 0.20E+00    0.0     0.01528864       -76.4920842031 -1.04E-06
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=31
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=31
+    31 P_Mix/Diag. 0.20E+00    0.0     0.01289815       -76.4920849269 -7.24E-07
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=32
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=32
+    32 P_Mix/Diag. 0.20E+00    0.0     0.01087411       -76.4920854291 -5.02E-07
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=33
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=33
+    33 P_Mix/Diag. 0.20E+00    0.0     0.00916194       -76.4920857778 -3.49E-07
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=34
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=34
+    34 P_Mix/Diag. 0.20E+00    0.0     0.00771483       -76.4920860200 -2.42E-07
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=35
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=35
+    35 P_Mix/Diag. 0.20E+00    0.0     0.00649274       -76.4920861881 -1.68E-07
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=36
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=36
+    36 P_Mix/Diag. 0.20E+00    0.0     0.00546145       -76.4920863050 -1.17E-07
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=37
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=37
+    37 P_Mix/Diag. 0.20E+00    0.0     0.00459176       -76.4920863861 -8.12E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=38
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=38
+    38 P_Mix/Diag. 0.20E+00    0.0     0.00385884       -76.4920864426 -5.64E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=39
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=39
+    39 P_Mix/Diag. 0.20E+00    0.0     0.00324154       -76.4920864818 -3.92E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=40
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=40
+    40 P_Mix/Diag. 0.20E+00    0.0     0.00272192       -76.4920865091 -2.73E-08
+
+ *** WARNING in kpoint_restart_transfer.F:670 :: Projecting inconsistent ***
+ *** modulo-grid aliases onto the canonical k-point restart density.     ***
+
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=41
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=41
+    41 P_Mix/Diag. 0.20E+00    0.0     0.00228475       -76.4920865280 -1.90E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=42
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=42
+    42 P_Mix/Diag. 0.20E+00    0.0     0.00191713       -76.4920865412 -1.32E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=43
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=43
+    43 P_Mix/Diag. 0.20E+00    0.0     0.00160814       -76.4920865504 -9.18E-09
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=44
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=44
+    44 P_Mix/Diag. 0.20E+00    0.0     0.00134854       -76.4920865568 -6.39E-09
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=45
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=45
+    45 P_Mix/Diag. 0.20E+00    0.0     0.00113052       -76.4920865613 -4.45E-09
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=46
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=46
+    46 P_Mix/Diag. 0.20E+00    0.0     0.00094749       -76.4920865644 -3.10E-09
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=47
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=47
+    47 P_Mix/Diag. 0.20E+00    0.0     0.00079389       -76.4920865665 -2.16E-09
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=48
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=48
+    48 P_Mix/Diag. 0.20E+00    0.0     0.00066504       -76.4920865680 -1.50E-09
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=49
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=49
+    49 P_Mix/Diag. 0.20E+00    0.0     0.00055697       -76.4920865691 -1.05E-09
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=50
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=50
+    50 P_Mix/Diag. 0.20E+00    0.0     0.00046637       -76.4920865698 -7.29E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=51
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=51
+    51 P_Mix/Diag. 0.20E+00    0.0     0.00039042       -76.4920865703 -5.08E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=52
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=52
+    52 P_Mix/Diag. 0.20E+00    0.0     0.00032679       -76.4920865707 -3.54E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=53
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=53
+    53 P_Mix/Diag. 0.20E+00    0.0     0.00027348       -76.4920865709 -2.47E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=54
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=54
+    54 P_Mix/Diag. 0.20E+00    0.0     0.00022882       -76.4920865711 -1.72E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=55
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=55
+    55 P_Mix/Diag. 0.20E+00    0.0     0.00019143       -76.4920865712 -1.20E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=56
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=56
+    56 P_Mix/Diag. 0.20E+00    0.0     0.00016013       -76.4920865713 -8.35E-11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=57
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=57
+    57 P_Mix/Diag. 0.20E+00    0.0     0.00013392       -76.4920865713 -5.83E-11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=58
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=58
+    58 P_Mix/Diag. 0.20E+00    0.0     0.00011199       -76.4920865714 -4.06E-11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=59
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=59
+    59 P_Mix/Diag. 0.20E+00    0.0     0.00009364       -76.4920865714 -2.83E-11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=60
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=60
+    60 P_Mix/Diag. 0.20E+00    0.0     0.00007829       -76.4920865714 -1.98E-11
+
+ *** WARNING in kpoint_restart_transfer.F:670 :: Projecting inconsistent ***
+ *** modulo-grid aliases onto the canonical k-point restart density.     ***
+
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=61
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=61
+    61 P_Mix/Diag. 0.20E+00    0.0     0.00006545       -76.4920865714 -1.38E-11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=62
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=62
+    62 P_Mix/Diag. 0.20E+00    0.0     0.00005471       -76.4920865714 -9.63E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=63
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=63
+    63 P_Mix/Diag. 0.20E+00    0.0     0.00004573       -76.4920865715 -6.71E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=64
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=64
+    64 P_Mix/Diag. 0.20E+00    0.0     0.00003822       -76.4920865715 -4.70E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=65
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=65
+    65 P_Mix/Diag. 0.20E+00    0.0     0.00003194       -76.4920865715 -3.27E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=66
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=66
+    66 P_Mix/Diag. 0.20E+00    0.0     0.00002669       -76.4920865715 -2.27E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=67
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=67
+    67 P_Mix/Diag. 0.20E+00    0.0     0.00002230       -76.4920865715 -1.59E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=68
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=68
+    68 P_Mix/Diag. 0.20E+00    0.0     0.00001863       -76.4920865715 -1.12E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=69
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=69
+    69 P_Mix/Diag. 0.20E+00    0.0     0.00001556       -76.4920865715 -7.82E-13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=70
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=70
+    70 P_Mix/Diag. 0.20E+00    0.0     0.00001300       -76.4920865715 -5.40E-13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=71
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=71
+    71 P_Mix/Diag. 0.20E+00    0.0     0.00001086       -76.4920865715 -3.84E-13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=72
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=72
+    72 P_Mix/Diag. 0.20E+00    0.0     0.00000907       -76.4920865715 -2.56E-13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=73
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=73
+    73 P_Mix/Diag. 0.20E+00    0.0     0.00000758       -76.4920865715 -1.85E-13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=74
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=74
+    74 P_Mix/Diag. 0.20E+00    0.0     0.00000633       -76.4920865715 -1.28E-13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=75
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=75
+    75 P_Mix/Diag. 0.20E+00    0.0     0.00000529       -76.4920865715 -1.14E-13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=76
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=76
+    76 P_Mix/Diag. 0.20E+00    0.0     0.00000442       -76.4920865715 -4.26E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=77
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=77
+    77 P_Mix/Diag. 0.20E+00    0.0     0.00000369       -76.4920865715 -4.26E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=78
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=78
+    78 P_Mix/Diag. 0.20E+00    0.0     0.00000308       -76.4920865715 -4.26E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=79
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=79
+    79 P_Mix/Diag. 0.20E+00    0.0     0.00000257       -76.4920865715 -1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=80
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=80
+    80 P_Mix/Diag. 0.20E+00    0.0     0.00000215       -76.4920865715 -1.42E-14
+
+ *** WARNING in kpoint_restart_transfer.F:670 :: Projecting inconsistent ***
+ *** modulo-grid aliases onto the canonical k-point restart density.     ***
+
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=81
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=81
+    81 P_Mix/Diag. 0.20E+00    0.0     0.00000179       -76.4920865715 -1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=82
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=82
+    82 P_Mix/Diag. 0.20E+00    0.0     0.00000150       -76.4920865715 -1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=83
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=83
+    83 P_Mix/Diag. 0.20E+00    0.0     0.00000125       -76.4920865715  1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=84
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=84
+    84 P_Mix/Diag. 0.20E+00    0.0     0.00000104       -76.4920865715 -1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=85
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=85
+    85 P_Mix/Diag. 0.20E+00    0.0     0.00000087       -76.4920865715 -1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=86
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=86
+    86 P_Mix/Diag. 0.20E+00    0.0     0.00000073       -76.4920865715  1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=87
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=87
+    87 P_Mix/Diag. 0.20E+00    0.0     0.00000061       -76.4920865715 -1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=88
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=88
+    88 P_Mix/Diag. 0.20E+00    0.0     0.00000051       -76.4920865715  1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=89
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=89
+    89 P_Mix/Diag. 0.20E+00    0.0     0.00000042       -76.4920865715  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=90
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=90
+    90 P_Mix/Diag. 0.20E+00    0.0     0.00000035       -76.4920865715 -1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=91
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=91
+    91 P_Mix/Diag. 0.20E+00    0.0     0.00000030       -76.4920865715  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=92
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=92
+    92 P_Mix/Diag. 0.20E+00    0.0     0.00000025       -76.4920865715  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=93
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=93
+    93 P_Mix/Diag. 0.20E+00    0.0     0.00000021       -76.4920865715  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=94
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=94
+    94 P_Mix/Diag. 0.20E+00    0.0     0.00000017       -76.4920865715  1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=95
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=95
+    95 P_Mix/Diag. 0.20E+00    0.0     0.00000014       -76.4920865715  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=96
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=96
+    96 P_Mix/Diag. 0.20E+00    0.0     0.00000012       -76.4920865715  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=97
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=97
+    97 P_Mix/Diag. 0.20E+00    0.0     0.00000010       -76.4920865715 -1.42E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=98
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=98
+    98 P_Mix/Diag. 0.20E+00    0.0     0.00000008       -76.4920865715  0.00E+00
+
+  *** SCF run converged in    98 steps ***
+
+
+  Core Hamiltonian energy:                                     -3.90013465577091
+  Repulsive potential energy:                                   0.41008859983881
+  Electrostatic energy:                                         0.15448289919965
+  Self-consistent dispersion energy:                           -0.00004120650156
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208657147079
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086571470793
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                DBCSR STATISTICS                             -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ COUNTER                                    TOTAL       BLAS       SMM       ACC
+ flops inhomo. stacks                           0       0.0%      0.0%      0.0%
+ flops total                         0.000000E+00       0.0%      0.0%      0.0%
+ flops max/rank                      0.000000E+00       0.0%      0.0%      0.0%
+ matmuls inhomo. stacks                         0       0.0%      0.0%      0.0%
+ matmuls total                                  0       0.0%      0.0%      0.0%
+ number of processed stacks                     0       0.0%      0.0%      0.0%
+ average stack size                                     0.0       0.0       0.0
+ marketing flops                     0.000000E+00
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                      DBCSR MESSAGE PASSING PERFORMANCE                      -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Bcast                1                     12.
+ MP_Allreduce           19                     21.
+ MP_Alltoall         24210                    279.
+ -------------------------------------------------------------------------------
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                          OFFLOAD MEMPOOL STATISTICS                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ Memory consumption                Number of allocations  Used [MiB]  Size [MiB]
+ Host                                                  1           0           0
+ -------------------------------------------------------------------------------
+
+ MEMORY| Estimated peak process memory [MiB]                                 125
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                         MESSAGE PASSING PERFORMANCE                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Group                1
+ MP_Bcast            31886                      7.
+ MP_Allreduce       354378                     32.
+ MP_Sync                 1
+ MP_Wait             26490
+ MP_ISend            37086                     47.
+ MP_IRecv            37086                     47.
+ -------------------------------------------------------------------------------
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                           R E F E R E N C E S                               -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ 
+ CP2K version 2026.2 (Development Version), the CP2K developers group (2026).
+ CP2K is freely available from https://www.cp2k.org/ .
+ 
+ M. Iannuzzi, J. Wilhelm, F. Stein, A. Bussy, H. Elgabarty, D. Golze, A. Hehn, 
+ M. Graml, S. Marek, B. Sertcan Gökmen, C. Schran, H. Forbert, R. Z. 
+ Khaliullin, A. Kozhevnikov, M. Taillefumier, R. Meli, V. V. Rybkin, M. Brehm, 
+ R. Schade, O. Schütt, J. V. Pototschnig, H. Mirhosseini, A. Knüpfer, D. Marx, 
+ M. Krack, J. Hutter, T. D. Kühne.
+ J. Phys. Chem. B 130, 1237-1310 (2026).
+ The CP2K Program Package Made Simple.
+ https://doi.org/10.1021/acs.jpcb.5c05851
+
+ A. Katbashev, M. Stahn, T. Rose, V. Alizadeh, M. Friede, C. Plett, P. 
+ Steinbach, S. Ehlert.
+ J. Phys. Chem. A 129, 2667-2682 (2025).
+ Overview on Building Blocks and Applications of Efficient and Robust Extended 
+ Tight Binding.
+ https://doi.org/10.1021/acs.jpca.4c08263
+
+ T. D. Kühne, M. Iannuzzi, M. Del Ben, V. V. Rybkin, P. Seewald, F. Stein, T. 
+ Laino, R. Z. Khaliullin, O. Schütt, F. Schiffmann, D. Golze, J. Wilhelm, S. 
+ Chulkov, M. H. Bani-Hashemian, V. Weber, U. Borstnik, M. Taillefumier, A. S. 
+ Jakobovits, A. Lazzaro, H. Pabst, T. Müller, R. Schade, M. Guidon, S. 
+ Andermatt, N. Holmberg, G. K. Schenter, A. Hehn, A. Bussy, F. Belleflamme, G. 
+ Tabacchi, A. Glöß, M. Lass, I. Bethune, C. J. Mundy, C. Plessl, M. Watkins, 
+ J. VandeVondele, M. Krack, J. Hutter.
+ J. Chem. Phys. 152, 194103 (2020).
+ CP2K: An electronic structure and molecular dynamics software package - 
+ Quickstep: Efficient and accurate electronic structure calculations.
+ https://doi.org/10.1063/5.0007045
+
+ P. Pracht, E. Caldeweyher, S. Ehlert, S. Grimme.
+ ChemRxiv, (2019).
+ A Robust Non-Self-Consistent Tight-Binding Quantum Chemistry Method for large 
+ Molecules.
+ https://doi.org/10.26434/chemrxiv.8326202.v1
+
+ S. Grimme, C. Bannwarth, P. Shushkov.
+ J. Chem. Theory Comput. 13, 1989 (2017).
+ A Robust and Accurate Tight-Binding Quantum Chemical Method for Structures, 
+ Vibrational Frequencies, and Noncovalent Interactions of Large Molecular 
+ Systems Parametrized for All spd-Block Elements (Z = 1-86).
+ https://doi.org/10.1021/acs.jctc.7b00118
+
+ O. Schuett, P. Messmer, J. Hutter, J. VandeVondele.
+ Electronic Structure Calculations on Graphics Processing Units, 173-190 (2016).
+ GPU-Accelerated Sparse Matrix-Matrix Multiplication for Linear Scaling Density 
+ Functional Theory.
+ https://doi.org/10.1002/9781118670712.ch8
+
+ U. Borstnik, J. VandeVondele, V. Weber, J. Hutter.
+ Parallel Comput. 40, 47-58 (2014).
+ Sparse matrix multiplication: The distributed block-compressed sparse row 
+ library.
+ https://doi.org/10.1016/j.parco.2014.03.012
+
+ M. Frigo, S. G. Johnson.
+ Proc. IEEE 93, 216-231 (2005).
+ The design and implementation of FFTW3.
+ https://doi.org/10.1109/JPROC.2004.840301
+
+ C.-L. Fu, K.-M. Ho.
+ Phys. Rev. B 28, 5480-5486 (1983).
+ First-principles calculation of the equilibrium ground-state properties of 
+ transition metals: Applications to Nb and Mo.
+ https://doi.org/10.1103/PhysRevB.28.5480
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                T I M I N G                                  -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ SUBROUTINE                       CALLS  ASD         SELF TIME        TOTAL TIME
+                                MAXIMUM       AVERAGE  MAXIMUM  AVERAGE  MAXIMUM
+ CP2K                                 1  1.0    0.004    0.004    1.949    1.949
+ qs_energies                          1  2.0    0.000    0.000    1.937    1.937
+ scf_env_do_scf                       1  3.0    0.000    0.000    1.878    1.878
+ scf_env_do_scf_inner_loop           98  4.0    0.307    0.307    1.878    1.878
+ qs_ks_update_qs_env                 98  5.0    0.000    0.000    0.762    0.762
+ rebuild_ks_matrix                   98  6.0    0.000    0.000    0.697    0.697
+ build_tblite_ks_matrix              98  7.0    0.407    0.407    0.697    0.697
+ qs_scf_new_mos_kp                   98  5.0    0.000    0.000    0.390    0.390
+ do_general_diag_kp                  98  6.0    0.006    0.006    0.389    0.389
+ dbcsr_iterator_start            362227  6.8    0.190    0.190    0.237    0.237
+ dbcsr_iterator_stop             362227  6.8    0.159    0.159    0.198    0.198
+ rskp_transform                    1179  6.7    0.148    0.148    0.148    0.148
+ evaluate_core_matrix_traces        196  5.5    0.000    0.000    0.129    0.129
+ calculate_ptrace_kp                196  6.5    0.010    0.010    0.129    0.129
+ dbcsr_dot                        30380  7.5    0.072    0.072    0.119    0.119
+ copy_dbcsr_to_fm                  1182  7.0    0.006    0.006    0.106    0.106
+ kpoint_density_transform            98  7.0    0.007    0.007    0.099    0.099
+ cp_fm_start_copy_general          5298  6.7    0.050    0.050    0.080    0.080
+ dbcsr_complete_redistribute       1770  8.3    0.028    0.028    0.075    0.075
+ dbcsr_copy                       30968  6.5    0.032    0.032    0.061    0.061
+ qs_energies_init_hamiltonians        1  3.0    0.000    0.000    0.054    0.054
+ scf_env_density_mixing              99  5.0    0.005    0.005    0.052    0.052
+ build_tblite_matrices                1  4.0    0.010    0.010    0.051    0.051
+ dbcsr_desymmetrize_deep           2364  7.5    0.018    0.018    0.051    0.051
+ cp_dbcsr_alloc_block_from_nbl     4351  5.3    0.041    0.041    0.050    0.050
+ dbcsr_iterator_seek             362227  7.8    0.047    0.047    0.047    0.047
+ dbcsr_create_new                 40735  7.4    0.034    0.034    0.046    0.046
+ dbcsr_data_release              396508  7.9    0.044    0.044    0.044    0.044
+ cp_sm_mix                        15190  6.0    0.025    0.025    0.044    0.044
+ -------------------------------------------------------------------------------
+
+ The number of warnings for this run is : 6
+ 
+ -------------------------------------------------------------------------------
+  **** **** ******  **  PROGRAM ENDED AT                 2026-07-19 01:03:06.820
+ ***** ** ***  *** **   PROGRAM RAN ON                                     terok
+ **    ****   ******    PROGRAM RAN BY                                  kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                               3284564
+  **** **  *******  **  PROGRAM STOPPED IN /home/kuehne88/work/gxtb-response-har
+                                           dening-20260719/focused-tests/h2o_den
+                                           sity

@@ -1,0 +1,349 @@
+*************************** Testing started ****************************
+
+----------------------------- Settings ---------------------------------
+MPI ranks:      1
+OpenMP threads: 1
+GPU devices:    2
+Workers:        1
+Timeout [s]:    900
+Work base dir:  /home/kuehne88/work/gxtb-response-hardening-20260719/regtest-final/work/TEST-2026-07-19_01-17-07
+MPI exec:       taskset -c 109 /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/mpirun --report-bindings --bind-to core --cpu-list 109 -np {N}
+Smoke test:     False
+Valgrind:       False
+Keepalive:      False
+Flag slow:      False
+Debug:          False
+Binary dir:     /home/kuehne88/work/gxtb-response-hardening-20260719/cp2k-build/bin
+CP2K data dir:  /home/kuehne88/work/gxtb-response-hardening-20260719/cp2k/data
+VERSION:        psmp
+Flags:          omp,parallel,scalapack,spglib,s_dftd3,mctc-lib,tblite,tblite_gxtb
+------------------------------------------------------------------------
+Copying test files ... done
+Skipping UNIT/nequip_unittest because its requirements are not satisfied.
+Skipping UNIT/gx_ac_unittest because its requirements are not satisfied.
+Skipping QS/regtest-dft-d4-auto-ref because its requirements are not satisfied.
+Skipping QS/regtest-dft-d2-auto-ref because its requirements are not satisfied.
+Skipping QS/regtest-dft-d3-auto-ref because its requirements are not satisfied.
+Skipping QS/regtest-dft-d3-bj-auto-ref because its requirements are not satisfied.
+Skipping QS/regtest-dft-d3-lib-ref because its requirements are not satisfied.
+Skipping QS/regtest-dft-d3bj-lib-ref because its requirements are not satisfied.
+Skipping QS/regtest-libgint because its requirements are not satisfied.
+Skipping QS/regtest-gw-realspace because its requirements are not satisfied.
+Skipping MIMIC/regtest-qmmm because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-sf-force because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-sf because its requirements are not satisfied.
+Skipping QS/regtest-hf-3c because its requirements are not satisfied.
+Skipping Fist/regtest-ace because its requirements are not satisfied.
+Skipping QS/regtest-double-hybrid-stress-laplace because its requirements are not satisfied.
+Skipping QS/regtest-rpa-sigma because its requirements are not satisfied.
+Skipping TMC/regtest_ana_on_the_fly because its requirements are not satisfied.
+Skipping QS/regtest-cusolver because its requirements are not satisfied.
+Skipping QS/regtest-dlaf because its requirements are not satisfied.
+Skipping QS/regtest-dlaf-2 because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-force-gapw because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-4 because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-force-3 because its requirements are not satisfied.
+Skipping QS/regtest-debug-5 because its requirements are not satisfied.
+Skipping xTB/regtest-gfn0 because its requirements are not satisfied.
+Skipping xTB/regtest-gfn0-d because its requirements are not satisfied.
+Skipping xTB/regtest-gfn0-m1 because its requirements are not satisfied.
+Skipping xTB/regtest-gfn0-m2 because its requirements are not satisfied.
+Skipping xTB/regtest-gfn0-m3 because its requirements are not satisfied.
+Skipping xTB/regtest-gfn0-m4 because its requirements are not satisfied.
+Skipping QS/regtest-debug-7 because its requirements are not satisfied.
+Skipping QS/regtest-hfx because its requirements are not satisfied.
+Skipping QS/regtest-debug-6 because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-force because its requirements are not satisfied.
+Skipping QS/regtest-ec because its requirements are not satisfied.
+Skipping QS/regtest-as-1 because its requirements are not satisfied.
+Skipping QS/regtest-gpw-1 because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-force-2 because its requirements are not satisfied.
+Skipping QS/regtest-openpmd because its requirements are not satisfied.
+Skipping QS/regtest-ec-force because its requirements are not satisfied.
+Skipping QS/regtest-embed because its requirements are not satisfied.
+Skipping SIRIUS/regtest-1 because its requirements are not satisfied.
+Skipping QS/regtest-gapw_xc because its requirements are not satisfied.
+Skipping QS/regtest-xastdp because its requirements are not satisfied.
+Skipping QS/regtest-rixs because its requirements are not satisfied.
+Skipping QS/regtest-dcdft-force because its requirements are not satisfied.
+Skipping QS/regtest-dcdft-gapw because its requirements are not satisfied.
+Skipping QS/regtest-admm-gapw because its requirements are not satisfied.
+Skipping QS/regtest-ed because its requirements are not satisfied.
+Skipping QS/regtest-kp-2 because its requirements are not satisfied.
+Skipping QS/regtest-kp-spglib because its requirements are not satisfied.
+Skipping QS/regtest-gw-cubic because its requirements are not satisfied.
+Skipping QS/regtest-dcdft-stress because its requirements are not satisfied.
+Skipping QS/regtest-ec-stress because its requirements are not satisfied.
+Skipping QS/regtest-debug-4 because its requirements are not satisfied.
+Skipping QS/regtest-kg because its requirements are not satisfied.
+Skipping QS/regtest-kp-hfx-ri-admm-2 because its requirements are not satisfied.
+Skipping QS/regtest-stda-force because its requirements are not satisfied.
+Skipping QS/regtest-rpa-cubic-scaling-2 because its requirements are not satisfied.
+Skipping QS/regtest-gw-kpoints because its requirements are not satisfied.
+Skipping QS/regtest-mp2-grad-1 because its requirements are not satisfied.
+Skipping QS/regtest-libxc because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-rse-1 because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-stda because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-static because its requirements are not satisfied.
+Skipping QS/regtest-scalable-gw because its requirements are not satisfied.
+Skipping QS/regtest-hfx-periodic because its requirements are not satisfied.
+Skipping QS/regtest-gapw because its requirements are not satisfied.
+Skipping QS/regtest-kp-hfx-ri-2 because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-api because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-api-debug because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-cdft because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-skala because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-gpw-mol because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-gpw-nlcc because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-gpw-coords because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-gpw-mech because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-gpw-kp because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-gapw-base because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-gapw-ae-kp because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-gapw-gth because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-gapw-gth-kp because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-gapw-ecp because its requirements are not satisfied.
+Skipping QS/regtest-gauxc-cuda because its requirements are not satisfied.
+Skipping QS/regtest-dft-vdw-corr-3 because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-gapw because its requirements are not satisfied.
+Skipping QS/regtest-hfx-ri because its requirements are not satisfied.
+Skipping QS/regtest-mp2-grad-2 because its requirements are not satisfied.
+Skipping QS/regtest-stda-force-3 because its requirements are not satisfied.
+Skipping QS/regtest-hfx-wfn-fitting because its requirements are not satisfied.
+Skipping QS/regtest-gapw-4 because its requirements are not satisfied.
+Skipping QS/regtest-ri-rpa because its requirements are not satisfied.
+Skipping QS/regtest-dcdft-hfx because its requirements are not satisfied.
+Skipping QS/regtest-dft-vdw-corr-2 because its requirements are not satisfied.
+Skipping QS/regtest-pao-5 because its requirements are not satisfied.
+Skipping QS/regtest-acc-1 because its requirements are not satisfied.
+Skipping QS/regtest-acc-1-libxc because its requirements are not satisfied.
+Skipping QS/regtest-acc-2 because its requirements are not satisfied.
+Skipping QS/regtest-acc-3 because its requirements are not satisfied.
+Skipping QS/regtest-acc-4 because its requirements are not satisfied.
+Skipping QS/regtest-acc-5 because its requirements are not satisfied.
+Skipping QS/regtest-gw because its requirements are not satisfied.
+Skipping QS/regtest-kp-1 because its requirements are not satisfied.
+Skipping QS/regtest-kp-1-spg because its requirements are not satisfied.
+Skipping QS/regtest-kp-1-spglib because its requirements are not satisfied.
+Skipping QS/regtest-mp2-grad-solvers because its requirements are not satisfied.
+Skipping QS/regtest-rpa-cubic-scaling because its requirements are not satisfied.
+Skipping QS/regtest-debug-2 because its requirements are not satisfied.
+Skipping QS/regtest-ps-implicit-1-3 because its requirements are not satisfied.
+Skipping QS/regtest-hfx-ri-2 because its requirements are not satisfied.
+Skipping QS/regtest-kp-hfx-ri-admm because its requirements are not satisfied.
+Skipping QS/regtest-as-2 because its requirements are not satisfied.
+Skipping QS/regtest-mp2-block because its requirements are not satisfied.
+Skipping QS/regtest-gw2x because its requirements are not satisfied.
+Skipping QS/regtest-admm-1 because its requirements are not satisfied.
+Skipping QS/regtest-ri-laplace-mp2-cubic-2 because its requirements are not satisfied.
+Skipping Fist/regtest-nequip because its requirements are not satisfied.
+Skipping QS/regtest-admm-qps-2 because its requirements are not satisfied.
+Skipping QS/regtest-admm-4 because its requirements are not satisfied.
+Skipping QS/regtest-debug-3 because its requirements are not satisfied.
+Skipping QS/regtest-hybrid-4 because its requirements are not satisfied.
+Skipping QS/regtest-mp2-stress because its requirements are not satisfied.
+Skipping QS/regtest-lsroks because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-2 because its requirements are not satisfied.
+Skipping QS/regtest-hfx-block because its requirements are not satisfied.
+Skipping QS/regtest-stda-force-2 because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-3 because its requirements are not satisfied.
+Skipping QS/regtest-ps-implicit-1-1 because its requirements are not satisfied.
+Skipping QMMM/QS/regtest-cdft because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-lri because its requirements are not satisfied.
+Skipping QS/regtest-pexsi because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-admm because its requirements are not satisfied.
+Skipping QS/regtest-admm-3 because its requirements are not satisfied.
+Skipping QS/regtest-cdft-3 because its requirements are not satisfied.
+Skipping QS/regtest-admm-libxc because its requirements are not satisfied.
+Skipping QS/regtest-ri-rpa-grad because its requirements are not satisfied.
+Skipping QS/regtest-mp2-lr-grad because its requirements are not satisfied.
+Skipping QS/regtest-ri-mp2 because its requirements are not satisfied.
+Skipping QS/regtest-mom-2 because its requirements are not satisfied.
+Skipping QS/regtest-admm-2 because its requirements are not satisfied.
+Skipping QS/regtest-as-dft because its requirements are not satisfied.
+Skipping QS/regtest-as-fci because its requirements are not satisfied.
+Skipping QS/regtest-mp2-admm-grad because its requirements are not satisfied.
+Skipping QS/regtest-admm-dm because its requirements are not satisfied.
+Skipping QS/regtest-sos-mp2-grad because its requirements are not satisfied.
+Skipping QS/regtest-ec-meta because its requirements are not satisfied.
+Skipping QS/regtest-ps-implicit-1-2 because its requirements are not satisfied.
+Skipping QS/regtest-sparsity because its requirements are not satisfied.
+Skipping Fist/regtest-allegro because its requirements are not satisfied.
+Skipping QS/regtest-hybrid-3 because its requirements are not satisfied.
+Skipping QS/regtest-dft-vdw-corr-4 because its requirements are not satisfied.
+Skipping QS/regtest-as-3 because its requirements are not satisfied.
+Skipping QS/regtest-bse because its requirements are not satisfied.
+Skipping QS/regtest-rtbse because its requirements are not satisfied.
+Skipping QS/regtest-smeagol-2 because its requirements are not satisfied.
+Skipping QS/regtest-mp2-admm-stress because its requirements are not satisfied.
+Skipping QS/regtest-gpw-9 because its requirements are not satisfied.
+Skipping QS/regtest-mp2-lr-stress because its requirements are not satisfied.
+Skipping LIBTEST/libbqb because its requirements are not satisfied.
+Skipping QS/regtest-hfx-stress because its requirements are not satisfied.
+Skipping QS/regtest-rma because its requirements are not satisfied.
+Skipping QS/regtest-rpa-lr because its requirements are not satisfied.
+Skipping TMC/regtest because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-soc because its requirements are not satisfied.
+Skipping QS/regtest-hybrid-2 because its requirements are not satisfied.
+Skipping QS/regtest-admm-qps because its requirements are not satisfied.
+Skipping QMMM/QS/regtest-gapw because its requirements are not satisfied.
+Skipping QS/regtest-ri-mp2-opt because its requirements are not satisfied.
+Skipping QS/regtest-mp2-lr because its requirements are not satisfied.
+Skipping QS/regtest-kp-hfx-ri because its requirements are not satisfied.
+Skipping LIBTEST/libvori because its requirements are not satisfied.
+Skipping QS/regtest-mp2-admm-grad-numer because its requirements are not satisfied.
+Skipping QS/regtest-rma-3D because its requirements are not satisfied.
+Skipping QS/regtest-mp2-admm-stress-numer because its requirements are not satisfied.
+Skipping QS/regtest-ri-laplace-mp2 because its requirements are not satisfied.
+Skipping QS/regtest-ri-rpa-exchange because its requirements are not satisfied.
+Skipping QS/regtest-double-hybrid-grad-numer-meta because its requirements are not satisfied.
+Skipping QS/regtest-admm-type because its requirements are not satisfied.
+Skipping QS/regtest-rs-dhft because its requirements are not satisfied.
+Skipping QS/regtest-mp2-2 because its requirements are not satisfied.
+Skipping QS/regtest-mp2-4 because its requirements are not satisfied.
+Skipping QS/regtest-cdft-hirshfeld-2 because its requirements are not satisfied.
+Skipping QS/regtest-hfx-2 because its requirements are not satisfied.
+Skipping QS/regtest-double-hybrid-grad-meta because its requirements are not satisfied.
+Skipping QS/regtest-double-hybrid-grad-laplace because its requirements are not satisfied.
+Skipping QS/regtest-stda because its requirements are not satisfied.
+Skipping QS/regtest-sos-mp2-lr because its requirements are not satisfied.
+Skipping QS/regtest-mp2-3 because its requirements are not satisfied.
+Skipping QS/regtest-stda-force-4 because its requirements are not satisfied.
+Skipping QS/regtest-mp2-1 because its requirements are not satisfied.
+Skipping QS/regtest-double-hybrid-3 because its requirements are not satisfied.
+Skipping TMC/regtest_ana_post_proc because its requirements are not satisfied.
+Skipping QS/regtest-hybrid-1 because its requirements are not satisfied.
+Skipping QS/regtest-ri-rpa-rse because its requirements are not satisfied.
+Skipping QS/regtest-double-hybrid-1 because its requirements are not satisfied.
+Skipping QS/regtest-ri-laplace-mp2-cubic because its requirements are not satisfied.
+Skipping QS/regtest-double-hybrid-stress-numer-laplace because its requirements are not satisfied.
+Skipping QS/regtest-as because its requirements are not satisfied.
+Skipping QS/regtest-as-qcschema because its requirements are not satisfied.
+Skipping QS/regtest-double-hybrid-2 because its requirements are not satisfied.
+Skipping QS/regtest-negf-1 because its requirements are not satisfied.
+Skipping QS/regtest-negf-2 because its requirements are not satisfied.
+Skipping QS/regtest-negf-xtb-1 because its requirements are not satisfied.
+Skipping QS/regtest-double-hybrid-stress-numer-meta because its requirements are not satisfied.
+Skipping QS/regtest-elpa-qr because its requirements are not satisfied.
+Skipping QS/regtest-double-hybrid-stress-meta because its requirements are not satisfied.
+Skipping QS/regtest-fftw-wisdom because its requirements are not satisfied.
+Skipping QS/regtest-gw-ic-model because its requirements are not satisfied.
+Skipping QS/regtest-elpa-2 because its requirements are not satisfied.
+Skipping ATOM/regtest-libxc because its requirements are not satisfied.
+Skipping QS/regtest-fftw because its requirements are not satisfied.
+Skipping Fist/regtest-deepmd because its requirements are not satisfied.
+Skipping QS/regtest-elpa because its requirements are not satisfied.
+Skipping Fist/regtest-plumed2 because its requirements are not satisfied.
+Skipping Fist/regtest-quip because its requirements are not satisfied.
+Skipping QS/regtest-eht-guess because its requirements are not satisfied.
+Skipping QS/regtest-trexio because its requirements are not satisfied.
+Skipping QS/regtest-trexio-2 because its requirements are not satisfied.
+Skipping QS/regtest-rtbse-gxac because its requirements are not satisfied.
+Skipping QS/regtest-tddfpt-bse because its requirements are not satisfied.
+Skipping QS/regtest-hybrid-ace-gs because its requirements are not satisfied.
+Skipping 246 test directories because of --restrictdir.
+Launched 1 test directories and 1 worker...
+
+>>> /home/kuehne88/work/gxtb-response-hardening-20260719/regtest-final/work/TEST-2026-07-19_01-17-07/xTB/regtest-tblite-gxtb
+    H2O_gxtb_pbc.inp:E_total                                                              -76.49208605           OK (   1.65 sec)
+    H2O_gxtb_pbc.inp:GXTB_native_raw                                                                 -           OK (   1.65 sec)
+    H2O_gxtb_pbc.inp:GXTB_native_simple                                                              -           OK (   1.65 sec)
+    H2O_gxtb_pbc.inp:GXTB_native_fdiis                                                               -           OK (   1.65 sec)
+    H2O_gxtb_kp_gamma.inp                                                                 -76.49208605           OK (   1.88 sec)
+    H2O_gxtb_force.inp                                                                               -           OK (   1.90 sec)
+    H2O_gxtb_stress.inp                                                                      3.859e-09           OK (   1.93 sec)
+    H2O_gxtb_gamma_force_stress.inp:DEBUG_stress_sum                                         4.755e-09           OK (   2.23 sec)
+    H2O_gxtb_gamma_force_stress.inp:DEBUG_force_sum                                              1e-08           OK (   2.23 sec)
+    H2O_gxtb_kp_gamma_force_stress.inp:DEBUG_stress_sum                                      4.849e-09           OK (  11.16 sec)
+    H2O_gxtb_kp_gamma_force_stress.inp:DEBUG_force_sum                                               -           OK (  11.16 sec)
+    H2O_gxtb_reference_cli.inp                                                            -76.49208605           OK (   1.65 sec)
+    O2_gxtb_uks_reference_cli.inp                                                          -150.340839           OK (   1.66 sec)
+    O2_gxtb_uks_kp_311.inp:E_total                                                        -150.5418925           OK (   2.44 sec)
+    O2_gxtb_uks_kp_311.inp:TBLITE_alpha_population                                                   7           OK (   2.44 sec)
+    O2_gxtb_uks_kp_311.inp:TBLITE_beta_population                                                    5           OK (   2.44 sec)
+    H2O_gxtb_cp2k_density_mixer.inp:E_total                                               -76.49208605           OK (   1.70 sec)
+    H2O_gxtb_cp2k_density_mixer.inp:GXTB_cp2k_pmix                                                   -           OK (   1.70 sec)
+    H2O_gxtb_cp2k_fock_diis.inp:E_total                                                   -76.49208605           OK (   1.64 sec)
+    H2O_gxtb_cp2k_fock_diis.inp:GXTB_cp2k_fdiis                                                      -           OK (   1.64 sec)
+    H2O_gxtb_kp_cp2k_density_mixer.inp:E_total                                            -76.49208657           OK (   3.61 sec)
+    H2O_gxtb_kp_cp2k_density_mixer.inp:GXTB_cp2k_pmix                                                -           OK (   3.61 sec)
+    H2O_gxtb_kp_cp2k_density_mixer_restart.inp:E_total                                    -76.49208657           OK (   1.74 sec)
+    H2O_gxtb_kp_cp2k_density_mixer_restart.inp:GXTB_cp2k_pmix                                        -           OK (   1.74 sec)
+    H2O_gxtb_kp_cp2k_fock_diis.inp:E_total                                                -76.49208657           OK (   1.93 sec)
+    H2O_gxtb_kp_cp2k_fock_diis.inp:GXTB_cp2k_fdiis                                                   -           OK (   1.93 sec)
+    Si_prim_gxtb_kp_full.inp                                                              -579.1442534           OK (  20.77 sec)
+    Si_prim_gxtb_kp_311.inp                                                               -579.0255314           OK (  16.74 sec)
+    CH4_gxtb_kp_full.inp                                                                  -40.47374897           OK (   3.22 sec)
+    H2_gxtb_kp_311.inp                                                                    -1.196733965           OK (   4.75 sec)
+    H2_gxtb_gamma_supercell_311.inp                                                       -3.590201894           OK (   1.65 sec)
+    H2_gxtb_kp_311_force_stress.inp:DEBUG_stress_sum                                          1.36e-10           OK (  95.38 sec)
+    H2_gxtb_kp_311_force_stress.inp:DEBUG_force_sum                                                  -           OK (  95.38 sec)
+    H2_gxtb_gamma_supercell_311_force_stress.inp:DEBUG_stress_sum                            3.454e-08           OK (   3.46 sec)
+    H2_gxtb_gamma_supercell_311_force_stress.inp:DEBUG_force_sum                                 1e-08           OK (   3.46 sec)
+    CH4_gxtb_gamma_force_stress.inp:DEBUG_stress_sum                                         7.286e-09           OK (   2.18 sec)
+    CH4_gxtb_gamma_force_stress.inp:DEBUG_force_sum                                                  -           OK (   2.18 sec)
+    CH4_gxtb_kp_111_force_stress.inp:DEBUG_stress_sum                                        2.234e-09           OK (  24.36 sec)
+    CH4_gxtb_kp_111_force_stress.inp:DEBUG_force_sum                                                 -           OK (  24.36 sec)
+    CH4_gxtb_kp_k290.inp:E_total                                                          -40.47374897           OK (   3.78 sec)
+    CH4_gxtb_kp_k290.inp:N_special_kpoints                                                           1           OK (   3.78 sec)
+    CH4_gxtb_kp_k290_force_stress.inp:DEBUG_stress_sum                                       1.199e-09           OK (  36.88 sec)
+    CH4_gxtb_kp_k290_force_stress.inp:DEBUG_force_sum                                                -           OK (  36.88 sec)
+    H2_gxtb_kp_311_tr.inp                                                                 -1.196733965           OK (   4.65 sec)
+    H2_gxtb_kp_311_tr_force_stress.inp:DEBUG_stress_sum                                       1.37e-10           OK (  93.95 sec)
+    H2_gxtb_kp_311_tr_force_stress.inp:DEBUG_force_sum                                               -           OK (  93.95 sec)
+    O2_gxtb_uks_kp_311_tr.inp:E_total                                                     -150.5418925           OK (   2.39 sec)
+    O2_gxtb_uks_kp_311_tr.inp:TBLITE_alpha_population                                                7           OK (   2.39 sec)
+    O2_gxtb_uks_kp_311_tr.inp:TBLITE_beta_population                                                 5           OK (   2.39 sec)
+    Si_prim_gxtb_kp_general.inp                                                           -579.0509288           OK (  19.41 sec)
+    Si_prim_gxtb_kp_shifted_full.inp                                                      -579.0509288           OK (  26.89 sec)
+    CH4_gxtb_kp_acceleration_qualify.inp:E_total                                          -40.47374897           OK (   4.76 sec)
+    CH4_gxtb_kp_acceleration_qualify.inp:GXTB_exchange_qualification                                 -           OK (   4.76 sec)
+    CH4_gxtb_kp_acceleration_qualify.inp:GXTB_forward_fock_qualification                             -           OK (   4.76 sec)
+    CH4_gxtb_kp_acceleration_qualify.inp:GXTB_mixer_star_qualification                               -           OK (   4.76 sec)
+    CH4_gxtb_kp_acceleration_qualify.inp:GXTB_acp_cache_qualification                                -           OK (   4.76 sec)
+    CH4_gxtb_kp_acceleration_production.inp:E_total                                       -40.47374897           OK (   4.64 sec)
+    CH4_gxtb_kp_acceleration_production.inp:GXTB_distributed_images_production                       -           OK (   4.64 sec)
+    CH4_gxtb_kp_acceleration_production.inp:GXTB_streamed_star_production                            -           OK (   4.64 sec)
+    CH4_gxtb_kp_acceleration_production.inp:GXTB_distributed_images_reverse_production                 -           OK (   4.64 sec)
+    CH4_gxtb_kp_symmetry_fused_qualify.inp:E_total                                        -40.46886607           OK (   7.72 sec)
+    CH4_gxtb_kp_symmetry_fused_qualify.inp:GXTB_symmetry_fused_forward                               -           OK (   7.72 sec)
+    CH4_gxtb_kp_symmetry_fused_qualify.inp:GXTB_symmetry_fused_reverse                               -           OK (   7.72 sec)
+    CH4_gxtb_kp_symmetry_fused_qualify.inp:GXTB_symmetry_fused_overlap_covariance                    -           OK (   7.72 sec)
+    CH4_gxtb_kp_symmetry_fused_qualify.inp:GXTB_forward_stream_oracle_qualification                  -           OK (   7.72 sec)
+    CH4_gxtb_kp_symmetry_fused_qualify.inp:GXTB_streamed_reverse_qualification                       -           OK (   7.72 sec)
+    CH4_gxtb_kp_symmetry_fused_large_batch.inp:E_total                                    -40.46886607           OK (   6.56 sec)
+    CH4_gxtb_kp_symmetry_fused_large_batch.inp:GXTB_symmetry_fused_forward                           -           OK (   6.56 sec)
+    CH4_gxtb_kp_symmetry_fused_large_batch.inp:GXTB_symmetry_fused_reverse                           -           OK (   6.56 sec)
+    CH4_gxtb_kp_symmetry_fused_large_batch.inp:GXTB_symmetry_fused_overlap_covariance                 -           OK (   6.56 sec)
+    CH4_gxtb_kp_symmetry_fused_large_batch.inp:GXTB_symmetry_fused_large_batch_clamp                 -           OK (   6.56 sec)
+    CH4_gxtb_kp_restart_3.inp                                                             -40.46886607           OK (   5.13 sec)
+    CH4_gxtb_kp_restart_4.inp:E_total                                                     -40.46855198           OK (  11.46 sec)
+    CH4_gxtb_kp_restart_4.inp:KPOINT_RESTART_VALIDATED_TRANSFER                                      -           OK (  11.46 sec)
+    Si_prim_gxtb_kp_mixed_radix.inp:E_total                                               -579.0509288           OK (  26.90 sec)
+    Si_prim_gxtb_kp_mixed_radix.inp:GXTB_forward_fullmesh_qualification                              -           OK (  26.90 sec)
+    Si_prim_gxtb_kp_mixed_radix.inp:GXTB_mixed_radix_transform                                       -           OK (  26.90 sec)
+    Si_prim_gxtb_kp_mixed_radix.inp:GXTB_mixed_radix_transform_forward                               -           OK (  26.90 sec)
+<<< /home/kuehne88/work/gxtb-response-hardening-20260719/regtest-final/work/TEST-2026-07-19_01-17-07/xTB/regtest-tblite-gxtb (1 of 1) done in 953.32 sec
+------------------------------- Errors ---------------------------------
+
+
+------------------------------- Timings --------------------------------
+Plot: name="timings", title="Timing Distribution", ylabel="time [s]"
+PlotPoint: name="100th_percentile", plot="timings", label="100th %ile", y=95.38, yerr=0.0
+PlotPoint: name="99th_percentile", plot="timings", label="99th %ile", y=95.38, yerr=0.0
+PlotPoint: name="98th_percentile", plot="timings", label="98th %ile", y=94.61, yerr=0.0
+PlotPoint: name="95th_percentile", plot="timings", label="95th %ile", y=45.44, yerr=0.0
+PlotPoint: name="90th_percentile", plot="timings", label="90th %ile", y=26.90, yerr=0.0
+PlotPoint: name="80th_percentile", plot="timings", label="80th %ile", y=14.63, yerr=0.0
+
+------------------------------- Summary --------------------------------
+Number of FAILED  tests 0
+Number of WRONG   tests 0
+Number of CORRECT tests 78
+Total number of   tests 78
+
+Summary: correct: 78 / 78; 8min
+Status: OK
+
+*************************** Testing ended ******************************
