@@ -36,6 +36,7 @@ fe7054250de4ab3d5438ff6a2e5d6d37b31a04f3905bebb480402e3825ee9365  ./results/curr
 fe60aeb6466079c241457b888f7f60ddec145011688d497100ceb0ad57c21b6d  ./results/current_cp2k_native/k444/VII/cp2k.out
 96e1005da0a8d9e6d8393093bd60d1e0c76dd868c3acab3c51e1fce82c28e89e  ./results/current_cp2k_native/k444/VIII/cp2k.out
 075cdddb5a6d8f55bb38fe763af9b21219794c82442d7fea93a9c640ebb34aff  ./results/current_cp2k_native/k444/XI/cp2k.out
+228406e9009dcfcc244f352d547ed50e003cfc45e06e3168a6ec93d4c883337d  ./results/current_cp2k_native/k444/XIII/cp2k.out
 67ead01157baa9b07aa586fa6e5df1588c25d7ce9cf22394f248313d3d7793e1  ./results/current_cp2k_native/k444/XIV/cp2k.out
 2196e976f8d08f35526af1d64215b322895db4d5e3be138ce3c663de4ab11332  ./results/current_cp2k_native/k444/XV/cp2k.out
 8bf8ef2b58e01640ff82202f874c436a83882efe6daba232a48876fd1fbfe391  ./results/current_cp2k_native/k444/XVII/cp2k.out
@@ -174,6 +175,6 @@ f206d84a1fc49e7b689ebbfe3add78f286212d32b190a67da0d1199c84d7c8fe  ./structures/k
 b8f43b68c42392c4406e1837cd29e045f353abb5f36a6e994148539aa889e381  ./structures/k444/XIV/POSCAR
 ea3034a6c763b483e737ac3d2768fe851a2030e8fc4aca7d1d79e9ffb790e20f  ./structures/k444/XV/POSCAR
 9ec96686cd0a805f8833658bcf6dc107d3f122914eb0538440859931dd6ab657  ./structures/k444/XVII/POSCAR
-02e309be4908ee88878a137b382f54b4c6f96eabf1a7110d959511e85c5187c2  ./tables/absolute_energies_vs_mesh.csv
+f86813ae6f94948fed5a75aec6b364b12cdd01dd615dfaeffe9cb7de3c4f7fdb  ./tables/absolute_energies_vs_mesh.csv
 c30e4117eccc6cd91428134bd53150d3240161b9aa808b9af187f24cbbfecee3  ./tools/build_cartesian_cells.py
 140e76fbf769b42b192dd9c3790d08231d3c6523fdac40372aa990919b1bfae3  ./tools/collect_absolute_energies.py
