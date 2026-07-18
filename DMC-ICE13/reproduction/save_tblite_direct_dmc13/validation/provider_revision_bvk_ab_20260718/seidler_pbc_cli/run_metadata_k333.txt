@@ -1,0 +1,11 @@
+executable=/private/tmp/save_tblite_seidler_pbc_build_noddx_20260718/app/tblite
+executable_sha256=795ba8516910892dddb97fbccc319c7b14bf0ba46cc6e2a06c72d08deec41f5c
+meshes=3
+phases=Ih VII XVII
+accuracy=0.1
+iterations=300
+gradients=0
+tblite version 0.6.0
+ddX support: disabled
+HDF5 support: disabled
+TREXIO support: disabled

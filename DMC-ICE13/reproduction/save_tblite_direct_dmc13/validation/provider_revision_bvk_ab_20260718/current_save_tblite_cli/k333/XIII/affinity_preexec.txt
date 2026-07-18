@@ -1,0 +1,5 @@
+pid=2790388 expected_cpu=150 allowed=150
+Name:	bash
+State:	S (sleeping)
+Cpus_allowed:	0000,00000000,00000000,00400000,00000000,00000000,00000000,00000000
+Cpus_allowed_list:	150

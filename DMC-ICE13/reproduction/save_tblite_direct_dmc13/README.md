@@ -102,3 +102,11 @@ hybrid ACP reverse-path gates: a real-space image contraction for self-inverse
 meshes and a direct Bloch-space contraction for genuinely complex meshes.  It
 also archives all force/stress ablations and failed representation trials with
 SHA-256 provenance.
+
+`validation/provider_revision_bvk_ab_20260718` compares the unchanged Seidler
+`pbc` executable and the current `save_tblite` executable directly on the same
+explicit `2 x 2 x 2` and `3 x 3 x 3` BvK supercells.  For the difficult ice-VII
+gate, the provider revision changes the Ih-referenced energy by less than
+`0.1` kJ mol^-1 per water at either mesh; it therefore cannot explain the
+earlier large implementation discrepancy or a materially shorter convergence
+tail.
