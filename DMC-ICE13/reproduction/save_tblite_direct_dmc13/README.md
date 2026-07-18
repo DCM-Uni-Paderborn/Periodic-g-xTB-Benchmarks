@@ -142,3 +142,16 @@ large coarse-grid shift, whereas changing only the image-distance threshold
 does not.  The apparently improved `mstore-inorganic` MAE is therefore a
 legacy indexing artifact and must not be used as the periodic author
 reference.
+
+`validation/cp2k_response_fix_ab_20260719` closes the independent CP2K-side
+audit.  Its complete 13-structure `2 x 2 x 2` gate compares native,
+SPGLIB-reduced primitive-cell energies with explicit standalone-CLI BvK
+supercells and finds a maximum Ih-referenced difference of only
+`2.1414e-5` kJ mol^-1 per water.  Controlled before/after and no-ACP tests
+assign the earlier CP2K energy shift predominantly to the corrected periodic
+BvK Coulomb response rather than to smearing, symmetry acceleration, or the
+provider frontend.  The package also contains focused GENERAL-grid and
+density-mixer restart gates plus the complete final CP2K regression result:
+78 correct, zero wrong, and zero failed checks.  Run its
+`verify_response_fix.py` script to recompute the tables and verify the full
+SHA-256 manifest.
