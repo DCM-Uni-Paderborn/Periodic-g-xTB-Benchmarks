@@ -1,0 +1,11 @@
+started_utc=2026-07-17T14:30:55Z
+host=terok
+kernel=Linux 6.12.88+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.88-1 (2026-05-15) x86_64 GNU/Linux
+root=/home/kuehne88/work/gxtb-provenance-d933e083-15915c94-20260717-v2
+build_cpus=80-111
+validation_cpu=159
+runtime=/home/kuehne88/work/gxtb-runtime-part-II-20260717/env
+cp2k_expected_commit=d933e083840a4a0e0e7901f45a2470f34087ae1f
+provider_expected_commit=15915c9435644eb257178ca8f8bf7220c38b1a84
+provider_expected_branch=cp2k-integration
+provider_ref_resolution=local-clean-object-at-verified-commit-because-private-https-ref-requires-credentials-on-terok

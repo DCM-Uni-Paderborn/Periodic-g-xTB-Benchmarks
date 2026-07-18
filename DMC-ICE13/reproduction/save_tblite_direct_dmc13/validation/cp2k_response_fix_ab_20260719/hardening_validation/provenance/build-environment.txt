@@ -1,0 +1,8 @@
+started_utc=2026-07-18T22:52:57Z
+host=terok
+cp2k_base_commit=8520b2e592cd04d35081ab4ad46d92c606071e23
+provider_commit=15915c9435644eb257178ca8f8bf7220c38b1a84
+patch_sha256=17a87b05a0af1bca96371d799773cc8f7227a40d404dc26bc450b485f5e50734
+provider_archive_sha256=e5137bcf675a99e177c30006fa2ed54cd7eaa1ab65d3dcc2337701e6f7f81492
+build_cpus=0-7
+parallel_jobs=8

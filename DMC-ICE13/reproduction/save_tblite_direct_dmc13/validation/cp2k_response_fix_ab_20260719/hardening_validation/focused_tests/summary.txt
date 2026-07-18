@@ -1,0 +1,7 @@
+status=PASS
+si_general_energy_hartree=-579.050928767344203
+si_shifted_energy_hartree=-579.050928767344203
+si_general_shifted_delta_hartree=0.0000000000000000e+00
+h2o_density_energy_hartree=-76.492086571470793
+h2o_fock_energy_hartree=-76.492086571470793
+h2o_mixer_delta_hartree=0.0000000000000000e+00

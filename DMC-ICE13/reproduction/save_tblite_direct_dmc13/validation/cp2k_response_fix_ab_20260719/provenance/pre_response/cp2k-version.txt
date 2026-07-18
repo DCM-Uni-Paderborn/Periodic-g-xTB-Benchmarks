@@ -1,0 +1,54 @@
+ CP2K version 2026.2 (Development Version)
+ Source code revision fc1a7e79a
+ cp2kflags: omp parallel scalapack spglib s_dftd3 mctc-lib tblite tblite_gxtb
+ compiler: GCC version 15.2.0
+ compiler options:
+   -I /home/kuehne88/work/gxtb-before-response-fix-20260719/cp2k-build/
+   src/start -I /home/kuehne88/work/gxtb-before-response-fix-20260719/c
+   p2k/src -I /home/kuehne88/work/gxtb-before-response-fix-20260719/cp2
+   k-build/src -I /home/kuehne88/work/gxtb-before-response-fix-20260719
+   /cp2k/src/base -I /home/kuehne88/work/gxtb-before-response-fix-20260
+   719/cp2k/src/common -I /home/kuehne88/work/gxtb-before-response-fix-
+   20260719/cp2k/src/motion -I /home/kuehne88/work/gxtb-before-response
+   -fix-20260719/cp2k/src/dbm -I /home/kuehne88/work/gxtb-before-respon
+   se-fix-20260719/cp2k-build/src/mod_files -I /home/kuehne88/work/gxtb
+   -provenance-d933e083-15915c94-20260717-v2/save_tblite-install/includ
+   e -I /home/kuehne88/work/gxtb-provenance-d933e083-15915c94-20260717-
+   v2/save_tblite-install/include/tblite/GNU-15.2.0 -I /home/kuehne88/w
+   ork/gxtb-runtime-part-II-20260717/env/include -I /home/kuehne88/work
+   /gxtb-provenance-d933e083-15915c94-20260717-v2/save_tblite-install/i
+   nclude/toml-f/modules -I /home/kuehne88/work/gxtb-provenance-d933e08
+   3-15915c94-20260717-v2/save_tblite-install/include/mctc-lib/modules 
+   -I /home/kuehne88/work/gxtb-provenance-d933e083-15915c94-20260717-v2
+   /save_tblite-install/include/dftd4/GNU-15.2.0 -I /home/kuehne88/work
+   /gxtb-provenance-d933e083-15915c94-20260717-v2/save_tblite-install/i
+   nclude/multicharge/GNU-15.2.0 -I /home/kuehne88/work/gxtb-provenance
+   -d933e083-15915c94-20260717-v2/save_tblite-install/include/s-dftd3/G
+   NU-15.2.0 -I /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/i
+   nclude -I /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/incl
+   ude -march=znver1 -mmmx -mpopcnt -msse -msse2 -msse3 -mssse3 -msse4.
+   1 -msse4.2 -mavx -mavx2 -msse4a -mno-fma4 -mno-xop -mfma -mno-avx512
+   f -mbmi -mbmi2 -maes -mpclmul -mno-avx512vl -mno-avx512bw -mno-avx51
+   2dq -mno-avx512cd -mno-avx512vbmi -mno-avx512ifma -mno-avx512vpopcnt
+   dq -mno-avx512vbmi2 -mno-gfni -mno-vpclmulqdq -mno-avx512vnni -mno-a
+   vx512bitalg -mno-avx512bf16 -mno-avx512vp2intersect -mno-3dnow -madx
+    -mabm -mno-cldemote -mclflushopt -mno-clwb -mclzero -mcx16 -mno-enq
+   cmd -mf16c -mfsgsbase -mfxsr -mno-hle -msahf -mno-lwp -mlzcnt -mmovb
+   e -mno-movdir64b -mno-movdiri -mno-mwaitx -mno-pconfig -mno-pku -mpr
+   fchw -mno-ptwrite -mno-rdpid -mrdrnd -mrdseed -mno-rtm -mno-serializ
+   e -mno-sgx -msha -mno-shstk -mno-tbm -mno-tsxldtrk -mno-vaes -mno-wa
+   itpkg -mno-wbnoinvd -mxsave -mxsavec -mxsaveopt -mxsaves -mno-amx-ti
+   le -mno-amx-int8 -mno-amx-bf16 -mno-uintr -mno-hreset -mno-kl -mno-w
+   idekl -mno-avxvnni -mno-avx512fp16 -mno-avxifma -mno-avxvnniint8 -mn
+   o-avxneconvert -mno-cmpccxadd -mno-amx-fp16 -mno-prefetchi -mno-raoi
+   nt -mno-amx-complex -mno-avxvnniint16 -mno-sm3 -mno-sha512 -mno-sm4 
+   -mno-apxf -mno-usermsr -mno-avx10.2 -mno-amx-avx512 -mno-amx-tf32 -m
+   no-amx-transpose -mno-amx-fp8 -mno-movrs -mno-amx-movrs --param=l1-c
+   ache-size=32 --param=l1-cache-line-size=64 --param=l2-cache-size=512
+    -mtune=znver1 -g -O3 -O3 -Wno-deprecated-declarations -Wno-maybe-un
+   initialized -Wuninitialized -Wuse-without-only -std=f2008 -fPIE -ffr
+   ee-form -fimplicit-none -fno-omit-frame-pointer -fbacktrace -fallow-
+   argument-mismatch -funroll-loops -fopenmp -fpreprocessed -J src -fpr
+   e-include=/home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/
+   ../x86_64-conda-linux-gnu/sysroot/usr/include/finclude/math-vector-f
+   ortran.h
