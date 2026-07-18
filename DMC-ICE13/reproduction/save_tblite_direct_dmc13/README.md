@@ -87,6 +87,12 @@ cell (RMS `2.96e-8` Hartree).  The three `4 x 4 x 4` gates agree within
 `1.12e-7` Hartree per primitive cell.  This makes the table suitable as a
 strict absolute-energy comparison for another `save_tblite` build.
 
+`validation/kpoint_grid_bvk_oracle_20260718` independently checks the point
+sets themselves.  The complete printed `2 x 2 x 2`, `3 x 3 x 3`, and
+`4 x 4 x 4` native grids are equal-weight realizations of the corresponding
+Gamma-centred BvK reciprocal grids, including the even-mesh MacDonald shifts.
+Thus the direct-supercell comparison does not hide a shifted-mesh mismatch.
+
 ## Derivative validation
 
 `validation/k222_XVII_derivatives` contains a native-versus-explicit-supercell
