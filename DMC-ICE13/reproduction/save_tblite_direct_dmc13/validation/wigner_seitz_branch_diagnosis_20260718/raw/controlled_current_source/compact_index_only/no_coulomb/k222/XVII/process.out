@@ -1,0 +1,49 @@
+xTB calculator
+ | self-consistent screened Coulomb + Pauli repulsion
+ | Coulomb electrostatics and tight-binding
+ |  * onsite first-order tight-binding
+ | self-consistent DFT-D4Srev dispersion
+ | Mulliken and onsite Fock exchange + bond-order correlation
+
+core increment energy         -3.3325160265936E+03 Eh
+dispersion energy              2.0903737438152E-02 Eh
+molecular charge               0.0000000000000E+00 e
+number of electrons            3.8399999999761E+02 e
+number of unpaired electrons   0.0000000000000E+00 e
+wavefunction                   restricted
+integral cutoff                2.6907767250513E+01 bohr
+energy convergence             1.0000000000000E-08 Eh
+density convergence            2.0000000000000E-07 e
+
+------------------------------------------------------------
+  cycle        total energy    energy error   density error
+------------------------------------------------------------
+      1     -3674.234649160  -3.4173953E+02   0.0000000E+00
+      2     -3674.850026113  -6.1537695E-01   1.0996347E-02
+      3     -3675.292302041  -4.4227593E-01   9.1145926E-03
+      4     -3676.393210095  -1.1009081E+00   7.5572881E-03
+      5     -3676.394454125  -1.2440300E-03   1.0012805E-04
+      6     -3676.394536414  -8.2289173E-05   2.7728240E-05
+      7     -3676.394536607  -1.9295953E-07   3.7192808E-06
+      8     -3676.394536611  -4.0697614E-09   3.1824263E-07
+      9     -3676.394536611  -5.1159077E-13   2.9920222E-09
+------------------------------------------------------------
+
+electronic energy             -3.4389941375482E+02 Eh
+total energy                  -3.6763945366110E+03 Eh
+
+Post processing:
+ | Mayer-Wiberg bond orders
+
+ total:                                   2.609 sec
+ - increment                              0.000 sec (  0%)
+ - repulsion                              0.005 sec (  0%)
+ - dispersion                             0.785 sec ( 30%)
+ - coulomb                                0.006 sec (  0%)
+ - exchange                               0.004 sec (  0%)
+ - hamiltonian                            0.148 sec (  5%)
+ - acp                                    1.483 sec ( 56%)
+ - post processing                        0.000 sec (  0%)
+ - scc                                    0.094 sec (  3%)
+
+[Info] JSON dump of results written to '/private/tmp/gxtb-wsc-component-diagnostic-20260718/compact_index_only/no_coulomb/k222/XVII/result.json'
