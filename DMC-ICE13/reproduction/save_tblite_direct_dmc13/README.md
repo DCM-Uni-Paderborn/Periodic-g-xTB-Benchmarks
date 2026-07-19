@@ -189,6 +189,18 @@ change no larger than the chosen threshold, and computes aggregate error
 statistics only after all twelve non-reference phases pass.  No aggregate MAE
 or RMS condition participates in endpoint selection.
 
+`tools/dmc_phase_convergence.py` and `tools/dmc_mixed_mae.py` apply the same
+qualification to incremental decisions and progress reports.  When an
+execution hash is required, they also verify normal exit and the hash of the
+actual input.  A denser result produced by another executable or from a
+modified input is skipped instead of masking a valid lower-mesh pair.
+`tools/verify_adaptive_dmc13.py` is an independent final oracle: it reparses
+the raw CP2K energies and MacDonald meshes, verifies binary and input
+provenance, proves that every reported endpoint is the first passing adjacent
+pair, and recomputes all aggregate statistics.  The positive and negative
+end-to-end checks in `tools/tests/test_adaptive_reporting.py` can be run with
+`python3 -m unittest -v tools/tests/test_adaptive_reporting.py`.
+
 If an unresolved phase needs a denser regular mesh,
 `tools/build_native_mesh_input.py` rewrites exactly the single cubic
 `SCHEME MACDONALD` line of a frozen input.  It refuses anisotropic or ambiguous
