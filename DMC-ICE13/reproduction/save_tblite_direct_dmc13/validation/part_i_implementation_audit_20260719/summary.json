@@ -1,0 +1,129 @@
+{
+  "failed_gates": [],
+  "gate_count": 11,
+  "gates": [
+    {
+      "name": "absolute_energy_parity",
+      "returncode": 0,
+      "script": "tools/verify_absolute_energy_parity.py",
+      "script_sha256": "a97c245e0a0f3c4d63b130ed0f095c45e894294c98b1276216d4a86d662a02e6",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "b7829a21589140b34b1688633f9f4d84d522205800010af99c1d1294efa2baaa",
+      "stdout_tail": "mesh=4 coverage=3 max_abs_delta_Ha=1.115253098760e-07 rms_delta_Ha=6.611287642430e-08 max_abs_relative_delta_kJ_mol_per_water=1.872265502464e-05 status=pass"
+    },
+    {
+      "name": "accuracy_sensitivity",
+      "returncode": 0,
+      "script": "validation/accuracy_sensitivity_20260718/verify_accuracy.py",
+      "script_sha256": "c28eccd451873dadfe029012ec546fa8449a92a4c20fa4f9f51710f80e615f9b",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "9967de320bd92dab98025eb80e8f491d4336f80262afae061cd9089762cccb90",
+      "stdout_tail": "accuracy-sensitivity validation: pass"
+    },
+    {
+      "name": "response_fix",
+      "returncode": 0,
+      "script": "validation/cp2k_response_fix_ab_20260719/verify_response_fix.py",
+      "script_sha256": "fd6b67c5ffdb2a0296a048ff85994c698da8c02a60a00648e53f7e5475bd1bd5",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "970385d58498249c594d08ff389940615e28866c9c13740897974305e6e8a4fd",
+      "stdout_tail": "CP2K response-fix, CLI/native, and hardening validation: pass"
+    },
+    {
+      "name": "energy_force_stress",
+      "returncode": 0,
+      "script": "validation/k222_XVII_derivatives/verify_derivatives.py",
+      "script_sha256": "21f4e4effcab63900a2bf79253574d563f352248f78ffd280d5d090bb04da1f9",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "9b014de84b14628ad58e75cf82d6755e9a6c2ec4fed876c5371cb317b9697576",
+      "stdout_tail": "}"
+    },
+    {
+      "name": "kpoint_grid_bvk",
+      "returncode": 0,
+      "script": "validation/kpoint_grid_bvk_oracle_20260718/verify_grid.py",
+      "script_sha256": "0188625c3780d0f7e18c1333c5b02659b683a6a4f35e94aadadcef2db45d9308",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "81a7bb02919aafbb98f540e6ea9faebdc3f3fbbd2c9f0f6320744f652af4c963",
+      "stdout_tail": "mesh=4 points=64 equal_weights=true bvk_grid_equivalent=true status=pass"
+    },
+    {
+      "name": "model_revision",
+      "returncode": 0,
+      "script": "validation/model_revision_coarse_grid_ab_20260718/verify_comparison.py",
+      "script_sha256": "6b81b9831694b96ce5c1c8f5c16e5f000824bc40477ba0491e14b3300d0f0233",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "0fe22a5b7f5da1d898c6bb54b0c089b11905e7c219f3a774d2f9bdaa4f8872f2",
+      "stdout_tail": "model-revision coarse-grid validation: pass"
+    },
+    {
+      "name": "native_derivative_hardening",
+      "returncode": 0,
+      "script": "validation/native_derivative_hardening_20260718/verify_current_build.py",
+      "script_sha256": "475baf041008c3a3ed3c576881f278cb756d19febdc6078552046e47072769a0",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "0fad3ca3e3cc2d97ac4b5c5af0fd781c18d38a7286c0316a4d7bfe004360646e",
+      "stdout_tail": "current CP2K build retention gate: all archived values verified"
+    },
+    {
+      "name": "provider_revision",
+      "returncode": 0,
+      "script": "validation/provider_revision_bvk_ab_20260718/verify_comparison.py",
+      "script_sha256": "430ffc9c219cc106c50adfde4634fb6837e3796067b0a6087ae06321dd8fa666",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "d60d23d1c30e7bf273bd8bc24b2ba232d0a579200841a63d7bc8cb34c81466d0",
+      "stdout_tail": "provider-revision BvK comparison: all archived values verified"
+    },
+    {
+      "name": "qualified_energy_sentinels",
+      "returncode": 0,
+      "script": "validation/qualified_energy_sentinels_20260719/verify_qualified_energy_sentinels.py",
+      "script_sha256": "b1f66fa2c1ea3a77bc4c596116d6b4146f4e0bcd26c385812b33d2e1937c3a03",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "a53853180977d6a2d8d14c49dfaa2ba1824098822c63e52b2494d69c3c3e0b71",
+      "stdout_tail": "}"
+    },
+    {
+      "name": "wigner_seitz_branch_diagnosis",
+      "returncode": 0,
+      "script": "validation/wigner_seitz_branch_diagnosis_20260718/verify_diagnosis.py",
+      "script_sha256": "74d0166cdca4fc8c42b60b103714388c42bd605567890a6ac70b373cfa3955e6",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "9e9a3ec0febbbfbc224eb6ce653f4b0f6129dfd7505cda0e1721e0575bb85ffc",
+      "stdout_tail": "PASS unit-test statuses: legacy=8, fixed=0"
+    },
+    {
+      "name": "archive_sha256",
+      "returncode": 0,
+      "script": "tools/verify_sha256_manifests.py",
+      "script_sha256": "25c8219e2c36609c1f4b95fb1bb4a3273f165f6032a58ea20fc8765ec16782cf",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "134158cc82708c01d2eaa43988bc80b8a79e4e659a3755502a3119651220af59",
+      "stdout_tail": "manifests=58 entries=2691 failures=0"
+    }
+  ],
+  "passed_gate_count": 11,
+  "status": "PASS"
+}
