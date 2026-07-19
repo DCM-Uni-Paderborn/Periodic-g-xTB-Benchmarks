@@ -155,3 +155,11 @@ density-mixer restart gates plus the complete final CP2K regression result:
 78 correct, zero wrong, and zero failed checks.  Run its
 `verify_response_fix.py` script to recompute the tables and verify the full
 SHA-256 manifest.
+
+`validation/qualified_energy_sentinels_20260719` then compares that
+response-corrected reference build with the subsequently hardened source on
+ice Ih and ice VII at `2 x 2 x 2` and on ice VII at `3 x 3 x 3`. All three
+qualified-minus-reference energies are exactly zero at the precision printed
+by CP2K. This proves that the regular-mesh/restart hardening is inactive for
+the frozen DMC energy inputs; previously completed response-corrected points
+therefore do not require a blanket rerun merely because of that hardening.

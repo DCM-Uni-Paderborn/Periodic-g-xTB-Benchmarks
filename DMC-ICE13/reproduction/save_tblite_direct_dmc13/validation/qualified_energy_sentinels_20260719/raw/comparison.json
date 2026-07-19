@@ -1,0 +1,19 @@
+{
+  "maximum_absolute_delta_hartree": 0.0,
+  "qualified_hartree": {
+    "k222_Ih": -917.687114386895,
+    "k222_VII": -919.0581687422933,
+    "k333_VII": -918.1992895616488
+  },
+  "qualified_minus_reference_hartree": {
+    "k222_Ih": 0.0,
+    "k222_VII": 0.0,
+    "k333_VII": 0.0
+  },
+  "reference_hartree": {
+    "k222_Ih": -917.687114386895,
+    "k222_VII": -919.0581687422933,
+    "k333_VII": -918.1992895616488
+  },
+  "status": "PASS"
+}

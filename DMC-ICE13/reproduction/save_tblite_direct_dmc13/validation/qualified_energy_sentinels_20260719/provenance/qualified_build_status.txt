@@ -1,0 +1,3 @@
+cp2k_commit=10f4e246967de34cfcb2d26b9d587ecc00bbb2f4
+provider_commit=15915c9435644eb257178ca8f8bf7220c38b1a84
+status=BUILD_PASS
