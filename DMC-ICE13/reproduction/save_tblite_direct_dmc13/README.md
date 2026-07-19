@@ -188,3 +188,9 @@ selects the denser member of the first pair with an absolute relative-energy
 change no larger than the chosen threshold, and computes aggregate error
 statistics only after all twelve non-reference phases pass.  No aggregate MAE
 or RMS condition participates in endpoint selection.
+
+If an unresolved phase needs a denser regular mesh,
+`tools/build_native_mesh_input.py` rewrites exactly the single cubic
+`SCHEME MACDONALD` line of a frozen input.  It refuses anisotropic or ambiguous
+sources and records both input hashes plus the sole changed line, preventing a
+dynamic extension from silently changing any other numerical setting.

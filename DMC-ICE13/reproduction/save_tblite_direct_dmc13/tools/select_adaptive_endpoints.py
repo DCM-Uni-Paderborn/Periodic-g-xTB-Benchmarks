@@ -98,7 +98,7 @@ def write_csv(path: Path, rows: list[dict[str, object]]) -> None:
         "reason",
     )
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
