@@ -134,6 +134,17 @@ per-water comparison.  Its positive and deliberately corrupted input, exit,
 and affinity cases are covered by
 `tools/tests/test_gamma_cli_requalification.py`.
 
+`tools/verify_no_acp_cli_native.py` supplies a separate component-ablation
+gate for ice Ih and XVII on the `2 x 2 x 2` mesh.  It compares the final
+CP2K-native energies with direct explicit-BvK CLI energies generated from the
+identical ACP-disabled parameter file.  Before any numerical comparison, it
+requires normal termination on both sides, exact executable, structure, and
+parameter hashes, the selected provider revision, and a singleton-CPU
+affinity proof for each CLI calculation.  The gate checks both absolute
+primitive-cell energies and the Ih-referenced energy per water.  Positive and
+deliberately corrupted provenance, affinity, and energy cases are covered by
+`tools/tests/test_no_acp_cli_native.py`.
+
 ## Derivative validation
 
 `validation/k222_XVII_derivatives` contains a native-versus-explicit-supercell
