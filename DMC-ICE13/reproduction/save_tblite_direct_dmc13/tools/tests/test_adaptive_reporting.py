@@ -6,6 +6,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -252,6 +253,73 @@ class AdaptiveReportingTest(unittest.TestCase):
             expected_returncode=2,
         )
         self.assertIn("noncanonical Gamma-centred BvK shift", selection.stdout)
+
+    def test_monitor_reports_ready_and_not_ready_states(self) -> None:
+        paper = self.root / "paper.json"
+        relative_values = {"Ih": 0.0}
+        relative_values.update(
+            {phase: (index + 1) / 10 for index, phase in enumerate(PHASES)}
+        )
+        paper.write_text(
+            json.dumps(
+                {
+                    "results": {
+                        f"k{mesh}{mesh}{mesh}": {
+                            "GXTB": {"relative_kjmol": relative_values}
+                        }
+                        for mesh in (1, 2)
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        environment = os.environ.copy()
+        environment.update({"ONCE": "1", "MESHES": "2,1"})
+        status = self.root / "monitor-ready"
+        result = subprocess.run(
+            [
+                str(TOOLS / "monitor_qualified_mixed_mae.sh"),
+                str(self.root),
+                str(self.reference),
+                str(paper),
+                CURRENT_DIGEST,
+                str(status),
+                "1",
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+            env=environment,
+        )
+        self.assertEqual(result.returncode, 0, msg=result.stderr)
+        self.assertIn("status=READY", (status / "dmc_mixed_qualified.status").read_text())
+        history = (status / "dmc_mixed_qualified_history.tsv").read_text().splitlines()
+        self.assertEqual(len(history), 2)
+        self.assertEqual(len(history[0].split("\t")), 7)
+        self.assertEqual(len(history[1].split("\t")), 7)
+
+        for mesh in (1, 2):
+            (self.root / "runs" / f"k{mesh}{mesh}{mesh}-reduced" / "II" / "cp2k.out").unlink()
+        not_ready = self.root / "monitor-not-ready"
+        result = subprocess.run(
+            [
+                str(TOOLS / "monitor_qualified_mixed_mae.sh"),
+                str(self.root),
+                str(self.reference),
+                str(paper),
+                CURRENT_DIGEST,
+                str(not_ready),
+                "1",
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+            env=environment,
+        )
+        self.assertEqual(result.returncode, 1, msg=result.stderr)
+        readiness = (not_ready / "dmc_mixed_qualified.status").read_text()
+        self.assertIn("status=NOT_READY", readiness)
+        self.assertIn("no complete qualified same-mesh result for II", readiness)
 
     def test_verifier_rejects_nonfirst_passing_pair(self) -> None:
         endpoints = self.root / "endpoints.json"

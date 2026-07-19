@@ -197,7 +197,10 @@ def main() -> None:
         print(f"paper_comparator_mae_kj_mol\t{paper_mae:.12f}")
         print(f"paper_comparator_all_same_mesh\t{str(all(row[1] == row[7] for row in rows)).lower()}")
         print(f"mae_improvement_kj_mol\t{paper_mae-current_mae:.12f}")
-        print(f"mae_improvement_percent\t{100.0*(paper_mae-current_mae)/paper_mae:.12f}")
+        if paper_mae == 0.0:
+            print("mae_improvement_percent\tnan")
+        else:
+            print(f"mae_improvement_percent\t{100.0*(paper_mae-current_mae)/paper_mae:.12f}")
 
 
 if __name__ == "__main__":

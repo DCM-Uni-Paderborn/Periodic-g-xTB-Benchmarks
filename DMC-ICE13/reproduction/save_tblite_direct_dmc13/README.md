@@ -196,6 +196,12 @@ actual input.  They additionally require the directory mesh, the dimensions
 inside the input, and the canonical even/odd MacDonald shift to agree.  A
 denser result produced by another executable, from a modified input, or with a
 noncanonical shift is skipped instead of masking a valid lower-mesh pair.
+`tools/monitor_qualified_mixed_mae.sh` wraps the latter evaluator for a live
+calculation campaign.  It writes a result only when all twelve phases have a
+normally terminated same-mesh phase/Ih pair from the required executable and
+canonical input; otherwise it records an explicit `NOT_READY` reason.  Its
+history includes the selected mesh vector and the same-mesh paper comparator,
+and `ONCE=1` provides a nonpolling reproducibility gate.
 `tools/verify_adaptive_dmc13.py` is an independent final oracle: it reparses
 the raw CP2K energies and MacDonald meshes, verifies binary and input
 provenance, proves that every reported endpoint is the first passing adjacent
