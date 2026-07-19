@@ -90,7 +90,13 @@ within `1.06e-7` Hartree over the complete `2 x 2 x 2` set.  The complete
 Hartree per primitive cell.  This makes the table suitable as a strict
 absolute-energy comparison for another `save_tblite` build.  Run
 `tools/verify_absolute_energy_parity.py` to check required coverage, hashes,
-normal termination, and the numerical tolerance.
+normal termination, and the numerical tolerance.  On the Ih-referenced,
+per-water scale the maximum native/CLI differences are
+`1.89e-6`, `2.14e-5`, and `1.71e-5` kJ mol^-1 for the complete Gamma,
+`2 x 2 x 2`, and `3 x 3 x 3` sets, respectively; the three independent
+`4 x 4 x 4` gates give `1.87e-5` kJ mol^-1.  These differences are many
+orders of magnitude below the DMC benchmark errors and cannot explain a
+different apparent k-point convergence curve.
 
 `validation/kpoint_grid_bvk_oracle_20260718` independently checks the point
 sets themselves.  The complete printed `2 x 2 x 2`, `3 x 3 x 3`, and

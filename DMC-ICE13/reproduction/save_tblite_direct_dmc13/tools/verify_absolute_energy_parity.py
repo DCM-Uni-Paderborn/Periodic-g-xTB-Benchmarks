@@ -20,8 +20,10 @@ REQUIRED = {
     4: ("Ih", "VII", "XVII"),
 }
 TOLERANCE_HARTREE = 2.0e-7
+RELATIVE_TOLERANCE_KJ_MOL_PER_WATER = 5.0e-5
 TABLE_TOTAL_TOLERANCE_HARTREE = 5.0e-10
 TABLE_PRIMITIVE_TOLERANCE_HARTREE = 5.0e-12
+HARTREE_TO_KJ_MOL = 2625.4996394799
 ENERGY_RE = re.compile(
     r"^\s*ENERGY\|\s+Total FORCE_EVAL.*?"
     r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?)\s*$"
@@ -51,7 +53,7 @@ def native_energy(text: str, path: Path) -> float:
     return values[-1]
 
 
-def verify_row(row: dict[str, str]) -> float:
+def verify_row(row: dict[str, str]) -> tuple[float, int]:
     mesh = int(row["mesh_n"])
     mesh_id = row["mesh_id"]
     phase = row["phase"]
@@ -73,6 +75,16 @@ def verify_row(row: dict[str, str]) -> float:
     direct_total = float(direct_payload["energy"])
     if not math.isfinite(direct_total):
         raise AssertionError(f"invalid direct energy: {direct}")
+    if mesh > 1:
+        exit_status = direct.parent / "exit_status"
+        process_output = direct.parent / "process.out"
+        if not exit_status.is_file() or exit_status.read_text().strip() != "0":
+            raise AssertionError(f"missing or nonzero direct exit status: {direct.parent}")
+        if not process_output.is_file():
+            raise AssertionError(f"missing direct process output: {direct.parent}")
+        process_text = process_output.read_text(encoding="utf-8", errors="replace")
+        if "total energy" not in process_text or "JSON dump of results written" not in process_text:
+            raise AssertionError(f"incomplete direct process output: {process_output}")
     replicas = mesh**3
     direct_per_primitive = direct_total / replicas
     computed_delta = native_value - direct_per_primitive
@@ -118,7 +130,9 @@ def verify_row(row: dict[str, str]) -> float:
         raise AssertionError(
             f"parity failure {mesh_id}/{phase}: {delta:.6e} Ha > {TOLERANCE_HARTREE:.6e} Ha"
         )
-    return delta
+    if natom_primitive % 3:
+        raise AssertionError(f"nonintegral water count: {mesh_id}/{phase}")
+    return computed_delta, natom_primitive // 3
 
 
 def main() -> None:
@@ -126,11 +140,29 @@ def main() -> None:
     with table.open(newline="", encoding="utf-8") as handle:
         rows = {(int(row["mesh_n"]), row["phase"]): row for row in csv.DictReader(handle)}
     for mesh, phases in REQUIRED.items():
-        deltas = [verify_row(rows[(mesh, phase)]) for phase in phases]
-        rms = math.sqrt(sum(delta * delta for delta in deltas) / len(deltas))
+        verified = {phase: verify_row(rows[(mesh, phase)]) for phase in phases}
+        signed_deltas = [verified[phase][0] for phase in phases]
+        absolute_deltas = [abs(delta) for delta in signed_deltas]
+        rms = math.sqrt(sum(delta * delta for delta in absolute_deltas) / len(absolute_deltas))
+        ih_delta, ih_waters = verified["Ih"]
+        relative_deltas = {
+            phase: HARTREE_TO_KJ_MOL
+            * (verified[phase][0] / verified[phase][1] - ih_delta / ih_waters)
+            for phase in phases
+            if phase != "Ih"
+        }
+        maximum_relative = max(map(abs, relative_deltas.values()))
+        if maximum_relative > RELATIVE_TOLERANCE_KJ_MOL_PER_WATER:
+            raise AssertionError(
+                f"relative parity failure mesh={mesh}: {maximum_relative:.6e} "
+                f"kJ mol-1 per water > {RELATIVE_TOLERANCE_KJ_MOL_PER_WATER:.6e}"
+            )
         print(
-            f"mesh={mesh} coverage={len(deltas)} max_abs_delta_Ha={max(deltas):.12e} "
-            f"rms_delta_Ha={rms:.12e} status=pass"
+            f"mesh={mesh} coverage={len(absolute_deltas)} "
+            f"max_abs_delta_Ha={max(absolute_deltas):.12e} "
+            f"rms_delta_Ha={rms:.12e} "
+            f"max_abs_relative_delta_kJ_mol_per_water={maximum_relative:.12e} "
+            f"status=pass"
         )
 
 
