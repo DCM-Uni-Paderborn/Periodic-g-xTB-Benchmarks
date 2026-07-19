@@ -6,7 +6,10 @@ commensurate Born--von-Karman supercells.
 
 ## Structures
 
-`structures/kNNN/<phase>/POSCAR` contains Cartesian coordinates in Angstrom.
+`structures/kNNN/<phase>/POSCAR` and `structure.xyz` contain Cartesian
+coordinates in Angstrom.  The extended-XYZ comment line carries the complete
+lattice and periodicity, so the geometry can be inspected without interpreting
+POSCAR scaling conventions.
 For mesh size `N`, the lattice and atom list are explicit `N x N x N`
 replications of the primitive DMC-ICE13 cell.  Hence a Gamma-only direct CLI
 calculation on that POSCAR is the real-space counterpart of the native,
@@ -26,8 +29,8 @@ here only as an independently packaged geometry source and historical CP2K
 snapshot.  `provenance/gamma_exchange_archive_20260606.md` records the archive
 identity and the evidence for this classification.
 
-`provenance/structure_hashes.csv` records the SHA-256 digest of every POSCAR
-and its source CP2K input.
+`provenance/structure_hashes.csv` records the SHA-256 digest of every POSCAR,
+extended XYZ, and source CP2K input.
 
 The package is intentionally self-contained: the structures contain absolute
 Cartesian positions rather than scaled coordinates, and no CP2K parser is
@@ -78,9 +81,22 @@ refer to the explicit supercell and are also reported after division by
 E(CP2K native, N x N x N) = E(save_tblite CLI, explicit N^3 cell) / N^3.
 ```
 
-Relative DMC-ICE13 energies and MAEs are deliberately kept in separate tables:
-this file is an absolute-energy oracle intended to expose unit, normalization,
-cell, occupation, and k-point inconsistencies directly.
+`tables/dmc_reference_relative_energies.csv` gives the DMC reference energies
+relative to ice Ih.  `tables/relative_energies_vs_mesh.csv` combines those
+references with our absolute CP2K-native and direct-CLI energies at every
+available mesh.  It reports the Ih-referenced energy and signed DMC error per
+water molecule while retaining the absolute energy and source-file hash in
+the same row.  Missing provider/mesh combinations are omitted, never
+interpolated.  Regenerate the derived table with
+`tools/collect_relative_energies.py`.
+`tools/verify_recalculation_package.py` independently checks all Cartesian
+structure hashes, atom counts and cell metadata, the complete phase set, both
+energy providers, and every relative-energy/error conversion.
+
+Keeping the absolute and relative tables separate makes the former an oracle
+for unit, normalization, cell, occupation, and k-point inconsistencies while
+the latter is the compact phase-by-phase comparison requested for independent
+recalculation.
 
 ## Supplied reference coverage
 
