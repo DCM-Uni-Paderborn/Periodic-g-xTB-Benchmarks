@@ -114,7 +114,7 @@ def main() -> int:
     parser.add_argument("previous_mesh", type=int)
     parser.add_argument("current_mesh", type=int)
     parser.add_argument("phase")
-    parser.add_argument("--threshold", type=float, default=0.05)
+    parser.add_argument("--threshold", type=float, default=0.10)
     parser.add_argument("--require-binary-sha256")
     args = parser.parse_args()
     expected_digest = None

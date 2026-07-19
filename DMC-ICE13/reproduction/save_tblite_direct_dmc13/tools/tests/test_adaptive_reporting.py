@@ -185,6 +185,32 @@ class AdaptiveReportingTest(unittest.TestCase):
         self.assertTrue(payload["complete"])
         self.assertEqual(payload["threshold_kj_mol_per_water"], 0.10)
 
+        phase_default = self.run_tool(
+            "dmc_phase_convergence.py",
+            self.root,
+            1,
+            2,
+            "II",
+            "--require-binary-sha256",
+            CURRENT_DIGEST,
+        )
+        self.assertIn("threshold_kj_mol=0.100000000000", phase_default.stdout)
+        self.assertIn("status=converged", phase_default.stdout)
+
+        phase_strict = self.run_tool(
+            "dmc_phase_convergence.py",
+            self.root,
+            1,
+            2,
+            "II",
+            "--threshold",
+            "0.05",
+            "--require-binary-sha256",
+            CURRENT_DIGEST,
+            expected_returncode=1,
+        )
+        self.assertIn("status=unresolved", phase_strict.stdout)
+
         strict = self.run_tool(
             "select_adaptive_endpoints.py",
             self.root,
