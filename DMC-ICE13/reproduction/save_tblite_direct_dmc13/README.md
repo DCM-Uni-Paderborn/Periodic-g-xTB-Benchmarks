@@ -134,6 +134,17 @@ per-water comparison.  Its positive and deliberately corrupted input, exit,
 and affinity cases are covered by
 `tools/tests/test_gamma_cli_requalification.py`.
 
+`tools/verify_k222_cli_native_requalification.py` applies the stricter
+same-host provenance gate to a fresh all-phase `2 x 2 x 2` repetition.  Every
+direct and native phase must carry the selected Linux executable hash, the
+exact input hash, normal termination, and the direct singleton-CPU affinity
+proof.  The native input is independently required to contain the canonical
+shifted MacDonald mesh with symmetry reduction enabled.  Only after all
+thirteen phases satisfy these conditions are absolute and Ih-referenced
+CLI/native differences evaluated.  Positive and deliberately altered binary
+and mesh cases are covered by
+`tools/tests/test_k222_cli_native_requalification.py`.
+
 `tools/verify_no_acp_cli_native.py` supplies a separate component-ablation
 gate for ice Ih and XVII on the `2 x 2 x 2` mesh.  It compares the final
 CP2K-native energies with direct explicit-BvK CLI energies generated from the
