@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a cubic native-k CP2K input by changing only its regular mesh."""
+"""Create a canonical Gamma-centred cubic BvK CP2K k-point input."""
 
 from __future__ import annotations
 
@@ -13,7 +13,8 @@ from pathlib import Path
 SCHEME_RE = re.compile(
     r"^(?P<indent>\s*)SCHEME\s+MACDONALD\s+"
     r"(?P<n1>\d+)\s+(?P<n2>\d+)\s+(?P<n3>\d+)"
-    r"(?P<tail>\s+[-+0-9.eEdD]+\s+[-+0-9.eEdD]+\s+[-+0-9.eEdD]+\s*)$",
+    r"\s+(?P<s1>[-+0-9.eEdD]+)\s+(?P<s2>[-+0-9.eEdD]+)"
+    r"\s+(?P<s3>[-+0-9.eEdD]+)(?P<trailing>\s*)$",
     flags=re.IGNORECASE,
 )
 
@@ -24,6 +25,19 @@ def digest(path: Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             value.update(block)
     return value.hexdigest()
+
+
+def canonical_bvk_shift(mesh: int) -> float:
+    """Return the MacDonald shift for a Gamma-centred BvK mesh."""
+    if mesh <= 0:
+        raise ValueError("mesh must be positive")
+    if mesh % 2:
+        return 0.0
+    return (mesh - 1) / (2 * mesh)
+
+
+def format_shift(value: float) -> str:
+    return "0.0" if value == 0.0 else repr(value)
 
 
 def main() -> None:
@@ -43,6 +57,8 @@ def main() -> None:
     in_kpoints = False
     replacements = 0
     source_mesh = 0
+    source_shift: tuple[float, float, float] | None = None
+    target_shift = canonical_bvk_shift(args.mesh)
     for index, raw_line in enumerate(lines):
         stripped = raw_line.strip().upper()
         if stripped == "&KPOINTS":
@@ -63,10 +79,20 @@ def main() -> None:
         if len(set(mesh_values)) != 1:
             raise ValueError(f"source mesh is not cubic: {mesh_values}")
         source_mesh = mesh_values[0]
+        try:
+            source_shift = tuple(
+                float(match.group(name).replace("D", "E").replace("d", "e"))
+                for name in ("s1", "s2", "s3")
+            )
+        except ValueError as exc:
+            raise ValueError(f"invalid source shift: {raw_line.rstrip()}") from exc
         newline = "\r\n" if raw_line.endswith("\r\n") else "\n" if raw_line.endswith("\n") else ""
+        shift_text = format_shift(target_shift)
         lines[index] = (
             f"{match.group('indent')}SCHEME MACDONALD "
-            f"{args.mesh} {args.mesh} {args.mesh}{match.group('tail')}{newline}"
+            f"{args.mesh} {args.mesh} {args.mesh} "
+            f"{shift_text} {shift_text} {shift_text}"
+            f"{match.group('trailing')}{newline}"
         )
         replacements += 1
 
@@ -89,11 +115,14 @@ def main() -> None:
         "changed_line": changed[0],
         "source": str(args.source),
         "source_mesh": source_mesh,
+        "source_shift": list(source_shift or ()),
         "source_sha256": digest(args.source),
         "status": "PASS",
         "target": str(args.target),
         "target_mesh": args.mesh,
+        "target_shift": [target_shift, target_shift, target_shift],
         "target_sha256": digest(args.target),
+        "shift_policy": "canonical Gamma-centred BvK MacDonald shift",
     }
     payload = json.dumps(result, indent=2, sort_keys=True) + "\n"
     if args.provenance:

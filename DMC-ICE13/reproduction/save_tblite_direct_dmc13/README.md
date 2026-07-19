@@ -209,6 +209,9 @@ compact archive.
 
 If an unresolved phase needs a denser regular mesh,
 `tools/build_native_mesh_input.py` rewrites exactly the single cubic
-`SCHEME MACDONALD` line of a frozen input.  It refuses anisotropic or ambiguous
-sources and records both input hashes plus the sole changed line, preventing a
-dynamic extension from silently changing any other numerical setting.
+`SCHEME MACDONALD` line of a frozen input.  Along with the mesh dimensions it
+recomputes the canonical Gamma-centred BvK MacDonald shift: zero for odd meshes
+and `(N-1)/(2N)` for even meshes.  It refuses anisotropic or ambiguous sources
+and records both input hashes, both shifts, and the sole changed line,
+preventing a dynamic extension from silently inheriting the wrong even/odd
+shift or changing any other numerical setting.
