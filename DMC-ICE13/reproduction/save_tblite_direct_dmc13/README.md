@@ -104,6 +104,10 @@ For the explicit CP2K Gamma-supercell oracle, use
 and every Cartesian coordinate against the archived POSCAR.  The verifier
 also rejects a non-XYZ cell or any explicit KPOINTS section, so the energy
 gate cannot silently compare different structures or boundary conditions.
+`tools/compare_native_symmetry_cli.py` complements this input gate by requiring
+normal termination and a selected CP2K executable hash before it compares an
+explicit full native-k mesh, its symmetry-reduced counterpart, and the direct
+BvK CLI energy on the common primitive-cell normalization.
 
 ## Derivative validation
 
