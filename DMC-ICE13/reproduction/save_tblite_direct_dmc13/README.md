@@ -232,6 +232,15 @@ by CP2K. This proves that the regular-mesh/restart hardening is inactive for
 the frozen DMC energy inputs; previously completed response-corrected points
 therefore do not require a blanket rerun merely because of that hardening.
 
+`tools/verify_k222_full_reduced_set.py` provides the complementary fresh-build
+symmetry gate for all 13 DMC-ICE13 structures.  It accepts only normally
+terminated runs from the requested CP2K executable hash, proves singleton CPU
+affinity and exact input provenance, and requires the full-grid and reduced
+inputs to differ only in their project and symmetry-control lines.  Total and
+non-self-consistent dispersion energies are then compared component by
+component.  The negative tests reject altered inputs, binaries, affinity,
+mesh flags, total energies, and dispersion components.
+
 For a single reproducible implementation audit,
 `tools/verify_part_i_implementation.py` executes the complete archived gate
 set: absolute CLI/native energy parity, numerical-accuracy sensitivity,
