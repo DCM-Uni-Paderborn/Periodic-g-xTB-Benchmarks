@@ -22,6 +22,7 @@ EXPECTED_GATES = {
     "native_derivative_hardening",
     "provider_revision",
     "qualified_energy_sentinels",
+    "cli_native_k444_sentinels",
     "wigner_seitz_branch_diagnosis",
     "final_lowk_derivatives",
     "phase_viii_component_ablation",

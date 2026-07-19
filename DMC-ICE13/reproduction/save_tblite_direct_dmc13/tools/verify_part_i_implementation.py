@@ -70,6 +70,13 @@ GATES = (
         (),
     ),
     (
+        "cli_native_k444_sentinels",
+        ROOT / "validation/cli_native_k444_sentinels_20260719",
+        ROOT
+        / "validation/cli_native_k444_sentinels_20260719/verify_archive.py",
+        (),
+    ),
+    (
         "wigner_seitz_branch_diagnosis",
         ROOT / "validation/wigner_seitz_branch_diagnosis_20260718",
         ROOT / "validation/wigner_seitz_branch_diagnosis_20260718/verify_diagnosis.py",

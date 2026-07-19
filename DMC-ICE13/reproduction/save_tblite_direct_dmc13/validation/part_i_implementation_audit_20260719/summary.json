@@ -1,17 +1,17 @@
 {
   "failed_gates": [],
-  "gate_count": 21,
+  "gate_count": 22,
   "gates": [
     {
       "name": "absolute_energy_parity",
       "returncode": 0,
       "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/tools/verify_absolute_energy_parity.py",
-      "script_sha256": "a97c245e0a0f3c4d63b130ed0f095c45e894294c98b1276216d4a86d662a02e6",
+      "script_sha256": "d78024c6a49504c8276c0ea6946872bb56273364852b1013d9bcde299eef3768",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_tail": "",
-      "stdout_sha256": "b7829a21589140b34b1688633f9f4d84d522205800010af99c1d1294efa2baaa",
-      "stdout_tail": "mesh=4 coverage=3 max_abs_delta_Ha=1.115253098760e-07 rms_delta_Ha=6.611287642430e-08 max_abs_relative_delta_kJ_mol_per_water=1.872265502464e-05 status=pass"
+      "stdout_sha256": "de286a73503b42f271db8a5f278bb6f9f37caa49e3d056514abf51d8bfa0a02d",
+      "stdout_tail": "mesh=4 coverage=6 max_abs_delta_Ha=1.115253098760e-07 rms_delta_Ha=4.682426702884e-08 max_abs_relative_delta_kJ_mol_per_water=1.872265502464e-05 status=pass"
     },
     {
       "name": "accuracy_sensitivity",
@@ -99,6 +99,17 @@
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_tail": "",
       "stdout_sha256": "a53853180977d6a2d8d14c49dfaa2ba1824098822c63e52b2494d69c3c3e0b71",
+      "stdout_tail": "}"
+    },
+    {
+      "name": "cli_native_k444_sentinels",
+      "returncode": 0,
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/cli_native_k444_sentinels_20260719/verify_archive.py",
+      "script_sha256": "6026f5391351cf4ff9cb482ab544b5c1388c1c14ea6a0fe1e1a4095667ea1c59",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "045030c62900abf0d902b8d0f5990932ae473ae6c432ef6435788626ab2c45e7",
       "stdout_tail": "}"
     },
     {
@@ -230,10 +241,10 @@
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_tail": "",
-      "stdout_sha256": "4373300f695a4d76a2becefc71eaad341375dbae36ab7b55817503b8b1ec83f7",
-      "stdout_tail": "manifests=58 entries=2708 failures=0"
+      "stdout_sha256": "8e87ddf0d34b3c446884fc7c971245734f395907e341ed2586987cdb32ccc835",
+      "stdout_tail": "manifests=59 entries=2881 failures=0"
     }
   ],
-  "passed_gate_count": 21,
+  "passed_gate_count": 22,
   "status": "PASS"
 }

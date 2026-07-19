@@ -17,7 +17,7 @@ REQUIRED = {
     1: PHASES,
     2: PHASES,
     3: PHASES,
-    4: ("Ih", "VII", "XVII"),
+    4: ("Ih", "II", "VII", "XI", "XIV", "XVII"),
 }
 TOLERANCE_HARTREE = 2.0e-7
 RELATIVE_TOLERANCE_KJ_MOL_PER_WATER = 5.0e-5

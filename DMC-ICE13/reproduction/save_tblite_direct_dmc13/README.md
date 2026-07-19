@@ -103,8 +103,10 @@ recalculation.
 The current package contains direct `save_tblite` absolute energies for all 13
 phases at Gamma, `2 x 2 x 2`, and `3 x 3 x 3`.  CP2K-native absolute energies
 are supplied for all phases at the same three meshes and at `4 x 4 x 4`.
-Independent direct `4 x 4 x 4` supercell gates are supplied for Ih, VII, and
-XVII.
+Independent direct `4 x 4 x 4` supercell gates are supplied for Ih, II, VII,
+XI, XIV, and XVII. The final qualified five-phase subset Ih/II/VII/XI/XIV is
+also retained with exact executable/input hashes and affinity proofs under
+`validation/cli_native_k444_sentinels_20260719`.
 
 Empty CSV fields mean "not yet calculated" and are never interpolated or
 replaced by a value from another implementation.
@@ -113,14 +115,14 @@ The direct/current and native/current columns agree within `2.97e-8` Hartree
 per primitive cell over the complete Gamma set (RMS `1.57e-8` Hartree) and
 within `1.06e-7` Hartree over the complete `2 x 2 x 2` set.  The complete
 13-phase `3 x 3 x 3` set agrees within `1.03e-7` Hartree per primitive cell
-(RMS `2.96e-8` Hartree).  The three `4 x 4 x 4` gates agree within `1.12e-7`
+(RMS `2.96e-8` Hartree).  The six `4 x 4 x 4` gates agree within `1.12e-7`
 Hartree per primitive cell.  This makes the table suitable as a strict
 absolute-energy comparison for another `save_tblite` build.  Run
 `tools/verify_absolute_energy_parity.py` to check required coverage, hashes,
 normal termination, and the numerical tolerance.  On the Ih-referenced,
 per-water scale the maximum native/CLI differences are
 `1.89e-6`, `2.14e-5`, and `1.71e-5` kJ mol^-1 for the complete Gamma,
-`2 x 2 x 2`, and `3 x 3 x 3` sets, respectively; the three independent
+`2 x 2 x 2`, and `3 x 3 x 3` sets, respectively; the independent
 `4 x 4 x 4` gates give `1.87e-5` kJ mol^-1.  These differences are many
 orders of magnitude below the DMC benchmark errors and cannot explain a
 different apparent k-point convergence curve.

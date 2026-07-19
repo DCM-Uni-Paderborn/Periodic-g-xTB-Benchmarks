@@ -1,0 +1,115 @@
+{
+  "mesh": 4,
+  "phases": [
+    "Ih",
+    "XI",
+    "XIV",
+    "II",
+    "VII"
+  ],
+  "provenance": {
+    "direct_binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+    "native_binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f"
+  },
+  "rows": [
+    {
+      "direct_cpu": 76,
+      "direct_input_sha256": "502636e949cc72a2fe8d34bc127726e1cce79431986bd6cdb72729a2cc6e2b34",
+      "direct_per_primitive_Ha": -917.4808045290538,
+      "direct_result_sha256": "21bee2711afff2550fa1a122a6e0418ad230f7821ce35a98a30f643bc55f6dac",
+      "direct_supercell_atoms": 2304,
+      "direct_total_Ha": -58718.77148985944,
+      "mesh": 4,
+      "native_cpu": 85,
+      "native_input_sha256": "d73ebefb583462392cc6cb7ed11aa16db329853ec74a37e9ea42be059c2a0047",
+      "native_minus_direct_Ha": -2.5952317628252786e-08,
+      "native_output_sha256": "beca796a44a0aed7a4097deb996dc051322d51e417977beadfcc8e60889cc55d",
+      "native_per_primitive_Ha": -917.4808045550061,
+      "phase": "Ih",
+      "primitive_atoms": 36,
+      "primitive_waters": 12,
+      "relative_native_minus_direct_kJ_mol_per_water": 0.0
+    },
+    {
+      "direct_cpu": 133,
+      "direct_input_sha256": "f206d84a1fc49e7b689ebbfe3add78f286212d32b190a67da0d1199c84d7c8fe",
+      "direct_per_primitive_Ha": -611.6991944325383,
+      "direct_result_sha256": "260b177144419167dce97023f9826fb0b5e874ad8e4e7a7b7e7fd45b382ffe2b",
+      "direct_supercell_atoms": 1536,
+      "direct_total_Ha": -39148.74844368245,
+      "mesh": 4,
+      "native_cpu": 69,
+      "native_input_sha256": "195189b39772fee2e0ec96fdd28a29e5e43faa73b5ba11cc70047f95630f486b",
+      "native_minus_direct_Ha": 2.6697080102167092e-09,
+      "native_output_sha256": "506a9317b481fca4b027199fa5aa778f05f0741a882d774bac1a08d23dea38f3",
+      "native_per_primitive_Ha": -611.6991944298686,
+      "phase": "XI",
+      "primitive_atoms": 24,
+      "primitive_waters": 8,
+      "relative_native_minus_direct_kJ_mol_per_water": 6.554314725346366e-06
+    },
+    {
+      "direct_cpu": 131,
+      "direct_input_sha256": "b8f43b68c42392c4406e1837cd29e045f353abb5f36a6e994148539aa889e381",
+      "direct_per_primitive_Ha": -917.5902150497142,
+      "direct_result_sha256": "5b87758935680acd8ff1e572d3ab6f23ddccc03a6583f3d03a9d6615210c1bdb",
+      "direct_supercell_atoms": 2304,
+      "direct_total_Ha": -58725.77376318171,
+      "mesh": 4,
+      "native_cpu": 65,
+      "native_input_sha256": "1d3bcb7c8eb872a4339bba187351c14755e631391c1a3f240f220956c41c1f90",
+      "native_minus_direct_Ha": 5.27904830960324e-09,
+      "native_output_sha256": "d659c108d1d3e892de0f0edf12c568d3056f6cd87147fa6706a7bf87699568ff",
+      "native_per_primitive_Ha": -917.5902150444351,
+      "phase": "XIV",
+      "primitive_atoms": 36,
+      "primitive_waters": 12,
+      "relative_native_minus_direct_kJ_mol_per_water": 6.833161667525485e-06
+    },
+    {
+      "direct_cpu": 133,
+      "direct_input_sha256": "c4b76a244dac8e25bb2e5d5dcf0ad5e6a1725598fa812c3d3aa055e22f004612",
+      "direct_per_primitive_Ha": -917.4922910311981,
+      "direct_result_sha256": "d539f51c982bd238a511da4596c3c8c89a2ead224acb8840570e8e5b39273a5c",
+      "direct_supercell_atoms": 2304,
+      "direct_total_Ha": -58719.50662599668,
+      "mesh": 4,
+      "native_cpu": 83,
+      "native_input_sha256": "544be2436965d6141d323939f6e1412dd8f67398e379b85a5be16d90f403ab8e",
+      "native_minus_direct_Ha": 2.7090436560683884e-09,
+      "native_output_sha256": "5ec40d2356af2e13f390437470de8c8ea381934f678cda9807917f4c562c9ed2",
+      "native_per_primitive_Ha": -917.492291028489,
+      "phase": "II",
+      "primitive_atoms": 36,
+      "primitive_waters": 12,
+      "relative_native_minus_direct_kJ_mol_per_water": 6.270866143249034e-06
+    },
+    {
+      "direct_cpu": 131,
+      "direct_input_sha256": "67d1507c82fc8a3c7c765fa2e2dd67c577b7784b588e74180af599a66d63c47d",
+      "direct_per_primitive_Ha": -917.7731156798977,
+      "direct_result_sha256": "1355fe8964e8c05bd6cd435748a79983514c67e197b0a9a4d0d7a2962006ad6a",
+      "direct_supercell_atoms": 2304,
+      "direct_total_Ha": -58737.479403513455,
+      "mesh": 4,
+      "native_cpu": 75,
+      "native_input_sha256": "f47b7a01b4e294a684ea90431d9114eaffbd92ce298a164dba06bbc983b476fa",
+      "native_minus_direct_Ha": -1.1152530987601494e-07,
+      "native_output_sha256": "1a2c377e2aad12ab4563f59117a193d7d61568ab09c3aa26d7f07060c051fba2",
+      "native_per_primitive_Ha": -917.773115791423,
+      "phase": "VII",
+      "primitive_atoms": 36,
+      "primitive_waters": 12,
+      "relative_native_minus_direct_kJ_mol_per_water": -1.8722655024642987e-05
+    }
+  ],
+  "status": "pass",
+  "summary": {
+    "max_abs_native_minus_direct_Ha": 1.1152530987601494e-07,
+    "max_abs_relative_native_minus_direct_kJ_mol_per_water": 1.8722655024642987e-05
+  },
+  "thresholds": {
+    "absolute_Ha": 2e-07,
+    "relative_kJ_mol_per_water": 5e-05
+  }
+}

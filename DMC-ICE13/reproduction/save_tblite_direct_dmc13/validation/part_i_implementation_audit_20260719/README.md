@@ -4,7 +4,7 @@
 `tools/verify_part_i_implementation.py` from the root of the direct
 `save_tblite` reproduction package on 19 July 2026.
 
-The audit reruns twenty-one independent archived gates covering absolute and
+The audit reruns twenty-two independent archived gates covering absolute and
 Ih-referenced CLI/native energies, numerical accuracy, the periodic-response
 correction, energy/force/stress derivatives, native-k/BvK grid identity,
 provider and model revisions, final-source retention sentinels, the
@@ -16,9 +16,10 @@ author-`pbc`/current-CLI/CP2K-native `3 x 3 x 3` closure, the
 author-archive/production-structure equivalence, the portable author-facing
 DMC-ICE13 recalculation package, the fail-closed adaptive
 production-controller dry run, and every portable SHA-256 manifest.  All
-twenty gates pass.  The same-host, all-phase CLI/native repetitions at Gamma,
-`2 x 2 x 2`, and `3 x 3 x 3` are retained by their dedicated provenance gates;
-the independent `4 x 4 x 4` sentinel comparison is retained separately.
+twenty-two gates pass.  The same-host, all-phase CLI/native repetitions at
+Gamma, `2 x 2 x 2`, and `3 x 3 x 3` are retained by their dedicated provenance
+gates; the independent five-phase `4 x 4 x 4` comparison is a separate,
+fully hashed gate.
 
 Reproduce the report with:
 
