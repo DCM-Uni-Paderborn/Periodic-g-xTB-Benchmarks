@@ -1,5 +1,0 @@
-{
-  "entries": [],
-  "instructions": "Copy reviewed entries to gxtb_eos_classifications.json and set action to exclude or retain plus a nonempty classification and rationale.",
-  "schema_version": 1
-}

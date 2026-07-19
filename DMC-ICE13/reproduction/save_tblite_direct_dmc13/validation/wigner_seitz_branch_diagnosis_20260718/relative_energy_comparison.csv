@@ -1,6 +1,0 @@
-implementation,wsc_index,wsc_electrostatics,VII_k222_kj_mol_per_water,XVII_k222_kj_mol_per_water
-current_integration,original_translation,smooth,-299.975204734206,-51.558720954546
-seidler_pbc,original_translation,hard,-300.067320161804,-51.559121420866
-seidler_mstore-inorganic,compact_position,hard,-151.947965742095,-25.438330430095
-controlled_compact_index_only,compact_position,smooth,-146.223759626509,-25.280290256467
-controlled_threshold_only,original_translation,smooth,-299.975160744189,-51.558826267388

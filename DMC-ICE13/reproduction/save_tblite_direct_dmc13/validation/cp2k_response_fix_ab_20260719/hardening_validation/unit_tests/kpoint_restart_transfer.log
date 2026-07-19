@@ -1,9 +1,0 @@
- test_rks_waterfill: OK
- test_uks_waterfill: OK
- test_shifted_weight_waterfill: OK
- test_metric_projection: OK
- test_ill_conditioned_overlap: OK
- test_nonfinite_inputs: OK
- test_nonhermitian_inputs: OK
- test_infeasible_electron_target: OK
- test_target_occupation_bounds: OK

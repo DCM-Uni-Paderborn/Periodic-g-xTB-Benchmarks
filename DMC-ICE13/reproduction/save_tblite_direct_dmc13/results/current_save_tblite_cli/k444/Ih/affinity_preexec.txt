@@ -1,5 +1,0 @@
-pid=2823801 expected_cpu=154 allowed=154
-Name:	bash
-State:	S (sleeping)
-Cpus_allowed:	0000,00000000,00000000,04000000,00000000,00000000,00000000,00000000
-Cpus_allowed_list:	154

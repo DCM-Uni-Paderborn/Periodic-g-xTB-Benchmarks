@@ -1,5 +1,0 @@
-CP2K version: 2026.2 Development Version
-CP2K source revision: 8520b2e592
-CP2K executable SHA-256: e034824111011b1177ed78f77f6049eeae5aca56dd7d96dfa923af0e29495b8d
-Features: spglib, tblite, tblite_gxtb
-

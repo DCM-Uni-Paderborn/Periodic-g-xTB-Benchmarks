@@ -1,6 +1,0 @@
-gate,metric,value
-exact_pre_response_vs_old_d933,max_abs_energy_delta_ha_Ih_XVII,0.0
-final_no_smear_vs_300K,max_abs_energy_delta_ha_Ih_XVII,0.0
-full_model_response_fix,XVII_minus_Ih_relative_shift_kj_mol,5.819640799558684
-no_ACP_response_fix,XVII_minus_Ih_relative_shift_kj_mol,5.232844993338276
-no_ACP_fraction,percent_of_full_relative_shift,89.91697552424704

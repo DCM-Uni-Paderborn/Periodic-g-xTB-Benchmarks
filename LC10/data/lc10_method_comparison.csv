@@ -1,0 +1,4 @@
+method,a0_me_A,a0_mae_A,ecoh_me_eV_per_atom,ecoh_mae_eV_per_atom,source
+GFN1-xTB,0.0220,0.1451,1.4670,1.5439,Periodic-GFN2-Benchmarks
+GFN2-xTB,-0.0058,0.0624,1.1070,1.2993,Periodic-GFN2-Benchmarks
+g-xTB,-0.1394,0.1434,0.2299,0.2947,this_repository

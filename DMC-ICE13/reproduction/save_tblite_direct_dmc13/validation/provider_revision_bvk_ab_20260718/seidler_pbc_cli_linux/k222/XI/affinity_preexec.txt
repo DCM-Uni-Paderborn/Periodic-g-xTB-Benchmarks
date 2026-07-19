@@ -1,4 +1,0 @@
-job=provider-author-k222-XI
-pid=2987476
-requested_cpu=84
-allowed=84

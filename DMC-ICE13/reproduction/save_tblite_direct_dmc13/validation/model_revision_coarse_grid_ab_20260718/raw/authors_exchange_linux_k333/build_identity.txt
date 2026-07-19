@@ -1,4 +1,0 @@
-source_commit=be87ef681acd880705d83b8b1f7c19b58ca5ea85
-source_tree=3acace864498c38e25449ec6a93350b4ab35aa4c
-4fa6fd99e1b0de2d0aa76b80cc9089a0ceeefdaf1bc787042221c7fb63479ffd  /home/kuehne88/work/save_tblite-author-exchange-evaluation-20260718/install/bin/tblite
-tblite version 0.5.0

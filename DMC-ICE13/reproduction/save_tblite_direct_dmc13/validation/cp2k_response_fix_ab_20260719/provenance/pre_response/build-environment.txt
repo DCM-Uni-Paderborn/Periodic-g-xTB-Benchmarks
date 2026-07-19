@@ -1,7 +1,0 @@
-started_utc=2026-07-18T22:07:00Z
-host=terok
-cp2k_commit=fc1a7e79a1c256ec4e5b555009ad6751b08243b7
-provider_commit=15915c9435644eb257178ca8f8bf7220c38b1a84
-provider_archive_sha256=e5137bcf675a99e177c30006fa2ed54cd7eaa1ab65d3dcc2337701e6f7f81492
-build_cpus=8-15
-parallel_jobs=8

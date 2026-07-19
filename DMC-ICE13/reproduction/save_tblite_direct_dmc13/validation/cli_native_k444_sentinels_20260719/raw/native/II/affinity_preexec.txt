@@ -1,5 +1,0 @@
-pid=3202018 expected_cpu=83 allowed=83
-Name:	bash
-State:	R (running)
-Cpus_allowed:	0000,00000000,00000000,00000000,00000000,00080000,00000000,00000000
-Cpus_allowed_list:	83

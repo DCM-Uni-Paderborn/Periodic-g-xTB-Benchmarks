@@ -1,4 +1,0 @@
-commit=d933e083840a4a0e0e7901f45a2470f34087ae1f
-branch=g-xTB-pbc
-origin=https://github.com/DCM-Uni-Paderborn/cp2k.git
-## g-xTB-pbc...origin/g-xTB-pbc

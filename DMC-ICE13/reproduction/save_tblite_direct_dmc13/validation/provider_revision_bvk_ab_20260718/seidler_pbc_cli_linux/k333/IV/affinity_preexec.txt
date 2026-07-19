@@ -1,4 +1,0 @@
-job=provider-author-k333-IV
-pid=3378183
-requested_cpu=84
-allowed=84

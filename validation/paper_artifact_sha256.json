@@ -1,37 +1,57 @@
 {
-  "schema_version": 1,
-  "purpose": "Machine-readable provenance for artifacts cited without inline digests in the JCP manuscript and Supplementary Material",
+  "schema_version": 2,
+  "purpose": "Integrity records for the curated Periodic g-xTB Part I paper data",
   "algorithm": "SHA-256",
   "artifacts": [
     {
-      "id": "dmc13_gamma_cli_parity",
-      "path": "DMC-ICE13/data/dmc_ice13_gxtb_spglib_gamma_cli_check.csv",
-      "sha256": "02297be201bc744356f58c070bedabf84dc0b8291545e0ccf3ae28f787a225e9"
+      "id": "dmc13_uniform_same_build_statistics",
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_same_build_fixed_mesh_mae.csv",
+      "sha256": "3d1bbd5962c9e9b8433ab3fcac46a4ea43d47813509a2b5cc1a504ae3df2661d"
     },
     {
-      "id": "dmc13_phasewise_method_summary",
-      "path": "DMC-ICE13/data/dmc_ice13_gfn_gxtb_phasewise_summary.json",
-      "sha256": "87c546c99c6b0dbdff1c8ad9f75e8801589ad67fbd2950deb3eea8d9d9492c93"
+      "id": "dmc13_current_adaptive_set",
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv",
+      "sha256": "e9e833c1e36c75561792c3af7ce83553c98e101408f2a8c0a5f259ce59eacd86"
     },
     {
-      "id": "dmc13_post_pr5582_energy_sentinel",
-      "path": "DMC-ICE13/data/dmc_ice13_gxtb_post5582_energy_sentinel_qualification.json",
-      "sha256": "cfd583ee231a1d8d85cb492b3052a4cf56ecef75626806b46301730866481fea"
+      "id": "dmc13_current_adaptive_statistics",
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv",
+      "sha256": "9f3b8803108f95e40264d8a97e7392d1c628cb93e30a9b33ee0ed8ddf70f6c18"
     },
     {
-      "id": "x23b_k222_force_stress_gate",
-      "path": "campaigns/gxtb-pbc-v1-20260714/x23b-k222-force-stress-gate.json",
-      "sha256": "140a726de2f0c7a7450fca88d31b842a9beacb98fef1dd0683fd567457517ce5"
+      "id": "dmc13_ice_vii_sequence",
+      "path": "DMC-ICE13/data/dmc_ice13_gxtb_phase_vii_current.csv",
+      "sha256": "2fb09e8953bd171e865a4ec3043be489f886dc8d97ec20e3693c218c44d7df1d"
     },
     {
-      "id": "dmc13_raw_kpoint_result_matrix",
-      "path": "DMC-ICE13/data/dmc_ice13_gxtb_spglib_kpoint_results.json",
-      "sha256": "d28420a5bc54033dbc8c06d5c1ddd1bed7aef7960a39eb36b46a5f76d208aa17"
+      "id": "dmc13_uniform_same_build_figure",
+      "path": "DMC-ICE13/figures/dmc_ice13_gxtb_same_build_fixed_mesh_mae.pdf",
+      "sha256": "b01ccd8705f755ea04d6240004fa3151f5b14d1c165ae2444c8bdee43ef6e96e"
     },
     {
-      "id": "dmc13_phase_vii_plot_data",
-      "path": "DMC-ICE13/data/dmc_ice13_gxtb_phase_vii_kpoint_convergence.csv",
-      "sha256": "b80e4a2da1f3714242e267a5ae398148f8aa31c37c85db86c7304d86dcd96e31"
+      "id": "lc10_final_per_solid_data",
+      "path": "LC10/data/lc10_gxtb_final.csv",
+      "sha256": "20c9b701dd1e78e5fb14149928e28d73ffd715d6f500caecda222f83ae7e8ee7"
+    },
+    {
+      "id": "lc10_method_comparison",
+      "path": "LC10/data/lc10_method_comparison.csv",
+      "sha256": "8d64a5a3f6d56e01d4f132d74d551d1dc88066fefc208620aba136dcd124b2b6"
+    },
+    {
+      "id": "lc10_adaptive_progress",
+      "path": "LC10/data/lc10_adaptive_progress_mae.csv",
+      "sha256": "2aaeff9746a4859003d72802339f57680f1ee98e5afaaf2d3ecb84bb359122a8"
+    },
+    {
+      "id": "lc10_adaptive_figure",
+      "path": "LC10/figures/lc10_gxtb_adaptive_mae.pdf",
+      "sha256": "4543bf6a1f6e88099a9f96c395b46d404d40317bb455a26229d86220cd791220"
+    },
+    {
+      "id": "molecular_limit_results",
+      "path": "Molecular-limit/results.csv",
+      "sha256": "96683480fbbdb433b02675880c66dad158edd489c07342aebc8eccd1765dc3cf"
     }
   ]
 }
