@@ -181,6 +181,21 @@ pair_status() {
   return "$rc"
 }
 
+rank_pending() {
+  local previous=$1 current=$2 phase file relative delta reference absolute_error
+  shift 2
+  for phase in "$@"; do
+    file="$decision_root/$phase/k${previous}-k${current}.tsv"
+    relative=$(awk -F '\t' '{for (i = 1; i <= NF; i++) {split($i, value, "="); if (value[1] == "rel_current_kj_mol") print value[2]}}' "$file")
+    delta=$(awk -F '\t' '{for (i = 1; i <= NF; i++) {split($i, value, "="); if (value[1] == "delta_kj_mol") print value[2]}}' "$file")
+    reference=$(awk -F ',' -v phase="$phase" 'NR > 1 && $2 == phase {print $3}' \
+      "$root/tools/dmc_ice13_relative_energies.csv")
+    absolute_error=$(awk -v relative="$relative" -v reference="$reference" \
+      'BEGIN {difference = relative - reference; if (difference < 0) difference = -difference; printf "%.12f", difference}')
+    printf '%s\t%s\t%s\n' "$absolute_error" "$delta" "$phase"
+  done | sort -t $'\t' -k1,1nr -k2,2nr | awk -F '\t' '{print $3}'
+}
+
 test "$(sha256sum "$binary" | awk '{print $1}')" = "$expected_binary"
 printf '%s strict adaptive completion waiting\n' \
   "$(date --iso-8601=seconds)" >>"$log"
@@ -227,6 +242,15 @@ for phase in "${phases[@]}"; do
     incomplete=$((incomplete + 1))
   fi
 done
+if (( ${#pending[@]} )); then
+  ranked_pending=()
+  while IFS= read -r phase; do
+    ranked_pending+=("$phase")
+  done < <(rank_pending 4 5 "${pending[@]}")
+  pending=("${ranked_pending[@]}")
+  printf '%s ranked pending mesh=6 phases=%s\n' \
+    "$(date --iso-8601=seconds)" "${pending[*]}" >>"$log"
+fi
 
 previous=5
 for ((mesh = 6; mesh <= maximum_mesh; mesh++)); do
@@ -249,7 +273,13 @@ for ((mesh = 6; mesh <= maximum_mesh; mesh++)); do
     fi
   done
   if (( ${#next_pending[@]} )); then
-    pending=("${next_pending[@]}")
+    ranked_pending=()
+    while IFS= read -r phase; do
+      ranked_pending+=("$phase")
+    done < <(rank_pending "$previous" "$mesh" "${next_pending[@]}")
+    pending=("${ranked_pending[@]}")
+    printf '%s ranked pending mesh=%s phases=%s\n' \
+      "$(date --iso-8601=seconds)" "$((mesh + 1))" "${pending[*]}" >>"$log"
   else
     pending=()
   fi
