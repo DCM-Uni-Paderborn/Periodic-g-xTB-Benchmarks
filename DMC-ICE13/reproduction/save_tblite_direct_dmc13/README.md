@@ -137,8 +137,8 @@ and affinity cases are covered by
 `tools/verify_k222_cli_native_requalification.py` applies the stricter
 same-host provenance gate to a fresh all-phase `2 x 2 x 2` repetition.  Every
 direct and native phase must carry the selected Linux executable hash, the
-exact input hash, normal termination, and the direct singleton-CPU affinity
-proof.  The native input is independently required to contain the canonical
+exact input hash, normal termination, and a singleton-CPU affinity proof on
+both sides.  The native input is independently required to contain the canonical
 shifted MacDonald mesh with symmetry reduction enabled.  Only after all
 thirteen phases satisfy these conditions are absolute and Ih-referenced
 CLI/native differences evaluated.  Positive and deliberately altered binary

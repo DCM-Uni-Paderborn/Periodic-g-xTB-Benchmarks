@@ -52,7 +52,8 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
         self.controller.write_text("0\n", encoding="utf-8")
         self.source.write_text(
             f"repository=https://example.invalid/provider.git\n"
-            f"branch=cp2k-integration\ncommit={SOURCE_REVISION}\n",
+            f"branch=cp2k-integration\ncommit={SOURCE_REVISION}\n"
+            f"executable_sha256={DIRECT_BINARY}\n",
             encoding="utf-8",
         )
         for index, phase in enumerate(PHASES):
@@ -109,6 +110,10 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
             )
             (native_dir / "input.sha256").write_text(
                 f"{digest(native_input)}  {native_input}\n", encoding="utf-8"
+            )
+            (native_dir / "affinity_preexec.txt").write_text(
+                f"pid=84 expected_cpu={80 + index} allowed={80 + index}\n",
+                encoding="utf-8",
             )
 
     def tearDown(self) -> None:
@@ -171,6 +176,26 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
         completed = self.run_verifier()
         self.assertNotEqual(completed.returncode, 0)
         self.assertIn("noncanonical 2x2x2 MacDonald mesh", completed.stderr)
+
+    def test_non_singleton_native_affinity_is_rejected(self) -> None:
+        affinity = self.native_runs / "II" / "affinity_preexec.txt"
+        affinity.write_text(
+            "pid=84 expected_cpu=81 allowed=80-81\n", encoding="utf-8"
+        )
+        completed = self.run_verifier()
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("non-singleton or wrong affinity", completed.stderr)
+
+    def test_source_identity_binary_mismatch_is_rejected(self) -> None:
+        self.source.write_text(
+            self.source.read_text(encoding="utf-8").replace(
+                DIRECT_BINARY, "e" * 64
+            ),
+            encoding="utf-8",
+        )
+        completed = self.run_verifier()
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("direct provider executable mismatch", completed.stderr)
 
 
 if __name__ == "__main__":

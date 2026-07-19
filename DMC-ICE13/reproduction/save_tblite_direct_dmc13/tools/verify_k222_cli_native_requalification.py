@@ -61,7 +61,7 @@ def require_status_zero(path: Path, label: str) -> None:
         raise AssertionError(f"nonzero or missing {label}: {path}")
 
 
-def qualify_affinity(path: Path, expected_cpu: int) -> str:
+def qualify_affinity(path: Path, expected_cpu: int | None = None) -> int:
     if not path.is_file():
         raise AssertionError(f"missing affinity proof: {path}")
     text = path.read_text(encoding="utf-8", errors="replace")
@@ -70,12 +70,14 @@ def qualify_affinity(path: Path, expected_cpu: int) -> str:
         raise AssertionError(f"malformed affinity proof: {path}")
     recorded_cpu = int(match.group(1))
     allowed = match.group(2)
-    if recorded_cpu != expected_cpu or allowed != str(expected_cpu):
+    if allowed != str(recorded_cpu) or (
+        expected_cpu is not None and recorded_cpu != expected_cpu
+    ):
         raise AssertionError(
-            f"non-singleton or wrong affinity: expected={expected_cpu} "
+            f"non-singleton or wrong affinity: requested={expected_cpu} "
             f"recorded={recorded_cpu} allowed={allowed}"
         )
-    return allowed
+    return recorded_cpu
 
 
 def read_cli_energy(path: Path) -> float:
@@ -121,7 +123,9 @@ def verify_native_input(path: Path) -> str:
     return digest(path)
 
 
-def verify_source_identity(path: Path, expected_revision: str) -> str:
+def verify_source_identity(
+    path: Path, expected_revision: str, expected_binary: str
+) -> str:
     if not path.is_file():
         raise AssertionError(f"missing source identity: {path}")
     values = {}
@@ -131,6 +135,8 @@ def verify_source_identity(path: Path, expected_revision: str) -> str:
             values[key.strip()] = value.strip()
     if values.get("commit") != expected_revision:
         raise AssertionError("direct provider revision mismatch")
+    if values.get("executable_sha256") != expected_binary:
+        raise AssertionError("direct provider executable mismatch")
     return digest(path)
 
 
@@ -151,12 +157,12 @@ def main() -> None:
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
 
-    for label, value in (
-        ("direct binary", args.expected_direct_binary),
-        ("native binary", args.expected_native_binary),
-        ("source revision", args.expected_source_revision),
+    for label, value, length in (
+        ("direct binary", args.expected_direct_binary, 64),
+        ("native binary", args.expected_native_binary, 64),
+        ("source revision", args.expected_source_revision, 40),
     ):
-        if re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", value) is None:
+        if re.fullmatch(rf"[0-9a-f]{{{length}}}", value) is None:
             parser.error(f"invalid {label} digest")
     if args.expected_direct_cpu < 0:
         parser.error("expected direct CPU must be nonnegative")
@@ -165,7 +171,9 @@ def main() -> None:
 
     require_status_zero(args.direct_controller_status, "direct controller status")
     source_hash = verify_source_identity(
-        args.source_identity, args.expected_source_revision
+        args.source_identity,
+        args.expected_source_revision,
+        args.expected_direct_binary,
     )
 
     rows: list[dict[str, object]] = []
@@ -188,7 +196,10 @@ def main() -> None:
         native_input_hash = verify_native_input(native_input)
         if recorded_digest(native_dir / "input.sha256") != native_input_hash:
             raise AssertionError(f"native input mismatch: {phase}")
-        qualify_affinity(direct_dir / "affinity_preexec.txt", args.expected_direct_cpu)
+        direct_cpu = qualify_affinity(
+            direct_dir / "affinity_preexec.txt", args.expected_direct_cpu
+        )
+        native_cpu = qualify_affinity(native_dir / "affinity_preexec.txt")
 
         direct_text = (direct_dir / "process.out").read_text(
             encoding="utf-8", errors="replace"
@@ -220,6 +231,8 @@ def main() -> None:
                 "direct_json_sha256": digest(direct_json),
                 "native_output_sha256": digest(native_output),
                 "native_input_sha256": native_input_hash,
+                "direct_cpu": direct_cpu,
+                "native_cpu": native_cpu,
             }
         )
 
