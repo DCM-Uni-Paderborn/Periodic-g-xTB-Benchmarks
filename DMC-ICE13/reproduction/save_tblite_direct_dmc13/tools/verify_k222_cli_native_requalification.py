@@ -32,6 +32,16 @@ ENERGY_RE = re.compile(
     r"^\s*ENERGY\|\s+Total FORCE_EVAL.*?"
     r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?)\s*$"
 )
+DIRECT_DISPERSION_RE = re.compile(
+    r"^\s*dispersion energy\s+"
+    r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?)\s+Eh\s*$",
+    re.IGNORECASE | re.MULTILINE,
+)
+NATIVE_DISPERSION_RE = re.compile(
+    r"^\s*Non-self consistent dispersion energy:\s+"
+    r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?)\s*$",
+    re.IGNORECASE | re.MULTILINE,
+)
 SCHEME_RE = re.compile(
     r"^\s*SCHEME\s+MACDONALD\s+2\s+2\s+2\s+"
     r"0\.25(?:0*)\s+0\.25(?:0*)\s+0\.25(?:0*)\s*$",
@@ -97,6 +107,13 @@ def read_native_energy(path: Path) -> float:
     if "PROGRAM ENDED AT" not in text or not values:
         raise AssertionError(f"incomplete native output: {path}")
     return values[-1]
+
+
+def read_component(text: str, pattern: re.Pattern[str], label: str) -> float:
+    matches = [float(match.group(1)) for match in pattern.finditer(text)]
+    if not matches or not math.isfinite(matches[-1]):
+        raise AssertionError(f"missing or non-finite {label}")
+    return matches[-1]
 
 
 def water_count(structure: Path) -> int:
@@ -180,6 +197,7 @@ def main() -> None:
     parser.add_argument("--expected-native-build-ninja", required=True)
     parser.add_argument("--expected-direct-cpu", type=int, required=True)
     parser.add_argument("--tolerance-ha", type=float, default=2.0e-7)
+    parser.add_argument("--component-tolerance-ha", type=float, default=2.0e-7)
     parser.add_argument("--relative-tolerance-kj-mol", type=float, default=5.0e-5)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
@@ -197,7 +215,11 @@ def main() -> None:
             parser.error(f"invalid {label} digest")
     if args.expected_direct_cpu < 0:
         parser.error("expected direct CPU must be nonnegative")
-    if args.tolerance_ha <= 0.0 or args.relative_tolerance_kj_mol <= 0.0:
+    if (
+        args.tolerance_ha <= 0.0
+        or args.component_tolerance_ha <= 0.0
+        or args.relative_tolerance_kj_mol <= 0.0
+    ):
         parser.error("energy tolerances must be positive")
 
     require_status_zero(args.direct_controller_status, "direct controller status")
@@ -250,6 +272,21 @@ def main() -> None:
         direct_primitive = direct_total / REPLICAS
         native_output = native_dir / "cp2k.out"
         native = read_native_energy(native_output)
+        direct_dispersion = read_component(
+            direct_text, DIRECT_DISPERSION_RE, f"direct dispersion energy: {phase}"
+        ) / REPLICAS
+        native_text = native_output.read_text(encoding="utf-8", errors="replace")
+        native_dispersion = read_component(
+            native_text,
+            NATIVE_DISPERSION_RE,
+            f"native non-self-consistent dispersion energy: {phase}",
+        )
+        dispersion_delta = native_dispersion - direct_dispersion
+        if abs(dispersion_delta) > args.component_tolerance_ha:
+            raise AssertionError(
+                f"native/direct dispersion mismatch {phase}: "
+                f"{dispersion_delta:+.6e} Ha"
+            )
         delta = native - direct_primitive
         if abs(delta) > args.tolerance_ha:
             raise AssertionError(
@@ -263,6 +300,9 @@ def main() -> None:
                 "direct_primitive_energy_Ha": direct_primitive,
                 "native_primitive_energy_Ha": native,
                 "native_minus_direct_Ha": delta,
+                "direct_primitive_dispersion_energy_Ha": direct_dispersion,
+                "native_dispersion_energy_Ha": native_dispersion,
+                "native_minus_direct_dispersion_Ha": dispersion_delta,
                 "structure_sha256": digest(structure),
                 "direct_json_sha256": digest(direct_json),
                 "native_output_sha256": digest(native_output),
@@ -294,6 +334,9 @@ def main() -> None:
             f"{maximum_relative:.6e} kJ mol-1 per water"
         )
     signed = [float(row["native_minus_direct_Ha"]) for row in rows]
+    dispersion_signed = [
+        float(row["native_minus_direct_dispersion_Ha"]) for row in rows
+    ]
     payload = {
         "status": "PASS",
         "mesh": "2x2x2",
@@ -305,6 +348,13 @@ def main() -> None:
             "max_abs_native_minus_direct_Ha": max(abs(value) for value in signed),
             "rms_native_minus_direct_Ha": math.sqrt(
                 sum(value * value for value in signed) / len(signed)
+            ),
+            "max_abs_native_minus_direct_dispersion_Ha": max(
+                abs(value) for value in dispersion_signed
+            ),
+            "rms_native_minus_direct_dispersion_Ha": math.sqrt(
+                sum(value * value for value in dispersion_signed)
+                / len(dispersion_signed)
             ),
             "max_abs_relative_native_minus_direct_kJ_mol_per_water": maximum_relative,
         },

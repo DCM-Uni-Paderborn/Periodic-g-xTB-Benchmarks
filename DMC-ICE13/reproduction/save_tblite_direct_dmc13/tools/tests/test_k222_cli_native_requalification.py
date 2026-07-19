@@ -84,7 +84,9 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
                 encoding="utf-8",
             )
             (direct_dir / "process.out").write_text(
-                "total energy\nJSON dump of results written\n", encoding="utf-8"
+                "dispersion energy              8.0000000000000E-02 Eh\n"
+                "total energy\nJSON dump of results written\n",
+                encoding="utf-8",
             )
             (direct_dir / "exit_status").write_text("0\n", encoding="utf-8")
             (direct_dir / "binary.sha256").write_text(
@@ -112,6 +114,8 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
             native_dir.mkdir(parents=True)
             delta = (index - 6) * 1.0e-10
             (native_dir / "cp2k.out").write_text(
+                " Non-self consistent dispersion energy:                        "
+                "0.01000000000000\n"
                 " ENERGY| Total FORCE_EVAL ( QS ) energy [hartree] "
                 f"{primitive + delta:.15f}\nPROGRAM ENDED AT now\n",
                 encoding="utf-8",
@@ -240,6 +244,18 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
         completed = self.run_verifier()
         self.assertNotEqual(completed.returncode, 0)
         self.assertIn("native link plan mismatch", completed.stderr)
+
+    def test_dispersion_component_mismatch_is_rejected(self) -> None:
+        output = self.native_runs / "XIV" / "cp2k.out"
+        output.write_text(
+            output.read_text(encoding="utf-8").replace(
+                "0.01000000000000", "0.01000100000000"
+            ),
+            encoding="utf-8",
+        )
+        completed = self.run_verifier()
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("native/direct dispersion mismatch", completed.stderr)
 
 
 if __name__ == "__main__":
