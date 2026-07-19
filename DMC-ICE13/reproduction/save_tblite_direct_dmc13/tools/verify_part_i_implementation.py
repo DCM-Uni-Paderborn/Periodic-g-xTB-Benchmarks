@@ -138,6 +138,12 @@ GATES = (
         (),
     ),
     (
+        "adaptive_controller_dry_run",
+        ROOT / "tools/controllers",
+        ROOT / "tools/controllers/test_adaptive_controller.py",
+        ("-v",),
+    ),
+    (
         "archive_sha256",
         ROOT,
         ROOT / "tools/verify_sha256_manifests.py",

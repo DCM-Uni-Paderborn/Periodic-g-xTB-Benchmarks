@@ -1,6 +1,6 @@
 {
   "failed_gates": [],
-  "gate_count": 19,
+  "gate_count": 20,
   "gates": [
     {
       "name": "absolute_energy_parity",
@@ -201,6 +201,17 @@
       "stdout_tail": "files=38 structures=13 status=PASS"
     },
     {
+      "name": "adaptive_controller_dry_run",
+      "returncode": 0,
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/tools/controllers/test_adaptive_controller.py",
+      "script_sha256": "68eb22093b2658fa8e6fdd06eef989af3701f0196da9c7a5f02443d1489ec7c0",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "06d4636524ba501f9ede8e08dd6f0b85e9879e0b89f3a4e5976832671cfc521f",
+      "stdout_tail": "{\"errors\": 0, \"failures\": 0, \"status\": \"PASS\", \"tests_run\": 1}"
+    },
+    {
       "name": "archive_sha256",
       "returncode": 0,
       "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/tools/verify_sha256_manifests.py",
@@ -208,10 +219,10 @@
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_tail": "",
-      "stdout_sha256": "15d338e470100294992f569c63d8a1ac4e2d22372a94a75b6a3bf50efe565d25",
-      "stdout_tail": "manifests=58 entries=2695 failures=0"
+      "stdout_sha256": "37e02c898ecf436617c0411e21a218a79c9db42cdd40c2102de8083621bba17b",
+      "stdout_tail": "manifests=58 entries=2700 failures=0"
     }
   ],
-  "passed_gate_count": 19,
+  "passed_gate_count": 20,
   "status": "PASS"
 }

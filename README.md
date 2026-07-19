@@ -89,6 +89,9 @@ executables have SHA-256 digests
 and `f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a`.
 The complete implementation audit and exact provenance are retained under
 `DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/`.
+The fail-closed Terok production and independent-verification controllers are
+archived under `DMC-ICE13/reproduction/save_tblite_direct_dmc13/tools/controllers/`;
+their dry run is part of the aggregate implementation gate.
 
 The older phase-wise DMC-ICE13 trace remains frozen only as a pre-response
 baseline.  Its response-corrected replacement is promoted only after every

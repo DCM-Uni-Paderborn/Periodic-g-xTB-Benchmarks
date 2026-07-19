@@ -297,7 +297,10 @@ direct periodic source tests for H0, Wigner--Seitz, exchange, Fock response,
 forces, stress, and transform oracles, the complete author-`pbc`/current-CLI/
 CP2K-native `3 x 3 x 3` energy closure, the sibling
 `../seidler_dmc13_recalculation` author-facing rerun package, and all portable
-SHA-256 manifests.  Its
+SHA-256 manifests.  The archived `tools/controllers` suite additionally
+enforces the VII--Ih--Gamma-oracle priority, exact executable hashes,
+memory-safe serialization, and phase-local `0.10` adaptive pruning in a
+synthetic end-to-end dry run.  Its
 JSON report records every return code and hashes the script and captured
 output of each gate; any failed subordinate verifier fails the aggregate
 audit.

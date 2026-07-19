@@ -31,6 +31,7 @@ EXPECTED_GATES = {
     "save_tblite_periodic_source_tests",
     "three_route_k333_closure",
     "seidler_recalculation_package",
+    "adaptive_controller_dry_run",
     "archive_sha256",
 }
 
