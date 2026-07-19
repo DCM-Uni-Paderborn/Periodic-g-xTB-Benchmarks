@@ -30,6 +30,7 @@ EXPECTED_GATES = {
     "pbc_h0_anisotropy_attribution",
     "save_tblite_periodic_source_tests",
     "three_route_k333_closure",
+    "author_structure_equivalence",
     "seidler_recalculation_package",
     "adaptive_controller_dry_run",
     "archive_sha256",

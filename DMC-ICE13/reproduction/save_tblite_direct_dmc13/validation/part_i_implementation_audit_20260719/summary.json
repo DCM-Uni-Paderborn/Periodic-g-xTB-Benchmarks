@@ -1,6 +1,6 @@
 {
   "failed_gates": [],
-  "gate_count": 20,
+  "gate_count": 21,
   "gates": [
     {
       "name": "absolute_energy_parity",
@@ -190,6 +190,17 @@
       "stdout_tail": "}"
     },
     {
+      "name": "author_structure_equivalence",
+      "returncode": 0,
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/seidler_structure_equivalence_20260719/verify_report.py",
+      "script_sha256": "15f2811114f69b302bc2d45a8dae97bdc234d92f7e5bfdce0b1c69e2e5d28942",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "433fea2eaae4eb3cfdfde764feae7723b4ad55a8154dc5f3952a40f15534bbc3",
+      "stdout_tail": "author DMC-ICE13 structures: 13/13 equivalent; max atom residual=7.256700359989e-10 Angstrom"
+    },
+    {
       "name": "seidler_recalculation_package",
       "returncode": 0,
       "script": "DMC-ICE13/reproduction/seidler_dmc13_recalculation/prepare_package.py",
@@ -219,10 +230,10 @@
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_tail": "",
-      "stdout_sha256": "37e02c898ecf436617c0411e21a218a79c9db42cdd40c2102de8083621bba17b",
-      "stdout_tail": "manifests=58 entries=2700 failures=0"
+      "stdout_sha256": "4373300f695a4d76a2becefc71eaad341375dbae36ab7b55817503b8b1ec83f7",
+      "stdout_tail": "manifests=58 entries=2708 failures=0"
     }
   ],
-  "passed_gate_count": 20,
+  "passed_gate_count": 21,
   "status": "PASS"
 }

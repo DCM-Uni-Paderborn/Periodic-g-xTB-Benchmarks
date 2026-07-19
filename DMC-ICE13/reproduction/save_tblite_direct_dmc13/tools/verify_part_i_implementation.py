@@ -132,6 +132,13 @@ GATES = (
         (),
     ),
     (
+        "author_structure_equivalence",
+        ROOT / "validation/seidler_structure_equivalence_20260719",
+        ROOT
+        / "validation/seidler_structure_equivalence_20260719/verify_report.py",
+        (),
+    ),
+    (
         "seidler_recalculation_package",
         ROOT.parent / "seidler_dmc13_recalculation",
         ROOT.parent / "seidler_dmc13_recalculation/prepare_package.py",
