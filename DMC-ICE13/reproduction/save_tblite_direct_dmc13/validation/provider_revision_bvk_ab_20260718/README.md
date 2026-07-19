@@ -34,3 +34,9 @@ At this deliberately unconverged mesh, the current and author-branch MAEs are
 revision changes the full MAE by only `+0.02549` kJ mol^-1 and does not account
 for an accuracy improvement.  `full_k222_relative_comparison.csv` contains the
 phase-resolved evidence.
+
+`compare_complete_mesh.py` applies the same absolute-energy, Ih-referenced
+relative-energy, and MAE analysis to any complete 13-phase direct-BvK mesh.
+It refuses missing, malformed, or non-finite JSON results and writes a
+SHA-256 input manifest alongside the generated tables, so a denser author
+comparison cannot silently mix executables or incomplete phases.
