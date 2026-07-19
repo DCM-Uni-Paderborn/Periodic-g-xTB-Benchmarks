@@ -12,6 +12,8 @@ import re
 import sys
 from pathlib import Path
 
+from bvk_input import input_mesh_and_water_count
+
 
 HARTREE_TO_KJMOL = 2625.4996394799
 PHASES = ("II", "III", "IV", "VI", "VII", "VIII", "IX", "XI", "XIII", "XIV", "XV", "XVII")
@@ -36,47 +38,6 @@ def recorded_digest(path: Path) -> str:
     if not SHA256_RE.fullmatch(digest):
         raise ValueError(f"invalid SHA-256 record: {path}")
     return digest
-
-
-def input_mesh_and_water_count(path: Path) -> tuple[int, int]:
-    mesh_values: list[int] = []
-    water_count = 0
-    in_coordinates = False
-    for raw_line in path.read_text(encoding="utf-8", errors="replace").splitlines():
-        code = re.split(r"[#!]", raw_line, maxsplit=1)[0].split()
-        if len(code) >= 2 and tuple(token.upper() for token in code[:2]) == (
-            "SCHEME",
-            "MACDONALD",
-        ):
-            if len(code) not in (5, 8):
-                raise ValueError(f"unsupported MACDONALD syntax in {path}: {raw_line}")
-            try:
-                dimensions = tuple(int(value) for value in code[2:5])
-                shifts = tuple(float(value) for value in code[5:])
-            except ValueError as exc:
-                raise ValueError(f"invalid MACDONALD mesh in {path}: {raw_line}") from exc
-            if len(set(dimensions)) != 1:
-                raise ValueError(f"anisotropic mesh in {path}: {dimensions}")
-            if any(not math.isfinite(value) for value in shifts):
-                raise ValueError(f"non-finite MACDONALD shift in {path}: {shifts}")
-            mesh_values.append(dimensions[0])
-        line = raw_line.strip()
-        upper = line.upper()
-        if upper == "&COORD":
-            in_coordinates = True
-            continue
-        if in_coordinates and upper.startswith("&END"):
-            in_coordinates = False
-            continue
-        if in_coordinates and line and not line.startswith(("#", "!")):
-            water_count += line.split()[0].upper() == "O"
-    if len(mesh_values) != 1:
-        raise ValueError(
-            f"expected exactly one MACDONALD mesh in {path}, found {len(mesh_values)}"
-        )
-    if water_count <= 0:
-        raise ValueError(f"no oxygen atoms in coordinate section: {path}")
-    return mesh_values[0], water_count
 
 
 def final_energy(path: Path) -> float:

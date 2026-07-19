@@ -53,11 +53,12 @@ class AdaptiveReportingTest(unittest.TestCase):
         input_dir.mkdir(parents=True, exist_ok=True)
         run_dir.mkdir(parents=True, exist_ok=True)
         input_path = input_dir / "input.inp"
+        shift = "0.0" if mesh % 2 else repr((mesh - 1) / (2 * mesh))
         input_path.write_text(
             "&FORCE_EVAL\n"
             "  &DFT\n"
             "    &KPOINTS\n"
-            f"      SCHEME MACDONALD {mesh} {mesh} {mesh} 0.375 0.375 0.375\n"
+            f"      SCHEME MACDONALD {mesh} {mesh} {mesh} {shift} {shift} {shift}\n"
             "    &END KPOINTS\n"
             "  &END DFT\n"
             "  &SUBSYS\n"
@@ -196,6 +197,46 @@ class AdaptiveReportingTest(unittest.TestCase):
         meshes = self.mesh_vector(result.stdout)
         self.assertEqual(meshes["II"], 1)
         self.assertEqual(meshes["III"], 2)
+
+    def test_wrong_macdonald_shift_is_not_qualified(self) -> None:
+        input_path = self.root / "inputs" / "k222-reduced" / "II" / "input.inp"
+        input_path.write_text(
+            input_path.read_text(encoding="utf-8").replace(
+                "0.25 0.25 0.25", "0.375 0.375 0.375"
+            ),
+            encoding="utf-8",
+        )
+        run_dir = self.root / "runs" / "k222-reduced" / "II"
+        (run_dir / "input.sha256").write_text(
+            f"{sha256(input_path)}  {input_path}\n", encoding="utf-8"
+        )
+        result = self.run_tool(
+            "dmc_mixed_mae.py",
+            self.root,
+            self.reference,
+            "--meshes",
+            "2,1",
+            "--require-binary-sha256",
+            CURRENT_DIGEST,
+        )
+        meshes = self.mesh_vector(result.stdout)
+        self.assertEqual(meshes["II"], 1)
+        self.assertEqual(meshes["III"], 2)
+
+        endpoints = self.root / "wrong-shift-endpoints.json"
+        selection = self.run_tool(
+            "select_adaptive_endpoints.py",
+            self.root,
+            self.reference,
+            "--meshes",
+            "1,2",
+            "--require-binary-sha256",
+            CURRENT_DIGEST,
+            "--output-json",
+            endpoints,
+            expected_returncode=2,
+        )
+        self.assertIn("noncanonical Gamma-centred BvK shift", selection.stdout)
 
     def test_verifier_rejects_nonfirst_passing_pair(self) -> None:
         endpoints = self.root / "endpoints.json"

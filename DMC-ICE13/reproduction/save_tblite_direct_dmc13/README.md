@@ -192,8 +192,10 @@ or RMS condition participates in endpoint selection.
 `tools/dmc_phase_convergence.py` and `tools/dmc_mixed_mae.py` apply the same
 qualification to incremental decisions and progress reports.  When an
 execution hash is required, they also verify normal exit and the hash of the
-actual input.  A denser result produced by another executable or from a
-modified input is skipped instead of masking a valid lower-mesh pair.
+actual input.  They additionally require the directory mesh, the dimensions
+inside the input, and the canonical even/odd MacDonald shift to agree.  A
+denser result produced by another executable, from a modified input, or with a
+noncanonical shift is skipped instead of masking a valid lower-mesh pair.
 `tools/verify_adaptive_dmc13.py` is an independent final oracle: it reparses
 the raw CP2K energies and MacDonald meshes, verifies binary and input
 provenance, proves that every reported endpoint is the first passing adjacent

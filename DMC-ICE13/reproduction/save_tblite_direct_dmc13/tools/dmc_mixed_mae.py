@@ -10,6 +10,8 @@ import json
 import re
 from pathlib import Path
 
+from bvk_input import input_mesh_and_water_count
+
 
 HARTREE_TO_KJMOL = 2625.4996394799
 PHASES = ("II", "III", "IV", "VI", "VII", "VIII", "IX", "XI", "XIII", "XIV", "XV", "XVII")
@@ -53,25 +55,6 @@ def energy(path: Path) -> float | None:
         if "PROGRAM ENDED AT" in line:
             ended = True
     return values[-1] if ended and values else None
-
-
-def oxygen_count(path: Path) -> int:
-    count = 0
-    in_coordinates = False
-    for raw_line in path.read_text(encoding="utf-8", errors="replace").splitlines():
-        line = raw_line.strip()
-        upper = line.upper()
-        if upper == "&COORD":
-            in_coordinates = True
-            continue
-        if in_coordinates and upper.startswith("&END"):
-            in_coordinates = False
-            continue
-        if in_coordinates and line and not line.startswith(("#", "!")):
-            count += line.split()[0].upper() == "O"
-    if count <= 0:
-        raise ValueError(f"no oxygen atoms in {path}")
-    return count
 
 
 def main() -> None:
@@ -148,9 +131,21 @@ def main() -> None:
                         f"phase={phase_digest or 'missing'} Ih={ih_digest or 'missing'} "
                         f"mesh={mesh} phase_name={phase}"
                     )
+            try:
+                phase_mesh, phase_water = input_mesh_and_water_count(phase_input)
+                ih_mesh, ih_water = input_mesh_and_water_count(ih_input)
+                if phase_mesh != mesh or ih_mesh != mesh:
+                    raise ValueError(
+                        f"directory/input mesh mismatch: directory={mesh} "
+                        f"phase={phase_mesh} Ih={ih_mesh} phase_name={phase}"
+                    )
+            except (OSError, ValueError):
+                if expected_digest is not None:
+                    continue
+                raise
             relative = (
-                phase_energy / oxygen_count(phase_input)
-                - ih_energy / oxygen_count(ih_input)
+                phase_energy / phase_water
+                - ih_energy / ih_water
             ) * HARTREE_TO_KJMOL
             selected = (mesh, relative)
             break

@@ -9,6 +9,8 @@ import json
 import re
 from pathlib import Path
 
+from bvk_input import canonical_bvk_shift, format_shift
+
 
 SCHEME_RE = re.compile(
     r"^(?P<indent>\s*)SCHEME\s+MACDONALD\s+"
@@ -25,19 +27,6 @@ def digest(path: Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             value.update(block)
     return value.hexdigest()
-
-
-def canonical_bvk_shift(mesh: int) -> float:
-    """Return the MacDonald shift for a Gamma-centred BvK mesh."""
-    if mesh <= 0:
-        raise ValueError("mesh must be positive")
-    if mesh % 2:
-        return 0.0
-    return (mesh - 1) / (2 * mesh)
-
-
-def format_shift(value: float) -> str:
-    return "0.0" if value == 0.0 else repr(value)
 
 
 def main() -> None:

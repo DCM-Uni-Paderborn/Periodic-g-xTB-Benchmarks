@@ -11,6 +11,8 @@ import re
 import sys
 from pathlib import Path
 
+from bvk_input import input_mesh_and_water_count
+
 
 HARTREE_TO_KJMOL = 2625.4996394799
 PHASES = ("II", "III", "IV", "VI", "VII", "VIII", "IX", "XI", "XIII", "XIV", "XV", "XVII")
@@ -38,25 +40,6 @@ def final_energy(path: Path) -> float:
     return values[-1]
 
 
-def oxygen_count(path: Path) -> int:
-    count = 0
-    in_coordinates = False
-    for raw_line in path.read_text(encoding="utf-8", errors="replace").splitlines():
-        line = raw_line.strip()
-        upper = line.upper()
-        if upper == "&COORD":
-            in_coordinates = True
-            continue
-        if in_coordinates and upper.startswith("&END"):
-            in_coordinates = False
-            continue
-        if in_coordinates and line and not line.startswith(("#", "!")):
-            count += line.split()[0].upper() == "O"
-    if count <= 0:
-        raise ValueError(f"no oxygen atoms found in input: {path}")
-    return count
-
-
 def qualified_energy(
     root: Path, mesh: int, phase: str, required_binary: str
 ) -> tuple[float, int, str]:
@@ -73,7 +56,13 @@ def qualified_energy(
             f"wrong binary at mesh={mesh} phase={phase}: "
             f"actual={digest or 'missing'} required={required_binary}"
         )
-    return final_energy(run / "cp2k.out"), oxygen_count(input_path), digest
+    actual_mesh, water_count = input_mesh_and_water_count(input_path)
+    if actual_mesh != mesh:
+        raise ValueError(
+            f"directory/input mesh mismatch for {phase}: "
+            f"directory={mesh}, input={actual_mesh}"
+        )
+    return final_energy(run / "cp2k.out"), water_count, digest
 
 
 def relative_energy(root: Path, mesh: int, phase: str, required_binary: str) -> float:

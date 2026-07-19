@@ -9,6 +9,8 @@ import re
 import sys
 from pathlib import Path
 
+from bvk_input import input_mesh_and_water_count
+
 
 HARTREE_TO_KJMOL = 2625.4996394799
 ENERGY_RE = re.compile(
@@ -54,27 +56,6 @@ def final_energy(path: Path) -> float:
     return values[-1]
 
 
-def water_count(path: Path) -> int:
-    count = 0
-    in_coordinates = False
-    with path.open(encoding="utf-8", errors="replace") as handle:
-        for raw_line in handle:
-            line = raw_line.strip()
-            upper = line.upper()
-            if upper == "&COORD":
-                in_coordinates = True
-                continue
-            if in_coordinates and upper.startswith("&END"):
-                in_coordinates = False
-                continue
-            if in_coordinates and line and not line.startswith(("#", "!")):
-                if line.split()[0].upper() == "O":
-                    count += 1
-    if count <= 0:
-        raise ValueError(f"no oxygen atoms found in coordinates: {path}")
-    return count
-
-
 def relative_energy(
     root: Path, mesh: int, phase: str, expected_digest: str | None = None
 ) -> float:
@@ -114,8 +95,15 @@ def relative_energy(
                     f"input hash mismatch: recorded={recorded_input} "
                     f"actual={actual_input} path={input_path}"
                 )
-    phase_per_water = final_energy(phase_dir / "cp2k.out") / water_count(phase_input)
-    ih_per_water = final_energy(ih_dir / "cp2k.out") / water_count(ih_input)
+    phase_mesh, phase_water = input_mesh_and_water_count(phase_input)
+    ih_mesh, ih_water = input_mesh_and_water_count(ih_input)
+    if phase_mesh != mesh or ih_mesh != mesh:
+        raise ValueError(
+            f"directory/input mesh mismatch: directory={mesh} "
+            f"phase={phase_mesh} Ih={ih_mesh} phase_name={phase}"
+        )
+    phase_per_water = final_energy(phase_dir / "cp2k.out") / phase_water
+    ih_per_water = final_energy(ih_dir / "cp2k.out") / ih_water
     return (phase_per_water - ih_per_water) * HARTREE_TO_KJMOL
 
 
