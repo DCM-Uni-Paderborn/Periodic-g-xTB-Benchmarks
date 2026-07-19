@@ -37,9 +37,12 @@ MESHES="1 2 3" ACCURACY=0.1 ./run_save_tblite.sh
 `PHASES="Ih VII XVII"` restricts a run to selected polymorphs, while
 `RESULT_ROOT=/path/to/results` keeps results from different executables fully
 separate.  The driver records the executable hash, reported version, numerical
-settings, structure hashes, JSON results, and process output.  Set
-`SKIP_EXISTING=1` to resume an interrupted series without repeating completed
-JSON results.
+settings, structure hashes, JSON results, process output, and exit status.
+Each phase directory also carries the exact executable and input hashes.  A
+nonzero CLI exit or a successful process that produces no JSON is retained as
+an explicit failed result.  Set `SKIP_EXISTING=1` to resume an interrupted
+series; an existing result is reused only when the executable and input hashes,
+exit status, JSON, and normal output markers all qualify.
 
 The archived Gamma CP2K inputs used `ACCURACY 0.01`.
 `validation/accuracy_sensitivity_20260718` contains the complete direct and
@@ -119,6 +122,17 @@ comparator applies the same termination and optional provenance gates.  The
 positive and negative checks in `tools/tests/test_oracle_qualification.py`
 ensure that successful parity is accepted while a failed CLI run or changed
 CP2K input is rejected before any energy tolerance is considered.
+
+`tools/verify_gamma_cli_requalification.py` independently qualifies a fresh
+all-phase Gamma repetition.  It requires a singleton-CPU affinity proof,
+controller and phase exit status zero, the requested source revision and
+executable hash, exact structure hashes, numerical settings, JSON and
+process-completion markers.
+Only then does it compare every new absolute energy both with the archived
+direct result and CP2K-native, followed by the stricter Ih-referenced,
+per-water comparison.  Its positive and deliberately corrupted input, exit,
+and affinity cases are covered by
+`tools/tests/test_gamma_cli_requalification.py`.
 
 ## Derivative validation
 
