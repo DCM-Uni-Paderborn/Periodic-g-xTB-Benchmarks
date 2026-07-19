@@ -64,9 +64,18 @@ def read_direct_energy(path: Path) -> float:
     return energy
 
 
-def qualify_no_acp_parameter(path: Path) -> dict[str, int]:
-    parameter = tomllib.loads(path.read_text(encoding="utf-8"))
-    elements = parameter.get("element")
+def qualify_no_acp_parameter(no_acp_path: Path, full_path: Path) -> dict[str, object]:
+    no_acp = tomllib.loads(no_acp_path.read_text(encoding="utf-8"))
+    full = tomllib.loads(full_path.read_text(encoding="utf-8"))
+    if "acp" in no_acp:
+        raise AssertionError("No-ACP parameter still activates the global ACP table")
+    if "acp" not in full:
+        raise AssertionError("full parameter lacks the global ACP table")
+    full_without_acp = dict(full)
+    del full_without_acp["acp"]
+    if no_acp != full_without_acp:
+        raise AssertionError("No-ACP parameter changes content beyond the global ACP table")
+    elements = no_acp.get("element")
     if not isinstance(elements, dict):
         raise AssertionError("No-ACP parameter has no element table")
     counts: dict[str, int] = {}
@@ -76,11 +85,11 @@ def qualify_no_acp_parameter(path: Path) -> dict[str, int]:
         levels = acp.get("acp_levels") if isinstance(acp, dict) else None
         if not isinstance(levels, list) or not levels:
             raise AssertionError(f"No-ACP parameter lacks {symbol} ACP levels")
-        values = [float(value) for value in levels]
-        if any(value != 0.0 for value in values):
-            raise AssertionError(f"No-ACP parameter has nonzero {symbol} ACP levels")
-        counts[symbol] = len(values)
-    return counts
+        counts[symbol] = len(levels)
+    return {
+        "semantic_delta": "global ACP table removed only",
+        "inactive_element_projector_counts": counts,
+    }
 
 
 def water_count(path: Path, replicas: int) -> int:
@@ -102,6 +111,7 @@ def main() -> None:
     parser.add_argument("--native-root", type=Path, required=True)
     parser.add_argument("--structure-root", type=Path, required=True)
     parser.add_argument("--parameter-file", type=Path, required=True)
+    parser.add_argument("--full-parameter-file", type=Path, required=True)
     parser.add_argument("--controller-exit-status", type=Path, required=True)
     parser.add_argument("--source-identity", type=Path, required=True)
     parser.add_argument("--require-source-revision", required=True)
@@ -143,7 +153,10 @@ def main() -> None:
     if source.get("commit") != expected_revision:
         raise AssertionError("source revision mismatch")
     parameter_hash = digest(args.parameter_file)
-    zeroed_acp_levels = qualify_no_acp_parameter(args.parameter_file)
+    full_parameter_hash = digest(args.full_parameter_file)
+    parameter_ablation = qualify_no_acp_parameter(
+        args.parameter_file, args.full_parameter_file
+    )
 
     rows: list[dict[str, object]] = []
     for phase in ("Ih", "XVII"):
@@ -244,7 +257,8 @@ def main() -> None:
             "source_revision": expected_revision,
             "source_identity_sha256": digest(args.source_identity),
             "parameter_sha256": parameter_hash,
-            "zeroed_acp_level_counts": zeroed_acp_levels,
+            "full_parameter_sha256": full_parameter_hash,
+            "parameter_ablation": parameter_ablation,
             "controller_exit_status_sha256": digest(args.controller_exit_status),
         },
         "rows": rows,

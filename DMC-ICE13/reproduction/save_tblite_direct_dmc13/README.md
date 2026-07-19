@@ -140,9 +140,11 @@ CP2K-native energies with direct explicit-BvK CLI energies generated from the
 identical ACP-disabled parameter file.  Before any numerical comparison, it
 requires normal termination on both sides, exact executable, structure, and
 parameter hashes, the selected provider revision, and a singleton-CPU
-affinity proof for each CLI calculation.  It also parses the parameter file
-and rejects it unless every H and O ACP projector level is exactly zero.  The
-gate checks both absolute
+affinity proof for each CLI calculation.  It also parses both the internal
+full-model export and the No-ACP parameter file.  The latter is accepted only
+if the global `[acp]` activation table has been removed and every other parsed
+parameter is unchanged; the retained elemental projector records are then
+inactive by construction.  The gate checks both absolute
 primitive-cell energies and the Ih-referenced energy per water.  Positive and
 deliberately corrupted provenance, affinity, and energy cases are covered by
 `tools/tests/test_no_acp_cli_native.py`.

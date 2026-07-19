@@ -17,10 +17,13 @@ VERIFY = TOOLS / "verify_no_acp_cli_native.py"
 DIRECT_BINARY = "a" * 64
 NATIVE_BINARY = "b" * 64
 SOURCE_REVISION = "c" * 40
-PARAMETER_TEXT = (
+NO_ACP_PARAMETER_TEXT = (
     "[hamiltonian.xtb]\n"
-    "[element.H.acp]\nacp_levels = [0.0, 0.0, 0.0, 0.0]\n"
-    "[element.O.acp]\nacp_levels = [0.0, 0.0, 0.0, 0.0]\n"
+    "[element.H.acp]\nacp_levels = [-0.1, -0.2, -0.3, -0.4]\n"
+    "[element.O.acp]\nacp_levels = [-0.5, -0.6, -0.7, -0.8]\n"
+)
+FULL_PARAMETER_TEXT = NO_ACP_PARAMETER_TEXT.replace(
+    "[element.H.acp]", "[acp]\n[element.H.acp]"
 )
 
 
@@ -36,9 +39,11 @@ class NoAcpCliNativeTests(unittest.TestCase):
         self.native = self.root / "native"
         self.structures = self.root / "structures"
         self.parameter = self.root / "gxtb_no_acp.toml"
+        self.full_parameter = self.root / "gxtb_full.toml"
         self.controller_status = self.root / "controller_exit_status"
         self.source_identity = self.root / "source_identity.txt"
-        self.parameter.write_text(PARAMETER_TEXT, encoding="utf-8")
+        self.parameter.write_text(NO_ACP_PARAMETER_TEXT, encoding="utf-8")
+        self.full_parameter.write_text(FULL_PARAMETER_TEXT, encoding="utf-8")
         self.controller_status.write_text("0\n", encoding="utf-8")
         self.source_identity.write_text(
             f"commit={SOURCE_REVISION}\nbranch=cp2k-integration\n",
@@ -109,6 +114,8 @@ class NoAcpCliNativeTests(unittest.TestCase):
                 str(self.structures),
                 "--parameter-file",
                 str(self.parameter),
+                "--full-parameter-file",
+                str(self.full_parameter),
                 "--controller-exit-status",
                 str(self.controller_status),
                 "--source-identity",
@@ -143,17 +150,16 @@ class NoAcpCliNativeTests(unittest.TestCase):
         self.assertIn("input hash mismatch", completed.stderr)
 
     def test_changed_parameter_is_rejected(self) -> None:
-        self.parameter.write_text(PARAMETER_TEXT + "# changed\n", encoding="utf-8")
+        self.parameter.write_text(
+            NO_ACP_PARAMETER_TEXT + "# changed\n", encoding="utf-8"
+        )
         completed = self.run_verifier()
         self.assertNotEqual(completed.returncode, 0)
         self.assertIn("parameter hash mismatch", completed.stderr)
 
-    def test_nonzero_acp_is_rejected_even_with_matching_hashes(self) -> None:
+    def test_global_acp_is_rejected_even_with_matching_hashes(self) -> None:
         self.parameter.write_text(
-            PARAMETER_TEXT.replace(
-                "[element.O.acp]\nacp_levels = [0.0, 0.0, 0.0, 0.0]",
-                "[element.O.acp]\nacp_levels = [0.0, -0.1, 0.0, 0.0]",
-            ),
+            FULL_PARAMETER_TEXT,
             encoding="utf-8",
         )
         parameter_hash = digest(self.parameter)
@@ -164,7 +170,21 @@ class NoAcpCliNativeTests(unittest.TestCase):
             )
         completed = self.run_verifier()
         self.assertNotEqual(completed.returncode, 0)
-        self.assertIn("nonzero O ACP levels", completed.stderr)
+        self.assertIn("still activates the global ACP table", completed.stderr)
+
+    def test_unrelated_parameter_change_is_rejected_with_matching_hashes(self) -> None:
+        self.parameter.write_text(
+            NO_ACP_PARAMETER_TEXT.replace("-0.8", "-0.9"), encoding="utf-8"
+        )
+        parameter_hash = digest(self.parameter)
+        for phase in ("Ih", "XVII"):
+            manifest = self.direct / "k222" / phase / "parameter.sha256"
+            manifest.write_text(
+                f"{parameter_hash}  {self.parameter}\n", encoding="utf-8"
+            )
+        completed = self.run_verifier()
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("changes content beyond", completed.stderr)
 
     def test_nonzero_controller_exit_is_rejected(self) -> None:
         self.controller_status.write_text("9\n", encoding="utf-8")
