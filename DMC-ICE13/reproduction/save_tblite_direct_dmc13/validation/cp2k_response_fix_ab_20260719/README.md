@@ -24,13 +24,16 @@ different matrix representations and summation orders and is treated as a
 numerical parity bound rather than bitwise identity.  The independent input
 accuracy gate is stored in `../accuracy_sensitivity_20260718`.
 
-The largest residual was challenged further for ice Ih and VII by tightening
-the direct CLI energy and density criteria to `1e-10` hartree and `2e-9` e,
-respectively.  The largest primitive-cell energy change is only
-`9.49e-11` hartree, while the ice-VII native/CLI difference remains
-`1.0520e-7` hartree.  The residual is therefore not caused by premature CLI
-SCC termination.  The exact outputs and both normal and persistent-wrapper
-exit records are retained in `raw/cli_tight_scc`.
+The largest residual was challenged further on both sides.  For ice Ih and
+VII, tightening the direct CLI energy and density criteria to `1e-10`
+hartree and `2e-9` e changes a primitive-cell energy by at most
+`9.49e-11` hartree.  Independently, tightening native ice VII from
+`ACCURACY 0.1` and `EPS_SCF 1e-9` to `ACCURACY 1e-4` and `EPS_SCF 1e-12`
+changes its energy by only `1.14e-13` hartree.  The tight-on-both-sides
+native/CLI difference remains `1.0520e-7` hartree.  The residual is therefore
+not caused by premature SCC termination in either front end.  Exact outputs,
+inputs, affinity proofs, and exit records are retained in
+`raw/cli_tight_scc` and `raw/cp2k_native_tight_scc`.
 
 ## Response-fix A/B gate
 

@@ -110,6 +110,9 @@ def compute() -> tuple[list[dict[str, object]], list[dict[str, object]], list[di
         phase: cli_energy(RAW / "cli_tight_scc" / phase / "result.json")
         for phase in ("Ih", "VII")
     }
+    tight_native_vii = cp2k_energy(
+        RAW / "cp2k_native_tight_scc" / "VII" / "cp2k.out"
+    )
 
     parity_rows: list[dict[str, object]] = []
     absolute_deltas = []
@@ -216,6 +219,10 @@ def compute() -> tuple[list[dict[str, object]], list[dict[str, object]], list[di
         "tight_cli_max_abs_energy_change_ha": max(
             abs(tight_cli[phase] - cli[phase]) for phase in tight_cli
         ),
+        "tight_native_VII_energy_change_ha": tight_native_vii - final["VII"],
+        "tight_native_cli_VII_energy_delta_ha": (
+            tight_native_vii - tight_cli["VII"]
+        ),
         "tight_cli_native_VII_energy_delta_ha": final["VII"] - tight_cli["VII"],
         "tight_cli_native_VII_relative_delta_kj_mol": (
             relative(final, "VII") - relative(tight_cli, "VII")
@@ -252,6 +259,11 @@ def verify_summary(summary: dict[str, object]) -> None:
         raise AssertionError("CLI/native relative-energy delta exceeds 3.0e-5 kJ/mol")
     if float(summary["tight_cli_max_abs_energy_change_ha"]) > 1.0e-10:
         raise AssertionError("tight CLI SCC changes a primitive-cell energy by more than 1e-10 Ha")
+    if abs(float(summary["tight_native_VII_energy_change_ha"])) > 2.0e-13:
+        raise AssertionError("tight native SCC changes the ice-VII energy by more than 2e-13 Ha")
+    close(float(summary["tight_native_cli_VII_energy_delta_ha"]),
+          -1.051994331646711e-7, 2.0e-13,
+          "tight native/tight CLI ice-VII energy delta")
     close(float(summary["tight_cli_native_VII_energy_delta_ha"]),
           -1.051995468515088e-7, 2.0e-13, "tight CLI/native ice-VII energy delta")
     close(float(summary["tight_cli_native_VII_relative_delta_kj_mol"]),
@@ -369,6 +381,26 @@ def verify_hardening() -> None:
         ):
             if marker not in tight_output:
                 raise AssertionError(f"missing tight-CLI marker for {phase}: {marker}")
+
+    tight_native_root = RAW / "cp2k_native_tight_scc" / "VII"
+    tight_native_input = (tight_native_root / "input.inp").read_text(
+        encoding="utf-8", errors="replace"
+    )
+    tight_native_output = (tight_native_root / "cp2k.out").read_text(
+        encoding="utf-8", errors="replace"
+    )
+    for marker in ("ACCURACY 0.0001", "EPS_SCF 1.0E-12"):
+        if marker not in tight_native_input:
+            raise AssertionError(f"missing tight-native input marker: {marker}")
+    for marker in ("PROGRAM ENDED AT", "eps_scf:                                        1.00E-12"):
+        if marker not in tight_native_output:
+            raise AssertionError(f"missing tight-native output marker: {marker}")
+    if (tight_native_root / "exit_status").read_text().strip() != "0":
+        raise AssertionError("tight-native ice-VII run has nonzero exit status")
+    if "expected_cpu=93 allowed=93" not in (
+        tight_native_root / "affinity_preexec.txt"
+    ).read_text():
+        raise AssertionError("tight-native ice-VII affinity proof is invalid")
 
 
 def write_manifest() -> None:

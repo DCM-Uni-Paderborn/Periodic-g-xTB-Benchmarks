@@ -17,5 +17,7 @@
   "relative_phase_count": 12,
   "tight_cli_max_abs_energy_change_ha": 9.492850949754938e-11,
   "tight_cli_native_VII_energy_delta_ha": -1.0519954685150879e-07,
-  "tight_cli_native_VII_relative_delta_kj_mol": -2.143273491128639e-05
+  "tight_cli_native_VII_relative_delta_kj_mol": -2.143273491128639e-05,
+  "tight_native_VII_energy_change_ha": 1.1368683772161603e-13,
+  "tight_native_cli_VII_energy_delta_ha": -1.0519943316467106e-07
 }
