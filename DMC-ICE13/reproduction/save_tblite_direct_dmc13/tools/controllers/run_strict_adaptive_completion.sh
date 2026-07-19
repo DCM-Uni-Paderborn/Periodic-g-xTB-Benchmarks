@@ -130,8 +130,14 @@ run_phase_round() {
     cpus=(83)
   elif (( mesh == 7 )); then
     cpus=(83 79)
+  elif (( mesh == 6 )); then
+    # Archived peak-memory data bound a six-job batch below the 400 GiB
+    # reserve while keeping every calculation on its own physical CPU.
+    cpus=(83 81 79 77 75 73)
   else
-    cpus=(83 81 79 77)
+    # The complete 4^3 and 5^3 phase sets peak at about 72 and 249 GiB,
+    # respectively, so all twelve non-reference phases can run together.
+    cpus=(83 81 79 77 75 73 71 69 67 65 63 61)
   fi
   local -a batch=()
   local phase cpu index=0

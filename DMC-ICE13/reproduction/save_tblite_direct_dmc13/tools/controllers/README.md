@@ -11,6 +11,15 @@ uses the first adjacent pair satisfying
 `|Delta R| <= 0.10 kJ mol^-1 per H2O`, retains the denser endpoint, and advances
 only unresolved phases.  Mesh 8 and above are serialized to limit memory use.
 
+Concurrency below that boundary is bounded by archived peak-memory data: all
+twelve non-reference phases run together at `4^3` and `5^3`, at most six run
+together at `6^3`, and at most two at `7^3`.  Every science process still
+receives a disjoint singleton CPU through the reservation launcher.
+
+`restart_parallel_completion_after_current.sh` safely replaces an older
+suspended controller only after its current hash-qualified calculation has
+completed and no live CP2K or MPI process remains.
+
 `run_gamma_supercell_oracle.sh` refuses to run until the qualified VII/Ih
 `8 x 8 x 8` pair exists.  It then evaluates the explicit Gamma-only
 Born--von--Karman supercell with its independently frozen input hash.
