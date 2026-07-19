@@ -7,6 +7,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import re
 from pathlib import Path
 
@@ -54,7 +55,7 @@ def energy(path: Path) -> float | None:
             values.append(float(match.group(1)))
         if "PROGRAM ENDED AT" in line:
             ended = True
-    return values[-1] if ended and values else None
+    return values[-1] if ended and values and math.isfinite(values[-1]) else None
 
 
 def main() -> None:
@@ -104,24 +105,27 @@ def main() -> None:
                     # and fail below only if no qualified same-mesh pair exists.
                     continue
                 qualified = True
-                for run_dir, input_path in (
-                    (phase_dir, phase_input),
-                    (ih_dir, ih_input),
-                ):
-                    exit_status = run_dir / "exit_status"
-                    if (
-                        not exit_status.is_file()
-                        or exit_status.read_text().strip() != "0"
+                try:
+                    for run_dir, input_path in (
+                        (phase_dir, phase_input),
+                        (ih_dir, ih_input),
                     ):
-                        qualified = False
-                        break
-                    input_hash_path = run_dir / "input.sha256"
-                    if (
-                        not input_hash_path.is_file()
-                        or recorded_digest(input_hash_path) != sha256(input_path)
-                    ):
-                        qualified = False
-                        break
+                        exit_status = run_dir / "exit_status"
+                        if (
+                            not exit_status.is_file()
+                            or exit_status.read_text().strip() != "0"
+                        ):
+                            qualified = False
+                            break
+                        input_hash_path = run_dir / "input.sha256"
+                        if (
+                            not input_hash_path.is_file()
+                            or recorded_digest(input_hash_path) != sha256(input_path)
+                        ):
+                            qualified = False
+                            break
+                except (OSError, RuntimeError):
+                    qualified = False
                 if not qualified:
                     continue
             elif phase_digest is not None or ih_digest is not None:

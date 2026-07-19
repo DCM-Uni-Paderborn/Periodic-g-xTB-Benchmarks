@@ -198,6 +198,21 @@ class AdaptiveReportingTest(unittest.TestCase):
         self.assertEqual(meshes["II"], 1)
         self.assertEqual(meshes["III"], 2)
 
+        endpoints = self.root / "bad-hash-endpoints.json"
+        selection = self.run_tool(
+            "select_adaptive_endpoints.py",
+            self.root,
+            self.reference,
+            "--meshes",
+            "1,2",
+            "--require-binary-sha256",
+            CURRENT_DIGEST,
+            "--output-json",
+            endpoints,
+            expected_returncode=2,
+        )
+        self.assertIn("input hash mismatch", selection.stdout)
+
     def test_wrong_macdonald_shift_is_not_qualified(self) -> None:
         input_path = self.root / "inputs" / "k222-reduced" / "II" / "input.inp"
         input_path.write_text(

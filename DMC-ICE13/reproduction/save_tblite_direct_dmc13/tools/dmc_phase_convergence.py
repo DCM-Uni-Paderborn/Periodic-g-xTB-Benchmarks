@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import math
 import re
 import sys
 from pathlib import Path
@@ -51,7 +52,7 @@ def final_energy(path: Path) -> float:
                 values.append(float(match.group(1)))
             if "PROGRAM ENDED AT" in line:
                 ended = True
-    if not ended or not values:
+    if not ended or not values or not math.isfinite(values[-1]):
         raise ValueError(f"incomplete CP2K output: {path}")
     return values[-1]
 

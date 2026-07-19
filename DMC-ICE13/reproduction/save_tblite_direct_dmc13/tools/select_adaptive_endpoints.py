@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 import re
@@ -21,6 +22,22 @@ ENERGY_RE = re.compile(
     r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?)\s*$"
 )
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def recorded_digest(path: Path) -> str:
+    fields = path.read_text(encoding="utf-8", errors="replace").split()
+    digest = fields[0].lower() if fields else ""
+    if not SHA256_RE.fullmatch(digest):
+        raise ValueError(f"invalid SHA-256 record: {path}")
+    return digest
 
 
 def mesh_directory(root: Path, mesh: int, area: str) -> Path:
@@ -48,13 +65,18 @@ def qualified_energy(
     exit_status = run / "exit_status"
     if not exit_status.is_file() or exit_status.read_text().strip() != "0":
         raise ValueError(f"missing or nonzero exit status: {exit_status}")
-    digest_path = run / "binary.sha256"
-    fields = digest_path.read_text(encoding="utf-8", errors="replace").split()
-    digest = fields[0].lower() if fields else ""
+    digest = recorded_digest(run / "binary.sha256")
     if digest != required_binary:
         raise ValueError(
             f"wrong binary at mesh={mesh} phase={phase}: "
             f"actual={digest or 'missing'} required={required_binary}"
+        )
+    recorded_input = recorded_digest(run / "input.sha256")
+    actual_input = sha256(input_path)
+    if recorded_input != actual_input:
+        raise ValueError(
+            f"input hash mismatch for mesh={mesh} phase={phase}: "
+            f"recorded={recorded_input} actual={actual_input}"
         )
     actual_mesh, water_count = input_mesh_and_water_count(input_path)
     if actual_mesh != mesh:
