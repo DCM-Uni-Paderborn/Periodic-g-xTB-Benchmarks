@@ -1,0 +1,52 @@
+xTB calculator
+ | self-consistent screened Coulomb + Pauli repulsion
+ | Coulomb electrostatics and tight-binding
+ |  * onsite first-order tight-binding
+ |  * isotropic Klopman-Ohno-Mataga-Nishimoto electrostatics
+ |  * erf-damped anisotropic electrostatics
+ |  * two-body third-order tight-binding
+ |  * onsite fourth-order tight-binding
+ | self-consistent DFT-D4Srev dispersion
+ | Mulliken and onsite Fock exchange + bond-order correlation
+
+core increment energy         -3.3325160265936E+03 Eh
+dispersion energy              2.0893202668979E-02 Eh
+molecular charge               0.0000000000000E+00 e
+number of electrons            3.8399999999761E+02 e
+number of unpaired electrons   0.0000000000000E+00 e
+wavefunction                   restricted
+integral cutoff                2.6907767250513E+01 bohr
+energy convergence             1.0000000000000E-07 Eh
+density convergence            2.0000000000000E-06 e
+
+------------------------------------------------------------
+  cycle        total energy    energy error   density error
+------------------------------------------------------------
+      1     -3670.741623317  -3.3824649E+02   0.0000000E+00
+      2     -3671.064448902  -3.2282558E-01   9.1493642E-03
+      3     -3671.274341531  -2.0989263E-01   7.4259393E-03
+      4     -3671.686845018  -4.1250349E-01   6.0312085E-03
+      5     -3671.690797288  -3.9522702E-03   3.0230859E-04
+      6     -3671.690919617  -1.2232901E-04   7.2528009E-05
+      7     -3671.690920371  -7.5361891E-07   8.8833317E-06
+      8     -3671.690920377  -6.6663119E-09   2.4591957E-07
+------------------------------------------------------------
+
+electronic energy             -3.3919578698635E+02 Eh
+total energy                  -3.6716909203773E+03 Eh
+
+Post processing:
+ | Mayer-Wiberg bond orders
+
+ total:                                   3.369 sec
+ - increment                              0.000 sec (  0%)
+ - repulsion                              0.007 sec (  0%)
+ - dispersion                             0.783 sec ( 23%)
+ - coulomb                                0.757 sec ( 22%)
+ - exchange                               0.004 sec (  0%)
+ - hamiltonian                            0.152 sec (  4%)
+ - acp                                    1.501 sec ( 44%)
+ - post processing                        0.001 sec (  0%)
+ - scc                                    0.086 sec (  2%)
+
+[Info] JSON dump of results written to '/private/tmp/dmc_stress_fd_k222_xvii_20260718/h00002_plus/result.json'

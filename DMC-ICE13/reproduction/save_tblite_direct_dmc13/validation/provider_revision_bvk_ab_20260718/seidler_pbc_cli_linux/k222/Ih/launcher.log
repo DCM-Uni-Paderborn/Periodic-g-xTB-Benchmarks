@@ -1,0 +1,53 @@
+xTB calculator
+ | self-consistent screened Coulomb + Pauli repulsion
+ | Coulomb electrostatics and tight-binding
+ |  * onsite first-order tight-binding
+ |  * isotropic Klopman-Ohno-Mataga-Nishimoto electrostatics
+ |  * erf-damped anisotropic electrostatics
+ |  * two-body third-order tight-binding
+ |  * onsite fourth-order tight-binding
+ | self-consistent DFT-D4Srev dispersion
+ | Mulliken and onsite Fock exchange + bond-order correlation
+
+core increment energy         -6.6650320531872E+03 Eh
+dispersion energy              4.8900133595570E-02 Eh
+molecular charge               0.0000000000000E+00 e
+number of electrons            7.6799999999521E+02 e
+number of unpaired electrons   0.0000000000000E+00 e
+wavefunction                   restricted
+integral cutoff                2.6907767250513E+01 bohr
+energy convergence             1.0000000000000E-07 Eh
+density convergence            2.0000000000000E-06 e
+
+------------------------------------------------------------
+  cycle        total energy    energy error   density error
+------------------------------------------------------------
+      1     -7339.518705028  -6.7453555E+02   0.0000000E+00
+      2     -7340.193558398  -6.7485337E-01   6.4690004E-03
+      3     -7340.631418909  -4.3786051E-01   5.2505171E-03
+      4     -7341.487704609  -8.5628570E-01   4.2648593E-03
+      5     -7341.496465589  -8.7609803E-03   2.2218309E-04
+      6     -7341.496716270  -2.5068101E-04   5.2097650E-05
+      7     -7341.496717968  -1.6981261E-06   6.5818428E-06
+      8     -7341.496717980  -1.2255782E-08   2.0539422E-07
+------------------------------------------------------------
+
+electronic energy             -6.7651356492663E+02 Eh
+total energy                  -7.3414967179802E+03 Eh
+
+Post processing:
+ | Mayer-Wiberg bond orders
+
+ total:                                  15.926 sec
+ - increment                              0.000 sec (  0%)
+ - repulsion                              0.021 sec (  0%)
+ - dispersion                             3.166 sec ( 19%)
+ - coulomb                                6.881 sec ( 43%)
+ - exchange                               0.027 sec (  0%)
+ - hamiltonian                            0.651 sec (  4%)
+ - acp                                    3.540 sec ( 22%)
+ - spin polarization                      0.000 sec (  0%)
+ - post processing                        0.009 sec (  0%)
+ - scc                                    1.440 sec (  9%)
+
+[Info] JSON dump of results written to '/home/kuehne88/work/gxtb-native-bvk-20260718/provider-author-pbc-linux-gate/k222/Ih-sentinel2/result.json'
