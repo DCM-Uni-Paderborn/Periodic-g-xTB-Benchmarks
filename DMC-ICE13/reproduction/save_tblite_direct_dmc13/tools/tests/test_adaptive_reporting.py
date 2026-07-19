@@ -361,6 +361,40 @@ class AdaptiveReportingTest(unittest.TestCase):
         self.assertIn("status=NOT_READY", readiness)
         self.assertIn("no complete qualified same-mesh result for II", readiness)
 
+    def test_fixed_mesh_mae_requires_complete_same_build_series(self) -> None:
+        result = self.run_tool(
+            "dmc_fixed_mesh_mae.py",
+            self.root,
+            self.reference,
+            "--meshes",
+            "1,2",
+            "--require-binary-sha256",
+            CURRENT_DIGEST,
+        )
+        rows = result.stdout.splitlines()
+        self.assertEqual(
+            rows[0],
+            "mesh\tMAE_kJ_mol_H2O\tRMSE_kJ_mol_H2O\tMaxAE_kJ_mol_H2O",
+        )
+        self.assertEqual(len(rows), 3)
+        self.assertTrue(rows[1].startswith("Gamma\t"))
+        self.assertTrue(rows[2].startswith("2x2x2\t"))
+
+        (self.root / "runs/k222-reduced/II/binary.sha256").write_text(
+            f"{OLDER_DIGEST}  /synthetic/cp2k.psmp\n", encoding="utf-8"
+        )
+        failed = self.run_tool(
+            "dmc_fixed_mesh_mae.py",
+            self.root,
+            self.reference,
+            "--meshes",
+            "1,2",
+            "--require-binary-sha256",
+            CURRENT_DIGEST,
+            expected_returncode=1,
+        )
+        self.assertIn("binary mismatch: mesh=2 phase=II", failed.stderr)
+
     def test_verifier_rejects_nonfirst_passing_pair(self) -> None:
         endpoints = self.root / "endpoints.json"
         self.run_tool(

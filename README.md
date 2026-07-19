@@ -16,7 +16,11 @@ inputs, results, and Part-I/Part-II paper artifacts belong exclusively here.
 
 - `DMC-ICE13/`: phase-wise adaptive native-Bloch k-point convergence for
   periodic g-xTB relative ice-polymorph energies, with compact GFN1/GFN2 and
-  diffusion Monte Carlo comparison values.
+  diffusion Monte Carlo comparison values.  The independent fail-closed
+  fixed-mesh series and its paper plot use a value only after ice Ih and all
+  twelve comparison phases carry the same executable and exact input
+  provenance; the current qualified curve covers Gamma through `4x4x4` and is
+  extended in place as complete denser meshes finish.
 - `X23b/`: correctness-gated g-xTB molecular-crystal workflow covering
   molecular optimization, shifted-k preflights, force/stress finite
   differences, native-Bloch cell optimization, and final k-point energies.
