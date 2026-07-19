@@ -98,6 +98,11 @@ response-corrected values.
   `SOURCE_SHA256SUMS` additionally preserves the original full temporary
   regression-worktree inventory, including files that are not duplicated in
   this compact archive;
+- `source_identity.txt` distinguishes the base revision printed by the
+  qualified executable from its effective source tree.  The two-file patch
+  archived under `hardening_validation/provenance/source.patch` was present
+  in that build and was subsequently committed unchanged as the recorded
+  effective source revision;
 - `SHA256SUMS`: complete integrity manifest for every archived file.
 
 Recompute all tables and enforce the numerical gates with:
