@@ -15,3 +15,9 @@ primitive atom together for the force check.  The stress check applies a
 homogeneous `xx` strain to the complete supercell.  All displaced structures
 and raw JSON energies are retained below the two `finite_difference_*`
 directories.
+
+Run `python3 verify_derivatives.py` to reconstruct the native/CLI comparison
+and every central difference directly from the raw outputs.  The verifier also
+checks normal termination and proves geometrically that the force pair moves
+exactly the eight translational images while every stress pair applies the
+requested homogeneous Cartesian strain to both lattice and coordinates.
