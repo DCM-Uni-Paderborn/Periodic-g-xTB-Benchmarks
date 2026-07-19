@@ -221,6 +221,16 @@ by CP2K. This proves that the regular-mesh/restart hardening is inactive for
 the frozen DMC energy inputs; previously completed response-corrected points
 therefore do not require a blanket rerun merely because of that hardening.
 
+For a single reproducible implementation audit,
+`tools/verify_part_i_implementation.py` executes the complete archived gate
+set: absolute CLI/native energy parity, numerical-accuracy sensitivity,
+periodic-response A/B, energy/force/stress derivatives, k-point/BvK grid
+identity, provider and model revisions, derivative hardening, unchanged-build
+sentinels, Wigner--Seitz diagnosis, and all portable SHA-256 manifests.  Its
+JSON report records every return code and hashes the script and captured
+output of each gate; any failed subordinate verifier fails the aggregate
+audit.
+
 For the final adaptive table, `tools/select_adaptive_endpoints.py` enforces the
 phase-local one-step rule directly on normally terminated calculations from a
 required CP2K executable hash.  It rejects a missing earlier adjacent pair,
