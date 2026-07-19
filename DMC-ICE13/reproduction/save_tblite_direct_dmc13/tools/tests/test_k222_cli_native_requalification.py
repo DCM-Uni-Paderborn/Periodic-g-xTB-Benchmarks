@@ -71,8 +71,29 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
         for index, phase in enumerate(PHASES):
             structure = self.archive / "structures" / "k222" / phase / "POSCAR"
             structure.parent.mkdir(parents=True)
+            primitive = (
+                ("H", (0.10, 0.20, 0.30)),
+                ("H", (0.20, 0.30, 0.40)),
+                ("O", (0.15, 0.25, 0.35)),
+            )
+            positions = []
+            for element in ("H", "O"):
+                for primitive_element, fractional in primitive:
+                    if primitive_element != element:
+                        continue
+                    for iz in range(2):
+                        for iy in range(2):
+                            for ix in range(2):
+                                positions.append(
+                                    " ".join(
+                                        f"{4.0 * (fractional[axis] + shift):.12f}"
+                                        for axis, shift in enumerate((ix, iy, iz))
+                                    )
+                                )
             structure.write_text(
-                "test\n1.0\n8 0 0\n0 8 0\n0 0 8\nH O\n16 8\nCartesian\n",
+                "test\n1.0\n8 0 0\n0 8 0\n0 0 8\nH O\n16 8\nCartesian\n"
+                + "\n".join(positions)
+                + "\n",
                 encoding="utf-8",
             )
 
@@ -107,7 +128,21 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
                 "  SCHEME MACDONALD 2 2 2 0.25 0.25 0.25\n"
                 "  SYMMETRY T\n"
                 "  FULL_GRID F\n"
-                "&END KPOINTS\n",
+                "&END KPOINTS\n"
+                "&SUBSYS\n"
+                "  &CELL\n"
+                "    PERIODIC XYZ\n"
+                "    A 4 0 0\n"
+                "    B 0 4 0\n"
+                "    C 0 0 4\n"
+                "  &END CELL\n"
+                "  &COORD\n"
+                "    SCALED\n"
+                "    H 0.10 0.20 0.30\n"
+                "    H 0.20 0.30 0.40\n"
+                "    O 0.15 0.25 0.35\n"
+                "  &END COORD\n"
+                "&END SUBSYS\n",
                 encoding="utf-8",
             )
             native_dir = self.native_runs / phase
@@ -256,6 +291,36 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
         completed = self.run_verifier()
         self.assertNotEqual(completed.returncode, 0)
         self.assertIn("native/direct dispersion mismatch", completed.stderr)
+
+    def test_supercell_coordinate_mismatch_is_rejected(self) -> None:
+        structure = self.archive / "structures" / "k222" / "VIII" / "POSCAR"
+        lines = structure.read_text(encoding="utf-8").splitlines()
+        fields = lines[8].split()
+        fields[0] = f"{float(fields[0]) + 1.0e-4:.12f}"
+        lines[8] = " ".join(fields)
+        structure.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        direct_manifest = self.direct / "k222" / "VIII" / "input.sha256"
+        direct_manifest.write_text(
+            f"{digest(structure)}  {structure}\n", encoding="utf-8"
+        )
+        completed = self.run_verifier()
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("native/direct coordinate mismatch", completed.stderr)
+
+    def test_cartesian_native_coordinates_map_to_same_supercell(self) -> None:
+        native_input = self.native_inputs / "II" / "input.inp"
+        text = native_input.read_text(encoding="utf-8")
+        text = text.replace("    SCALED\n", "")
+        text = text.replace("H 0.10 0.20 0.30", "H 0.40 0.80 1.20")
+        text = text.replace("H 0.20 0.30 0.40", "H 0.80 1.20 1.60")
+        text = text.replace("O 0.15 0.25 0.35", "O 0.60 1.00 1.40")
+        native_input.write_text(text, encoding="utf-8")
+        native_manifest = self.native_runs / "II" / "input.sha256"
+        native_manifest.write_text(
+            f"{digest(native_input)}  {native_input}\n", encoding="utf-8"
+        )
+        completed = self.run_verifier()
+        self.assertEqual(completed.returncode, 0, completed.stderr)
 
 
 if __name__ == "__main__":

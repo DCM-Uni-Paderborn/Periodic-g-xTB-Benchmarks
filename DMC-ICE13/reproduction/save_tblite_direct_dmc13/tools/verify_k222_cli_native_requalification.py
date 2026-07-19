@@ -9,6 +9,7 @@ import json
 import math
 import re
 from pathlib import Path
+from typing import Iterable
 
 
 PHASES = (
@@ -47,6 +48,213 @@ SCHEME_RE = re.compile(
     r"0\.25(?:0*)\s+0\.25(?:0*)\s+0\.25(?:0*)\s*$",
     re.IGNORECASE | re.MULTILINE,
 )
+STRUCTURE_TOLERANCE_ANGSTROM = 5.0e-8
+
+
+def parse_float(value: str) -> float:
+    return float(value.replace("D", "E").replace("d", "e"))
+
+
+def vector_scale(value: Iterable[float], factor: float) -> tuple[float, float, float]:
+    data = tuple(component * factor for component in value)
+    if len(data) != 3:
+        raise AssertionError("expected a three-vector")
+    return data  # type: ignore[return-value]
+
+
+def row_times_matrix(
+    row: tuple[float, float, float], matrix: list[tuple[float, float, float]]
+) -> tuple[float, float, float]:
+    return tuple(sum(row[i] * matrix[i][j] for i in range(3)) for j in range(3))
+
+
+def inverse_3x3(
+    matrix: list[tuple[float, float, float]],
+) -> list[tuple[float, float, float]]:
+    a, b, c = matrix
+    determinant = (
+        a[0] * (b[1] * c[2] - b[2] * c[1])
+        - a[1] * (b[0] * c[2] - b[2] * c[0])
+        + a[2] * (b[0] * c[1] - b[1] * c[0])
+    )
+    if not math.isfinite(determinant) or abs(determinant) < 1.0e-14:
+        raise AssertionError("singular or invalid cell")
+    inverse = [
+        (
+            (b[1] * c[2] - b[2] * c[1]) / determinant,
+            (a[2] * c[1] - a[1] * c[2]) / determinant,
+            (a[1] * b[2] - a[2] * b[1]) / determinant,
+        ),
+        (
+            (b[2] * c[0] - b[0] * c[2]) / determinant,
+            (a[0] * c[2] - a[2] * c[0]) / determinant,
+            (a[2] * b[0] - a[0] * b[2]) / determinant,
+        ),
+        (
+            (b[0] * c[1] - b[1] * c[0]) / determinant,
+            (a[1] * c[0] - a[0] * c[1]) / determinant,
+            (a[0] * b[1] - a[1] * b[0]) / determinant,
+        ),
+    ]
+    return inverse
+
+
+def parse_cp2k_structure(
+    path: Path,
+) -> tuple[list[tuple[float, float, float]], list[tuple[str, tuple[float, float, float]]]]:
+    cell: dict[str, tuple[float, float, float]] = {}
+    coordinates: list[tuple[str, tuple[float, float, float]]] = []
+    in_cell = False
+    in_coordinates = False
+    scaled = False
+    periodic_xyz = False
+    for raw_line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        line = re.split(r"[#!]", raw_line, maxsplit=1)[0].strip()
+        if not line:
+            continue
+        upper = line.upper()
+        if upper == "&CELL":
+            in_cell = True
+            continue
+        if upper == "&COORD":
+            in_coordinates = True
+            continue
+        if upper.startswith("&END"):
+            in_cell = False
+            in_coordinates = False
+            continue
+        fields = line.split()
+        if in_cell:
+            key = fields[0].upper()
+            if key in {"A", "B", "C"} and len(fields) == 4:
+                cell[key] = tuple(parse_float(value) for value in fields[1:4])
+            elif key == "PERIODIC" and len(fields) == 2:
+                periodic_xyz = fields[1].upper() == "XYZ"
+        elif in_coordinates:
+            if upper == "SCALED":
+                scaled = True
+            elif len(fields) >= 4:
+                coordinates.append(
+                    (
+                        fields[0],
+                        tuple(parse_float(value) for value in fields[1:4]),
+                    )
+                )
+    if set(cell) != {"A", "B", "C"} or not periodic_xyz:
+        raise AssertionError(f"incomplete periodic CP2K cell: {path}")
+    if not coordinates:
+        raise AssertionError(f"expected nonempty CP2K coordinates: {path}")
+    ordered_cell = [cell[key] for key in ("A", "B", "C")]
+    if not scaled:
+        inverse_cell = inverse_3x3(ordered_cell)
+        coordinates = [
+            (element, row_times_matrix(cartesian, inverse_cell))
+            for element, cartesian in coordinates
+        ]
+    return ordered_cell, coordinates
+
+
+def parse_poscar_structure(
+    path: Path,
+) -> tuple[list[tuple[float, float, float]], list[tuple[str, tuple[float, float, float]]]]:
+    lines = [line.strip() for line in path.read_text(encoding="utf-8").splitlines()]
+    if len(lines) < 9:
+        raise AssertionError(f"incomplete POSCAR: {path}")
+    scale = parse_float(lines[1])
+    if not math.isfinite(scale) or scale <= 0.0:
+        raise AssertionError(f"unsupported POSCAR scale: {path}")
+    cell = [
+        vector_scale((parse_float(value) for value in lines[index].split()[:3]), scale)
+        for index in range(2, 5)
+    ]
+    elements = lines[5].split()
+    counts = [int(value) for value in lines[6].split()]
+    if len(elements) != len(counts) or any(value <= 0 for value in counts):
+        raise AssertionError(f"invalid POSCAR species/count record: {path}")
+    coordinate_line = 7
+    if lines[coordinate_line].lower().startswith("s"):
+        coordinate_line += 1
+    mode = lines[coordinate_line].lower()
+    coordinate_line += 1
+    direct = mode.startswith("d")
+    cartesian = mode.startswith(("c", "k"))
+    if not direct and not cartesian:
+        raise AssertionError(f"unknown POSCAR coordinate mode: {path}")
+    species = [element for element, count in zip(elements, counts) for _ in range(count)]
+    if len(lines) < coordinate_line + len(species):
+        raise AssertionError(f"missing POSCAR coordinates: {path}")
+    coordinates: list[tuple[str, tuple[float, float, float]]] = []
+    for element, line in zip(
+        species, lines[coordinate_line : coordinate_line + len(species)]
+    ):
+        values = tuple(parse_float(value) for value in line.split()[:3])
+        cart = row_times_matrix(values, cell) if direct else vector_scale(values, scale)
+        coordinates.append((element, cart))
+    return cell, coordinates
+
+
+def verify_structure_mapping(cp2k_input: Path, poscar: Path) -> tuple[float, float]:
+    primitive_cell, primitive_coordinates = parse_cp2k_structure(cp2k_input)
+    supercell, explicit_coordinates = parse_poscar_structure(poscar)
+    expected_supercell = [vector_scale(vector, 2.0) for vector in primitive_cell]
+    cell_residual = max(
+        abs(supercell[i][j] - expected_supercell[i][j])
+        for i in range(3)
+        for j in range(3)
+    )
+    if cell_residual > STRUCTURE_TOLERANCE_ANGSTROM:
+        raise AssertionError(
+            f"native/direct 2x2x2 cell mismatch: {cell_residual:.6e} Angstrom"
+        )
+
+    expected: dict[str, list[tuple[float, float, float]]] = {}
+    for element, fractional in primitive_coordinates:
+        wrapped = tuple(value % 1.0 for value in fractional)
+        for iz in range(2):
+            for iy in range(2):
+                for ix in range(2):
+                    expected.setdefault(element, []).append(
+                        (
+                            (wrapped[0] + ix) / 2.0,
+                            (wrapped[1] + iy) / 2.0,
+                            (wrapped[2] + iz) / 2.0,
+                        )
+                    )
+    inverse_supercell = inverse_3x3(supercell)
+    actual: dict[str, list[tuple[float, float, float]]] = {}
+    for element, cartesian in explicit_coordinates:
+        fractional = row_times_matrix(cartesian, inverse_supercell)
+        actual.setdefault(element, []).append(tuple(value % 1.0 for value in fractional))
+    if {key: len(value) for key, value in expected.items()} != {
+        key: len(value) for key, value in actual.items()
+    }:
+        raise AssertionError("native/direct species multiplicity mismatch")
+
+    coordinate_residual = 0.0
+    for element, expected_positions in expected.items():
+        remaining = list(actual[element])
+        for expected_position in expected_positions:
+            best_index = -1
+            best_distance = math.inf
+            for index, actual_position in enumerate(remaining):
+                delta_fractional = tuple(
+                    (actual_position[j] - expected_position[j])
+                    - round(actual_position[j] - expected_position[j])
+                    for j in range(3)
+                )
+                delta_cartesian = row_times_matrix(delta_fractional, supercell)
+                distance = math.sqrt(sum(value * value for value in delta_cartesian))
+                if distance < best_distance:
+                    best_distance = distance
+                    best_index = index
+            if best_index < 0 or best_distance > STRUCTURE_TOLERANCE_ANGSTROM:
+                raise AssertionError(
+                    f"native/direct coordinate mismatch for {element}: "
+                    f"{best_distance:.6e} Angstrom"
+                )
+            coordinate_residual = max(coordinate_residual, best_distance)
+            remaining.pop(best_index)
+    return cell_residual, coordinate_residual
 
 
 def digest(path: Path) -> str:
@@ -252,6 +460,9 @@ def main() -> None:
         if recorded_digest(native_dir / "binary.sha256") != args.expected_native_binary:
             raise AssertionError(f"native binary mismatch: {phase}")
         native_input_hash = verify_native_input(native_input)
+        cell_residual, coordinate_residual = verify_structure_mapping(
+            native_input, structure
+        )
         if recorded_digest(native_dir / "input.sha256") != native_input_hash:
             raise AssertionError(f"native input mismatch: {phase}")
         direct_cpu = qualify_affinity(
@@ -307,6 +518,8 @@ def main() -> None:
                 "direct_json_sha256": digest(direct_json),
                 "native_output_sha256": digest(native_output),
                 "native_input_sha256": native_input_hash,
+                "supercell_cell_residual_Angstrom": cell_residual,
+                "supercell_coordinate_residual_Angstrom": coordinate_residual,
                 "direct_cpu": direct_cpu,
                 "native_cpu": native_cpu,
             }
@@ -355,6 +568,12 @@ def main() -> None:
             "rms_native_minus_direct_dispersion_Ha": math.sqrt(
                 sum(value * value for value in dispersion_signed)
                 / len(dispersion_signed)
+            ),
+            "max_supercell_cell_residual_Angstrom": max(
+                float(row["supercell_cell_residual_Angstrom"]) for row in rows
+            ),
+            "max_supercell_coordinate_residual_Angstrom": max(
+                float(row["supercell_coordinate_residual_Angstrom"]) for row in rows
             ),
             "max_abs_relative_native_minus_direct_kJ_mol_per_water": maximum_relative,
         },
