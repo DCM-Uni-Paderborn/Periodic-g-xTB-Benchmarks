@@ -7,6 +7,7 @@ import argparse
 import json
 import math
 import re
+import tomllib
 from pathlib import Path
 
 from verify_absolute_energy_parity import (
@@ -61,6 +62,25 @@ def read_direct_energy(path: Path) -> float:
     if not math.isfinite(energy):
         raise AssertionError(f"non-finite direct energy: {path}")
     return energy
+
+
+def qualify_no_acp_parameter(path: Path) -> dict[str, int]:
+    parameter = tomllib.loads(path.read_text(encoding="utf-8"))
+    elements = parameter.get("element")
+    if not isinstance(elements, dict):
+        raise AssertionError("No-ACP parameter has no element table")
+    counts: dict[str, int] = {}
+    for symbol in ("H", "O"):
+        record = elements.get(symbol)
+        acp = record.get("acp") if isinstance(record, dict) else None
+        levels = acp.get("acp_levels") if isinstance(acp, dict) else None
+        if not isinstance(levels, list) or not levels:
+            raise AssertionError(f"No-ACP parameter lacks {symbol} ACP levels")
+        values = [float(value) for value in levels]
+        if any(value != 0.0 for value in values):
+            raise AssertionError(f"No-ACP parameter has nonzero {symbol} ACP levels")
+        counts[symbol] = len(values)
+    return counts
 
 
 def water_count(path: Path, replicas: int) -> int:
@@ -123,6 +143,7 @@ def main() -> None:
     if source.get("commit") != expected_revision:
         raise AssertionError("source revision mismatch")
     parameter_hash = digest(args.parameter_file)
+    zeroed_acp_levels = qualify_no_acp_parameter(args.parameter_file)
 
     rows: list[dict[str, object]] = []
     for phase in ("Ih", "XVII"):
@@ -223,6 +244,7 @@ def main() -> None:
             "source_revision": expected_revision,
             "source_identity_sha256": digest(args.source_identity),
             "parameter_sha256": parameter_hash,
+            "zeroed_acp_level_counts": zeroed_acp_levels,
             "controller_exit_status_sha256": digest(args.controller_exit_status),
         },
         "rows": rows,

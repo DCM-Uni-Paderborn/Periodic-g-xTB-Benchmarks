@@ -17,7 +17,11 @@ VERIFY = TOOLS / "verify_no_acp_cli_native.py"
 DIRECT_BINARY = "a" * 64
 NATIVE_BINARY = "b" * 64
 SOURCE_REVISION = "c" * 40
-PARAMETER_TEXT = "[hamiltonian.xtb]\nacp = false\n"
+PARAMETER_TEXT = (
+    "[hamiltonian.xtb]\n"
+    "[element.H.acp]\nacp_levels = [0.0, 0.0, 0.0, 0.0]\n"
+    "[element.O.acp]\nacp_levels = [0.0, 0.0, 0.0, 0.0]\n"
+)
 
 
 def digest(path: Path) -> str:
@@ -143,6 +147,24 @@ class NoAcpCliNativeTests(unittest.TestCase):
         completed = self.run_verifier()
         self.assertNotEqual(completed.returncode, 0)
         self.assertIn("parameter hash mismatch", completed.stderr)
+
+    def test_nonzero_acp_is_rejected_even_with_matching_hashes(self) -> None:
+        self.parameter.write_text(
+            PARAMETER_TEXT.replace(
+                "[element.O.acp]\nacp_levels = [0.0, 0.0, 0.0, 0.0]",
+                "[element.O.acp]\nacp_levels = [0.0, -0.1, 0.0, 0.0]",
+            ),
+            encoding="utf-8",
+        )
+        parameter_hash = digest(self.parameter)
+        for phase in ("Ih", "XVII"):
+            manifest = self.direct / "k222" / phase / "parameter.sha256"
+            manifest.write_text(
+                f"{parameter_hash}  {self.parameter}\n", encoding="utf-8"
+            )
+        completed = self.run_verifier()
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("nonzero O ACP levels", completed.stderr)
 
     def test_nonzero_controller_exit_is_rejected(self) -> None:
         self.controller_status.write_text("9\n", encoding="utf-8")
