@@ -32,6 +32,17 @@ launcher is responsible for disjoint singleton CPU reservations,
 `OMP/BLAS=1`, the pre-execution `/proc` affinity proof, and cross-process
 reservation locking.
 
+`launch_pinned_command.sh` applies the same fail-closed policy to direct
+save_tblite commands.  It records the executable and final input SHA-256
+before acquiring the reservation and refuses overlapping live CP2K, MPI, or
+save_tblite processes.  This keeps the direct CLI/native energy comparison
+reproducible without treating it as manuscript benchmark data.
+
+`monitor_qualified_mixed_mae.sh` can additionally receive an explicitly
+labelled earlier-run comparator through `EARLIER_RUN_MAE`.  The comparator is
+reported separately from the same-mesh paper value; it never participates in
+endpoint selection or qualification.
+
 Run the synthetic fail-closed controller test with:
 
 ```bash

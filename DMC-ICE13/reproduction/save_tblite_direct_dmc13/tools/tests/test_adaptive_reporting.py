@@ -249,6 +249,36 @@ class AdaptiveReportingTest(unittest.TestCase):
         self.assertEqual(set(self.mesh_vector(current.stdout).values()), {1})
         self.assertEqual(set(self.mesh_vector(older.stdout).values()), {2})
 
+    def test_mixed_report_labels_earlier_run_comparison(self) -> None:
+        result = self.run_tool(
+            "dmc_mixed_mae.py",
+            self.root,
+            self.reference,
+            "--meshes",
+            "2,1",
+            "--require-binary-sha256",
+            CURRENT_DIGEST,
+            "--earlier-run-mae",
+            "1.5",
+        )
+        fields = dict(
+            line.split("\t", 1)
+            for line in result.stdout.splitlines()
+            if "\t" in line
+        )
+        current = float(fields["mixed_mae_kj_mol"])
+        self.assertEqual(fields["earlier_run_comparator_mae_kj_mol"], "1.500000000000")
+        self.assertAlmostEqual(
+            float(fields["mae_change_vs_earlier_run_kj_mol"]),
+            current - 1.5,
+            places=11,
+        )
+        self.assertAlmostEqual(
+            float(fields["mae_change_vs_earlier_run_percent"]),
+            100.0 * (current - 1.5) / 1.5,
+            places=10,
+        )
+
     def test_mixed_report_skips_bad_input_hash(self) -> None:
         bad_hash = self.root / "runs" / "k222-reduced" / "II" / "input.sha256"
         bad_hash.write_text(f"{'0' * 64}  /synthetic/input.inp\n", encoding="utf-8")
@@ -340,7 +370,9 @@ class AdaptiveReportingTest(unittest.TestCase):
             encoding="utf-8",
         )
         environment = os.environ.copy()
-        environment.update({"ONCE": "1", "MESHES": "2,1"})
+        environment.update(
+            {"ONCE": "1", "MESHES": "2,1", "EARLIER_RUN_MAE": "1.5"}
+        )
         status = self.root / "monitor-ready"
         result = subprocess.run(
             [
@@ -361,8 +393,8 @@ class AdaptiveReportingTest(unittest.TestCase):
         self.assertIn("status=READY", (status / "dmc_mixed_qualified.status").read_text())
         history = (status / "dmc_mixed_qualified_history.tsv").read_text().splitlines()
         self.assertEqual(len(history), 2)
-        self.assertEqual(len(history[0].split("\t")), 7)
-        self.assertEqual(len(history[1].split("\t")), 7)
+        self.assertEqual(len(history[0].split("\t")), 10)
+        self.assertEqual(len(history[1].split("\t")), 10)
 
         for mesh in (1, 2):
             (self.root / "runs" / f"k{mesh}{mesh}{mesh}-reduced" / "II" / "cp2k.out").unlink()

@@ -22,6 +22,7 @@ interval=${6:-60}
 tool_dir=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 tool=$tool_dir/dmc_mixed_mae.py
 meshes=${MESHES:-9,8,7,6,5,4,3,2,1}
+earlier_run_mae=${EARLIER_RUN_MAE:-}
 
 [[ $required_binary =~ ^[0-9a-f]{64}$ ]] || {
   printf 'invalid required executable SHA-256: %s\n' "$required_binary" >&2
@@ -31,6 +32,10 @@ meshes=${MESHES:-9,8,7,6,5,4,3,2,1}
   printf 'invalid polling interval: %s\n' "$interval" >&2
   exit 2
 }
+if [[ -n $earlier_run_mae && ! $earlier_run_mae =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+  printf 'invalid earlier-run MAE: %s\n' "$earlier_run_mae" >&2
+  exit 2
+fi
 [[ -x $tool ]] || {
   printf 'missing executable evaluator: %s\n' "$tool" >&2
   exit 2
@@ -60,9 +65,14 @@ phase_pattern='^(II|III|IV|VI|VII|VIII|IX|XI|XIII|XIV|XV|XVII)$'
 while true; do
   temporary=$(mktemp "$status_dir/dmc_mixed_qualified.XXXXXX")
   stderr_file=$temporary.stderr
-  if "$tool" "$root" "$reference" --meshes "$meshes" \
-       --paper-json "$paper" --require-binary-sha256 "$required_binary" \
-       >"$temporary" 2>"$stderr_file"; then
+  tool_arguments=(
+    "$root" "$reference" --meshes "$meshes"
+    --paper-json "$paper" --require-binary-sha256 "$required_binary"
+  )
+  if [[ -n $earlier_run_mae ]]; then
+    tool_arguments+=(--earlier-run-mae "$earlier_run_mae")
+  fi
+  if "$tool" "${tool_arguments[@]}" >"$temporary" 2>"$stderr_file"; then
     signature=$(awk -F '\t' -v pattern="$phase_pattern" \
       '$1 ~ pattern {print $1 ":" $2}' "$temporary" | hash_stdin | awk '{print $1}')
     previous=$(awk 'NR == 1 {print $1}' "$signature_file" 2>/dev/null || true)
@@ -73,20 +83,25 @@ while true; do
       paper_same_mesh=$(awk -F '\t' '$1 == "paper_comparator_all_same_mesh" {print $2}' "$temporary")
       improvement=$(awk -F '\t' '$1 == "mae_improvement_kj_mol" {print $2}' "$temporary")
       percent=$(awk -F '\t' '$1 == "mae_improvement_percent" {print $2}' "$temporary")
+      earlier_value=$(awk -F '\t' '$1 == "earlier_run_comparator_mae_kj_mol" {print $2}' "$temporary")
+      earlier_change=$(awk -F '\t' '$1 == "mae_change_vs_earlier_run_kj_mol" {print $2}' "$temporary")
+      earlier_percent=$(awk -F '\t' '$1 == "mae_change_vs_earlier_run_percent" {print $2}' "$temporary")
       mesh_vector=$(awk -F '\t' -v pattern="$phase_pattern" \
         '$1 ~ pattern {printf "%s%s:%s", separator, $1, $2; separator=","} END {print ""}' \
         "$temporary")
       mv "$temporary" "$latest"
       printf '%s  %s\n' "$signature" "$timestamp" >"$signature_file"
       if [[ ! -s $history ]]; then
-        printf 'timestamp\tmixed_mae_kj_mol\tpaper_comparator_mae_kj_mol\tpaper_comparator_all_same_mesh\tmae_improvement_kj_mol\tmae_improvement_percent\tmesh_vector\n' \
+        printf 'timestamp\tmixed_mae_kj_mol\tpaper_comparator_mae_kj_mol\tpaper_comparator_all_same_mesh\tmae_improvement_kj_mol\tmae_improvement_percent\tearlier_run_comparator_mae_kj_mol\tmae_change_vs_earlier_run_kj_mol\tmae_change_vs_earlier_run_percent\tmesh_vector\n' \
           >"$history"
       fi
-      printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+      printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
         "$timestamp" "$current" "$paper_value" "$paper_same_mesh" \
-        "$improvement" "$percent" "$mesh_vector" >>"$history"
-      printf 'updated timestamp=%s mixed_mae=%s paper_comparator_mae=%s same_mesh=%s mesh_vector=%s\n' \
-        "$timestamp" "$current" "$paper_value" "$paper_same_mesh" "$mesh_vector"
+        "$improvement" "$percent" "$earlier_value" "$earlier_change" \
+        "$earlier_percent" "$mesh_vector" >>"$history"
+      printf 'updated timestamp=%s mixed_mae=%s earlier_run_mae=%s change_vs_earlier=%s paper_comparator_mae=%s same_mesh=%s mesh_vector=%s\n' \
+        "$timestamp" "$current" "$earlier_value" "$earlier_change" \
+        "$paper_value" "$paper_same_mesh" "$mesh_vector"
     else
       rm -f "$temporary"
     fi

@@ -65,7 +65,19 @@ def main() -> None:
     parser.add_argument("--meshes", default="6,5,4,3,2,1")
     parser.add_argument("--paper-json", type=Path)
     parser.add_argument("--require-binary-sha256")
+    parser.add_argument(
+        "--earlier-run-mae",
+        type=float,
+        help=(
+            "MAE from an earlier run used only as an explicitly labelled "
+            "comparison; positive changes mean that the current MAE is larger"
+        ),
+    )
     args = parser.parse_args()
+    if args.earlier_run_mae is not None and (
+        not math.isfinite(args.earlier_run_mae) or args.earlier_run_mae < 0.0
+    ):
+        parser.error("--earlier-run-mae must be a finite non-negative number")
     expected_digest = None
     if args.require_binary_sha256 is not None:
         expected_digest = args.require_binary_sha256.lower()
@@ -192,6 +204,17 @@ def main() -> None:
         )
     current_mae = sum(row[5] for row in rows) / len(rows)
     print(f"mixed_mae_kj_mol\t{current_mae:.12f}")
+    if args.earlier_run_mae is not None:
+        change = current_mae - args.earlier_run_mae
+        print(f"earlier_run_comparator_mae_kj_mol\t{args.earlier_run_mae:.12f}")
+        print(f"mae_change_vs_earlier_run_kj_mol\t{change:.12f}")
+        if args.earlier_run_mae == 0.0:
+            print("mae_change_vs_earlier_run_percent\tnan")
+        else:
+            print(
+                "mae_change_vs_earlier_run_percent\t"
+                f"{100.0 * change / args.earlier_run_mae:.12f}"
+            )
     if paper_results is not None:
         paper_mae = sum(abs(row[6]) for row in rows) / len(rows)
         print(f"paper_comparator_mae_kj_mol\t{paper_mae:.12f}")
