@@ -98,6 +98,13 @@ sets themselves.  The complete printed `2 x 2 x 2`, `3 x 3 x 3`, and
 Gamma-centred BvK reciprocal grids, including the even-mesh MacDonald shifts.
 Thus the direct-supercell comparison does not hide a shifted-mesh mismatch.
 
+For the explicit CP2K Gamma-supercell oracle, use
+`tools/build_cp2k_gamma_supercell.py` to generate the input and
+`tools/verify_gamma_supercell_input.py` to compare its cell, atom ordering,
+and every Cartesian coordinate against the archived POSCAR.  The verifier
+also rejects a non-XYZ cell or any explicit KPOINTS section, so the energy
+gate cannot silently compare different structures or boundary conditions.
+
 ## Derivative validation
 
 `validation/k222_XVII_derivatives` contains a native-versus-explicit-supercell
@@ -123,7 +130,10 @@ earlier large implementation discrepancy or a materially shorter convergence
 tail.  An independent Linux repetition covers all 13 phases at `2 x 2 x 2`:
 the author-branch and current-provider MAEs differ by only
 `+0.02549` kJ mol^-1 per water, with the author branch being marginally worse
-at this unconverged mesh.
+at this unconverged mesh.  The complete all-phase `3 x 3 x 3` repetition gives
+the same conclusion: the corresponding MAE change is `+0.02210` kJ mol^-1 per
+water, and the largest phase-resolved relative-energy shift is `0.10048`
+kJ mol^-1 per water for ice VI.
 
 `validation/model_revision_coarse_grid_ab_20260718` extends that audit to the
 separate `mstore-inorganic`, post-March molecular g-xTB, and DCM `main` source
