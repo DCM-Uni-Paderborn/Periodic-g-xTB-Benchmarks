@@ -177,3 +177,11 @@ qualified-minus-reference energies are exactly zero at the precision printed
 by CP2K. This proves that the regular-mesh/restart hardening is inactive for
 the frozen DMC energy inputs; previously completed response-corrected points
 therefore do not require a blanket rerun merely because of that hardening.
+
+For the final adaptive table, `tools/select_adaptive_endpoints.py` enforces the
+phase-local one-step rule directly on normally terminated calculations from a
+required CP2K executable hash.  It rejects a missing earlier adjacent pair,
+selects the denser member of the first pair with an absolute relative-energy
+change no larger than the chosen threshold, and computes aggregate error
+statistics only after all twelve non-reference phases pass.  No aggregate MAE
+or RMS condition participates in endpoint selection.
