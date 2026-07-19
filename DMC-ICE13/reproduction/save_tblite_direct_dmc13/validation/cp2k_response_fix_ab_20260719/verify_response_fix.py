@@ -9,6 +9,7 @@ import hashlib
 import json
 import math
 import re
+import tomllib
 from pathlib import Path
 
 
@@ -102,7 +103,38 @@ def first_manifest_hash(path: Path) -> str:
     return value
 
 
+def verify_no_acp_parameter() -> dict[str, str]:
+    parameter_root = RAW / "parameters"
+    full_path = parameter_root / "gxtb_full.toml"
+    no_acp_path = parameter_root / "gxtb_no_acp.toml"
+    full = tomllib.loads(full_path.read_text(encoding="utf-8"))
+    no_acp = tomllib.loads(no_acp_path.read_text(encoding="utf-8"))
+    if "acp" not in full:
+        raise AssertionError("full g-xTB parameter lacks the global ACP table")
+    if "acp" in no_acp:
+        raise AssertionError("No-ACP parameter still activates the global ACP table")
+    full_without_acp = dict(full)
+    del full_without_acp["acp"]
+    if no_acp != full_without_acp:
+        raise AssertionError(
+            "No-ACP parameter changes content beyond the global ACP table"
+        )
+    ih_input = (RAW / "inputs/k222-no-acp/Ih/input.inp").read_text(
+        encoding="utf-8", errors="replace"
+    )
+    if "PARAM " not in ih_input or "gxtb_no_acp.toml" not in ih_input:
+        raise AssertionError("archived No-ACP input does not select the parameter file")
+    return {
+        "semantic_delta": "global ACP table removed only",
+        "full_parameter_sha256": hashlib.sha256(full_path.read_bytes()).hexdigest(),
+        "no_acp_parameter_sha256": hashlib.sha256(
+            no_acp_path.read_bytes()
+        ).hexdigest(),
+    }
+
+
 def compute() -> tuple[list[dict[str, object]], list[dict[str, object]], list[dict[str, object]], dict[str, object]]:
+    no_acp_parameter = verify_no_acp_parameter()
     final = cp2k_set("cp2k_final_k222")
     old = cp2k_set("cp2k_old_d933_k222")
     cli = cli_set("cli_final_k222")
@@ -236,6 +268,11 @@ def compute() -> tuple[list[dict[str, object]], list[dict[str, object]], list[di
         "full_model_XVII_Ih_response_shift_kj_mol": full_shift,
         "no_ACP_XVII_Ih_response_shift_kj_mol": no_acp_shift,
         "no_ACP_fraction_percent": 100.0 * no_acp_shift / full_shift,
+        "no_ACP_parameter_semantic_delta": no_acp_parameter["semantic_delta"],
+        "no_ACP_full_parameter_sha256": no_acp_parameter[
+            "full_parameter_sha256"
+        ],
+        "no_ACP_parameter_sha256": no_acp_parameter["no_acp_parameter_sha256"],
         "final_cp2k_binary_sha256": first_manifest_hash(
             ROOT / "provenance/final/formal-binaries.sha256"
         ),

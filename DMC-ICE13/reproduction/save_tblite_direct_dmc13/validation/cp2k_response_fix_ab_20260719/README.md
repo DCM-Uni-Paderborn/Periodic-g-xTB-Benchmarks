@@ -53,7 +53,12 @@ Removing ACP from both Ih and XVII retains `5.2328450` of the full
 `5.8196408` kJ mol^-1 relative-energy shift (`89.917%`).  The dominant cause is
 therefore the corrected periodic Born--von Karman Coulomb response.  This
 ablation does not imply that ACP is generally negligible; it only assigns the
-observed Ih--XVII A/B shift.
+observed Ih--XVII A/B shift.  The exact full and No-ACP parameter files are
+archived in `raw/parameters`.  Their parsed contents are identical except for
+the global `[acp]` activation table, whose absence prevents allocation of the
+ACP contribution while leaving the inactive elemental projector records
+unchanged.  The verifier enforces this semantic difference before accepting
+the ablation.
 
 The coarse-grid MAEs are diagnostic and must not replace the adaptively
 converged benchmark.
@@ -86,7 +91,7 @@ response-corrected values.
 - `summary.json`: machine-readable aggregate metrics;
 - `source_identity.txt` and `provenance/`: source and binary identities;
 - `raw/`: CP2K outputs, CLI JSON results, inputs, affinity proofs, and exit
-  statuses;
+  statuses, including the complete full and No-ACP parameter files;
 - `hardening_validation/`: focused GENERAL-grid, mixer/restart, unit-test, and
   complete before/after regression evidence.  Each regression directory has
   a portable `SHA256SUMS` for the archived proof files; its
