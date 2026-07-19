@@ -155,6 +155,19 @@ run_phase_round() {
   fi
 }
 
+run_reference_and_phase_round() {
+  local mesh=$1
+  shift
+  local -a cpus=(85 83 81 79 77 75 73 71 69 67 65 63 61)
+  local -a specifications=("$mesh:Ih:${cpus[0]}")
+  local phase index=1
+  for phase in "$@"; do
+    specifications+=("$mesh:$phase:${cpus[$index]}")
+    index=$((index + 1))
+  done
+  run_batch "${specifications[@]}"
+}
+
 pair_status() {
   local phase=$1 previous=$2 current=$3 output=$4
   set +e
@@ -190,11 +203,13 @@ phases=(II III IV VI VII VIII IX XI XIII XIV XV XVII)
 run_one 4 Ih 85
 run_phase_round 4 "${phases[@]}"
 
-# Every phase needs 5^3 once because none passed through 3^3->4^3.  Denser
-# rounds are generated exclusively from the unresolved set of the preceding
-# adjacent pair.
-run_one 5 Ih 85
-run_phase_round 5 "${phases[@]}"
+# Every phase needs 5^3 once because none passed through 3^3->4^3.  The
+# archived peak-memory envelope for Ih plus all twelve phase calculations is
+# about 266 GiB, so the complete 5^3 set can use thirteen disjoint physical
+# CPUs concurrently while retaining the 400-GiB pre-launch availability gate.
+# Denser rounds are generated exclusively from the unresolved set of the
+# preceding adjacent pair.
+run_reference_and_phase_round 5 "${phases[@]}"
 
 incomplete=0
 pending=()
