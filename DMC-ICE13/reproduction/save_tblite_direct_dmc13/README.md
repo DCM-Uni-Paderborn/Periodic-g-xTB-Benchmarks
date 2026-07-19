@@ -200,6 +200,12 @@ provenance, proves that every reported endpoint is the first passing adjacent
 pair, and recomputes all aggregate statistics.  The positive and negative
 end-to-end checks in `tools/tests/test_adaptive_reporting.py` can be run with
 `python3 -m unittest -v tools/tests/test_adaptive_reporting.py`.
+All portable integrity manifests, including their relative paths and complete
+file coverage, can be checked after a fresh clone with
+`python3 tools/verify_sha256_manifests.py`.  The separately named
+`SOURCE_SHA256SUMS` files preserve historical full-worktree inventories and
+are intentionally not interpreted as manifests for files shipped in the
+compact archive.
 
 If an unresolved phase needs a denser regular mesh,
 `tools/build_native_mesh_input.py` rewrites exactly the single cubic

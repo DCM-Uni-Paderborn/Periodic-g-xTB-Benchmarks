@@ -88,7 +88,11 @@ response-corrected values.
 - `raw/`: CP2K outputs, CLI JSON results, inputs, affinity proofs, and exit
   statuses;
 - `hardening_validation/`: focused GENERAL-grid, mixer/restart, unit-test, and
-  complete before/after regression evidence;
+  complete before/after regression evidence.  Each regression directory has
+  a portable `SHA256SUMS` for the archived proof files; its
+  `SOURCE_SHA256SUMS` additionally preserves the original full temporary
+  regression-worktree inventory, including files that are not duplicated in
+  this compact archive;
 - `SHA256SUMS`: complete integrity manifest for every archived file.
 
 Recompute all tables and enforce the numerical gates with:
