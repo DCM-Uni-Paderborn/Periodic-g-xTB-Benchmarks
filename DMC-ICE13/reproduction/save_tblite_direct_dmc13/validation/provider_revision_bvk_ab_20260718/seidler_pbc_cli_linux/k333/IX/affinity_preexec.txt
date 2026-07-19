@@ -1,0 +1,4 @@
+job=provider-author-k333-IX
+pid=3378898
+requested_cpu=84
+allowed=84

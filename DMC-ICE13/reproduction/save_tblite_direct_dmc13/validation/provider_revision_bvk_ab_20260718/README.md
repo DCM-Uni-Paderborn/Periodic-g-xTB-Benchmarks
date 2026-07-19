@@ -25,15 +25,19 @@ absolute-energy differences mean Seidler `pbc` minus current `save_tblite`.
 The archived process outputs, JSON files, executable hashes, structure hashes,
 and integrity manifest provide the complete provenance.
 
-The Linux author-branch repetition in `seidler_pbc_cli_linux` extends the
-`2 x 2 x 2` comparison to all 13 phases.  Its source tree is byte-for-byte
-identical to revision `c932120`, and the three calculations repeated on both
-macOS and Linux agree within `1.9e-12` Hartree for the complete supercell.
-At this deliberately unconverged mesh, the current and author-branch MAEs are
-`88.68138` and `88.70687` kJ mol^-1 per water, respectively.  Thus the provider
-revision changes the full MAE by only `+0.02549` kJ mol^-1 and does not account
-for an accuracy improvement.  `full_k222_relative_comparison.csv` contains the
-phase-resolved evidence.
+The Linux author-branch repetition in `seidler_pbc_cli_linux` extends both the
+`2 x 2 x 2` and `3 x 3 x 3` comparisons to all 13 phases.  Its source tree is
+byte-for-byte identical to revision `c932120`, and the three calculations
+repeated on both macOS and Linux agree within `1.9e-12` Hartree for the complete
+supercell.  At `2 x 2 x 2`, the current and author-branch MAEs are `88.68138`
+and `88.70687` kJ mol^-1 per water, respectively, a change of only `+0.02549`
+kJ mol^-1.  At `3 x 3 x 3`, they are `34.04849` and `34.07059` kJ mol^-1,
+respectively, a change of `+0.02210` kJ mol^-1; the largest individual
+author-minus-current relative-energy shift is `0.10048` kJ mol^-1 for ice VI.
+Thus the final author branch is marginally worse on both complete meshes and
+does not account for an accuracy or k-point-convergence improvement.
+`full_k222_relative_comparison.csv`, `full_k333_relative_comparison.csv`, and
+`full_k333_absolute_energy_comparison.csv` contain the phase-resolved evidence.
 
 `compare_complete_mesh.py` applies the same absolute-energy, Ih-referenced
 relative-energy, and MAE analysis to any complete 13-phase direct-BvK mesh.

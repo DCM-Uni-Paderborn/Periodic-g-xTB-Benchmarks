@@ -1,0 +1,11 @@
+{
+  "author_minus_current_mae_kj_mol_per_water": 0.02209622905607489,
+  "author_pbc_mae_kj_mol_per_water": 34.070588090850464,
+  "current_save_tblite_mae_kj_mol_per_water": 34.04849186179439,
+  "maximum_absolute_relative_energy_shift_kj_mol_per_water": 0.10048050521153762,
+  "maximum_shift_phase": "VI",
+  "mesh_n": 3,
+  "phase_count_including_Ih": 13,
+  "relative_phase_count": 12,
+  "status": "PASS"
+}

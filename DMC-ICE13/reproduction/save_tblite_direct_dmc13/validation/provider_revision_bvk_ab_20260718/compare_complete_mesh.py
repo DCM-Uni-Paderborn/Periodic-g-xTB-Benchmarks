@@ -12,7 +12,9 @@ import statistics
 from pathlib import Path
 
 
-HARTREE_TO_KJMOL = 2625.4996394799
+# Retain the conversion constant used by the archived DMC-ICE13 analysis so
+# complete-mesh extensions reproduce its stored tables bit for bit.
+HARTREE_TO_KJMOL = 2625.499638
 PHASES = ("Ih", "II", "III", "IV", "VI", "VII", "VIII", "IX", "XI", "XIII", "XIV", "XV", "XVII")
 N_WATER = {
     "Ih": 12,
