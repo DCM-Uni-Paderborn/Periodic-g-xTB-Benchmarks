@@ -18,6 +18,14 @@ inputs used for the current CP2K-native comparison.  An independent geometric
 audit found them equivalent to the supplied `gamma_only_dmc_ice13` archive to
 better than `1.2e-9` Angstrom in the periodic pair-distance spectra.
 
+The supplied archive is not an independent direct-CLI result from the model
+authors.  Its embedded README identifies it as a Gamma-only exchange package
+created on 6 June 2026 from the local CP2K working tree, and its energy table
+points back to the corresponding early CP2K output directories.  It is used
+here only as an independently packaged geometry source and historical CP2K
+snapshot.  `provenance/gamma_exchange_archive_20260606.md` records the archive
+identity and the evidence for this classification.
+
 `provenance/structure_hashes.csv` records the SHA-256 digest of every POSCAR
 and its source CP2K input.
 
