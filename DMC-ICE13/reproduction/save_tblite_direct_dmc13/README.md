@@ -169,6 +169,15 @@ CLI/native differences evaluated.  Positive and deliberately altered binary
 and mesh cases are covered by
 `tools/tests/test_k222_cli_native_requalification.py`.
 
+`tools/verify_cli_native_mesh_requalification.py` generalizes the same gate
+to any cubic MacDonald mesh.  It derives the odd/even mesh shift, verifies the
+explicit Born--von--Karman replication and Cartesian coordinates, accepts only
+declared singleton CPUs, and compares both total and non-self-consistent
+dispersion energies.  It can qualify either all thirteen phases or a declared
+sentinel subset that includes ice Ih.  Dedicated positive and negative tests
+cover a complete `3 x 3 x 3` fixture, the even-mesh shift rule, altered shifts,
+and undeclared CPU assignments.
+
 `tools/verify_no_acp_cli_native.py` supplies a separate component-ablation
 gate for ice Ih and XVII on the `2 x 2 x 2` mesh.  It compares the final
 CP2K-native energies with direct explicit-BvK CLI energies generated from the
@@ -213,6 +222,18 @@ at this unconverged mesh.  The complete all-phase `3 x 3 x 3` repetition gives
 the same conclusion: the corresponding MAE change is `+0.02210` kJ mol^-1 per
 water, and the largest phase-resolved relative-energy shift is `0.10048`
 kJ mol^-1 per water for ice VI.
+
+The remaining small final-`pbc`/current-provider difference is resolved by the
+top-level `validation/provider_component_attribution_20260719` and
+`validation/pbc_h0_anisotropy_attribution_20260719` archives.  A self-consistent
+exchange ablation first localized the amplification to the exchange-containing
+SCC path.  A controlled source A/B build then proved the actual origin:
+restoring the historical central-cell H0 anisotropy reproduces the final-`pbc`
+phase-VII `2 x 2 x 2` supercell energy within `1.91e-11` hartree and accounts
+for more than 99.999999% of the provider gap.  The current image-complete H0
+definition is retained because an equivalent lattice-image representation is
+invariant to `2.73e-12` hartree, whereas the historical treatment changes by
+`5.60e-8` hartree.
 
 `validation/model_revision_coarse_grid_ab_20260718` extends that audit to the
 separate `mstore-inorganic`, post-March molecular g-xTB, and DCM `main` source
@@ -270,7 +291,13 @@ For a single reproducible implementation audit,
 set: absolute CLI/native energy parity, numerical-accuracy sensitivity,
 periodic-response A/B, energy/force/stress derivatives, k-point/BvK grid
 identity, provider and model revisions, derivative hardening, unchanged-build
-sentinels, Wigner--Seitz diagnosis, and all portable SHA-256 manifests.  Its
+sentinels, Wigner--Seitz diagnosis, final-build low-k/partial-PBC derivatives,
+exchange/ACP component ablations, periodic-H0 source/invariance attribution,
+direct periodic source tests for H0, Wigner--Seitz, exchange, Fock response,
+forces, stress, and transform oracles, the complete author-`pbc`/current-CLI/
+CP2K-native `3 x 3 x 3` energy closure, the sibling
+`../seidler_dmc13_recalculation` author-facing rerun package, and all portable
+SHA-256 manifests.  Its
 JSON report records every return code and hashes the script and captured
 output of each gate; any failed subordinate verifier fails the aggregate
 audit.
@@ -279,7 +306,8 @@ For the final adaptive table, `tools/select_adaptive_endpoints.py` enforces the
 phase-local one-step rule directly on normally terminated calculations from a
 required CP2K executable hash.  It rejects a missing earlier adjacent pair,
 selects the denser member of the first pair with an absolute relative-energy
-change no larger than the chosen threshold, and computes aggregate error
+change no larger than the user-selected default threshold of `0.10`
+kJ mol^-1 per water molecule, and computes aggregate error
 statistics only after all twelve non-reference phases pass.  No aggregate MAE
 or RMS condition participates in endpoint selection.
 

@@ -1,0 +1,58 @@
+2026-07-19T11:22:30+02:00 launching task=derivative:CH4_gxtb_gamma_force_stress.inp cpu=60 available_GiB=229
+2026-07-19T11:22:30+02:00 launching task=derivative:CH4_gxtb_kp_full_222_force_stress.inp cpu=62 available_GiB=229
+2026-07-19T11:22:30+02:00 launching task=derivative:CH4_gxtb_kp_111_force_stress.inp cpu=61 available_GiB=229
+2026-07-19T11:22:30+02:00 launching task=derivative:CH4_gxtb_kp_k290_force_stress.inp cpu=63 available_GiB=229
+2026-07-19T11:22:30+02:00 launching task=derivative:CH4_gxtb_kp_spglib_222_force_stress.inp cpu=65 available_GiB=229
+2026-07-19T11:22:30+02:00 launching task=derivative:CH4_gxtb_kp_spglib_111_force_stress.inp cpu=64 available_GiB=229
+2026-07-19T11:22:30+02:00 launching task=derivative:H2_gxtb_gamma_supercell_311_force_stress.inp cpu=68 available_GiB=229
+2026-07-19T11:22:30+02:00 launching task=derivative:H2_gxtb_kp_311_force_stress.inp cpu=69 available_GiB=229
+2026-07-19T11:22:30+02:00 launching task=derivative:H2O_gxtb_gamma_force_stress.inp cpu=66 available_GiB=229
+2026-07-19T11:22:30+02:00 launching task=derivative:H2O_gxtb_kp_gamma_force_stress.inp cpu=67 available_GiB=229
+2026-07-19T11:22:30+02:00 launching task=partial:gxtb_1d_native_gamma_centered_k211.inp cpu=71 available_GiB=229
+2026-07-19T11:22:30+02:00 launching task=derivative:H2_gxtb_kp_311_tr_force_stress.inp cpu=70 available_GiB=229
+2026-07-19T11:22:59+02:00 launching task=derivative:CH4_gxtb_kp_full_222_force_stress.inp cpu=62 available_GiB=230
+2026-07-19T11:22:59+02:00 launching task=derivative:CH4_gxtb_kp_111_force_stress.inp cpu=61 available_GiB=230
+2026-07-19T11:22:59+02:00 launching task=derivative:CH4_gxtb_gamma_force_stress.inp cpu=60 available_GiB=230
+2026-07-19T11:22:59+02:00 launching task=derivative:CH4_gxtb_kp_spglib_111_force_stress.inp cpu=64 available_GiB=230
+2026-07-19T11:22:59+02:00 launching task=derivative:H2O_gxtb_kp_gamma_force_stress.inp cpu=67 available_GiB=230
+2026-07-19T11:22:59+02:00 launching task=derivative:CH4_gxtb_kp_k290_force_stress.inp cpu=63 available_GiB=230
+2026-07-19T11:22:59+02:00 launching task=derivative:CH4_gxtb_kp_spglib_222_force_stress.inp cpu=65 available_GiB=230
+2026-07-19T11:22:59+02:00 launching task=derivative:H2_gxtb_gamma_supercell_311_force_stress.inp cpu=68 available_GiB=230
+2026-07-19T11:22:59+02:00 launching task=derivative:H2_gxtb_kp_311_tr_force_stress.inp cpu=70 available_GiB=230
+2026-07-19T11:22:59+02:00 launching task=derivative:H2_gxtb_kp_311_force_stress.inp cpu=69 available_GiB=230
+2026-07-19T11:22:59+02:00 launching task=derivative:H2O_gxtb_gamma_force_stress.inp cpu=66 available_GiB=230
+2026-07-19T11:22:59+02:00 launching task=partial:gxtb_1d_native_gamma_centered_k211.inp cpu=71 available_GiB=230
+2026-07-19T11:23:25+02:00 complete task=derivative:CH4_gxtb_gamma_force_stress.inp
+2026-07-19T11:23:42+02:00 complete task=derivative:CH4_gxtb_kp_111_force_stress.inp
+2026-07-19T11:23:44+02:00 complete task=derivative:H2O_gxtb_kp_gamma_force_stress.inp
+2026-07-19T11:23:47+02:00 complete task=derivative:CH4_gxtb_kp_full_222_force_stress.inp
+2026-07-19T11:23:57+02:00 complete task=derivative:H2_gxtb_gamma_supercell_311_force_stress.inp
+2026-07-19T11:24:09+02:00 complete task=partial:gxtb_1d_native_gamma_centered_k211.inp
+2026-07-19T11:24:13+02:00 complete task=derivative:CH4_gxtb_kp_spglib_111_force_stress.inp
+2026-07-19T11:24:28+02:00 complete task=derivative:CH4_gxtb_kp_spglib_222_force_stress.inp
+2026-07-19T11:24:32+02:00 complete task=derivative:H2O_gxtb_gamma_force_stress.inp
+2026-07-19T11:24:42+02:00 complete task=derivative:CH4_gxtb_kp_k290_force_stress.inp
+2026-07-19T11:25:51+02:00 complete task=derivative:H2_gxtb_kp_311_force_stress.inp
+2026-07-19T11:25:59+02:00 complete task=derivative:H2_gxtb_kp_311_tr_force_stress.inp
+2026-07-19T11:25:59+02:00 launching task=partial:gxtb_1d_x_k211_force_stress_full.inp cpu=63 available_GiB=229
+2026-07-19T11:25:59+02:00 launching task=partial:gxtb_1d_native_k211.inp cpu=60 available_GiB=229
+2026-07-19T11:25:59+02:00 launching task=partial:gxtb_1d_x_k211_force_stress.inp cpu=62 available_GiB=229
+2026-07-19T11:25:59+02:00 launching task=partial:gxtb_1d_x_k211_force_stress_spglib.inp cpu=64 available_GiB=229
+2026-07-19T11:25:59+02:00 launching task=partial:gxtb_1d_supercell_k111.inp cpu=61 available_GiB=229
+2026-07-19T11:25:59+02:00 launching task=partial:gxtb_2d_supercell_k111.inp cpu=67 available_GiB=229
+2026-07-19T11:25:59+02:00 launching task=partial:gxtb_2d_native_gamma_centered_k212.inp cpu=65 available_GiB=229
+2026-07-19T11:25:59+02:00 launching task=partial:gxtb_2d_xz_k212_force_stress_full.inp cpu=69 available_GiB=229
+2026-07-19T11:25:59+02:00 launching task=partial:gxtb_2d_xz_k212_force_stress.inp cpu=68 available_GiB=229
+2026-07-19T11:25:59+02:00 launching task=partial:gxtb_2d_xz_k212_force_stress_spglib.inp cpu=70 available_GiB=229
+2026-07-19T11:25:59+02:00 launching task=partial:gxtb_2d_native_k212.inp cpu=66 available_GiB=229
+2026-07-19T11:26:09+02:00 complete task=partial:gxtb_1d_x_k211_force_stress_full.inp
+2026-07-19T11:26:17+02:00 complete task=partial:gxtb_1d_native_k211.inp
+2026-07-19T11:26:26+02:00 complete task=partial:gxtb_1d_x_k211_force_stress_spglib.inp
+2026-07-19T11:26:33+02:00 complete task=partial:gxtb_1d_supercell_k111.inp
+2026-07-19T11:26:43+02:00 complete task=partial:gxtb_1d_x_k211_force_stress.inp
+2026-07-19T11:27:00+02:00 complete task=partial:gxtb_2d_supercell_k111.inp
+2026-07-19T11:27:04+02:00 complete task=partial:gxtb_2d_xz_k212_force_stress_full.inp
+2026-07-19T11:27:15+02:00 complete task=partial:gxtb_2d_native_gamma_centered_k212.inp
+2026-07-19T11:27:23+02:00 complete task=partial:gxtb_2d_native_k212.inp
+2026-07-19T11:27:25+02:00 complete task=partial:gxtb_2d_xz_k212_force_stress_spglib.inp
+2026-07-19T11:27:48+02:00 complete task=partial:gxtb_2d_xz_k212_force_stress.inp

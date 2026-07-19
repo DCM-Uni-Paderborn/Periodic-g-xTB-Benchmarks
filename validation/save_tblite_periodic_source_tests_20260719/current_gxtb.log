@@ -1,0 +1,93 @@
+# Testing: gxtb
+  Starting energy-h2 ... (1/44)
+       ... energy-h2 [PASSED]
+  Starting energy-lih ... (2/44)
+       ... energy-lih [PASSED]
+  Starting energy-water ... (3/44)
+       ... energy-water [PASSED]
+  Starting energy-no ... (4/44)
+       ... energy-no [PASSED]
+  Starting energy-chex-rad ... (5/44)
+       ... energy-chex-rad [PASSED]
+  Starting energy-s2 ... (6/44)
+       ... energy-s2 [PASSED]
+  Starting energy-cecl3 ... (7/44)
+       ... energy-cecl3 [PASSED]
+  Starting energy-ce2 ... (8/44)
+       ... energy-ce2 [PASSED]
+  Starting energy-mb01 ... (9/44)
+       ... energy-mb01 [PASSED]
+  Starting energy-mb02 ... (10/44)
+       ... energy-mb02 [PASSED]
+  Starting gradient-h2 ... (11/44)
+       ... gradient-h2 [PASSED]
+  Starting gradient-lih ... (12/44)
+       ... gradient-lih [PASSED]
+  Starting gradient-water ... (13/44)
+       ... gradient-water [PASSED]
+  Starting gradient-no ... (14/44)
+       ... gradient-no [PASSED]
+  Starting gradient-s2 ... (15/44)
+       ... gradient-s2 [PASSED]
+  Starting gradient-pcl ... (16/44)
+       ... gradient-pcl [PASSED]
+  Starting gradient-sih4 ... (17/44)
+       ... gradient-sih4 [PASSED]
+  Starting gradient-cecl3 ... (18/44)
+       ... gradient-cecl3 [PASSED]
+  Starting gradient-ce2 ... (19/44)
+       ... gradient-ce2 [PASSED]
+  Starting gradient-panp ... (20/44)
+       ... gradient-panp [PASSED]
+  Starting gradient-mb02 ... (21/44)
+       ... gradient-mb02 [PASSED]
+  Starting sigma-h2 ... (22/44)
+       ... sigma-h2 [PASSED]
+  Starting sigma-lih ... (23/44)
+       ... sigma-lih [PASSED]
+  Starting sigma-water ... (24/44)
+       ... sigma-water [PASSED]
+  Starting sigma-no ... (25/44)
+       ... sigma-no [PASSED]
+  Starting sigma-s2 ... (26/44)
+       ... sigma-s2 [PASSED]
+  Starting sigma-pcl ... (27/44)
+       ... sigma-pcl [PASSED]
+  Starting sigma-sih4 ... (28/44)
+       ... sigma-sih4 [PASSED]
+  Starting sigma-cecl3 ... (29/44)
+       ... sigma-cecl3 [PASSED]
+  Starting sigma-ce2 ... (30/44)
+       ... sigma-ce2 [PASSED]
+  Starting sigma-panp ... (31/44)
+       ... sigma-panp [PASSED]
+  Starting sigma-mb03 ... (32/44)
+       ... sigma-mb03 [PASSED]
+  Starting energy-h2o-mol-pbc ... (33/44)
+       ... energy-h2o-mol-pbc [PASSED]
+  Starting sigma-h2o-pbc ... (34/44)
+       ... sigma-h2o-pbc [PASSED]
+  Starting image-h0-h2o-pbc ... (35/44)
+       ... image-h0-h2o-pbc [PASSED]
+  Starting image-acp-gradient-h2o-pbc ... (36/44)
+       ... image-acp-gradient-h2o-pbc [PASSED]
+  Starting kmesh-acp-h2o-pbc ... (37/44)
+       ... kmesh-acp-h2o-pbc [PASSED]
+  Starting cp2k-acp-cutoff ... (38/44)
+       ... cp2k-acp-cutoff [PASSED]
+  Starting cp2k-scc-mixer-dimension ... (39/44)
+       ... cp2k-scc-mixer-dimension [PASSED]
+  Starting cp2k-potential-mixer ... (40/44)
+       ... cp2k-potential-mixer [PASSED]
+  Starting cp2k-potential-mixer-uninitialized ... (41/44)
+       ... cp2k-potential-mixer-uninitialized [EXPECTED FAIL]
+  Message: CP2K potential mixer must be reset before use
+  Starting cp2k-potential-mixer-invalid-dimension ... (42/44)
+       ... cp2k-potential-mixer-invalid-dimension [EXPECTED FAIL]
+  Message: CP2K potential mixer dimension must be positive
+  Starting cp2k-potential-mixer-size-mismatch ... (43/44)
+       ... cp2k-potential-mixer-size-mismatch [EXPECTED FAIL]
+  Message: CP2K potential mixer Fock vector dimension mismatch
+  Starting cp2k-potential-mixer-nonfinite ... (44/44)
+       ... cp2k-potential-mixer-nonfinite [EXPECTED FAIL]
+  Message: CP2K potential mixer received a non-finite Fock vector

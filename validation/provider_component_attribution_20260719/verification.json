@@ -1,0 +1,23 @@
+{
+  "gap_reduction_when_exchange_disabled_percent": 98.31145327457459,
+  "interpretation_limit": "Each ablation was reconverged self-consistently. Component differences are therefore non-additive and do not constitute a fixed-density energy decomposition.",
+  "mesh": "2x2x2 explicit BvK supercell",
+  "pbc_minus_current_hartree_supercell": {
+    "full": -0.0031710954435766325,
+    "no_acp": -0.007471499560779193,
+    "no_exchange": 5.354542827262776e-05,
+    "no_exchange_no_acp": -0.003556249296707392
+  },
+  "phase": "VII",
+  "status": "PASS",
+  "unique_singleton_cpus": [
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75
+  ]
+}

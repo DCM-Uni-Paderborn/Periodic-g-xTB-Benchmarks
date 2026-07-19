@@ -1,0 +1,103 @@
+# Testing: coulomb-multipole
+  Starting energy-gfn2-m01 ... (1/51)
+       ... energy-gfn2-m01 [PASSED]
+  Starting energy-gfn2-m02 ... (2/51)
+       ... energy-gfn2-m02 [PASSED]
+  Starting energy-gfn2-co2-pbc ... (3/51)
+       ... energy-gfn2-co2-pbc [PASSED]
+  Starting energy-gfn2-co2-pbc-qp ... (4/51)
+       ... energy-gfn2-co2-pbc-qp [PASSED]
+  Starting energy-gfn2-co2-pbc-dp ... (5/51)
+       ... energy-gfn2-co2-pbc-dp [PASSED]
+  Starting energy-gfn2-co2-pbc-amat-qq ... (6/51)
+       ... energy-gfn2-co2-pbc-amat-qq [PASSED]
+  Starting energy-gfn2-co2-sc ... (7/51)
+       ... energy-gfn2-co2-sc [PASSED]
+  Starting energy-gfn2-co2-sc-qp ... (8/51)
+       ... energy-gfn2-co2-sc-qp [PASSED]
+  Starting energy-gfn2-co2-sc-dp ... (9/51)
+       ... energy-gfn2-co2-sc-dp [PASSED]
+  Starting energy-gxtb-m01 ... (10/51)
+       ... energy-gxtb-m01 [PASSED]
+  Starting energy-gxtb-m02 ... (11/51)
+       ... energy-gxtb-m02 [PASSED]
+  Starting energy-gxtb-cecl3 ... (12/51)
+       ... energy-gxtb-cecl3 [PASSED]
+  Starting energy-gxtb-co2-pbc ... (13/51)
+       ... energy-gxtb-co2-pbc [PASSED]
+  Starting energy-gxtb-co2-pbc-qp ... (14/51)
+       ... energy-gxtb-co2-pbc-qp [PASSED]
+  Starting energy-gxtb-co2-pbc-dp ... (15/51)
+       ... energy-gxtb-co2-pbc-dp [PASSED]
+  Starting energy-gxtb-co2-sc ... (16/51)
+       ... energy-gxtb-co2-sc [PASSED]
+  Starting energy-gxtb-co2-sc-qp ... (17/51)
+       ... energy-gxtb-co2-sc-qp [PASSED]
+  Starting energy-gxtb-co2-sc-dp ... (18/51)
+       ... energy-gxtb-co2-sc-dp [PASSED]
+  Starting potential-gfn2-m07 ... (19/51)
+       ... potential-gfn2-m07 [PASSED]
+  Starting potential-gfn2-m08 ... (20/51)
+       ... potential-gfn2-m08 [PASSED]
+  Starting potential-gxtb-m07 ... (21/51)
+       ... potential-gxtb-m07 [PASSED]
+  Starting potential-gxtb-m08 ... (22/51)
+       ... potential-gxtb-m08 [PASSED]
+  Starting potential-gxtb-cecl3 ... (23/51)
+       ... potential-gxtb-cecl3 [PASSED]
+  Starting gradient-gfn2-m03 ... (24/51)
+       ... gradient-gfn2-m03 [PASSED]
+  Starting gradient-gfn2-m04 ... (25/51)
+       ... gradient-gfn2-m04 [PASSED]
+  Starting gradient-gfn2-urea-pbc ... (26/51)
+       ... gradient-gfn2-urea-pbc [PASSED]
+  Starting gradient-gfn2-wsc-threshold-pbc ... (27/51)
+       ... gradient-gfn2-wsc-threshold-pbc [PASSED]
+  Starting gradient-gxtb-m03 ... (28/51)
+       ... gradient-gxtb-m03 [PASSED]
+  Starting gradient-gxtb-m04 ... (29/51)
+       ... gradient-gxtb-m04 [PASSED]
+  Starting gradient-gxtb-cecl3 ... (30/51)
+       ... gradient-gxtb-cecl3 [PASSED]
+  Starting gradient-gxtb-urea-pbc ... (31/51)
+       ... gradient-gxtb-urea-pbc [PASSED]
+  Starting sigma-gfn2-m05 ... (32/51)
+       ... sigma-gfn2-m05 [PASSED]
+  Starting sigma-gfn2-m06 ... (33/51)
+       ... sigma-gfn2-m06 [PASSED]
+  Starting sigma-gfn2-oxacb-pbc ... (34/51)
+       ... sigma-gfn2-oxacb-pbc [PASSED]
+  Starting sigma-gfn2-wsc-threshold-pbc ... (35/51)
+       ... sigma-gfn2-wsc-threshold-pbc [PASSED]
+  Starting sigma-gxtb-m05 ... (36/51)
+       ... sigma-gxtb-m05 [PASSED]
+  Starting sigma-gxtb-m06 ... (37/51)
+       ... sigma-gxtb-m06 [PASSED]
+  Starting sigma-gxtb-cecl3 ... (38/51)
+       ... sigma-gxtb-cecl3 [PASSED]
+  Starting sigma-gxtb-oxacb-pbc ... (39/51)
+       ... sigma-gxtb-oxacb-pbc [PASSED]
+  Starting energy-gfn2-nacl-sc ... (40/51)
+       ... energy-gfn2-nacl-sc [PASSED]
+  Starting energy-gfn2-nacl-sc-dp ... (41/51)
+       ... energy-gfn2-nacl-sc-dp [PASSED]
+  Starting energy-gfn2-nacl-sc-qp ... (42/51)
+       ... energy-gfn2-nacl-sc-qp [PASSED]
+  Starting energy-gxtb-nacl-sc ... (43/51)
+       ... energy-gxtb-nacl-sc [PASSED]
+  Starting energy-gxtb-nacl-sc-dp ... (44/51)
+       ... energy-gxtb-nacl-sc-dp [PASSED]
+  Starting energy-gxtb-nacl-sc-qp ... (45/51)
+       ... energy-gxtb-nacl-sc-qp [PASSED]
+  Starting energy-gfn2-zno-sc ... (46/51)
+       ... energy-gfn2-zno-sc [PASSED]
+  Starting energy-gfn2-zno-sc-dp ... (47/51)
+       ... energy-gfn2-zno-sc-dp [PASSED]
+  Starting energy-gfn2-zno-sc-qp ... (48/51)
+       ... energy-gfn2-zno-sc-qp [PASSED]
+  Starting energy-gxtb-zno-sc ... (49/51)
+       ... energy-gxtb-zno-sc [PASSED]
+  Starting energy-gxtb-zno-sc-dp ... (50/51)
+       ... energy-gxtb-zno-sc-dp [PASSED]
+  Starting energy-gxtb-zno-sc-qp ... (51/51)
+       ... energy-gxtb-zno-sc-qp [PASSED]

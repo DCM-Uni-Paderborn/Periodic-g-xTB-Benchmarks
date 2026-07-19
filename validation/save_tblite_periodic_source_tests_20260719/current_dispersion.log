@@ -1,0 +1,31 @@
+# Testing: dispersion
+  Starting e-d3-mb01 ... (1/15)
+       ... e-d3-mb01 [PASSED]
+  Starting e-d4-mb01 ... (2/15)
+       ... e-d4-mb01 [PASSED]
+  Starting e-d4s-mb01 ... (3/15)
+       ... e-d4s-mb01 [PASSED]
+  Starting e-d4srev-mb01 ... (4/15)
+       ... e-d4srev-mb01 [PASSED]
+  Starting e-d3-mb02 ... (5/15)
+       ... e-d3-mb02 [PASSED]
+  Starting e-d4-mb02 ... (6/15)
+       ... e-d4-mb02 [PASSED]
+  Starting e-d4s-mb02 ... (7/15)
+       ... e-d4s-mb02 [PASSED]
+  Starting e-d4srev-mb02 ... (8/15)
+       ... e-d4srev-mb02 [PASSED]
+  Starting p-d4-mb03 ... (9/15)
+       ... p-d4-mb03 [PASSED]
+  Starting p-d4s-mb03 ... (10/15)
+       ... p-d4s-mb03 [PASSED]
+  Starting p-d4srev-mb03 ... (11/15)
+       ... p-d4srev-mb03 [PASSED]
+  Starting p-d4-mb04 ... (12/15)
+       ... p-d4-mb04 [PASSED]
+  Starting p-d4srev-mb04 ... (13/15)
+       ... p-d4srev-mb04 [PASSED]
+  Starting gradient-d4srev-co2-pbc ... (14/15)
+       ... gradient-d4srev-co2-pbc [PASSED]
+  Starting sigma-d4srev-co2-pbc ... (15/15)
+       ... sigma-d4srev-co2-pbc [PASSED]

@@ -1,0 +1,13 @@
+# Testing: wignerseitz
+  Starting cubic-self-images ... (1/6)
+       ... cubic-self-images [PASSED]
+  Starting ortho-self-images ... (2/6)
+       ... ortho-self-images [PASSED]
+  Starting skew-self-images ... (3/6)
+       ... skew-self-images [PASSED]
+  Starting partial-periodicity ... (4/6)
+       ... partial-periodicity [PASSED]
+  Starting pair-images ... (5/6)
+       ... pair-images [PASSED]
+  Starting no-self-image ... (6/6)
+       ... no-self-image [PASSED]

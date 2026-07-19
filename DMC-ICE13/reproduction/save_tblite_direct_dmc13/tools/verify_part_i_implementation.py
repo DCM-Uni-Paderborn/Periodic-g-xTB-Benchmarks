@@ -12,6 +12,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+REPOSITORY_ROOT = ROOT.parents[2]
 GATES = (
     (
         "absolute_energy_parity",
@@ -75,6 +76,68 @@ GATES = (
         (),
     ),
     (
+        "final_lowk_derivatives",
+        REPOSITORY_ROOT / "validation/gxtb_final_lowk_derivatives_20260719",
+        REPOSITORY_ROOT
+        / "validation/gxtb_final_lowk_derivatives_20260719/verify_final_lowk_derivatives.py",
+        (
+            ".",
+            "--legacy-partial-manifest",
+            "legacy_partial_pbc_manifest.json",
+            "--output",
+            "verification.json",
+        ),
+    ),
+    (
+        "phase_viii_component_ablation",
+        REPOSITORY_ROOT / "validation/dmc13_k222_viii_component_ablation_20260719",
+        REPOSITORY_ROOT
+        / "validation/dmc13_k222_viii_component_ablation_20260719/verify_component_ablation.py",
+        (),
+    ),
+    (
+        "phase_xvii_derivative_component_ablation",
+        REPOSITORY_ROOT
+        / "validation/dmc13_k222_xvii_derivative_component_ablation_20260719",
+        REPOSITORY_ROOT
+        / "validation/dmc13_k222_xvii_derivative_component_ablation_20260719/verify_derivative_component_ablation.py",
+        (),
+    ),
+    (
+        "provider_component_attribution",
+        REPOSITORY_ROOT / "validation/provider_component_attribution_20260719",
+        REPOSITORY_ROOT
+        / "validation/provider_component_attribution_20260719/verify_attribution.py",
+        (),
+    ),
+    (
+        "pbc_h0_anisotropy_attribution",
+        REPOSITORY_ROOT / "validation/pbc_h0_anisotropy_attribution_20260719",
+        REPOSITORY_ROOT
+        / "validation/pbc_h0_anisotropy_attribution_20260719/verify_h0_attribution.py",
+        (),
+    ),
+    (
+        "save_tblite_periodic_source_tests",
+        REPOSITORY_ROOT / "validation/save_tblite_periodic_source_tests_20260719",
+        REPOSITORY_ROOT
+        / "validation/save_tblite_periodic_source_tests_20260719/verify_source_tests.py",
+        (),
+    ),
+    (
+        "three_route_k333_closure",
+        REPOSITORY_ROOT / "validation/three_route_k333_closure_20260719",
+        REPOSITORY_ROOT
+        / "validation/three_route_k333_closure_20260719/generate_and_verify.py",
+        (),
+    ),
+    (
+        "seidler_recalculation_package",
+        ROOT.parent / "seidler_dmc13_recalculation",
+        ROOT.parent / "seidler_dmc13_recalculation/prepare_package.py",
+        (),
+    ),
+    (
         "archive_sha256",
         ROOT,
         ROOT / "tools/verify_sha256_manifests.py",
@@ -108,7 +171,7 @@ def run_gate(
         "name": name,
         "status": "PASS" if completed.returncode == 0 else "FAIL",
         "returncode": completed.returncode,
-        "script": str(script.relative_to(ROOT)),
+        "script": str(script.relative_to(REPOSITORY_ROOT)),
         "script_sha256": hashlib.sha256(script.read_bytes()).hexdigest(),
         "stdout_sha256": digest_text(completed.stdout),
         "stderr_sha256": digest_text(completed.stderr),

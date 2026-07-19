@@ -160,6 +160,46 @@ class AdaptiveReportingTest(unittest.TestCase):
             places=14,
         )
 
+    def test_default_threshold_is_user_selected_point_one(self) -> None:
+        mesh_name = "k222-reduced"
+        for phase in PHASES:
+            run_dir = self.root / "runs" / mesh_name / phase
+            relative = (PHASES.index(phase) + 1) / 10 + 0.075
+            energy = -10.0 + relative / HARTREE_TO_KJMOL
+            (run_dir / "cp2k.out").write_text(
+                f" ENERGY| Total FORCE_EVAL ( QS ) energy [a.u.]: {energy:.15f}\n"
+                " PROGRAM ENDED AT synthetic-test\n",
+                encoding="utf-8",
+            )
+
+        selected = self.run_tool(
+            "select_adaptive_endpoints.py",
+            self.root,
+            self.reference,
+            "--meshes",
+            "1,2",
+            "--require-binary-sha256",
+            CURRENT_DIGEST,
+        )
+        payload = json.loads(selected.stdout)
+        self.assertTrue(payload["complete"])
+        self.assertEqual(payload["threshold_kj_mol_per_water"], 0.10)
+
+        strict = self.run_tool(
+            "select_adaptive_endpoints.py",
+            self.root,
+            self.reference,
+            "--meshes",
+            "1,2",
+            "--threshold",
+            "0.05",
+            "--require-binary-sha256",
+            CURRENT_DIGEST,
+            expected_returncode=1,
+        )
+        strict_payload = json.loads(strict.stdout)
+        self.assertEqual(strict_payload["unresolved_phase_count"], len(PHASES))
+
     def test_mixed_report_uses_highest_qualified_pair(self) -> None:
         self.set_mesh_digest(2, OLDER_DIGEST)
         current = self.run_tool(

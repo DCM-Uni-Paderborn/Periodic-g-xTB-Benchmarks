@@ -119,7 +119,7 @@ def main() -> int:
     parser.add_argument("root", type=Path)
     parser.add_argument("reference_csv", type=Path)
     parser.add_argument("--meshes", default="1,2,3,4,5,6,7,8")
-    parser.add_argument("--threshold", type=float, default=0.05)
+    parser.add_argument("--threshold", type=float, default=0.10)
     parser.add_argument("--require-binary-sha256", required=True)
     parser.add_argument("--output-json", type=Path)
     parser.add_argument("--output-csv", type=Path)

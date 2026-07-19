@@ -23,6 +23,14 @@ EXPECTED_GATES = {
     "provider_revision",
     "qualified_energy_sentinels",
     "wigner_seitz_branch_diagnosis",
+    "final_lowk_derivatives",
+    "phase_viii_component_ablation",
+    "phase_xvii_derivative_component_ablation",
+    "provider_component_attribution",
+    "pbc_h0_anisotropy_attribution",
+    "save_tblite_periodic_source_tests",
+    "three_route_k333_closure",
+    "seidler_recalculation_package",
     "archive_sha256",
 }
 

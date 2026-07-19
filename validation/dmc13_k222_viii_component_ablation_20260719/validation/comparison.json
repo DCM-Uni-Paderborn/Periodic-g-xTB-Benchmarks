@@ -1,0 +1,137 @@
+{
+  "eps_scf": 1e-12,
+  "mesh": "2x2x2",
+  "phase": "VIII",
+  "rows": [
+    {
+      "full": {
+        "affinity_proof": "pid=3080714 expected_cpu=68 allowed=68\nName:\tbash\nState:\tS (sleeping)\nCpus_allowed:\t0000,00000000,00000000,00000000,00000000,00000010,00000000,00000000\nCpus_allowed_list:\t68",
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "components_hartree": {
+          "Core Hamiltonian energy": -30.90035020851587,
+          "Correction for halogen bonding": 0.0,
+          "Electrostatic energy": 0.93480174767863,
+          "Non-self consistent dispersion energy": 0.01669026343473,
+          "Repulsive potential energy": 2.44067773546076,
+          "Self-consistent dispersion energy": -0.06632179736306
+        },
+        "energy_hartree": -602.5407486828432,
+        "input_sha256": "1eb388d39b93047bd1adc32b9f37c4f98eb42782f71705ae214a617ac1bef25d",
+        "output_sha256": "b41770c71fbcd4ea60777b6016fe32a396bd6707f6e051f4187f273c16b616d1"
+      },
+      "full_minus_reduced_components_hartree": {
+        "Core Hamiltonian energy": -4.5574211071652826e-10,
+        "Correction for halogen bonding": 0.0,
+        "Electrostatic energy": 4.115899843171178e-10,
+        "Non-self consistent dispersion energy": 0.0,
+        "Repulsive potential energy": -3.750333377183779e-12,
+        "Self-consistent dispersion energy": -6.359995863292056e-12
+      },
+      "full_minus_reduced_energy_hartree": -2.5420376914553344e-10,
+      "mode": "no_exchange",
+      "parity_within_5e_12_hartree": false,
+      "reduced": {
+        "affinity_proof": "pid=3085259 expected_cpu=69 allowed=69\nName:\tbash\nState:\tS (sleeping)\nCpus_allowed:\t0000,00000000,00000000,00000000,00000000,00000020,00000000,00000000\nCpus_allowed_list:\t69",
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "components_hartree": {
+          "Core Hamiltonian energy": -30.90035020806013,
+          "Correction for halogen bonding": 0.0,
+          "Electrostatic energy": 0.93480174726704,
+          "Non-self consistent dispersion energy": 0.01669026343473,
+          "Repulsive potential energy": 2.44067773546451,
+          "Self-consistent dispersion energy": -0.0663217973567
+        },
+        "energy_hartree": -602.540748682589,
+        "input_sha256": "ac803b7fddbf0e67113fc0fd1b9b83e9d44796563832938aba74f6f810fdfee0",
+        "output_sha256": "6f5ba21f56ef9102b2fd01c129b4f8851acae3718715638928ec2123ca3525ab"
+      }
+    },
+    {
+      "full": {
+        "affinity_proof": "pid=3089836 expected_cpu=70 allowed=70\nName:\tbash\nState:\tS (sleeping)\nCpus_allowed:\t0000,00000000,00000000,00000000,00000000,00000040,00000000,00000000\nCpus_allowed_list:\t70",
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "components_hartree": {
+          "Core Hamiltonian energy": -30.07658671806198,
+          "Correction for halogen bonding": 0.0,
+          "Electrostatic energy": 1.16225418792824,
+          "Non-self consistent dispersion energy": 0.01669026343473,
+          "Repulsive potential energy": 2.43039613286956,
+          "Self-consistent dispersion energy": -0.05986792829822
+        },
+        "energy_hartree": -593.0320873072908,
+        "input_sha256": "6fdd35ba00562ac9c32698d074d18b11ae7fee47a8f1e7939ab2db359ad68f9f",
+        "output_sha256": "7accaefa492a10ab139f729ee28f1269e2146d5f910ee0a0f38c8c562864b41e"
+      },
+      "full_minus_reduced_components_hartree": {
+        "Core Hamiltonian energy": 2.6972202249453403e-11,
+        "Correction for halogen bonding": 0.0,
+        "Electrostatic energy": -3.837499207293149e-10,
+        "Non-self consistent dispersion energy": 0.0,
+        "Repulsive potential energy": 4.949818332988798e-12,
+        "Self-consistent dispersion energy": 5.000166947155549e-14
+      },
+      "full_minus_reduced_energy_hartree": -1.8962964531965554e-10,
+      "mode": "no_acp",
+      "parity_within_5e_12_hartree": false,
+      "reduced": {
+        "affinity_proof": "pid=3094394 expected_cpu=71 allowed=71\nName:\tbash\nState:\tS (sleeping)\nCpus_allowed:\t0000,00000000,00000000,00000000,00000000,00000080,00000000,00000000\nCpus_allowed_list:\t71",
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "components_hartree": {
+          "Core Hamiltonian energy": -30.07658671808895,
+          "Correction for halogen bonding": 0.0,
+          "Electrostatic energy": 1.16225418831199,
+          "Non-self consistent dispersion energy": 0.01669026343473,
+          "Repulsive potential energy": 2.43039613286461,
+          "Self-consistent dispersion energy": -0.05986792829827
+        },
+        "energy_hartree": -593.0320873071012,
+        "input_sha256": "97cd4411e0cad604f4eb0837ba326a018a0f8f96904d44b84072871920258e20",
+        "output_sha256": "562535073e93c25efa86184e9f790543b764aa0d31f019585eebff2d92916ef3"
+      }
+    },
+    {
+      "full": {
+        "affinity_proof": "pid=3103530 expected_cpu=72 allowed=72\nName:\tbash\nState:\tS (sleeping)\nCpus_allowed:\t0000,00000000,00000000,00000000,00000000,00000100,00000000,00000000\nCpus_allowed_list:\t72",
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "components_hartree": {
+          "Core Hamiltonian energy": -30.77290235675352,
+          "Correction for halogen bonding": 0.0,
+          "Electrostatic energy": 0.7780165656201,
+          "Non-self consistent dispersion energy": 0.01669026343473,
+          "Repulsive potential energy": 2.44282435304019,
+          "Self-consistent dispersion energy": -0.0685170001491
+        },
+        "energy_hartree": -583.0232259404077,
+        "input_sha256": "2db969c2f867bb9bb0d24440d19ae8dd6fd665a1195bfcab08f8295afed4015b",
+        "output_sha256": "2db6a77032105ad8e84b97a4b12786afd3ceada2136575908fde1231f3f444b9"
+      },
+      "full_minus_reduced_components_hartree": {
+        "Core Hamiltonian energy": -4.950102550083102e-10,
+        "Correction for halogen bonding": 0.0,
+        "Electrostatic energy": 4.2833003810471837e-10,
+        "Non-self consistent dispersion energy": 0.0,
+        "Repulsive potential energy": -4.8401282981558325e-12,
+        "Self-consistent dispersion energy": -6.2100047326651975e-12
+      },
+      "full_minus_reduced_energy_hartree": -7.776179700158536e-11,
+      "mode": "no_exchange_no_acp",
+      "parity_within_5e_12_hartree": false,
+      "reduced": {
+        "affinity_proof": "pid=3098959 expected_cpu=73 allowed=73\nName:\tbash\nState:\tS (sleeping)\nCpus_allowed:\t0000,00000000,00000000,00000000,00000000,00000200,00000000,00000000\nCpus_allowed_list:\t73",
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "components_hartree": {
+          "Core Hamiltonian energy": -30.77290235625851,
+          "Correction for halogen bonding": 0.0,
+          "Electrostatic energy": 0.77801656519177,
+          "Non-self consistent dispersion energy": 0.01669026343473,
+          "Repulsive potential energy": 2.44282435304503,
+          "Self-consistent dispersion energy": -0.06851700014289
+        },
+        "energy_hartree": -583.0232259403299,
+        "input_sha256": "a9472413b9253fd739cfdac048e84f9deac171795c4315ab0cc42347d5b752b6",
+        "output_sha256": "4424c3dbeb78c33df2930c1f8e7078260932c491ce869aaa1d459acf4c3493ce"
+      }
+    }
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,17 @@
+{
+  "energy_hartree_supercell": {
+    "current_provider": -7352.46534909668,
+    "final_pbc_provider": -7352.468520192124,
+    "historical_h0_diagnostic": -7352.468520192105
+  },
+  "equivalent_image_invariance_hartree_supercell": {
+    "historical_central_cell_h0": 5.6007593229878694e-08,
+    "periodic_neighbour_h0": -2.7284841053187847e-12
+  },
+  "fraction_of_provider_gap_accounted_for": 0.9999999939770375,
+  "historical_h0_minus_current_hartree_supercell": -0.003171095424477244,
+  "historical_h0_minus_final_pbc_hartree_supercell": 1.9099388737231493e-11,
+  "mesh": "2x2x2 explicit BvK supercell",
+  "phase": "VII",
+  "status": "PASS"
+}

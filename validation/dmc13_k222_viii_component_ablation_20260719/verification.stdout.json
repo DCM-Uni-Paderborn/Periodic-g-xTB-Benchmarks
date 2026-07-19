@@ -1,0 +1,147 @@
+{
+  "checks": [
+    {
+      "name": "controller_exit_status",
+      "passed": true
+    },
+    {
+      "name": "no_exchange: successful normal termination",
+      "passed": true
+    },
+    {
+      "name": "no_exchange: immutable binary",
+      "passed": true
+    },
+    {
+      "name": "no_exchange: disjoint singleton affinity",
+      "passed": true
+    },
+    {
+      "name": "no_exchange: numerical energy equivalence",
+      "passed": true
+    },
+    {
+      "name": "no_acp: successful normal termination",
+      "passed": true
+    },
+    {
+      "name": "no_acp: immutable binary",
+      "passed": true
+    },
+    {
+      "name": "no_acp: disjoint singleton affinity",
+      "passed": true
+    },
+    {
+      "name": "no_acp: numerical energy equivalence",
+      "passed": true
+    },
+    {
+      "name": "no_exchange_no_acp: successful normal termination",
+      "passed": true
+    },
+    {
+      "name": "no_exchange_no_acp: immutable binary",
+      "passed": true
+    },
+    {
+      "name": "no_exchange_no_acp: disjoint singleton affinity",
+      "passed": true
+    },
+    {
+      "name": "no_exchange_no_acp: numerical energy equivalence",
+      "passed": true
+    }
+  ],
+  "eps_scf": 1e-12,
+  "interpretation": "The sub-nanohartree full/reduced residual remains when exchange, ACP, or both are disabled. It is therefore not uniquely caused by either term or their coupling and is numerically negligible.",
+  "maximum_absolute_difference_hartree_per_cell": 2.5420376914553344e-10,
+  "mesh": "2x2x2",
+  "minimum_absolute_difference_hartree_per_cell": 7.776179700158536e-11,
+  "phase": "VIII",
+  "rows": [
+    {
+      "full": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_hartree": -602.5407486828432,
+        "exit_status": 0,
+        "input_sha256": "1eb388d39b93047bd1adc32b9f37c4f98eb42782f71705ae214a617ac1bef25d",
+        "normal_termination": true,
+        "output_sha256": "b41770c71fbcd4ea60777b6016fe32a396bd6707f6e051f4187f273c16b616d1",
+        "singleton_cpu": 68,
+        "water_molecules": 8
+      },
+      "full_minus_reduced_hartree_per_cell": -2.5420376914553344e-10,
+      "full_minus_reduced_kjmol_per_water": -8.342648803075372e-08,
+      "mode": "no_exchange",
+      "reduced": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_hartree": -602.540748682589,
+        "exit_status": 0,
+        "input_sha256": "ac803b7fddbf0e67113fc0fd1b9b83e9d44796563832938aba74f6f810fdfee0",
+        "normal_termination": true,
+        "output_sha256": "6f5ba21f56ef9102b2fd01c129b4f8851acae3718715638928ec2123ca3525ab",
+        "singleton_cpu": 69,
+        "water_molecules": 8
+      },
+      "within_numerical_equivalence_tolerance": true
+    },
+    {
+      "full": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_hartree": -593.0320873072908,
+        "exit_status": 0,
+        "input_sha256": "6fdd35ba00562ac9c32698d074d18b11ae7fee47a8f1e7939ab2db359ad68f9f",
+        "normal_termination": true,
+        "output_sha256": "7accaefa492a10ab139f729ee28f1269e2146d5f910ee0a0f38c8c562864b41e",
+        "singleton_cpu": 70,
+        "water_molecules": 8
+      },
+      "full_minus_reduced_hartree_per_cell": -1.8962964531965554e-10,
+      "full_minus_reduced_kjmol_per_water": -6.223407067768212e-08,
+      "mode": "no_acp",
+      "reduced": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_hartree": -593.0320873071012,
+        "exit_status": 0,
+        "input_sha256": "97cd4411e0cad604f4eb0837ba326a018a0f8f96904d44b84072871920258e20",
+        "normal_termination": true,
+        "output_sha256": "562535073e93c25efa86184e9f790543b764aa0d31f019585eebff2d92916ef3",
+        "singleton_cpu": 71,
+        "water_molecules": 8
+      },
+      "within_numerical_equivalence_tolerance": true
+    },
+    {
+      "full": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_hartree": -583.0232259404077,
+        "exit_status": 0,
+        "input_sha256": "2db969c2f867bb9bb0d24440d19ae8dd6fd665a1195bfcab08f8295afed4015b",
+        "normal_termination": true,
+        "output_sha256": "2db6a77032105ad8e84b97a4b12786afd3ceada2136575908fde1231f3f444b9",
+        "singleton_cpu": 72,
+        "water_molecules": 8
+      },
+      "full_minus_reduced_hartree_per_cell": -7.776179700158536e-11,
+      "full_minus_reduced_kjmol_per_water": -2.5520446249121442e-08,
+      "mode": "no_exchange_no_acp",
+      "reduced": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_hartree": -583.0232259403299,
+        "exit_status": 0,
+        "input_sha256": "a9472413b9253fd739cfdac048e84f9deac171795c4315ab0cc42347d5b752b6",
+        "normal_termination": true,
+        "output_sha256": "4424c3dbeb78c33df2930c1f8e7078260932c491ce869aaa1d459acf4c3493ce",
+        "singleton_cpu": 73,
+        "water_molecules": 8
+      },
+      "within_numerical_equivalence_tolerance": true
+    }
+  ],
+  "status": "PASS",
+  "tolerances": {
+    "hartree_per_cell": 5e-10,
+    "kjmol_per_water": 1e-06
+  }
+}

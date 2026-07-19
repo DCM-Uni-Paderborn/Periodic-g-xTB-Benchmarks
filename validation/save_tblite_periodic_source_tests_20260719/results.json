@@ -1,0 +1,204 @@
+{
+  "schema": "save_tblite-periodic-source-tests-v1",
+  "current": {
+    "revision": "15915c9435644eb257178ca8f8bf7220c38b1a84",
+    "binary": "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+    "binary_sha256": "0b1fdc1af452f40ba838c60a276bed572a7708ead6dfab348973e558399c3969",
+    "git_status": ""
+  },
+  "pbc_baseline": {
+    "revision": "c932120d2580811901de6a1fe3f89b943c251766",
+    "binary": "/Users/tkuehne/Documents/g-xTB/save_tblite_pbc_source_baseline/build-tests-packages/test/unit/tblite-tester",
+    "binary_sha256": "be24f9c4fb696d29ff396b29130bf3111576ec69c70c0b28c9b94dbe1915a78c",
+    "build_only_repair_files": [
+      "test/unit/CMakeLists.txt",
+      "test/unit/test_gxtb.f90"
+    ]
+  },
+  "compiler": "GNU Fortran (Homebrew GCC 16.1.0) 16.1.0",
+  "tests": {
+    "current_h0_diamond": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "hamiltonian",
+        "anisotropy-gxtb-diamond-pbc"
+      ],
+      "log": "current_h0_diamond.log",
+      "returncode": 0,
+      "passed_count": 1,
+      "failed_count": 0
+    },
+    "current_h0_supercell": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "hamiltonian",
+        "anisotropy-gxtb-supercell-pbc"
+      ],
+      "log": "current_h0_supercell.log",
+      "returncode": 0,
+      "passed_count": 1,
+      "failed_count": 0
+    },
+    "current_h0_gradient": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "hamiltonian",
+        "anisotropy-gradient-gxtb-diamond-pbc"
+      ],
+      "log": "current_h0_gradient.log",
+      "returncode": 0,
+      "passed_count": 1,
+      "failed_count": 0
+    },
+    "current_wignerseitz": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "wignerseitz"
+      ],
+      "log": "current_wignerseitz.log",
+      "returncode": 0,
+      "passed_count": 6,
+      "failed_count": 0
+    },
+    "current_exchange": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "exchange"
+      ],
+      "log": "current_exchange.log",
+      "returncode": 0,
+      "passed_count": 36,
+      "failed_count": 0
+    },
+    "current_acp": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "acp"
+      ],
+      "log": "current_acp.log",
+      "returncode": 0,
+      "passed_count": 22,
+      "failed_count": 0
+    },
+    "current_coulomb_charge": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "coulomb-charge"
+      ],
+      "log": "current_coulomb_charge.log",
+      "returncode": 0,
+      "passed_count": 58,
+      "failed_count": 0
+    },
+    "current_coulomb_multipole": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "coulomb-multipole"
+      ],
+      "log": "current_coulomb_multipole.log",
+      "returncode": 0,
+      "passed_count": 51,
+      "failed_count": 0
+    },
+    "current_dispersion": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "dispersion"
+      ],
+      "log": "current_dispersion.log",
+      "returncode": 0,
+      "passed_count": 15,
+      "failed_count": 0
+    },
+    "current_repulsion": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "repulsion"
+      ],
+      "log": "current_repulsion.log",
+      "returncode": 0,
+      "passed_count": 19,
+      "failed_count": 0
+    },
+    "current_gxtb": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "gxtb"
+      ],
+      "log": "current_gxtb.log",
+      "returncode": 0,
+      "passed_count": 40,
+      "failed_count": 0
+    },
+    "current_hamiltonian": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "hamiltonian"
+      ],
+      "log": "current_hamiltonian.log",
+      "returncode": 1,
+      "passed_count": 74,
+      "failed_count": 1
+    },
+    "current_cecl3": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_integration_validation/build-tests/test/unit/tblite-tester",
+        "hamiltonian",
+        "hamiltonian-gradient-gxtb-cecl3"
+      ],
+      "log": "current_cecl3.log",
+      "returncode": 1,
+      "passed_count": 0,
+      "failed_count": 1
+    },
+    "pbc_cecl3": {
+      "command": [
+        "/Users/tkuehne/Documents/g-xTB/save_tblite_pbc_source_baseline/build-tests-packages/test/unit/tblite-tester",
+        "hamiltonian",
+        "hamiltonian-gradient-gxtb-cecl3"
+      ],
+      "log": "pbc_cecl3.log",
+      "returncode": 1,
+      "passed_count": 0,
+      "failed_count": 1
+    }
+  },
+  "exchange_residuals_hartree": {
+    "whole_mesh_vs_explicit_bvk": 4.613432032229969e-13,
+    "mixed_radix_fft_vs_dense": 9.71445146547012e-17
+  },
+  "cecl3_nonperiodic_finite_difference": {
+    "current_differences_hartree_per_bohr": [
+      -1.99409707496434e-11,
+      2.1790850374126e-11,
+      2.87804443471762e-10,
+      -5.67726074485186e-11,
+      6.82623402248339e-11,
+      1.05126324312366e-12,
+      -3.57203502887593e-11,
+      -1.69442029851474e-11,
+      1.60426255613189e-11,
+      1.12433937160539e-10,
+      1.57088439478592e-11,
+      5.03730356038457e-11
+    ],
+    "pbc_differences_hartree_per_bohr": [
+      -1.99409707496434e-11,
+      2.1790850374126e-11,
+      2.87804443471762e-10,
+      -5.67726074485186e-11,
+      6.82623402248339e-11,
+      1.05126324312366e-12,
+      -3.57203502887593e-11,
+      -1.69442029851474e-11,
+      1.60426255613189e-11,
+      1.12433937160539e-10,
+      1.57088439478592e-11,
+      5.03730356038457e-11
+    ],
+    "current_max_abs_hartree_per_bohr": 2.87804443471762e-10,
+    "pbc_max_abs_hartree_per_bohr": 2.87804443471762e-10,
+    "test_tolerance_hartree_per_bohr": 2.220446049250313e-10,
+    "identical_difference_components": true
+  }
+}

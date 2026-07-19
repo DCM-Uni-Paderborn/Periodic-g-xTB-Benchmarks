@@ -1,0 +1,12 @@
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/derivative/CH4_gxtb_gamma_force_stress-launcher.log: No such file or directory
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/derivative/CH4_gxtb_kp_full_222_force_stress-launcher.log: No such file or directory
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/derivative/CH4_gxtb_kp_111_force_stress-launcher.log: No such file or directory
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/derivative/CH4_gxtb_kp_k290_force_stress-launcher.log: No such file or directory
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/derivative/CH4_gxtb_kp_spglib_222_force_stress-launcher.log: No such file or directory
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/derivative/CH4_gxtb_kp_spglib_111_force_stress-launcher.log: No such file or directory
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/derivative/H2_gxtb_gamma_supercell_311_force_stress-launcher.log: No such file or directory
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/derivative/H2_gxtb_kp_311_force_stress-launcher.log: No such file or directory
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/derivative/H2O_gxtb_gamma_force_stress-launcher.log: No such file or directory
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/derivative/H2O_gxtb_kp_gamma_force_stress-launcher.log: No such file or directory
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/partial/gxtb_1d_native_gamma_centered_k211-launcher.log: No such file or directory
+./run_lowk_derivative_qualification.sh: line 83: /home/kuehne88/work/gxtb-final-lowk-derivatives-20260719/results/derivative/H2_gxtb_kp_311_tr_force_stress-launcher.log: No such file or directory

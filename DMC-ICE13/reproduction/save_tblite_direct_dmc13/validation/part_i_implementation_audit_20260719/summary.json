@@ -1,11 +1,11 @@
 {
   "failed_gates": [],
-  "gate_count": 11,
+  "gate_count": 19,
   "gates": [
     {
       "name": "absolute_energy_parity",
       "returncode": 0,
-      "script": "tools/verify_absolute_energy_parity.py",
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/tools/verify_absolute_energy_parity.py",
       "script_sha256": "a97c245e0a0f3c4d63b130ed0f095c45e894294c98b1276216d4a86d662a02e6",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -16,7 +16,7 @@
     {
       "name": "accuracy_sensitivity",
       "returncode": 0,
-      "script": "validation/accuracy_sensitivity_20260718/verify_accuracy.py",
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/accuracy_sensitivity_20260718/verify_accuracy.py",
       "script_sha256": "c28eccd451873dadfe029012ec546fa8449a92a4c20fa4f9f51710f80e615f9b",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -27,7 +27,7 @@
     {
       "name": "response_fix",
       "returncode": 0,
-      "script": "validation/cp2k_response_fix_ab_20260719/verify_response_fix.py",
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/cp2k_response_fix_ab_20260719/verify_response_fix.py",
       "script_sha256": "fd6b67c5ffdb2a0296a048ff85994c698da8c02a60a00648e53f7e5475bd1bd5",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -38,7 +38,7 @@
     {
       "name": "energy_force_stress",
       "returncode": 0,
-      "script": "validation/k222_XVII_derivatives/verify_derivatives.py",
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/k222_XVII_derivatives/verify_derivatives.py",
       "script_sha256": "21f4e4effcab63900a2bf79253574d563f352248f78ffd280d5d090bb04da1f9",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -49,7 +49,7 @@
     {
       "name": "kpoint_grid_bvk",
       "returncode": 0,
-      "script": "validation/kpoint_grid_bvk_oracle_20260718/verify_grid.py",
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/kpoint_grid_bvk_oracle_20260718/verify_grid.py",
       "script_sha256": "0188625c3780d0f7e18c1333c5b02659b683a6a4f35e94aadadcef2db45d9308",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -60,7 +60,7 @@
     {
       "name": "model_revision",
       "returncode": 0,
-      "script": "validation/model_revision_coarse_grid_ab_20260718/verify_comparison.py",
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/model_revision_coarse_grid_ab_20260718/verify_comparison.py",
       "script_sha256": "6b81b9831694b96ce5c1c8f5c16e5f000824bc40477ba0491e14b3300d0f0233",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -71,7 +71,7 @@
     {
       "name": "native_derivative_hardening",
       "returncode": 0,
-      "script": "validation/native_derivative_hardening_20260718/verify_current_build.py",
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/native_derivative_hardening_20260718/verify_current_build.py",
       "script_sha256": "475baf041008c3a3ed3c576881f278cb756d19febdc6078552046e47072769a0",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -82,7 +82,7 @@
     {
       "name": "provider_revision",
       "returncode": 0,
-      "script": "validation/provider_revision_bvk_ab_20260718/verify_comparison.py",
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/provider_revision_bvk_ab_20260718/verify_comparison.py",
       "script_sha256": "430ffc9c219cc106c50adfde4634fb6837e3796067b0a6087ae06321dd8fa666",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -93,7 +93,7 @@
     {
       "name": "qualified_energy_sentinels",
       "returncode": 0,
-      "script": "validation/qualified_energy_sentinels_20260719/verify_qualified_energy_sentinels.py",
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/qualified_energy_sentinels_20260719/verify_qualified_energy_sentinels.py",
       "script_sha256": "b1f66fa2c1ea3a77bc4c596116d6b4146f4e0bcd26c385812b33d2e1937c3a03",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -104,7 +104,7 @@
     {
       "name": "wigner_seitz_branch_diagnosis",
       "returncode": 0,
-      "script": "validation/wigner_seitz_branch_diagnosis_20260718/verify_diagnosis.py",
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/wigner_seitz_branch_diagnosis_20260718/verify_diagnosis.py",
       "script_sha256": "74d0166cdca4fc8c42b60b103714388c42bd605567890a6ac70b373cfa3955e6",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -113,17 +113,105 @@
       "stdout_tail": "PASS unit-test statuses: legacy=8, fixed=0"
     },
     {
+      "name": "final_lowk_derivatives",
+      "returncode": 0,
+      "script": "validation/gxtb_final_lowk_derivatives_20260719/verify_final_lowk_derivatives.py",
+      "script_sha256": "17034a4ec7ea4eaae2752c216094e22a9d96e5ce4f27154e115575da95da76c1",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "8670fc8fa49cf1be839943a4269d410eede9d4a96e19bf25273839c31f6e83af",
+      "stdout_tail": "}"
+    },
+    {
+      "name": "phase_viii_component_ablation",
+      "returncode": 0,
+      "script": "validation/dmc13_k222_viii_component_ablation_20260719/verify_component_ablation.py",
+      "script_sha256": "86379623208fc76fd74c970256fa9889679b09b03824e9aad27213eb64aca016",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "b0bdd59ad76314ba394f4b478591bcd31a2c6c9d7116655cd67907556fa0bc1c",
+      "stdout_tail": "}"
+    },
+    {
+      "name": "phase_xvii_derivative_component_ablation",
+      "returncode": 0,
+      "script": "validation/dmc13_k222_xvii_derivative_component_ablation_20260719/verify_derivative_component_ablation.py",
+      "script_sha256": "1129c70ade7f48b66ed3028ca38e0cc39741e0d7db816493cf39bb735f49e2a7",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "f2ec4954b7ccade986b2adb03a7bf6485d39d431d4154021f7f749cf6b45fb34",
+      "stdout_tail": "}"
+    },
+    {
+      "name": "provider_component_attribution",
+      "returncode": 0,
+      "script": "validation/provider_component_attribution_20260719/verify_attribution.py",
+      "script_sha256": "6609c0044d6102b5b8fec7b16be98c4c2028d23dcd4d5e50d5b9aac9761c3106",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "a64c37ed84a31c84db288469d08a8206921d5c2bfcbed7d537123df6202d9650",
+      "stdout_tail": "}"
+    },
+    {
+      "name": "pbc_h0_anisotropy_attribution",
+      "returncode": 0,
+      "script": "validation/pbc_h0_anisotropy_attribution_20260719/verify_h0_attribution.py",
+      "script_sha256": "d48b8aa76f4fe0df752a90bf24d5254b88324b564c0558e677d8c6ee413ffb79",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "bc3b998a6b074ad48fef5f0c26b80b8948b590a98726d2ed639abdca923a56fd",
+      "stdout_tail": "}"
+    },
+    {
+      "name": "save_tblite_periodic_source_tests",
+      "returncode": 0,
+      "script": "validation/save_tblite_periodic_source_tests_20260719/verify_source_tests.py",
+      "script_sha256": "29f3155290d2291561de1c15c05e49be53fd533f509106726a571a0a5f1d2a94",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "c89c79956c39d6ece92a57bdff30b2f272d958c9fe2fa52642b69ec8c7f42155",
+      "stdout_tail": "Hamiltonian: 74/75; sole pbc-identical nonperiodic CeCl3 threshold case"
+    },
+    {
+      "name": "three_route_k333_closure",
+      "returncode": 0,
+      "script": "validation/three_route_k333_closure_20260719/generate_and_verify.py",
+      "script_sha256": "8f97f8f47569e696437050e48a8787886a36906afc1eed4db6aa94872ead9618",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "a4c48434b5d9cb76ef7b32ff7cb71ff41ae774df484e982b38b0f9aaba806a71",
+      "stdout_tail": "}"
+    },
+    {
+      "name": "seidler_recalculation_package",
+      "returncode": 0,
+      "script": "DMC-ICE13/reproduction/seidler_dmc13_recalculation/prepare_package.py",
+      "script_sha256": "2a5edb2d84073fe4d83c5dda1696ef1c58746ec45b2f26f62f58f2442e030d94",
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "b9ea75611892cc36e02befdd1afde88e6c88a40469b41aa93ed7d4e3e3066b2a",
+      "stdout_tail": "files=38 structures=13 status=PASS"
+    },
+    {
       "name": "archive_sha256",
       "returncode": 0,
-      "script": "tools/verify_sha256_manifests.py",
+      "script": "DMC-ICE13/reproduction/save_tblite_direct_dmc13/tools/verify_sha256_manifests.py",
       "script_sha256": "25c8219e2c36609c1f4b95fb1bb4a3273f165f6032a58ea20fc8765ec16782cf",
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_tail": "",
-      "stdout_sha256": "134158cc82708c01d2eaa43988bc80b8a79e4e659a3755502a3119651220af59",
-      "stdout_tail": "manifests=58 entries=2691 failures=0"
+      "stdout_sha256": "15d338e470100294992f569c63d8a1ac4e2d22372a94a75b6a3bf50efe565d25",
+      "stdout_tail": "manifests=58 entries=2695 failures=0"
     }
   ],
-  "passed_gate_count": 11,
+  "passed_gate_count": 19,
   "status": "PASS"
 }

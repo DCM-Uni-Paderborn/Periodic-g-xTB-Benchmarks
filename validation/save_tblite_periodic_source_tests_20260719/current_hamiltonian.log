@@ -1,0 +1,177 @@
+# Testing: hamiltonian
+  Starting selfenergy-gfn2-h2 ... (1/75)
+       ... selfenergy-gfn2-h2 [PASSED]
+  Starting selfenergy-gfn2-lih ... (2/75)
+       ... selfenergy-gfn2-lih [PASSED]
+  Starting selfenergy-gfn2-s2 ... (3/75)
+       ... selfenergy-gfn2-s2 [PASSED]
+  Starting selfenergy-gfn2-sih4 ... (4/75)
+       ... selfenergy-gfn2-sih4 [PASSED]
+  Starting selfenergy-gxtb-h2 ... (5/75)
+       ... selfenergy-gxtb-h2 [PASSED]
+  Starting selfenergy-gxtb-lih ... (6/75)
+       ... selfenergy-gxtb-lih [PASSED]
+  Starting selfenergy-gxtb-s2 ... (7/75)
+       ... selfenergy-gxtb-s2 [PASSED]
+  Starting selfenergy-gxtb-sih4 ... (8/75)
+       ... selfenergy-gxtb-sih4 [PASSED]
+  Starting selfenergy-gxtb-cecl3 ... (9/75)
+       ... selfenergy-gxtb-cecl3 [PASSED]
+  Starting selfenergy-gxtb-ce2 ... (10/75)
+       ... selfenergy-gxtb-ce2 [PASSED]
+  Starting selfenergy-ceh-h2 ... (11/75)
+       ... selfenergy-ceh-h2 [PASSED]
+  Starting selfenergy-ceh-lih ... (12/75)
+       ... selfenergy-ceh-lih [PASSED]
+  Starting selfenergy-ceh-s2 ... (13/75)
+       ... selfenergy-ceh-s2 [PASSED]
+  Starting selfenergy-ceh-sih4 ... (14/75)
+       ... selfenergy-ceh-sih4 [PASSED]
+  Starting selfenergy-ceh-accl6 ... (15/75)
+       ... selfenergy-ceh-accl6 [PASSED]
+  Starting anisotropy-gxtb-h2 ... (16/75)
+       ... anisotropy-gxtb-h2 [PASSED]
+  Starting anisotropy-gxtb-lih ... (17/75)
+       ... anisotropy-gxtb-lih [PASSED]
+  Starting anisotropy-gxtb-sih4 ... (18/75)
+       ... anisotropy-gxtb-sih4 [PASSED]
+  Starting anisotropy-gxtb-cecl3 ... (19/75)
+       ... anisotropy-gxtb-cecl3 [PASSED]
+  Starting anisotropy-gxtb-m01 ... (20/75)
+       ... anisotropy-gxtb-m01 [PASSED]
+  Starting anisotropy-gxtb-m02 ... (21/75)
+       ... anisotropy-gxtb-m02 [PASSED]
+  Starting anisotropy-gxtb-diamond-pbc ... (22/75)
+       ... anisotropy-gxtb-diamond-pbc [PASSED]
+  Starting anisotropy-gxtb-supercell-pbc ... (23/75)
+       ... anisotropy-gxtb-supercell-pbc [PASSED]
+  Starting anisotropy-gradient-gxtb-diamond-pbc ... (24/75)
+       ... anisotropy-gradient-gxtb-diamond-pbc [PASSED]
+  Starting hamiltonian-gfn2-h2 ... (25/75)
+       ... hamiltonian-gfn2-h2 [PASSED]
+  Starting hamiltonian-gfn2-lih ... (26/75)
+       ... hamiltonian-gfn2-lih [PASSED]
+  Starting hamiltonian-gfn2-s2 ... (27/75)
+       ... hamiltonian-gfn2-s2 [PASSED]
+  Starting hamiltonian-gfn2-sih4 ... (28/75)
+       ... hamiltonian-gfn2-sih4 [PASSED]
+  Starting hamiltonian-gxtb-h2 ... (29/75)
+       ... hamiltonian-gxtb-h2 [PASSED]
+  Starting hamiltonian-gxtb-lih ... (30/75)
+       ... hamiltonian-gxtb-lih [PASSED]
+  Starting hamiltonian-gxtb-s2 ... (31/75)
+       ... hamiltonian-gxtb-s2 [PASSED]
+  Starting hamiltonian-gxtb-sih4 ... (32/75)
+       ... hamiltonian-gxtb-sih4 [PASSED]
+  Starting hamiltonian-gxtb-cecl3 ... (33/75)
+       ... hamiltonian-gxtb-cecl3 [PASSED]
+  Starting hamiltonian-gxtb-ce2 ... (34/75)
+       ... hamiltonian-gxtb-ce2 [PASSED]
+  Starting hamiltonian-ceh-h2 ... (35/75)
+       ... hamiltonian-ceh-h2 [PASSED]
+  Starting hamiltonian-ceh-lih ... (36/75)
+       ... hamiltonian-ceh-lih [PASSED]
+  Starting hamiltonian-ceh-s2 ... (37/75)
+       ... hamiltonian-ceh-s2 [PASSED]
+  Starting hamiltonian-ceh-sih4 ... (38/75)
+       ... hamiltonian-ceh-sih4 [PASSED]
+  Starting hamiltonian-ceh-panp ... (39/75)
+       ... hamiltonian-ceh-panp [PASSED]
+  Starting anisotropy-gradient-gxtb-h2 ... (40/75)
+       ... anisotropy-gradient-gxtb-h2 [PASSED]
+  Starting anisotropy-gradient-gxtb-lih ... (41/75)
+       ... anisotropy-gradient-gxtb-lih [PASSED]
+  Starting anisotropy-gradient-gxtb-sih4 ... (42/75)
+       ... anisotropy-gradient-gxtb-sih4 [PASSED]
+  Starting anisotropy-gradient-gxtb-cecl3 ... (43/75)
+       ... anisotropy-gradient-gxtb-cecl3 [PASSED]
+  Starting anisotropy-gradient-gxtb-m01 ... (44/75)
+       ... anisotropy-gradient-gxtb-m01 [PASSED]
+  Starting anisotropy-gradient-gxtb-m02 ... (45/75)
+       ... anisotropy-gradient-gxtb-m02 [PASSED]
+  Starting energy-aniso-grad-gxtb-h2 ... (46/75)
+       ... energy-aniso-grad-gxtb-h2 [PASSED]
+  Starting energy-aniso-grad-gxtb-lih ... (47/75)
+       ... energy-aniso-grad-gxtb-lih [PASSED]
+  Starting energy-aniso-grad-gxtb-no ... (48/75)
+       ... energy-aniso-grad-gxtb-no [PASSED]
+  Starting energy-aniso-grad-gxtb-s2 ... (49/75)
+       ... energy-aniso-grad-gxtb-s2 [PASSED]
+  Starting energy-aniso-grad-gxtb-sih4 ... (50/75)
+       ... energy-aniso-grad-gxtb-sih4 [PASSED]
+  Starting energy-aniso-grad-gxtb-cecl3 ... (51/75)
+       ... energy-aniso-grad-gxtb-cecl3 [PASSED]
+  Starting energy-self-dedcn-gfn2-co2-pbc ... (52/75)
+       ... energy-self-dedcn-gfn2-co2-pbc [PASSED]
+  Starting energy-self-grad-gfn2-co2-pbc ... (53/75)
+       ... energy-self-grad-gfn2-co2-pbc [PASSED]
+  Starting energy-self-sigma-gfn2-co2-pbc ... (54/75)
+       ... energy-self-sigma-gfn2-co2-pbc [PASSED]
+  Starting energy-self-dedcn-gxtb-co2-pbc ... (55/75)
+       ... energy-self-dedcn-gxtb-co2-pbc [PASSED]
+  Starting energy-self-grad-gxtb-co2-pbc ... (56/75)
+       ... energy-self-grad-gxtb-co2-pbc [PASSED]
+  Starting energy-self-sigma-gxtb-co2-pbc ... (57/75)
+       ... energy-self-sigma-gxtb-co2-pbc [PASSED]
+  Starting image-gradient-gxtb-co2-pbc ... (58/75)
+       ... image-gradient-gxtb-co2-pbc [PASSED]
+  Starting energy-qeff-grad-gxtb-h2 ... (59/75)
+       ... energy-qeff-grad-gxtb-h2 [PASSED]
+  Starting energy-qeff-grad-gxtb-lih ... (60/75)
+       ... energy-qeff-grad-gxtb-lih [PASSED]
+  Starting energy-qeff-grad-gxtb-no ... (61/75)
+       ... energy-qeff-grad-gxtb-no [PASSED]
+  Starting energy-qeff-grad-gxtb-s2 ... (62/75)
+       ... energy-qeff-grad-gxtb-s2 [PASSED]
+  Starting energy-qeff-grad-gxtb-sih4 ... (63/75)
+       ... energy-qeff-grad-gxtb-sih4 [PASSED]
+  Starting energy-qeff-grad-gxtb-cecl3 ... (64/75)
+       ... energy-qeff-grad-gxtb-cecl3 [PASSED]
+  Starting hamiltonian-gradient-gfn2-h2 ... (65/75)
+       ... hamiltonian-gradient-gfn2-h2 [PASSED]
+  Starting hamiltonian-gradient-gfn2-lih ... (66/75)
+       ... hamiltonian-gradient-gfn2-lih [PASSED]
+  Starting hamiltonian-gradient-gfn2-s2 ... (67/75)
+       ... hamiltonian-gradient-gfn2-s2 [PASSED]
+  Starting hamiltonian-gradient-gfn2-no ... (68/75)
+       ... hamiltonian-gradient-gfn2-no [PASSED]
+  Starting hamiltonian-gradient-gfn2-sih4 ... (69/75)
+       ... hamiltonian-gradient-gfn2-sih4 [PASSED]
+  Starting hamiltonian-gradient-gxtb-h2 ... (70/75)
+       ... hamiltonian-gradient-gxtb-h2 [PASSED]
+  Starting hamiltonian-gradient-gxtb-lih ... (71/75)
+       ... hamiltonian-gradient-gxtb-lih [PASSED]
+  Starting hamiltonian-gradient-gxtb-no ... (72/75)
+       ... hamiltonian-gradient-gxtb-no [PASSED]
+  Starting hamiltonian-gradient-gxtb-s2 ... (73/75)
+       ... hamiltonian-gradient-gxtb-s2 [PASSED]
+  Starting hamiltonian-gradient-gxtb-sih4 ... (74/75)
+       ... hamiltonian-gradient-gxtb-sih4 [PASSED]
+  Starting hamiltonian-gradient-gxtb-cecl3 ... (75/75)
+ Analytic gradient:
+ 9.43663643009215E-03 1.44143854403949E-02-2.30081828931015E-02
+-3.88350255632732E-02-5.61698033180344E-02-3.61117290726444E-02
+-4.04689389912050E-02 5.97425480472347E-02 2.95981342706696E-02
+ 6.98673281243861E-02-1.79871301695952E-02 2.95217776950762E-02
+ Numeric gradient:
+ 9.43663645003312E-03 1.44143854186041E-02-2.30081831809059E-02
+-3.88350255065006E-02-5.61698033862967E-02-3.61117290736956E-02
+-4.04689389554846E-02 5.97425480641789E-02 2.95981342546270E-02
+ 6.98673280119522E-02-1.79871301853041E-02 2.95217776447032E-02
+ Difference:
+-1.99409707496434E-11 2.17908503741260E-11 2.87804443471762E-10
+-5.67726074485186E-11 6.82623402248339E-11 1.05126324312366E-12
+-3.57203502887593E-11-1.69442029851474E-11 1.60426255613189E-11
+ 1.12433937160539E-10 1.57088439478592E-11 5.03730356038457E-11
+       ... hamiltonian-gradient-gxtb-cecl3 [FAILED]
+  Message: Gradient of electronic energy does not match
+1 test(s) failed!
+Note: The following floating-point exceptions are signalling: IEEE_INVALID_FLAG IEEE_DIVIDE_BY_ZERO IEEE_OVERFLOW_FLAG IEEE_UNDERFLOW_FLAG
+ERROR STOP 1
+
+Error termination. Backtrace:
+#0  0x10416f323
+#1  0x10416fef7
+#2  0x10417117f
+#3  0x102f156b3
+#4  0x10340bc3f

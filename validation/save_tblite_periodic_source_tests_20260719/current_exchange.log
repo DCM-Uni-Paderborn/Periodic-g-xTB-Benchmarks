@@ -1,0 +1,103 @@
+# Testing: exchange
+  Starting gamma_fock_h2 ... (1/36)
+       ... gamma_fock_h2 [PASSED]
+  Starting gamma_fock_lih ... (2/36)
+       ... gamma_fock_lih [PASSED]
+  Starting gamma_fock_no ... (3/36)
+       ... gamma_fock_no [PASSED]
+  Starting gamma_fock_s2 ... (4/36)
+       ... gamma_fock_s2 [PASSED]
+  Starting gamma_fock_cecl3 ... (5/36)
+       ... gamma_fock_cecl3 [PASSED]
+  Starting energy_fock_h2 ... (6/36)
+       ... energy_fock_h2 [PASSED]
+  Starting energy_fock_lih ... (7/36)
+       ... energy_fock_lih [PASSED]
+  Starting energy_fock_no ... (8/36)
+       ... energy_fock_no [PASSED]
+  Starting energy_fock_n2 ... (9/36)
+       ... energy_fock_n2 [PASSED]
+  Starting energy_fock_h2o ... (10/36)
+       ... energy_fock_h2o [PASSED]
+  Starting energy_fock_s2 ... (11/36)
+       ... energy_fock_s2 [PASSED]
+  Starting energy_fock_sih4 ... (12/36)
+       ... energy_fock_sih4 [PASSED]
+  Starting energy_fock_cecl3 ... (13/36)
+       ... energy_fock_cecl3 [PASSED]
+  Starting energy_fock_ce2 ... (14/36)
+       ... energy_fock_ce2 [PASSED]
+  Starting potential_fock_h2 ... (15/36)
+       ... potential_fock_h2 [PASSED]
+  Starting potential_fock_lih ... (16/36)
+       ... potential_fock_lih [PASSED]
+  Starting potential_fock_no ... (17/36)
+       ... potential_fock_no [PASSED]
+  Starting potential_fock_s2 ... (18/36)
+       ... potential_fock_s2 [PASSED]
+  Starting potential_fock_cecl3 ... (19/36)
+       ... potential_fock_cecl3 [PASSED]
+  Starting potential_fock_ce2 ... (20/36)
+       ... potential_fock_ce2 [PASSED]
+  Starting gradient_op_fock_h2 ... (21/36)
+       ... gradient_op_fock_h2 [PASSED]
+  Starting gradient_op_fock_lih ... (22/36)
+       ... gradient_op_fock_lih [PASSED]
+  Starting gradient_op_fock_no ... (23/36)
+       ... gradient_op_fock_no [PASSED]
+  Starting gradient_op_fock_s2 ... (24/36)
+       ... gradient_op_fock_s2 [PASSED]
+  Starting gradient_op_fock_cecl3 ... (25/36)
+       ... gradient_op_fock_cecl3 [PASSED]
+  Starting gradient_op_fock_pyrazine ... (26/36)
+       ... gradient_op_fock_pyrazine [PASSED]
+  Starting gradient_op_fock_oxacb ... (27/36)
+       ... gradient_op_fock_oxacb [PASSED]
+  Starting gradient_op_fock_co2 ... (28/36)
+       ... gradient_op_fock_co2 [PASSED]
+  Starting sigma_op_fock_pyrazine ... (29/36)
+       ... sigma_op_fock_pyrazine [PASSED]
+  Starting sigma_op_fock_oxacb ... (30/36)
+       ... sigma_op_fock_oxacb [PASSED]
+  Starting sigma_op_fock_co2 ... (31/36)
+       ... sigma_op_fock_co2 [PASSED]
+  Starting sigma_op_fock_h2 ... (32/36)
+       ... sigma_op_fock_h2 [PASSED]
+  Starting bvk_exchange_supercell ... (33/36)
+ STREAM_REVERSE_RKS_3X1X1_RESID   1.3877787807814457E-017   0.0000000000000000        0.0000000000000000                       113
+ MIXED_RADIX_FFT_RKS_FORWARD_RESID   2.7755575615628914E-017   0.0000000000000000        1.3877787807814457E-017
+ TRANSFORM_SELECTOR_RKS_SEPARABLE_MAX_RESID   2.7755575615628914E-017
+ MIXED_RADIX_FFT_RKS_REVERSE_RESID   4.4110315190431671E-019   8.4703294725430034E-022   2.6469779601696886E-023
+ MIXED_RADIX_FFT_UKS_FORWARD_RESID   9.7144514654701197E-017   0.0000000000000000        0.0000000000000000     
+ MIXED_RADIX_FFT_UKS_REVERSE_RESID   4.1633363423443370E-017   5.2939559203393771E-023   6.2468679860004650E-021
+ STREAM_REVERSE_UKS_BATCH_RESID   5.5511151231257827E-017   0.0000000000000000        1.3552527156068805E-020                  585
+ TRANSFORM_SELECTOR_2D_RKS_SEPARABLE_MAX_RESID   1.1102230246251565E-016
+ MIXED_RADIX_FFT_2D_RKS_FORWARD_RESID   8.3266726846886741E-017   0.0000000000000000        0.0000000000000000     
+ MIXED_RADIX_FFT_2D_RKS_REVERSE_RESID   4.1633363423443370E-017   5.2939559203393771E-023   6.7762635780344027E-021
+ STREAM_REVERSE_3D_RESID   2.7755575615628914E-017   0.0000000000000000        2.0679515313825692E-025                  144
+ TRANSFORM_SELECTOR_3D_UKS_SEPARABLE_MAX_RESID   5.5511151231257827E-017
+ MIXED_RADIX_FFT_3D_UKS_FORWARD_RESID   5.5511151231257827E-017   0.0000000000000000        0.0000000000000000     
+ MIXED_RADIX_FFT_3D_UKS_REVERSE_RESID   2.7755575615628914E-017   1.0587911840678754E-022   1.7347234759768071E-018
+ DISTRIBUTED_IMAGE_KERNEL_FORWARD_COMPONENTS   1.2490009027033011E-016   0.0000000000000000        1.1102230246251565E-016
+ DISTRIBUTED_IMAGE_KERNEL_REVERSE_COMPONENTS   4.1633363423443370E-017   5.2939559203393771E-023   3.3881317890172014E-021
+ DISTRIBUTED_IMAGE_KERNEL_REVERSE_ONLY_COMPONENTS   4.1633363423443370E-017   5.2939559203393771E-023   3.3881317890172014E-021
+ DISTRIBUTED_IMAGE_KERNEL_9X9X1_UKS_MAX_RESID   1.2490009027033011E-016
+ DISTRIBUTED_IMAGE_KERNEL_FORWARD_COMPONENTS   2.7755575615628914E-017   0.0000000000000000        0.0000000000000000     
+ DISTRIBUTED_IMAGE_KERNEL_REVERSE_COMPONENTS   2.7755575615628914E-017   2.1175823681357508E-022   5.2041704279304213E-018
+ DISTRIBUTED_IMAGE_KERNEL_REVERSE_ONLY_COMPONENTS   2.7755575615628914E-017   2.1175823681357508E-022   5.2041704279304213E-018
+ DISTRIBUTED_IMAGE_KERNEL_2X2X2_MAX_RESID   2.7755575615628914E-017
+ DISTRIBUTED_IMAGE_KERNEL_FORWARD_COMPONENTS   2.7755575615628914E-017   0.0000000000000000        0.0000000000000000     
+ DISTRIBUTED_IMAGE_KERNEL_REVERSE_COMPONENTS   1.3877787807814457E-017   1.3234889800848443E-023   8.6736173798840355E-019
+ DISTRIBUTED_IMAGE_KERNEL_REVERSE_ONLY_COMPONENTS   1.3877787807814457E-017   1.3234889800848443E-023   8.6736173798840355E-019
+ DISTRIBUTED_IMAGE_KERNEL_3X1X1_MAX_RESID   2.7755575615628914E-017
+ PARTIAL_K_TO_R_MAX_RESID   1.2490009027033011E-016
+ MIXED_RADIX_FFT_EXCHANGE_MAX_RESID   9.7144514654701197E-017
+ BVK_EXCHANGE_SUPERCELL_MAX_RESID   4.6134320322299693E-013
+       ... bvk_exchange_supercell [PASSED]
+  Starting kpoint_fock_complex ... (34/36)
+       ... kpoint_fock_complex [PASSED]
+  Starting regular_separable_dft ... (35/36)
+       ... regular_separable_dft [PASSED]
+  Starting regular_mixed_radix_fft ... (36/36)
+ MIXED_RADIX_FFT_TRANSFORM_MAX_RESID   4.8746882851148921E-014   8.0825456208805303E-016   2.0097183471152322E-014   1.4210854715202004E-014
+       ... regular_mixed_radix_fft [PASSED]

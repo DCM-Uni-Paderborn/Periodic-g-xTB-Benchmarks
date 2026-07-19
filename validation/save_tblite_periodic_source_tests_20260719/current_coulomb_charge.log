@@ -1,0 +1,117 @@
+# Testing: coulomb-charge
+  Starting energy-atom-eff-gfn1-m01 ... (1/58)
+       ... energy-atom-eff-gfn1-m01 [PASSED]
+  Starting energy-shell-eff-gfn1-m07 ... (2/58)
+       ... energy-shell-eff-gfn1-m07 [PASSED]
+  Starting energy-atom-eff-gfn2-m01 ... (3/58)
+       ... energy-atom-eff-gfn2-m01 [PASSED]
+  Starting energy-atom-eff-gfn2-oxacb-pbc ... (4/58)
+       ... energy-atom-eff-gfn2-oxacb-pbc [PASSED]
+  Starting energy-shell-eff-gxtb-lih ... (5/58)
+       ... energy-shell-eff-gxtb-lih [PASSED]
+  Starting energy-atom-eff-gxtb-m01 ... (6/58)
+       ... energy-atom-eff-gxtb-m01 [PASSED]
+  Starting energy-shell-eff-gxtb-m01 ... (7/58)
+       ... energy-shell-eff-gxtb-m01 [PASSED]
+  Starting energy-atom-eff-gxtb-m02 ... (8/58)
+       ... energy-atom-eff-gxtb-m02 [PASSED]
+  Starting energy-shell-eff-gxtb-m02 ... (9/58)
+       ... energy-shell-eff-gxtb-m02 [PASSED]
+  Starting energy-atom-gam-gfn1-m10 ... (10/58)
+       ... energy-atom-gam-gfn1-m10 [PASSED]
+  Starting energy-shell-gam-gfn2-m13 ... (11/58)
+       ... energy-shell-gam-gfn2-m13 [PASSED]
+  Starting energy-atom-eff-gxtb-oxacb-pbc ... (12/58)
+       ... energy-atom-eff-gxtb-oxacb-pbc [PASSED]
+  Starting potential-atom-eff-gxtb-m01 ... (13/58)
+       ... potential-atom-eff-gxtb-m01 [PASSED]
+  Starting potential-shell-eff-gxtb-m01 ... (14/58)
+       ... potential-shell-eff-gxtb-m01 [PASSED]
+  Starting potential-atom-eff-gxtb-m02 ... (15/58)
+       ... potential-atom-eff-gxtb-m02 [PASSED]
+  Starting potential-shell-eff-gxtb-m02 ... (16/58)
+       ... potential-shell-eff-gxtb-m02 [PASSED]
+  Starting amat-deriv-shell-eff-gfn1-m07 ... (17/58)
+       ... amat-deriv-shell-eff-gfn1-m07 [PASSED]
+  Starting amat-deriv-shell-gam-gfn2-m14 ... (18/58)
+       ... amat-deriv-shell-gam-gfn2-m14 [PASSED]
+  Starting amat-deriv-shell-eff-gxtb-h2 ... (19/58)
+       ... amat-deriv-shell-eff-gxtb-h2 [PASSED]
+  Starting amat-deriv-shell-eff-gxtb-lih ... (20/58)
+       ... amat-deriv-shell-eff-gxtb-lih [PASSED]
+  Starting amat-deriv-shell-eff-gxtb-s2 ... (21/58)
+       ... amat-deriv-shell-eff-gxtb-s2 [PASSED]
+  Starting amat-deriv-shell-eff-gxtb-cecl3 ... (22/58)
+       ... amat-deriv-shell-eff-gxtb-cecl3 [PASSED]
+  Starting gradient-atom-eff-gfn1-m03 ... (23/58)
+       ... gradient-atom-eff-gfn1-m03 [PASSED]
+  Starting gradient-shell-eff-gfn1-m08 ... (24/58)
+       ... gradient-shell-eff-gfn1-m08 [PASSED]
+  Starting gradient-atom-eff-gfn2-m04 ... (25/58)
+       ... gradient-atom-eff-gfn2-m04 [PASSED]
+  Starting gradient-atom-eff-gfn2-co2-pbc ... (26/58)
+       ... gradient-atom-eff-gfn2-co2-pbc [PASSED]
+  Starting gradient-atom-eff-wsc-threshold-pbc ... (27/58)
+       ... gradient-atom-eff-wsc-threshold-pbc [PASSED]
+  Starting gradient-shell-eff-gxtb-lih ... (28/58)
+       ... gradient-shell-eff-gxtb-lih [PASSED]
+  Starting gradient-atom-eff-gxtb-m03 ... (29/58)
+       ... gradient-atom-eff-gxtb-m03 [PASSED]
+  Starting gradient-shell-eff-gxtb-m03 ... (30/58)
+       ... gradient-shell-eff-gxtb-m03 [PASSED]
+  Starting gradient-atom-eff-gxtb-m04 ... (31/58)
+       ... gradient-atom-eff-gxtb-m04 [PASSED]
+  Starting gradient-shell-eff-gxtb-m04 ... (32/58)
+       ... gradient-shell-eff-gxtb-m04 [PASSED]
+  Starting gradient-atom-eff-gxtb-co2-pbc ... (33/58)
+       ... gradient-atom-eff-gxtb-co2-pbc [PASSED]
+  Starting gradient-shell-eff-gxtb-ammonia-pbc ... (34/58)
+       ... gradient-shell-eff-gxtb-ammonia-pbc [PASSED]
+  Starting gradient-atom-gam-gfn1-m11 ... (35/58)
+       ... gradient-atom-gam-gfn1-m11 [PASSED]
+  Starting gradient-atom-gam-gfn1-urea-pbc ... (36/58)
+       ... gradient-atom-gam-gfn1-urea-pbc [PASSED]
+  Starting gradient-shell-gam-gfn2-m14 ... (37/58)
+       ... gradient-shell-gam-gfn2-m14 [PASSED]
+  Starting sigma-atom-eff-gfn1-m05 ... (38/58)
+       ... sigma-atom-eff-gfn1-m05 [PASSED]
+  Starting sigma-shell-eff-gfn1-m09 ... (39/58)
+       ... sigma-shell-eff-gfn1-m09 [PASSED]
+  Starting sigma-atom-eff-gfn2-m06 ... (40/58)
+       ... sigma-atom-eff-gfn2-m06 [PASSED]
+  Starting sigma-atom-eff-gfn2-ammonia-pbc ... (41/58)
+       ... sigma-atom-eff-gfn2-ammonia-pbc [PASSED]
+  Starting sigma-atom-eff-wsc-threshold-pbc ... (42/58)
+       ... sigma-atom-eff-wsc-threshold-pbc [PASSED]
+  Starting sigma-atom-eff-gxtb-m05 ... (43/58)
+       ... sigma-atom-eff-gxtb-m05 [PASSED]
+  Starting sigma-shell-eff-gxtb-m05 ... (44/58)
+       ... sigma-shell-eff-gxtb-m05 [PASSED]
+  Starting sigma-atom-eff-gxtb-m06 ... (45/58)
+       ... sigma-atom-eff-gxtb-m06 [PASSED]
+  Starting sigma-shell-eff-gxtb-m06 ... (46/58)
+       ... sigma-shell-eff-gxtb-m06 [PASSED]
+  Starting sigma-atom-eff-gxtb-ammonia-pbc ... (47/58)
+       ... sigma-atom-eff-gxtb-ammonia-pbc [PASSED]
+  Starting sigma-shell-eff-gxtb-ammonia-pbc ... (48/58)
+       ... sigma-shell-eff-gxtb-ammonia-pbc [PASSED]
+  Starting sigma-atom-gam-gfn1-m12 ... (49/58)
+       ... sigma-atom-gam-gfn1-m12 [PASSED]
+  Starting sigma-shell-gam-gfn2-m15 ... (50/58)
+       ... sigma-shell-gam-gfn2-m15 [PASSED]
+  Starting sigma-atom-gam-gfn2-pyrazine-pbc ... (51/58)
+       ... sigma-atom-gam-gfn2-pyrazine-pbc [PASSED]
+  Starting potential-gradient-atom-eff-effceh-lih ... (52/58)
+       ... potential-gradient-atom-eff-effceh-lih [PASSED]
+  Starting potential-gradient-atom-eff-effceh-m15 ... (53/58)
+       ... potential-gradient-atom-eff-effceh-m15 [PASSED]
+  Starting potential-gradient-shell-eff-effceh-m16 ... (54/58)
+       ... potential-gradient-shell-eff-effceh-m16 [PASSED]
+  Starting potential-sigma-atom-eff-effceh-lih ... (55/58)
+       ... potential-sigma-atom-eff-effceh-lih [PASSED]
+  Starting potential-sigma-atom-eff-effceh-co2 ... (56/58)
+       ... potential-sigma-atom-eff-effceh-co2 [PASSED]
+  Starting potential-sigma-atom-eff-effceh-m05 ... (57/58)
+       ... potential-sigma-atom-eff-effceh-m05 [PASSED]
+  Starting potential-sigma-shell-eff-effceh-m17 ... (58/58)
+       ... potential-sigma-shell-eff-effceh-m17 [PASSED]

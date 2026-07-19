@@ -33,7 +33,29 @@ inputs, results, and Part-I/Part-II paper artifacts belong exclusively here.
   `validation/gxtb_derivative_regtests_post5582_20260716/`. The corresponding
   full-grid/K290/SPGLIB, force, and periodic-virial gates for representative
   one- and two-dimensional PBC are in
-  `validation/gxtb_partial_pbc_post5582_20260716/`.
+  `validation/gxtb_partial_pbc_post5582_20260716/`. The same 23 low-k,
+  force, stress, K290/SPGLIB, and partial-PBC cases were repeated with the
+  final clean DMC build in
+  `validation/gxtb_final_lowk_derivatives_20260719/`. This repetition closes
+  the formerly open Born--von Karman supercell residual: the one-dimensional
+  difference is zero at printed precision and the two-dimensional difference
+  is `4.070e-9` hartree per primitive cell.
+- The final-provider component and source attribution is archived in
+  `validation/provider_component_attribution_20260719/` and
+  `validation/pbc_h0_anisotropy_attribution_20260719/`.  The controlled source
+  A/B reproduces the final `pbc` phase-VII energy within `1.91e-11` hartree and
+  assigns the residual provider difference to the historical central-cell H0
+  anisotropy.  An equivalent lattice-image test supports retaining the current
+  image-complete periodic H0 definition.
+- Exchange/ACP energy and derivative ablations for the final CP2K build are in
+  `validation/dmc13_k222_viii_component_ablation_20260719/` and
+  `validation/dmc13_k222_xvii_derivative_component_ablation_20260719/`.
+- Direct source-level qualification of the final `save_tblite` periodic H0,
+  Wigner--Seitz, exchange, Fock-response, force, stress, and transform paths is
+  retained in `validation/save_tblite_periodic_source_tests_20260719/`.  The
+  periodic subsets pass completely; the sole 74/75 Hamiltonian-suite outlier
+  is a nonperiodic CeCl3 finite-difference threshold case reproduced with
+  identical component errors by the historical final `pbc` source.
 - `patches/`: local CP2K and tblite patches used for the final benchmark
   revision.
 - `scripts/`: helper scripts used for the final k-point, cell-optimization,
@@ -59,17 +81,23 @@ can be recreated from the versioned inputs and scripts.
 The active campaign is deliberately fail-closed: provisional numbers are not
 promoted to final paper summaries until the stored build identity, raw
 artifacts, k-point convergence, symmetry, force/stress, and cross-build gates
-pass. Current production calculations use post-#5582 CP2K source revision
-`28df9380abb3...` with save_tblite revision `257ba442684c...`. See
-`campaigns/gxtb-pbc-v1-post5582-20260714/` for the complete machine-readable
-identity and the frozen energy, ACP, partial-periodicity, force, and stress
-qualification gates.
+pass.  The current same-build implementation qualification uses CP2K source
+revision `8520b2e592cd04d35081ab4ad46d92c606071e23` and `save_tblite` source
+revision `15915c9435644eb257178ca8f8bf7220c38b1a84`; the corresponding Linux
+executables have SHA-256 digests
+`b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f`
+and `f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a`.
+The complete implementation audit and exact provenance are retained under
+`DMC-ICE13/reproduction/save_tblite_direct_dmc13/validation/`.
 
-The phase-wise DMC-ICE13 result is frozen and archived. LC10 remains explicitly
-provisional until all ten solids pass the per-solid lattice-constant and
-cohesive-energy gates. Other retained files outside the current manuscript
-benchmark scope are technical regression material and not accuracy claims.
-The publication finalizers refuse incomplete or unhashed data.
+The older phase-wise DMC-ICE13 trace remains frozen only as a pre-response
+baseline.  Its response-corrected replacement is promoted only after every
+phase has a qualifying adjacent-mesh endpoint from the same immutable build.
+LC10 remains explicitly provisional until all ten solids pass the per-solid
+lattice-constant and cohesive-energy gates.  Other retained files outside the
+current manuscript benchmark scope are technical regression material and not
+accuracy claims.  The publication finalizers refuse incomplete or unhashed
+data.
 
 The older three-benchmark bundle command remains available for archival
 campaigns:

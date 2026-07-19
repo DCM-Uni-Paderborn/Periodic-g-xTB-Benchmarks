@@ -1,0 +1,92 @@
+{
+  "mesh": "2x2x2 explicit BvK supercell",
+  "phase": "VII",
+  "primitive_repetitions": 8,
+  "rows": [
+    {
+      "current": {
+        "energy_hartree_supercell": -7352.46534909668,
+        "executable_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+        "output_sha256": "20d127646e9548d5395c27669bc936e99db6f0029d2cf773a4d01abdf9fd22b2",
+        "result_sha256": "4a39f32c864856c1bd7daead8878d807b704c681b4b722cdc0c477986d680084",
+        "scc_converged": true,
+        "singleton_cpu": 68
+      },
+      "mode": "full",
+      "pbc": {
+        "energy_hartree_supercell": -7352.468520192124,
+        "executable_sha256": "692b7da28bdef43cf8795fb33a2b60ccca49a116115715ffda2bda85fefe565d",
+        "output_sha256": "836432335acc2343469d9e8a1b60115e5899e1e42fd5a78654847b4e55a8862a",
+        "result_sha256": "7102b805ea4b7b2d36f0cb45d3b1bcb7736e770276e7944290e4f4e07e037a44",
+        "scc_converged": true,
+        "singleton_cpu": 72
+      },
+      "pbc_minus_current_hartree_primitive": -0.00039638693044707907,
+      "pbc_minus_current_hartree_supercell": -0.0031710954435766325
+    },
+    {
+      "current": {
+        "energy_hartree_supercell": -7230.474968528719,
+        "executable_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+        "output_sha256": "f6b5c275b1010358d078a44306cd57ce18bb2c875c7da16ad2ef7f316af8fb59",
+        "result_sha256": "71b046fa03363f6c8d3c414ca96eaf552859cad4f26e3762990cbf774d2f22d7",
+        "scc_converged": true,
+        "singleton_cpu": 69
+      },
+      "mode": "no_exchange",
+      "pbc": {
+        "energy_hartree_supercell": -7230.474914983291,
+        "executable_sha256": "692b7da28bdef43cf8795fb33a2b60ccca49a116115715ffda2bda85fefe565d",
+        "output_sha256": "bdb9d989c8bd2169fa5b810148b083c56ea7f3a1eca0fb986ed7eff3f0ae18e9",
+        "result_sha256": "f01f37f1f2cb836075d7c117ab203c5dae7a1b0ba6cfcd51d8fdc22c20f50989",
+        "scc_converged": true,
+        "singleton_cpu": 73
+      },
+      "pbc_minus_current_hartree_primitive": 6.69317853407847e-06,
+      "pbc_minus_current_hartree_supercell": 5.354542827262776e-05
+    },
+    {
+      "current": {
+        "energy_hartree_supercell": -7122.66030870946,
+        "executable_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+        "output_sha256": "f0456ba8cf73f43f35158d4cbd35267807fec99059e5d0c16840c1869221fc3f",
+        "result_sha256": "694c3f937d92507f0a54ea1202e49abb85a386b09cfa7f8c7b639640c0582c21",
+        "scc_converged": true,
+        "singleton_cpu": 70
+      },
+      "mode": "no_acp",
+      "pbc": {
+        "energy_hartree_supercell": -7122.667780209021,
+        "executable_sha256": "692b7da28bdef43cf8795fb33a2b60ccca49a116115715ffda2bda85fefe565d",
+        "output_sha256": "d78481b29badb743f324b8a326cf66f18f4aaa53440b54152847686a313861e4",
+        "result_sha256": "4e8cdffa9b512c312f96d5f97e188755bb7265354e266e1d3f381a187f8aebb9",
+        "scc_converged": true,
+        "singleton_cpu": 74
+      },
+      "pbc_minus_current_hartree_primitive": -0.0009339374450973992,
+      "pbc_minus_current_hartree_supercell": -0.007471499560779193
+    },
+    {
+      "current": {
+        "energy_hartree_supercell": -6996.299810263442,
+        "executable_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+        "output_sha256": "92e35ee36877be96447b0369633a0e2dd63219287fa22d93868b4e02c2b71edc",
+        "result_sha256": "8115533cba632dea6ce3b7ba8d32d73da0d115c8e7c5b0269f7d5a1978dbe85a",
+        "scc_converged": true,
+        "singleton_cpu": 71
+      },
+      "mode": "no_exchange_no_acp",
+      "pbc": {
+        "energy_hartree_supercell": -6996.303366512739,
+        "executable_sha256": "692b7da28bdef43cf8795fb33a2b60ccca49a116115715ffda2bda85fefe565d",
+        "output_sha256": "067360c2a9b3a26ba243545a4b49162e72a659fee4ed964560497f0689cc34b4",
+        "result_sha256": "6830632efaaae95f6773a5315f51e2835e2a4a448e6dd8eb8b190b0a75c6bb29",
+        "scc_converged": true,
+        "singleton_cpu": 75
+      },
+      "pbc_minus_current_hartree_primitive": -0.000444531162088424,
+      "pbc_minus_current_hartree_supercell": -0.003556249296707392
+    }
+  ],
+  "status": "PASS"
+}

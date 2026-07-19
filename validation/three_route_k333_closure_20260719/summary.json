@@ -1,0 +1,23 @@
+{
+  "classification": "current CLI and CP2K-native are energetically identical within the qualified numerical tolerance; the author-pbc/current shift is a provider-model revision, not a CP2K k-point integration error",
+  "maximum_absolute_native_minus_current_Ha": 1.024701532514882e-07,
+  "maximum_absolute_native_minus_current_relative_kJ_mol_per_H2O": 1.705504558913e-05,
+  "mesh": "3x3x3",
+  "phase_count_including_Ih": 13,
+  "relative_phase_count": 12,
+  "routes": {
+    "author": {
+      "mae_kJ_mol_per_H2O": 34.0705881089059,
+      "rmse_kJ_mol_per_H2O": 57.02438551409236
+    },
+    "current": {
+      "mae_kJ_mol_per_H2O": 34.048491879837364,
+      "rmse_kJ_mol_per_H2O": 57.001947496076724
+    },
+    "native": {
+      "mae_kJ_mol_per_H2O": 34.048487494129404,
+      "rmse_kJ_mol_per_H2O": 57.0019489414598
+    }
+  },
+  "status": "PASS"
+}
