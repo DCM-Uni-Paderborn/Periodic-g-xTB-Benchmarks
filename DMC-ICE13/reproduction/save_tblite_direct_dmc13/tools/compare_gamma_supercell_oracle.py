@@ -6,34 +6,9 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import re
 from pathlib import Path
 
-
-ENERGY_RE = re.compile(
-    r"^\s*ENERGY\|\s+Total FORCE_EVAL.*?"
-    r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?)\s*$"
-)
-
-
-def cp2k_energy(path: Path) -> float:
-    values: list[float] = []
-    ended = False
-    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
-        if match := ENERGY_RE.match(line):
-            values.append(float(match.group(1)))
-        if "PROGRAM ENDED AT" in line:
-            ended = True
-    if not ended or not values:
-        raise ValueError(f"incomplete CP2K output: {path}")
-    return values[-1]
-
-
-def cli_energy(path: Path) -> float:
-    value = float(json.loads(path.read_text(encoding="utf-8"))["energy"])
-    if not math.isfinite(value):
-        raise ValueError(f"non-finite CLI energy: {path}")
-    return value
+from compare_native_symmetry_cli import SHA256_RE, cp2k_energy, cli_energy
 
 
 def main() -> None:
@@ -44,14 +19,54 @@ def main() -> None:
     parser.add_argument("--replicas", type=int, default=8)
     parser.add_argument("--parity-tolerance", type=float, default=2.0e-7)
     parser.add_argument("--alignment-margin", type=float, default=1.0e-10)
+    parser.add_argument("--require-binary-sha256")
+    parser.add_argument("--require-cli-binary-sha256")
+    parser.add_argument("--native-input", type=Path)
+    parser.add_argument("--gamma-input", type=Path)
+    parser.add_argument("--cli-input", type=Path)
+    parser.add_argument("--require-native-input-sha256")
+    parser.add_argument("--require-gamma-input-sha256")
+    parser.add_argument("--require-cli-input-sha256")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     if args.replicas <= 0:
         raise ValueError("replica count must be positive")
 
-    native = cp2k_energy(args.native_cp2k_output)
-    gamma_total = cp2k_energy(args.gamma_supercell_cp2k_output)
-    cli_total = cli_energy(args.direct_cli_result)
+    digests = {
+        "CP2K binary": args.require_binary_sha256,
+        "CLI binary": args.require_cli_binary_sha256,
+        "native input": args.require_native_input_sha256,
+        "Gamma input": args.require_gamma_input_sha256,
+        "CLI input": args.require_cli_input_sha256,
+    }
+    for label, digest in tuple(digests.items()):
+        if digest is None:
+            continue
+        normalized = digest.lower()
+        if not SHA256_RE.fullmatch(normalized):
+            raise ValueError(
+                f"required {label} digest must contain 64 hexadecimal characters"
+            )
+        digests[label] = normalized
+
+    native, native_provenance = cp2k_energy(
+        args.native_cp2k_output,
+        digests["CP2K binary"],
+        args.native_input,
+        digests["native input"],
+    )
+    gamma_total, gamma_provenance = cp2k_energy(
+        args.gamma_supercell_cp2k_output,
+        digests["CP2K binary"],
+        args.gamma_input,
+        digests["Gamma input"],
+    )
+    cli_total, cli_provenance = cli_energy(
+        args.direct_cli_result,
+        digests["CLI binary"],
+        args.cli_input,
+        digests["CLI input"],
+    )
     gamma = gamma_total / args.replicas
     cli = cli_total / args.replicas
 
@@ -81,6 +96,11 @@ def main() -> None:
         "gamma_oracle_alignment": alignment,
         "maximum_absolute_pairwise_delta_hartree": maximum,
         "parity_tolerance_hartree": args.parity_tolerance,
+        "provenance": {
+            "native_cp2k": native_provenance,
+            "gamma_supercell_cp2k": gamma_provenance,
+            "direct_cli": cli_provenance,
+        },
         "status": "PASS" if maximum <= args.parity_tolerance else "FAIL",
     }
     payload = json.dumps(result, indent=2, sort_keys=True) + "\n"

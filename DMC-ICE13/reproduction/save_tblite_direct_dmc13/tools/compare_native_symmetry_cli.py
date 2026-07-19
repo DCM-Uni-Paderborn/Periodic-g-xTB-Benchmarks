@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import re
@@ -17,7 +18,30 @@ ENERGY_RE = re.compile(
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
-def cp2k_energy(path: Path, required_binary: str | None) -> float:
+def recorded_digest(path: Path, label: str) -> str:
+    if not path.is_file():
+        raise ValueError(f"missing {label} digest: {path}")
+    fields = path.read_text(encoding="utf-8", errors="replace").split()
+    digest = fields[0].lower() if fields else ""
+    if not SHA256_RE.fullmatch(digest):
+        raise ValueError(f"invalid {label} digest: {path}")
+    return digest
+
+
+def file_digest(path: Path) -> str:
+    hasher = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
+def cp2k_energy(
+    path: Path,
+    required_binary: str | None,
+    input_path: Path | None,
+    required_input: str | None,
+) -> tuple[float, dict[str, str]]:
     run_dir = path.parent
     values: list[float] = []
     ended = False
@@ -31,23 +55,60 @@ def cp2k_energy(path: Path, required_binary: str | None) -> float:
     exit_status = run_dir / "exit_status"
     if not exit_status.is_file() or exit_status.read_text().strip() != "0":
         raise ValueError(f"missing or nonzero exit status: {exit_status}")
+    provenance: dict[str, str] = {}
     if required_binary is not None:
-        digest_path = run_dir / "binary.sha256"
-        fields = digest_path.read_text(encoding="utf-8", errors="replace").split()
-        digest = fields[0].lower() if fields else ""
+        digest = recorded_digest(run_dir / "binary.sha256", "CP2K binary")
         if digest != required_binary:
             raise ValueError(
                 f"wrong CP2K binary for {path}: actual={digest or 'missing'} "
                 f"required={required_binary}"
             )
-    return values[-1]
+        provenance["binary_sha256"] = digest
+    if required_input is not None:
+        if input_path is None or not input_path.is_file():
+            raise ValueError(f"missing CP2K input for {path}: {input_path}")
+        actual = file_digest(input_path)
+        recorded = recorded_digest(run_dir / "input.sha256", "CP2K input")
+        if actual != recorded or actual != required_input:
+            raise ValueError(
+                f"wrong CP2K input for {path}: actual={actual} recorded={recorded} "
+                f"required={required_input}"
+            )
+        provenance["input_sha256"] = actual
+    return values[-1], provenance
 
 
-def cli_energy(path: Path) -> float:
+def cli_energy(
+    path: Path,
+    required_binary: str | None,
+    input_path: Path | None,
+    required_input: str | None,
+) -> tuple[float, dict[str, str]]:
+    run_dir = path.parent
+    exit_status = run_dir / "exit_status"
+    if not exit_status.is_file() or exit_status.read_text().strip() != "0":
+        raise ValueError(f"missing or nonzero CLI exit status: {exit_status}")
     value = float(json.loads(path.read_text(encoding="utf-8"))["energy"])
     if not math.isfinite(value):
         raise ValueError(f"non-finite CLI energy: {path}")
-    return value
+    provenance: dict[str, str] = {}
+    if required_binary is not None:
+        digest = recorded_digest(run_dir / "binary.sha256", "CLI binary")
+        if digest != required_binary:
+            raise ValueError(
+                f"wrong CLI binary for {path}: actual={digest} required={required_binary}"
+            )
+        provenance["binary_sha256"] = digest
+    if required_input is not None:
+        if input_path is None or not input_path.is_file():
+            raise ValueError(f"missing CLI input for {path}: {input_path}")
+        actual = file_digest(input_path)
+        if actual != required_input:
+            raise ValueError(
+                f"wrong CLI input for {path}: actual={actual} required={required_input}"
+            )
+        provenance["input_sha256"] = actual
+    return value, provenance
 
 
 def main() -> None:
@@ -59,6 +120,13 @@ def main() -> None:
     parser.add_argument("--symmetry-tolerance", type=float, default=5.0e-12)
     parser.add_argument("--cli-tolerance", type=float, default=2.0e-7)
     parser.add_argument("--require-binary-sha256")
+    parser.add_argument("--require-cli-binary-sha256")
+    parser.add_argument("--reduced-input", type=Path)
+    parser.add_argument("--full-input", type=Path)
+    parser.add_argument("--cli-input", type=Path)
+    parser.add_argument("--require-reduced-input-sha256")
+    parser.add_argument("--require-full-input-sha256")
+    parser.add_argument("--require-cli-input-sha256")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     if args.replicas <= 0:
@@ -69,15 +137,39 @@ def main() -> None:
     ):
         if not math.isfinite(value) or value < 0.0:
             raise ValueError(f"{name} must be finite and non-negative")
-    required_binary = args.require_binary_sha256
-    if required_binary is not None:
-        required_binary = required_binary.lower()
-        if not SHA256_RE.fullmatch(required_binary):
-            raise ValueError("required binary digest must contain 64 hexadecimal characters")
+    digests = {
+        "CP2K binary": args.require_binary_sha256,
+        "CLI binary": args.require_cli_binary_sha256,
+        "reduced input": args.require_reduced_input_sha256,
+        "full input": args.require_full_input_sha256,
+        "CLI input": args.require_cli_input_sha256,
+    }
+    for label, digest in tuple(digests.items()):
+        if digest is None:
+            continue
+        normalized = digest.lower()
+        if not SHA256_RE.fullmatch(normalized):
+            raise ValueError(f"required {label} digest must contain 64 hexadecimal characters")
+        digests[label] = normalized
 
-    reduced = cp2k_energy(args.reduced_cp2k_output, required_binary)
-    full = cp2k_energy(args.full_cp2k_output, required_binary)
-    direct_total = cli_energy(args.direct_cli_result)
+    reduced, reduced_provenance = cp2k_energy(
+        args.reduced_cp2k_output,
+        digests["CP2K binary"],
+        args.reduced_input,
+        digests["reduced input"],
+    )
+    full, full_provenance = cp2k_energy(
+        args.full_cp2k_output,
+        digests["CP2K binary"],
+        args.full_input,
+        digests["full input"],
+    )
+    direct_total, cli_provenance = cli_energy(
+        args.direct_cli_result,
+        digests["CLI binary"],
+        args.cli_input,
+        digests["CLI input"],
+    )
     direct = direct_total / args.replicas
     deltas = {
         "full_minus_reduced": full - reduced,
@@ -97,6 +189,11 @@ def main() -> None:
         "full_cp2k_hartree_per_primitive": full,
         "reduced_cp2k_hartree_per_primitive": reduced,
         "replicas": args.replicas,
+        "provenance": {
+            "reduced_cp2k": reduced_provenance,
+            "full_cp2k": full_provenance,
+            "direct_cli": cli_provenance,
+        },
         "status": "PASS" if symmetry_pass and cli_pass else "FAIL",
         "symmetry_parity_pass": symmetry_pass,
         "symmetry_tolerance_hartree": args.symmetry_tolerance,
