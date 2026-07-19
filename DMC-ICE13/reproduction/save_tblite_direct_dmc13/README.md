@@ -145,7 +145,10 @@ histories.  On identical Cartesian structures, these histories produce very
 different Gamma and `2 x 2 x 2` DMC-ICE13 MAEs.  The current integration and
 DCM `main` remain close, while the two historical development lines yield much
 smaller coarse-grid MAEs.  This establishes a source-revision effect, not a
-CP2K-native k-point discrepancy.
+CP2K-native k-point discrepancy.  The complete `3 x 3 x 3` extension sharpens
+that conclusion: current integration and final author `pbc` give MAEs of
+`34.04849` and `34.07059` kJ mol^-1 per water, whereas the obsolete
+`mstore-inorganic` history gives `17.83062` kJ mol^-1 per water.
 
 `validation/wigner_seitz_branch_diagnosis_20260718` resolves the dominant
 source-revision effect.  The older `mstore-inorganic` history retained a
