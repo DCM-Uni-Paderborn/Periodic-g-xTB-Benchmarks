@@ -124,7 +124,14 @@ def verify_native_input(path: Path) -> str:
 
 
 def verify_source_identity(
-    path: Path, expected_revision: str, expected_binary: str
+    path: Path,
+    expected_revision: str,
+    expected_binary: str,
+    expected_native_binary: str,
+    expected_native_provider_archive: str,
+    expected_native_cp2k_revision: str,
+    expected_native_cmake_cache: str,
+    expected_native_build_ninja: str,
 ) -> str:
     if not path.is_file():
         raise AssertionError(f"missing source identity: {path}")
@@ -137,6 +144,22 @@ def verify_source_identity(
         raise AssertionError("direct provider revision mismatch")
     if values.get("executable_sha256") != expected_binary:
         raise AssertionError("direct provider executable mismatch")
+    if values.get("native_provider_commit") != expected_revision:
+        raise AssertionError("native provider revision mismatch")
+    if values.get("native_provider_archive_sha256") != expected_native_provider_archive:
+        raise AssertionError("native provider archive mismatch")
+    if values.get("native_cp2k_commit") != expected_native_cp2k_revision:
+        raise AssertionError("native CP2K revision mismatch")
+    if values.get("native_cp2k_binary_sha256") != expected_native_binary:
+        raise AssertionError("native CP2K executable mismatch")
+    if values.get("native_cmake_provider") != "SAVE":
+        raise AssertionError("native CMake provider is not SAVE")
+    if values.get("native_cmake_provider_revision") != expected_revision:
+        raise AssertionError("native CMake provider revision mismatch")
+    if values.get("native_cmake_cache_sha256") != expected_native_cmake_cache:
+        raise AssertionError("native CMake cache mismatch")
+    if values.get("native_build_ninja_sha256") != expected_native_build_ninja:
+        raise AssertionError("native link plan mismatch")
     return digest(path)
 
 
@@ -151,6 +174,10 @@ def main() -> None:
     parser.add_argument("--expected-source-revision", required=True)
     parser.add_argument("--expected-direct-binary", required=True)
     parser.add_argument("--expected-native-binary", required=True)
+    parser.add_argument("--expected-native-provider-archive", required=True)
+    parser.add_argument("--expected-native-cp2k-revision", required=True)
+    parser.add_argument("--expected-native-cmake-cache", required=True)
+    parser.add_argument("--expected-native-build-ninja", required=True)
     parser.add_argument("--expected-direct-cpu", type=int, required=True)
     parser.add_argument("--tolerance-ha", type=float, default=2.0e-7)
     parser.add_argument("--relative-tolerance-kj-mol", type=float, default=5.0e-5)
@@ -160,7 +187,11 @@ def main() -> None:
     for label, value, length in (
         ("direct binary", args.expected_direct_binary, 64),
         ("native binary", args.expected_native_binary, 64),
+        ("native provider archive", args.expected_native_provider_archive, 64),
+        ("native CMake cache", args.expected_native_cmake_cache, 64),
+        ("native build.ninja", args.expected_native_build_ninja, 64),
         ("source revision", args.expected_source_revision, 40),
+        ("native CP2K revision", args.expected_native_cp2k_revision, 40),
     ):
         if re.fullmatch(rf"[0-9a-f]{{{length}}}", value) is None:
             parser.error(f"invalid {label} digest")
@@ -174,6 +205,11 @@ def main() -> None:
         args.source_identity,
         args.expected_source_revision,
         args.expected_direct_binary,
+        args.expected_native_binary,
+        args.expected_native_provider_archive,
+        args.expected_native_cp2k_revision,
+        args.expected_native_cmake_cache,
+        args.expected_native_build_ninja,
     )
 
     rows: list[dict[str, object]] = []
@@ -275,6 +311,10 @@ def main() -> None:
         "provenance": {
             "direct_binary_sha256": args.expected_direct_binary,
             "native_binary_sha256": args.expected_native_binary,
+            "native_provider_archive_sha256": args.expected_native_provider_archive,
+            "native_cp2k_revision": args.expected_native_cp2k_revision,
+            "native_cmake_cache_sha256": args.expected_native_cmake_cache,
+            "native_build_ninja_sha256": args.expected_native_build_ninja,
             "direct_source_revision": args.expected_source_revision,
             "source_identity_sha256": source_hash,
             "direct_cpu": args.expected_direct_cpu,

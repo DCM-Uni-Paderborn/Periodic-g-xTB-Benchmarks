@@ -32,6 +32,10 @@ PHASES = (
 DIRECT_BINARY = "a" * 64
 NATIVE_BINARY = "b" * 64
 SOURCE_REVISION = "c" * 40
+NATIVE_CP2K_REVISION = "d" * 40
+NATIVE_PROVIDER_ARCHIVE = "e" * 64
+NATIVE_CMAKE_CACHE = "f" * 64
+NATIVE_BUILD_NINJA = "1" * 64
 CPU = 72
 
 
@@ -53,7 +57,15 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
         self.source.write_text(
             f"repository=https://example.invalid/provider.git\n"
             f"branch=cp2k-integration\ncommit={SOURCE_REVISION}\n"
-            f"executable_sha256={DIRECT_BINARY}\n",
+            f"executable_sha256={DIRECT_BINARY}\n"
+            f"native_provider_commit={SOURCE_REVISION}\n"
+            f"native_provider_archive_sha256={NATIVE_PROVIDER_ARCHIVE}\n"
+            f"native_cp2k_commit={NATIVE_CP2K_REVISION}\n"
+            f"native_cp2k_binary_sha256={NATIVE_BINARY}\n"
+            f"native_cmake_provider=SAVE\n"
+            f"native_cmake_provider_revision={SOURCE_REVISION}\n"
+            f"native_cmake_cache_sha256={NATIVE_CMAKE_CACHE}\n"
+            f"native_build_ninja_sha256={NATIVE_BUILD_NINJA}\n",
             encoding="utf-8",
         )
         for index, phase in enumerate(PHASES):
@@ -138,6 +150,14 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
                 DIRECT_BINARY,
                 "--expected-native-binary",
                 NATIVE_BINARY,
+                "--expected-native-provider-archive",
+                NATIVE_PROVIDER_ARCHIVE,
+                "--expected-native-cp2k-revision",
+                NATIVE_CP2K_REVISION,
+                "--expected-native-cmake-cache",
+                NATIVE_CMAKE_CACHE,
+                "--expected-native-build-ninja",
+                NATIVE_BUILD_NINJA,
                 "--expected-direct-cpu",
                 str(CPU),
             ],
@@ -196,6 +216,30 @@ class K222CliNativeRequalificationTests(unittest.TestCase):
         completed = self.run_verifier()
         self.assertNotEqual(completed.returncode, 0)
         self.assertIn("direct provider executable mismatch", completed.stderr)
+
+    def test_native_provider_revision_mismatch_is_rejected(self) -> None:
+        self.source.write_text(
+            self.source.read_text(encoding="utf-8").replace(
+                f"native_provider_commit={SOURCE_REVISION}",
+                f"native_provider_commit={'2' * 40}",
+            ),
+            encoding="utf-8",
+        )
+        completed = self.run_verifier()
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("native provider revision mismatch", completed.stderr)
+
+    def test_native_link_plan_mismatch_is_rejected(self) -> None:
+        self.source.write_text(
+            self.source.read_text(encoding="utf-8").replace(
+                f"native_build_ninja_sha256={NATIVE_BUILD_NINJA}",
+                f"native_build_ninja_sha256={'3' * 64}",
+            ),
+            encoding="utf-8",
+        )
+        completed = self.run_verifier()
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("native link plan mismatch", completed.stderr)
 
 
 if __name__ == "__main__":
