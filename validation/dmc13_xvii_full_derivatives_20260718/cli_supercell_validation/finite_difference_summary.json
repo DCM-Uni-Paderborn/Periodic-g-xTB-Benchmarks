@@ -1,0 +1,38 @@
+{
+  "force": {
+    "coordinate": "primitive atom 1 x; all eight translational replicas displaced together",
+    "analytic_native_Ha_per_bohr": -0.00371118943,
+    "central_difference": [
+      {
+        "step_Angstrom": 0.001,
+        "force_Ha_per_bohr": -0.0037112551025336414
+      },
+      {
+        "step_Angstrom": 0.0005,
+        "force_Ha_per_bohr": -0.003711205033971103
+      }
+    ]
+  },
+  "stress": {
+    "component": "xx",
+    "analytic_cli_supercell_virial_Ha": 0.724884223071955,
+    "central_difference": [
+      {
+        "strain_step": 0.00005,
+        "virial_Ha": 0.7249439568113303
+      },
+      {
+        "strain_step": 0.0001,
+        "virial_Ha": 0.7247461917359033
+      },
+      {
+        "strain_step": 0.0002,
+        "virial_Ha": 0.7249981183576892
+      },
+      {
+        "strain_step": 0.0005,
+        "virial_Ha": 0.7260591523845505
+      }
+    ]
+  }
+}

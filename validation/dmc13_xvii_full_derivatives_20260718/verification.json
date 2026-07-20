@@ -1,0 +1,52 @@
+{
+  "finite_difference": {
+    "atom_1_x_absolute_difference_Ha_per_bohr": 1.5603971102642195e-08,
+    "atom_1_x_analytic_force_Ha_per_bohr": -0.00371118943,
+    "atom_1_x_cli_supercell_force_Ha_per_bohr": -0.003711205033971103,
+    "xx_absolute_difference_Ha": 6.99053682716444e-06,
+    "xx_analytic_virial_Ha": 0.09061103873907463,
+    "xx_native_finite_difference_virial_Ha": 0.09061802927590179
+  },
+  "full_minus_reduced": {
+    "energy_Ha": 0.0,
+    "force_component_count": 54,
+    "maximum_force_Ha_per_bohr": 0.0,
+    "maximum_stress_bar": 0.0,
+    "rms_force_Ha_per_bohr": 0.0,
+    "rms_stress_bar": 0.0,
+    "stress_component_count": 9
+  },
+  "integrity": {
+    "cli_manifest_entries_verified": 33,
+    "legacy_manifest_entries_verified": 17,
+    "raw_archive_sha256": "f7cd8cbbedd8653150aa3f947b5978acec3954f5718e6c4d0bb9c0ebab6b4b0e"
+  },
+  "interpretation": "The complete 18-atom ice-XVII 2x2x2 full-grid and SPGLIB derivatives are identical at printed precision. Independent collective supercell displacement and native homogeneous-strain differences reproduce the manuscript force and virial values, and the complex/self-inverse regression probes pass.",
+  "native_vs_direct_cli_supercell": {
+    "energy_difference_Ha_per_primitive": 4.299181455280632e-09,
+    "maximum_force_difference_Ha_per_bohr": 2.8440054834939776e-07,
+    "maximum_stress_difference_bar": 0.11202323565157712,
+    "rms_force_difference_Ha_per_bohr": 1.295599157921419e-07,
+    "rms_stress_difference_bar": 0.05286875279020072
+  },
+  "regression_gates": {
+    "ch4_full_k222": {
+      "force_sum_difference_Ha_per_bohr": 0.0,
+      "virial_sum_difference_Ha": 2.836e-09
+    },
+    "ch4_reduced_k222": {
+      "force_sum_difference_Ha_per_bohr": 0.0,
+      "virial_sum_difference_Ha": 1.994e-09
+    },
+    "h2_complex_k311": {
+      "force_sum_difference_Ha_per_bohr": 0.0,
+      "virial_sum_difference_Ha": 1.3e-10
+    }
+  },
+  "schema": "periodic-gxtb-part-i-ice-xvii-full-derivatives-v1",
+  "source_revisions": {
+    "cp2k": "8520b2e592cd04d35081ab4ad46d92c606071e23",
+    "save_tblite": "15915c9435644eb257178ca8f8bf7220c38b1a84"
+  },
+  "status": "PASS"
+}

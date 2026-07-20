@@ -32,6 +32,9 @@ their individual tolerances, the following independent checks:
 - native Bloch k points versus an explicit CP2K Gamma-point BvK supercell;
 - full-grid, K290, SPGLIB, and time-reversal equivalence;
 - analytic energy, force, virial, and stress paths, including 1D and 2D PBC;
+- the complete ice-XVII native-$2\times2\times2$ full-grid/SPGLIB derivative
+  identity, independent collective-displacement and homogeneous-strain finite
+  differences, and direct 144-atom `save_tblite` CLI derivative comparison;
 - exchange/ACP component ablations and model-provider attribution;
 - reciprocal Wigner--Seitz one-patch builds that reproduce the author `pbc`
   energies and explain more than 95% of the historical sparse-mesh branch gap;

@@ -57,6 +57,10 @@ independent `save_tblite` evaluation is in
 [`DMC-ICE13/reproduction/seidler_dmc13_recalculation/`](DMC-ICE13/reproduction/seidler_dmc13_recalculation/).
 The aggregate implementation gate is
 [`validation/implementation_audit_20260720/`](validation/implementation_audit_20260720/).
+The complete ice-XVII native-$2\times2\times2$ derivative gate, including the
+54 force and nine stress components, independent force/strain differences,
+and the direct 144-atom `save_tblite` CLI comparison, is retained under
+[`validation/dmc13_xvii_full_derivatives_20260718/`](validation/dmc13_xvii_full_derivatives_20260718/).
 Direct current-provider CLI/native parity passes for all 52 points through
 4x4x4.  Reciprocal one-patch builds attribute the dominant historical
 `mstore-inorganic`/`pbc` sparse-mesh difference to the corrected

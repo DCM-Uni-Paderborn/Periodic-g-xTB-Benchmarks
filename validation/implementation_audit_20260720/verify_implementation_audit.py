@@ -61,6 +61,7 @@ def main() -> None:
         "lowk_derivatives_and_partial_pbc": "validation/gxtb_final_lowk_derivatives_20260719/verification.reproduced.json",
         "energy_component_ablation": "validation/dmc13_k222_viii_component_ablation_20260719/verification.json",
         "derivative_component_ablation": "validation/dmc13_k222_xvii_derivative_component_ablation_20260719/verification.json",
+        "dmc13_xvii_full_derivatives": "validation/dmc13_xvii_full_derivatives_20260718/verification.json",
         "provider_component_attribution": "validation/provider_component_attribution_20260719/verification.json",
         "h0_anisotropy_attribution": "validation/pbc_h0_anisotropy_attribution_20260719/verification.json",
         "cecl3_tolerance_recheck": "validation/cecl3_tolerance_recheck_20260720/verification.reproduced.json",

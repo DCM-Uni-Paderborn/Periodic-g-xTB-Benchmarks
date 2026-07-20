@@ -30,6 +30,10 @@ CP2K executable.
 
 - `validation/gxtb_final_lowk_derivatives_20260719/`: final-build energy,
   force, stress, K290/SPGLIB, one-dimensional and two-dimensional gates;
+- `validation/dmc13_xvii_full_derivatives_20260718/`: complete condensed-phase
+  ice-XVII full-grid/SPGLIB force and stress identity, independent collective
+  displacement and homogeneous-strain differences, and direct 144-atom
+  `save_tblite` CLI comparison, reconstructed from integrity-checked raw data;
 - `validation/explicit_cp2k_gamma_supercell_oracle_20260719/`: explicit
   Gamma-supercell/native-Bloch oracle;
 - `validation/three_route_k333_closure_20260719/`: three-route 3x3x3 closure;

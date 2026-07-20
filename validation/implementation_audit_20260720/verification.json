@@ -1,5 +1,5 @@
 {
-  "completed_gate_count": 29,
+  "completed_gate_count": 30,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -47,6 +47,12 @@
       "file": "validation/dmc13_discrepancy_attribution_20260720/verification.json",
       "passed": true,
       "sha256": "866cf15411642faa9ed845e781df684cf7e5097e20b4f1714fc61e550e0e7ded",
+      "status": "PASS"
+    },
+    "dmc13_xvii_full_derivatives": {
+      "file": "validation/dmc13_xvii_full_derivatives_20260718/verification.json",
+      "passed": true,
+      "sha256": "d8ca480e8b4e683ae04cf19306d0ad6cb53490065e1c64f6f090155512a1e9ee",
       "status": "PASS"
     },
     "energy_component_ablation": {

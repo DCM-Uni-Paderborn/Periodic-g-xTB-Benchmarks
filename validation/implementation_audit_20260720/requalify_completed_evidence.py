@@ -31,6 +31,7 @@ STANDARD_VERIFIERS = (
     ("cecl3_tolerance_recheck", "validation/cecl3_tolerance_recheck_20260720/verify_cecl3_tolerance_recheck.py"),
     ("energy_component_ablation", "validation/dmc13_k222_viii_component_ablation_20260719/verify_component_ablation.py"),
     ("derivative_component_ablation", "validation/dmc13_k222_xvii_derivative_component_ablation_20260719/verify_derivative_component_ablation.py"),
+    ("dmc13_xvii_full_derivatives", "validation/dmc13_xvii_full_derivatives_20260718/verify_full_derivatives.py"),
     ("dmc13_discrepancy_attribution", "validation/dmc13_discrepancy_attribution_20260720/verify_discrepancy_attribution.py"),
     ("geometry_equivalence", "validation/geometry_equivalence_20260720/verify_geometry_equivalence.py"),
     ("restart_equivalence", "validation/gxtb_restart_equivalence_20260720/verify_restart_equivalence.py"),
@@ -57,6 +58,7 @@ MANIFESTS = (
     "validation/explicit_cp2k_gamma_supercell_oracle_20260719/SHA256SUMS",
     "validation/three_route_k333_closure_20260719/SHA256SUMS",
     "validation/gxtb_final_lowk_derivatives_20260719/SHA256SUMS",
+    "validation/dmc13_xvii_full_derivatives_20260718/CLI_SHA256SUMS",
     "validation/mstore_pbc_component_ablation_20260720/SHA256SUMS",
     "validation/wigner_seitz_self_image_attribution_20260720/SHA256SUMS",
     "validation/second_order_mic_attribution_20260720/SHA256SUMS",
@@ -299,7 +301,7 @@ def main() -> None:
     aggregate = json.loads((HERE / "verification.json").read_text(encoding="utf-8"))
     aggregate_valid = (
         aggregate.get("status") == "PASS"
-        and aggregate.get("completed_gate_count") == 29
+        and aggregate.get("completed_gate_count") == 30
         and all(
             item.get("passed") is True
             for item in aggregate.get("completed_gates", {}).values()
