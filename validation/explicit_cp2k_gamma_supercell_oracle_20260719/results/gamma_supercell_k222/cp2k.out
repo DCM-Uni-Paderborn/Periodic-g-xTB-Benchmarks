@@ -1,0 +1,343 @@
+ DBCSR| CPU Multiplication driver                                           BLAS (U)
+ DBCSR| Multrec recursion limit                                              512 (U)
+ DBCSR| Multiplication stack size                                           1000 (D)
+ DBCSR| Maximum elements for images                                    UNLIMITED (U)
+ DBCSR| Multiplicative factor virtual images                                   1 (U)
+ DBCSR| Use multiplication densification                                       T (D)
+ DBCSR| Multiplication size stacks                                             3 (U)
+ DBCSR| Use memory pool for CPU allocation                                     F (U)
+ DBCSR| Number of 3D layers                                               SINGLE (U)
+ DBCSR| Use MPI memory allocation                                              F (U)
+ DBCSR| Use RMA algorithm                                                      F (U)
+ DBCSR| Use Communication thread                                               T (U)
+ DBCSR| Communication thread load                                             87 (D)
+ DBCSR| MPI: My process id                                                     0
+ DBCSR| MPI: Number of processes                                               1
+ DBCSR| OMP: Current number of threads                                         1
+ DBCSR| OMP: Max number of threads                                             1
+ DBCSR| Split modifier for TAS multiplication algorithm                  1.0E+00 (U)
+
+
+  **** **** ******  **  PROGRAM STARTED AT               2026-07-19 16:29:14.687
+ ***** ** ***  *** **   PROGRAM STARTED ON                                 terok
+ **    ****   ******    PROGRAM STARTED BY                              kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                               3191728
+  **** **  *******  **  PROGRAM STARTED IN                        /home/kuehne88
+
+ CP2K| version string:                 CP2K version 2026.2 (Development Version)
+ CP2K| source code revision number:                                    8520b2e59
+ CP2K| cp2kflags: omp parallel scalapack spglib s_dftd3 mctc-lib tblite tblite_g
+ CP2K|            xtb
+ CP2K| is freely available from                            https://www.cp2k.org/
+ CP2K| Program compiled at                                   2026-07-18 23:48:15
+ CP2K| Program compiled on                                                 terok
+ CP2K| Program compiled for                                               x86_64
+ CP2K| Data directory path                            /usr/local/share/cp2k/data
+ CP2K| Input file name        /home/kuehne88/work/gxtb-native-bvk-20260718/valid
+
+ GLOBAL| Force Environment number                                              1
+ GLOBAL| Basis set file name                                           BASIS_SET
+ GLOBAL| Potential file name                                           POTENTIAL
+ GLOBAL| MM Potential file name                                     MM_POTENTIAL
+ GLOBAL| Coordinate file name                                      __STD_INPUT__
+ GLOBAL| Method name                                                        CP2K
+ GLOBAL| Project name                         ice_XVII_GXTB_k222_gamma_supercell
+ GLOBAL| Run type                                                         ENERGY
+ GLOBAL| FFT library                                                       FFTW3
+ GLOBAL| Diagonalization library                                       ScaLAPACK
+ GLOBAL| Cholesky decomposition library                                ScaLAPACK
+ GLOBAL| DGEMM library                                                      BLAS
+ GLOBAL| Direct generalized diagonalization requested                          F
+ GLOBAL| Orthonormality check for eigenvectors                          DISABLED
+ GLOBAL| Matrix multiplication library                                 ScaLAPACK
+ GLOBAL| All-to-all communication in single precision                          F
+ GLOBAL| FFTs using library dependent lengths                                  F
+ GLOBAL| Grid backend                                                       AUTO
+ GLOBAL| Global print level                                                  LOW
+ GLOBAL| MPI I/O enabled                                                       T
+ GLOBAL| Total number of message passing processes                             1
+ GLOBAL| Number of distributed systems (nodes)                                 1
+ GLOBAL| Number of threads for this process                                    1
+ GLOBAL| This output is from process                                           0
+ GLOBAL| OpenMP stack size per thread (OMP_STACKSIZE)                    default
+ GLOBAL| CPU model name                                       AMD EPYC Processor
+ GLOBAL| CPUID                                                              1002
+
+ MEMORY| system memory details [Kb]
+ MEMORY|                        rank 0           min           max       average
+ MEMORY| MemTotal            528104804     528104804     528104804     528104804
+ MEMORY| MemFree             341596700     341596700     341596700     341596700
+ MEMORY| Buffers                    20            20            20            20
+ MEMORY| Cached              180795912     180795912     180795912     180795912
+ MEMORY| Slab                  4555104       4555104       4555104       4555104
+ MEMORY| SReclaimable          2660876       2660876       2660876       2660876
+ MEMORY| MemLikelyFree       525053508     525053508     525053508     525053508
+
+
+ *** WARNING in environment.F:1098 :: FFT library FFTW3 is not available. ***
+ *** Trying FFT library FFTSG.                                            ***
+
+
+ *** WARNING in cell_methods.F:531 :: CELL%CANONICALIZE AUTO keeps the     ***
+ *** general input cell orientation. The cell matrix is not a lower        ***
+ *** triangle and does not conform to the program convention that A lies   ***
+ *** along the X-axis and B is in the XY plane. Set CELL%CANONICALIZE TRUE ***
+ *** to explicitly transform the cell and supported cell-dependent input   ***
+ *** to the canonical internal frame.                                      ***
+
+
+ GENERATE|  Preliminary Number of Bonds generated:                             0
+ GENERATE|  Achieved consistency in connectivity generation.
+
+
+                  #####   #####        #     #   #     #       #          
+                 #     # #     #      #    ##### #     #   # #####  ####  
+                 #     # #           #       #   ###   #       #   #    # 
+                 #     #  #####     #        #   #  #  #   #   #   ###### 
+                 #   # #       #   #         #   #   # #   #   #   #      
+                 #    #  #     #  #          #   #  #  # # #   #    #   # 
+                  #### #  #####  #           #   ###   ##  #   #     ###  
+
+                                     g-xTB   
+                                 Version 0.0                       
+                            Johann V. Pototschnig                  
+
+                tblite provider: SAVE
+                tblite source revision: 15915c9435644eb257178ca8f8bf7220c38b1a84
+                g-xTB support: enabled
+
+
+ TOTAL NUMBERS AND MAXIMUM NUMBERS
+
+  Total number of            - Atomic kinds:                                   2
+                             - Atoms:                                        144
+                             - Shell sets:                                   192
+                             - Shells:                                       192
+                             - Primitive Cartesian functions:               1344
+                             - Cartesian basis functions:                    288
+                             - Spherical basis functions:                    288
+
+  Maximum angular momentum of the orbital basis functions:                     1
+
+
+ SCF PARAMETERS         Density guess:                                     MOPAC
+                        --------------------------------------------------------
+                        max_scf:                                             300
+                        max_scf_history:                                       0
+                        max_diis:                                              4
+                        --------------------------------------------------------
+                        eps_scf:                                        1.00E-09
+                        eps_scf_history:                                0.00E+00
+                        eps_diis:                                       1.00E-01
+                        eps_eigval:                                     1.00E-05
+                        --------------------------------------------------------
+                        level_shift [a.u.]:                             0.000000
+                        added MOs                                        96    0
+                        --------------------------------------------------------
+                        Mixing method:                           DIRECT_P_MIXING
+                        --------------------------------------------------------
+                        No outer SCF
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                        384
+ Number of occupied orbitals:                                                192
+ Number of molecular orbitals:                                               288
+
+ Number of orbital functions:                                                288
+ Number of independent orbital functions:                                    288
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.2     0.74541941     -3670.9066963637 -3.67E+03
+     2 GXTB-Simple 0.20E+00    0.2     0.03237803     -3671.2525612634 -3.46E-01
+     3 GXTB-Simple 0.20E+00    0.2     0.02313838     -3671.4421834297 -1.90E-01
+     4 GXTB-FDIIS  0.10E+01    0.2     0.10013763     -3671.6884215563 -2.46E-01
+     5 GXTB-FDIIS  0.10E+01    0.2     0.00718442     -3671.6910507538 -2.63E-03
+     6 GXTB-FDIIS  0.10E+01    0.2     0.00123980     -3671.6910659905 -1.52E-05
+     7 GXTB-FDIIS  0.10E+01    0.2     0.00005134     -3671.6910661088 -1.18E-07
+     8 GXTB-FDIIS  0.10E+01    0.2     0.00000534     -3671.6910661097 -8.93E-10
+     9 GXTB-FDIIS  0.10E+01    0.2     0.00000213     -3671.6910661097 -8.23E-11
+    10 GXTB-FDIIS  0.10E+01    0.2     0.00000032     -3671.6910661097  0.00E+00
+    11 GXTB-FDIIS  0.10E+01    0.2     5.5827E-09     -3671.6910661097 -1.36E-12
+    12 GXTB-FDIIS  0.10E+01    0.2     1.6126E-09     -3671.6910661097  0.00E+00
+    13 GXTB-FDIIS  0.10E+01    0.2     3.4732E-10     -3671.6910661097  4.55E-13
+
+  *** SCF run converged in    13 steps ***
+
+
+  Core Hamiltonian energy:                                   -299.67638684611586
+  Repulsive potential energy:                                  14.02865634144701
+  Electrostatic energy:                                         7.96115066223236
+  Self-consistent dispersion energy:                           -0.19552299663441
+  Non-self consistent dispersion energy:                        0.02090373671937
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                             -3671.69106610974177
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]          -3671.691066109741769
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                DBCSR STATISTICS                             -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ COUNTER                                    TOTAL       BLAS       SMM       ACC
+ flops     1 x     1 x   288             34864128     100.0%      0.0%      0.0%     
+ flops     1 x     4 x   288             69009408     100.0%      0.0%      0.0%     
+ flops     4 x     1 x   288             69009408     100.0%      0.0%      0.0%     
+ flops     4 x     4 x   288            140894208     100.0%      0.0%      0.0%     
+ flops inhomo. stacks                           0       0.0%      0.0%      0.0%
+ flops total                       313.777152E+06     100.0%      0.0%      0.0%
+ flops max/rank                    313.777152E+06     100.0%      0.0%      0.0%
+ matmuls inhomo. stacks                         0       0.0%      0.0%      0.0%
+ matmuls total                             135720     100.0%      0.0%      0.0%
+ number of processed stacks                   169     100.0%      0.0%      0.0%
+ average stack size                                   803.1       0.0       0.0
+ marketing flops                   414.056448E+06
+ -------------------------------------------------------------------------------
+ # multiplications                             13
+ max memory usage/rank               9.942823E+09
+ # max total images/rank                        1
+ # max 3D layers                                1
+ # MPI messages exchanged                       0
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                      DBCSR MESSAGE PASSING PERFORMANCE                      -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Bcast                5                     12.
+ MP_Allreduce           92                     13.
+ MP_Alltoall           376                 496234.
+ MP_ISend               52                  25920.
+ MP_IRecv               52                  25920.
+ -------------------------------------------------------------------------------
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                          OFFLOAD MEMPOOL STATISTICS                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ Memory consumption                Number of allocations  Used [MiB]  Size [MiB]
+ Host                                                  1           0           0
+ -------------------------------------------------------------------------------
+
+ MEMORY| Estimated peak process memory [MiB]                                 179
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                         MESSAGE PASSING PERFORMANCE                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Group                1
+ MP_Bcast               26                   1154.
+ MP_Allreduce          415                  63306.
+ MP_Sync                14
+ MP_comm_split          13
+ -------------------------------------------------------------------------------
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                           R E F E R E N C E S                               -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ 
+ CP2K version 2026.2 (Development Version), the CP2K developers group (2026).
+ CP2K is freely available from https://www.cp2k.org/ .
+ 
+ M. Iannuzzi, J. Wilhelm, F. Stein, A. Bussy, H. Elgabarty, D. Golze, A. Hehn, 
+ M. Graml, S. Marek, B. Sertcan Gökmen, C. Schran, H. Forbert, R. Z. 
+ Khaliullin, A. Kozhevnikov, M. Taillefumier, R. Meli, V. V. Rybkin, M. Brehm, 
+ R. Schade, O. Schütt, J. V. Pototschnig, H. Mirhosseini, A. Knüpfer, D. Marx, 
+ M. Krack, J. Hutter, T. D. Kühne.
+ J. Phys. Chem. B 130, 1237-1310 (2026).
+ The CP2K Program Package Made Simple.
+ https://doi.org/10.1021/acs.jpcb.5c05851
+
+ A. Katbashev, M. Stahn, T. Rose, V. Alizadeh, M. Friede, C. Plett, P. 
+ Steinbach, S. Ehlert.
+ J. Phys. Chem. A 129, 2667-2682 (2025).
+ Overview on Building Blocks and Applications of Efficient and Robust Extended 
+ Tight Binding.
+ https://doi.org/10.1021/acs.jpca.4c08263
+
+ T. D. Kühne, M. Iannuzzi, M. Del Ben, V. V. Rybkin, P. Seewald, F. Stein, T. 
+ Laino, R. Z. Khaliullin, O. Schütt, F. Schiffmann, D. Golze, J. Wilhelm, S. 
+ Chulkov, M. H. Bani-Hashemian, V. Weber, U. Borstnik, M. Taillefumier, A. S. 
+ Jakobovits, A. Lazzaro, H. Pabst, T. Müller, R. Schade, M. Guidon, S. 
+ Andermatt, N. Holmberg, G. K. Schenter, A. Hehn, A. Bussy, F. Belleflamme, G. 
+ Tabacchi, A. Glöß, M. Lass, I. Bethune, C. J. Mundy, C. Plessl, M. Watkins, 
+ J. VandeVondele, M. Krack, J. Hutter.
+ J. Chem. Phys. 152, 194103 (2020).
+ CP2K: An electronic structure and molecular dynamics software package - 
+ Quickstep: Efficient and accurate electronic structure calculations.
+ https://doi.org/10.1063/5.0007045
+
+ P. Pracht, E. Caldeweyher, S. Ehlert, S. Grimme.
+ ChemRxiv, (2019).
+ A Robust Non-Self-Consistent Tight-Binding Quantum Chemistry Method for large 
+ Molecules.
+ https://doi.org/10.26434/chemrxiv.8326202.v1
+
+ S. Grimme, C. Bannwarth, P. Shushkov.
+ J. Chem. Theory Comput. 13, 1989 (2017).
+ A Robust and Accurate Tight-Binding Quantum Chemical Method for Structures, 
+ Vibrational Frequencies, and Noncovalent Interactions of Large Molecular 
+ Systems Parametrized for All spd-Block Elements (Z = 1-86).
+ https://doi.org/10.1021/acs.jctc.7b00118
+
+ O. Schuett, P. Messmer, J. Hutter, J. VandeVondele.
+ Electronic Structure Calculations on Graphics Processing Units, 173-190 (2016).
+ GPU-Accelerated Sparse Matrix-Matrix Multiplication for Linear Scaling Density 
+ Functional Theory.
+ https://doi.org/10.1002/9781118670712.ch8
+
+ U. Borstnik, J. VandeVondele, V. Weber, J. Hutter.
+ Parallel Comput. 40, 47-58 (2014).
+ Sparse matrix multiplication: The distributed block-compressed sparse row 
+ library.
+ https://doi.org/10.1016/j.parco.2014.03.012
+
+ M. Frigo, S. G. Johnson.
+ Proc. IEEE 93, 216-231 (2005).
+ The design and implementation of FFTW3.
+ https://doi.org/10.1109/JPROC.2004.840301
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                T I M I N G                                  -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ SUBROUTINE                       CALLS  ASD         SELF TIME        TOTAL TIME
+                                MAXIMUM       AVERAGE  MAXIMUM  AVERAGE  MAXIMUM
+ CP2K                                 1  1.0    0.009    0.009    7.858    7.858
+ qs_energies                          1  2.0    0.000    0.000    7.768    7.768
+ qs_energies_init_hamiltonians        1  3.0    0.000    0.000    5.611    5.611
+ build_tblite_matrices                1  4.0    5.411    5.411    5.600    5.600
+ scf_env_do_scf                       1  3.0    0.000    0.000    2.143    2.143
+ scf_env_do_scf_inner_loop           13  4.0    0.701    0.701    2.142    2.142
+ qs_ks_update_qs_env                 13  5.0    0.000    0.000    0.959    0.959
+ rebuild_ks_matrix                   13  6.0    0.000    0.000    0.946    0.946
+ build_tblite_ks_matrix              13  7.0    0.945    0.945    0.946    0.946
+ qs_scf_new_mos                      13  5.0    0.033    0.033    0.456    0.456
+ calculate_dm_sparse                 13  6.0    0.000    0.000    0.189    0.189
+ cp_dbcsr_plus_fm_fm_t               13  7.0    0.000    0.000    0.188    0.188
+ tb_get_multipole                     1  5.0    0.160    0.160    0.183    0.183
+ -------------------------------------------------------------------------------
+
+ The number of warnings for this run is : 2
+ 
+ -------------------------------------------------------------------------------
+  **** **** ******  **  PROGRAM ENDED AT                 2026-07-19 16:29:24.317
+ ***** ** ***  *** **   PROGRAM RAN ON                                     terok
+ **    ****   ******    PROGRAM RAN BY                                  kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                               3191728
+  **** **  *******  **  PROGRAM STOPPED IN                        /home/kuehne88
