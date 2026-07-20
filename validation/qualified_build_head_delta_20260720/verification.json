@@ -23,8 +23,8 @@
   "nonconforming_production_inputs": [],
   "production_input_count": 93,
   "production_input_mode_counts": {
-    "checkpoint_output_off": 92,
-    "checkpoint_output_on": 1,
+    "checkpoint_output_off": 90,
+    "checkpoint_output_on": 3,
     "macdonald": 93,
     "mopac_guess": 93,
     "no_ext_restart": 93,

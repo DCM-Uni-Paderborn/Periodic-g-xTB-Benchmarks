@@ -131,10 +131,10 @@
   "source_files": {
     "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv": "684ae61bb58a14ab07659393adc76b2b82e9cf1f5cf4daa5fecc55e6823ac497",
     "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv": "8633e943b835a199ea1b467dc152c12d97b7ab3e271e15a127552e8a9adf0840",
-    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/all_branch_relative_energy_comparison.csv": "f55a058d8996226818f9fb776a4e8281de56e717ceba45083c72501ba01223c6",
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/all_branch_relative_energy_comparison.csv": "d7807fa2e06f507ce1da71c41fe359c71d871c9754b7577f76dbc419c96fecb3",
     "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/author_pbc_relative_energies.csv": "b40caef7ac38d2c7f93171fea1f5d31dc10f4b463d2437141903f2ad59abb693",
-    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/branch_comparison_statistics.csv": "4fc63b67f55be8e4beeaf419a29ce4e8ced65055c394f886538d47bd13a44dcb",
-    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/mstore_vs_pbc_relative_differences.csv": "6677f91cf06a3ac880b732351ff5f11d2a05c5794ff14bb46c68f51091d24671",
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/branch_comparison_statistics.csv": "ee064cce1d564715b0647bb6a6fa3125f02c22c99ffcf7c07eb564a06d265d15",
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/mstore_vs_pbc_relative_differences.csv": "c3c332dfd755efa7a94bda21c4bd0d1a76867319acb75054199d6baabe0f5d3c",
     "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/pbc_cli_vs_cp2k_native_absolute_parity.csv": "31a6ce6caa33a6f67cafc07fd84e006a9dc1dfc9ad1618b7692b94457b144005"
   },
   "status": "PASS"
