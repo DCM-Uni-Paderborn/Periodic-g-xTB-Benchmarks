@@ -743,21 +743,40 @@ def main() -> None:
 
     closure_path = PACKAGE / "evidence" / "three_route_k333_closure" / "summary.json"
     oracle_path = PACKAGE / "evidence" / "cp2k_gamma_supercell_oracle" / "verification.json"
+    mic_path = PACKAGE / "evidence" / "second_order_mic_attribution" / "verification.json"
     closure = json.loads(closure_path.read_text(encoding="utf-8")) if closure_path.is_file() else {}
     oracle = json.loads(oracle_path.read_text(encoding="utf-8")) if oracle_path.is_file() else {}
+    mic = json.loads(mic_path.read_text(encoding="utf-8")) if mic_path.is_file() else {}
+    source_states = json.loads((PACKAGE / "sources.json").read_text(encoding="utf-8"))
+    if mic:
+        source_states.update({
+            "second_order_mic_evidence": "evidence/second_order_mic_attribution/verification.json",
+            "second_order_mic_reverted_commit": mic["source"]["reverted_commit"],
+            "second_order_mic_test_tree": mic["source"]["hybrid_tree"],
+            "second_order_mic_test_cli_sha256": read_sidecar_hash(
+                PACKAGE
+                / "evidence"
+                / "second_order_mic_attribution"
+                / "build"
+                / "pbc-without-mic-binary.sha256"
+            ),
+        })
     package_summary = {
         "schema_version": 1,
         "classification": (
             "The exact current pbc-derived CLI and CP2K-native implementation "
             "are numerically equivalent for all 52 required parity points on "
-            "the complete 1x1x1 through 4x4x4 matrices; mstore-inorganic and "
-            "pbc are distinct model source states."
+            "the complete 1x1x1 through 4x4x4 matrices. Reciprocal source-patch "
+            "tests attribute the historical mstore-inorganic/pbc sparse-mesh "
+            "separation to the Wigner--Seitz exchange self-image correction plus "
+            "the later minimum-image second-order Coulomb form, not to the CP2K "
+            "interface."
             if not failed_parity_meshes
             else "The current pbc-derived CLI and CP2K-native parity matrix is "
             "not yet complete on every required mesh; mstore-inorganic and pbc "
             "remain distinct model source states."
         ),
-        "source_states": json.loads((PACKAGE / "sources.json").read_text(encoding="utf-8")),
+        "source_states": source_states,
         "current_pbc_cli_vs_cp2k_native_k333": {
             "maximum_absolute_difference_Ha_per_primitive": closure.get(
                 "maximum_absolute_native_minus_current_Ha"
@@ -774,6 +793,23 @@ def main() -> None:
             ),
             "status": oracle.get("status"),
         },
+        "historical_branch_causality_k222_ice_VII_minus_Ih": ({
+            "mstore_wsc_corrected_kj_mol_per_H2O": mic["relative_energies_kj_mol_per_H2O"]["mstore-wsc-corrected"],
+            "pbc_correct_kj_mol_per_H2O": mic["relative_energies_kj_mol_per_H2O"]["pbc-correct"],
+            "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O": mic["pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O"],
+            "pbc_without_minimum_image_second_order_kj_mol_per_H2O": mic["relative_energies_kj_mol_per_H2O"]["pbc-without-mic"],
+            "pbc_without_minimum_image_second_order_minus_mstore_wsc_corrected_kj_mol_per_H2O": mic["pbc_without_mic_minus_mstore_wsc_corrected_kj_mol_per_H2O"],
+            "post_wsc_residual_explained_percent": mic["residual_explained_percent"],
+            "independent_ice_XVII_crosscheck": {
+                "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O": mic["phase_resolved_attribution"]["XVII"]["pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O"],
+                "pbc_without_minimum_image_second_order_minus_mstore_wsc_corrected_kj_mol_per_H2O": mic["phase_resolved_attribution"]["XVII"]["pbc_without_mic_minus_mstore_wsc_corrected_kj_mol_per_H2O"],
+                "post_wsc_residual_explained_percent": mic["phase_resolved_attribution"]["XVII"]["residual_explained_percent"],
+                "status": mic["status"],
+            },
+            "second_order_mic_evidence": "evidence/second_order_mic_attribution/verification.json",
+            "status": mic["status"],
+            "wigner_seitz_evidence": "evidence/wigner_seitz_self_image_attribution/verification.json",
+        } if mic else {}),
         "complete_branch_statistics": summary_rows,
     }
     (PACKAGE / "comparison_summary.json").write_text(

@@ -45,7 +45,7 @@
   "current_adaptive_dmc13": {
     "converged_phase_count": 9,
     "final": false,
-    "mae_kj_mol_per_H2O": 1.746596161474,
+    "mae_kj_mol_per_H2O": 1.7298061428838334,
     "phase_count": 12
   },
   "mstore_inorganic_vs_current_pbc": {
@@ -129,9 +129,9 @@
   },
   "schema": "periodic-gxtb-dmc13-discrepancy-attribution-v2",
   "source_files": {
-    "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv": "0ffda372a03acab7d2d496cacb1fb877bce724dcbc9e728c7d1a33cc3c381437",
-    "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv": "f7d59fc6afe5de83370803f3f065200c5c3e5912e4b0620f82fe3e4daff7b9bb",
-    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/all_branch_relative_energy_comparison.csv": "18020d0636846e4f94fbe1d887543b0e56f9a11549ae1a385ce78f38646b38a2",
+    "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv": "9ed7e774e9e33589e611d336ac874807b5c49de9520f901efd926dda6ddf6629",
+    "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv": "7f095ca3c35be8febc7067d0229ca55251169a6fb22c49aa44ee87d6a4c65882",
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/all_branch_relative_energy_comparison.csv": "9fbe52a3e5803d69ee980b900997660953f0fd70048db629fa295f514eacddad",
     "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/author_pbc_relative_energies.csv": "b40caef7ac38d2c7f93171fea1f5d31dc10f4b463d2437141903f2ad59abb693",
     "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/branch_comparison_statistics.csv": "4fc63b67f55be8e4beeaf419a29ce4e8ced65055c394f886538d47bd13a44dcb",
     "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/mstore_vs_pbc_relative_differences.csv": "6677f91cf06a3ac880b732351ff5f11d2a05c5794ff14bb46c68f51091d24671",

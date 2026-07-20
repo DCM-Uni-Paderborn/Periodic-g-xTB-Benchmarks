@@ -41,6 +41,8 @@ silently treating the cap as a convergence criterion.
 - `data/dmc_ice13_gxtb_phasewise_progress.csv`: reproducible phase-wise
   progress snapshots at mesh limits 6x6x6, 7x7x7, and 8x8x8, including the
   selected mesh of every phase and every still-pending next endpoint;
+- `data/dmc_ice13_completion_ledger.csv`: deduplication ledger for newly
+  qualified endpoints and the aggregate state reported after each completion;
 - `data/dmc_ice13_gxtb_phase_vii_current.csv`: current Ice-VII sequence,
   including the qualified 7x7x7--8x8x8 adjacent pair;
 - `data/dmc_ice13_published_dft_absolute_energies.csv`: published DMC/DFT
@@ -50,7 +52,7 @@ silently treating the cap as a convergence criterion.
 The current uniform MAEs are 163.8345, 88.6814, 34.0485, 11.3655, and
 4.3464 kJ mol-1 per H2O from Gamma through 5x5x5.  The qualified phase-wise
 progress values at mesh limits 6x6x6, 7x7x7, and 8x8x8 are 2.3596, 1.8643,
-and 1.7466 kJ mol-1 per H2O. The present phase-wise set through at most 8x8x8
+and 1.7298 kJ mol-1 per H2O. The present phase-wise set through at most 8x8x8
 is not final because
 Ice VII, Ice XI, and Ice XIV have not yet passed; Ice II, Ice III, Ice IV,
 Ice VI, Ice VIII, Ice IX, Ice XIII, Ice XV, and Ice XVII do pass the declared
