@@ -46,7 +46,7 @@
     "dmc13_discrepancy_attribution": {
       "file": "validation/dmc13_discrepancy_attribution_20260720/verification.json",
       "passed": true,
-      "sha256": "a4442e9f0ea6206de18b4fa33a2e12dbd1b77f7ef1e2467fe39bdbb720e99dfd",
+      "sha256": "d7809728a66acc5642270659192bd3f3d39acbd61f6c034775cd6d1de087b918",
       "status": "PASS"
     },
     "energy_component_ablation": {
@@ -82,7 +82,7 @@
     "mstore_accuracy_equivalence": {
       "file": "validation/mstore_accuracy_equivalence_20260720/verification.json",
       "passed": true,
-      "sha256": "1a5109eea0fe977799543bd6367c8f36e7ff17e2bc28285b3b1a4896d63703c0",
+      "sha256": "00cb88453bf7683a053410fd5f5244bafd2d7874e44a258a13f3235916b66692",
       "status": "PASS"
     },
     "native_cli_full_k111_to_k444_parity": {

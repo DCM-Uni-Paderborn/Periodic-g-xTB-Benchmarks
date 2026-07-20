@@ -39,7 +39,8 @@ Our present evidence is:
    than the CP2K integration does.
 4. Our independently rebuilt `mstore-inorganic` executable gives the same
    complete `3 x 3 x 3` absolute-energy matrix at `--acc 0.1` and `--acc 0.01`
-   to within `2.41e-12 Eh` per explicit supercell.  The large branch shift is
+   to within `6.5e-11 Eh` per explicit supercell, corresponding to only
+   `2.26e-10 kJ mol-1 H2O-1` after same-mesh Ih referencing.  The large branch shift is
    therefore not caused by the SCC accuracy setting.
 
 Could you please run the following two independent series with your own clean

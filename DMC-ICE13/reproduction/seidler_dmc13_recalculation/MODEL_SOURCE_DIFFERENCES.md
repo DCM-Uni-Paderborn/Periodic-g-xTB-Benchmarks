@@ -71,7 +71,8 @@ All entries are in kJ mol-1 per H2O.  Both branches have now been evaluated at
 CLI accuracy `0.1` for the complete `2^3` and `3^3` matrices.  In addition, an
 independently rebuilt `mstore-inorganic` executable was evaluated
 at `3^3` with both `0.1` and `0.01`; the largest absolute total-energy change
-was only `2.41e-12 Eh` per explicit supercell.  The corresponding controlled
+was only `6.5e-11 Eh` per explicit supercell, or `2.26e-10 kJ mol-1 H2O-1`
+after same-mesh Ih referencing.  The corresponding controlled
 pbc-derived sensitivity test changes total energies by less than `2e-10 Eh`.
 The branch separation is therefore neither a mixed-setting artifact nor an
 SCC stopping-threshold effect.  The settings of every row are exposed in the

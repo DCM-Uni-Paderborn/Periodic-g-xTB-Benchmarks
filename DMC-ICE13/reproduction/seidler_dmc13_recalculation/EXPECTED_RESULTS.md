@@ -62,7 +62,8 @@ between those branches is `76.4515 kJ mol-1 H2O-1`.  The most direct view is
 The complete `2^3` and `3^3` comparisons are now strictly same-setting at CLI
 accuracy `0.1`.  A separate independently rebuilt `mstore-inorganic` `3^3`
 sensitivity matrix at `0.01` differs from the `0.1` matrix by at most
-`2.41e-12 Eh` per explicit supercell.  Controlled pbc-derived runs likewise
+`6.5e-11 Eh` per explicit supercell and `2.26e-10 kJ mol-1 H2O-1` after
+same-mesh Ih referencing.  Controlled pbc-derived runs likewise
 show a sub-`2e-10 Eh` sensitivity over that interval.  The tens-of-kJ/mol
 branch shift is therefore not an SCC-accuracy artifact; an author rerun is
 still requested as an independent provenance check rather than as closure of

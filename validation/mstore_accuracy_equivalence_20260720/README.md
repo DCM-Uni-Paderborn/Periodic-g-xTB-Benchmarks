@@ -17,6 +17,8 @@ python3 verify_mstore_accuracy_equivalence.py
 ```
 
 to regenerate `verification.json`.  The maximum energy response to the tighter
-threshold is approximately `2.41e-12` hartree per evaluated supercell.  This
-rules out the SCC stopping threshold as the origin of the substantial
+threshold is `6.5e-11` hartree per evaluated supercell, corresponding after
+same-mesh Ih referencing to only `2.26e-10 kJ mol-1 H2O-1`.  The direct
+`result.json` energy is already in hartree and is not converted a second time.
+This rules out the SCC stopping threshold as the origin of the substantial
 `mstore-inorganic`/`pbc` DMC difference.

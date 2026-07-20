@@ -45,7 +45,7 @@
       "2": 88.68137557419759,
       "3": 34.0484918798365
     },
-    "maximum_accuracy_sensitivity_Ha_supercell": 2.4064785945003306e-12,
+    "maximum_accuracy_sensitivity_Ha_supercell": 6.5e-11,
     "maximum_shift_by_mesh": {
       "2": {
         "maximum_absolute_shift_kj_mol_per_H2O": 148.027239161441,
