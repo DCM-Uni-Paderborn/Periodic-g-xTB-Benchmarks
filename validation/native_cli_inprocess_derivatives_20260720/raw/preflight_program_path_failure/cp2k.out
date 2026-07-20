@@ -1,0 +1,27 @@
+
+ *******************************************************************************
+ *                                   The input string                          *
+ *          </home/kuehne88/work/gxtb-provenance-d933e083-15915c94-20260717-v2 *
+ *                  /save_tblite-build/app/tblite> has more than     80        *
+ *   ___         characters and is therefore too long to fit in the specified  *
+ *  /   \                             variable, File:                          *
+ * [ABORT]  '/home/kuehne88/work/gxtb-native-bvk-20260718/validation/native-cl *
+ *  \___/   i-inprocess-derivatives-20260720/inputs/H2O_gxtb_reference_cli.inp *
+ *    |                       ', Line: 22, Column: 12, Chunk:                  *
+ *  O/|     </home/kuehne88/work/gxtb-provenance-d933e083-15915c94-20260717-v2 *
+ * /| |                       /save_tblite-build/app/tblite>                   *
+ * / \                                          input/cp_parser_methods.F:1228 *
+ *******************************************************************************
+
+
+ ===== Routine Calling Stack ===== 
+
+            9 val_create_parsing
+            8 section_vals_parse
+            7 section_vals_parse
+            6 section_vals_parse
+            5 section_vals_parse
+            4 section_vals_parse
+            3 section_vals_parse
+            2 section_vals_parse
+            1 read_input

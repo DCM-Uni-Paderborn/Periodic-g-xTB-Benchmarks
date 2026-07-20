@@ -1,0 +1,61 @@
+xTB calculator
+ | self-consistent screened Coulomb + Pauli repulsion
+ | Coulomb electrostatics and tight-binding
+ |  * onsite first-order tight-binding
+ |  * isotropic Klopman-Ohno-Mataga-Nishimoto electrostatics
+ |  * erf-damped anisotropic electrostatics
+ |  * two-body third-order tight-binding
+ |  * onsite fourth-order tight-binding
+ | self-consistent DFT-D4Srev dispersion
+ | Mulliken and onsite Fock exchange + bond-order correlation
+
+core increment energy         -6.9427417220700E+01 Eh
+dispersion energy              9.3902932936130E-08 Eh
+molecular charge               0.0000000000000E+00 e
+number of electrons            7.9999999999502E+00 e
+number of unpaired electrons   0.0000000000000E+00 e
+wavefunction                   restricted
+integral cutoff                2.6907767250513E+01 bohr
+energy convergence             1.0000000000000E-06 Eh
+density convergence            2.0000000000000E-05 e
+
+------------------------------------------------------------
+  cycle        total energy    energy error   density error
+------------------------------------------------------------
+      1     -76.46696871840  -7.0395516E+00   0.0000000E+00
+      2     -76.47559340816  -8.6246898E-03   5.7403466E-02
+      3     -76.48116140637  -5.5679982E-03   4.7712654E-02
+      4     -76.49167427397  -1.0512868E-02   3.9709175E-02
+      5     -76.49208192072  -4.0764676E-04   4.8997989E-03
+      6     -76.49208592827  -4.0075447E-06   9.2965268E-04
+      7     -76.49208604945  -1.2117659E-07   1.8598730E-04
+      8     -76.49208605056  -1.1097852E-09   1.4921656E-05
+------------------------------------------------------------
+
+electronic energy             -7.0646689237582E+00 Eh
+total energy                  -7.6492086050555E+01 Eh
+
+Post processing:
+ | Mayer-Wiberg bond orders
+
+ total:                                   0.011 sec
+ - increment                              0.000 sec (  0%)
+ - repulsion                              0.000 sec (  0%)
+ - dispersion                             0.000 sec (  1%)
+ - coulomb                                0.001 sec ( 11%)
+ - exchange                               0.000 sec (  0%)
+ - hamiltonian                            0.000 sec (  4%)
+ - acp                                    0.001 sec (  6%)
+ - spin polarization                      0.000 sec (  0%)
+ - post processing                        0.000 sec (  0%)
+ - scc                                    0.001 sec ( 10%)
+ - coulomb gradient                       0.002 sec ( 21%)
+ - dispersion gradient                    0.000 sec (  0%)
+ - exchange gradient                      0.000 sec (  0%)
+ - repulsion gradient                     0.000 sec (  0%)
+ - acp gradient                           0.002 sec ( 15%)
+ - hamiltonian gradient                   0.001 sec ( 11%)
+ - gradient                               0.006 sec ( 50%)
+
+[Info] Tight-binding results written to '/home/kuehne88/work/gxtb-ref-h2o/tblite-reference.grad'
+[Info] JSON dump of results written to '/home/kuehne88/work/gxtb-ref-h2o/tblite-reference.json'
