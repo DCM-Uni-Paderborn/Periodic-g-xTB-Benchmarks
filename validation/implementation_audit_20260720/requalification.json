@@ -1,5 +1,5 @@
 {
-  "check_count": 29,
+  "check_count": 30,
   "checks": [
     {
       "command": [
@@ -288,22 +288,32 @@
       "status": "PASS"
     },
     {
+      "entry_count": 9,
+      "manifest_sha256": "06ee48de8ef9afdeed08da322196a50ee5df0452a3d28d88ebb16528373b25aa",
+      "name": "manifest:validation/cecl3_tolerance_recheck_20260720/SHA256SUMS",
+      "status": "PASS",
+      "tracked_entry_count": 9
+    },
+    {
       "entry_count": 26,
       "manifest_sha256": "318e8acc99433381fa5d0273549578acccb017158c2b21329433e88c3313feec",
       "name": "manifest:validation/explicit_cp2k_gamma_supercell_oracle_20260719/SHA256SUMS",
-      "status": "PASS"
+      "status": "PASS",
+      "tracked_entry_count": 26
     },
     {
       "entry_count": 5,
       "manifest_sha256": "05bb74de7954f6738f30e5f7ad20fc38d706cbf16dc104f65a93a8816a675d43",
       "name": "manifest:validation/three_route_k333_closure_20260719/SHA256SUMS",
-      "status": "PASS"
+      "status": "PASS",
+      "tracked_entry_count": 5
     },
     {
       "entry_count": 177,
       "manifest_sha256": "6adfc793810fb6425bcb6c3c90f12cab62cb8bbd389a7ae603f66971a2f4759a",
       "name": "manifest:validation/gxtb_final_lowk_derivatives_20260719/SHA256SUMS",
-      "status": "PASS"
+      "status": "PASS",
+      "tracked_entry_count": 177
     },
     {
       "command": [
