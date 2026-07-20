@@ -11,17 +11,17 @@
     {
       "id": "dmc13_current_adaptive_set",
       "path": "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv",
-      "sha256": "e9e833c1e36c75561792c3af7ce83553c98e101408f2a8c0a5f259ce59eacd86"
+      "sha256": "b6e32e6ba8977382b2856f72c148e6880e52dac15b0e411a05f2449216a1cf9a"
     },
     {
       "id": "dmc13_current_adaptive_statistics",
       "path": "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv",
-      "sha256": "9f3b8803108f95e40264d8a97e7392d1c628cb93e30a9b33ee0ed8ddf70f6c18"
+      "sha256": "4d705d8576ea06e4c1672e1b981f52bbd104d59b63d50dc08697f5f2f1437340"
     },
     {
       "id": "dmc13_ice_vii_sequence",
       "path": "DMC-ICE13/data/dmc_ice13_gxtb_phase_vii_current.csv",
-      "sha256": "2fb09e8953bd171e865a4ec3043be489f886dc8d97ec20e3693c218c44d7df1d"
+      "sha256": "47c6e13e26499e12390f305f07b4d80f45ef99e0546abb046fef43e92009baab"
     },
     {
       "id": "dmc13_uniform_same_build_figure",

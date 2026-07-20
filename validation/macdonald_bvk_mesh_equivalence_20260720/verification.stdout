@@ -1,0 +1,2183 @@
+{
+  "all_archived_inputs_pass": true,
+  "analytic_meshes": {
+    "1": {
+      "expected_shift": "0",
+      "one_dimensional_bvk": [
+        "0"
+      ],
+      "one_dimensional_native_modulo_one": [
+        "0"
+      ],
+      "one_dimensional_pass": true,
+      "point_count_3d": 1,
+      "three_dimensional_pass": true
+    },
+    "2": {
+      "expected_shift": "1/4",
+      "one_dimensional_bvk": [
+        "0",
+        "1/2"
+      ],
+      "one_dimensional_native_modulo_one": [
+        "0",
+        "1/2"
+      ],
+      "one_dimensional_pass": true,
+      "point_count_3d": 8,
+      "three_dimensional_pass": true
+    },
+    "3": {
+      "expected_shift": "0",
+      "one_dimensional_bvk": [
+        "0",
+        "1/3",
+        "2/3"
+      ],
+      "one_dimensional_native_modulo_one": [
+        "0",
+        "1/3",
+        "2/3"
+      ],
+      "one_dimensional_pass": true,
+      "point_count_3d": 27,
+      "three_dimensional_pass": true
+    },
+    "4": {
+      "expected_shift": "3/8",
+      "one_dimensional_bvk": [
+        "0",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "one_dimensional_native_modulo_one": [
+        "0",
+        "1/4",
+        "1/2",
+        "3/4"
+      ],
+      "one_dimensional_pass": true,
+      "point_count_3d": 64,
+      "three_dimensional_pass": true
+    },
+    "5": {
+      "expected_shift": "0",
+      "one_dimensional_bvk": [
+        "0",
+        "1/5",
+        "2/5",
+        "3/5",
+        "4/5"
+      ],
+      "one_dimensional_native_modulo_one": [
+        "0",
+        "1/5",
+        "2/5",
+        "3/5",
+        "4/5"
+      ],
+      "one_dimensional_pass": true,
+      "point_count_3d": 125,
+      "three_dimensional_pass": true
+    },
+    "6": {
+      "expected_shift": "5/12",
+      "one_dimensional_bvk": [
+        "0",
+        "1/6",
+        "1/3",
+        "1/2",
+        "2/3",
+        "5/6"
+      ],
+      "one_dimensional_native_modulo_one": [
+        "0",
+        "1/6",
+        "1/3",
+        "1/2",
+        "2/3",
+        "5/6"
+      ],
+      "one_dimensional_pass": true,
+      "point_count_3d": 216,
+      "three_dimensional_pass": true
+    },
+    "7": {
+      "expected_shift": "0",
+      "one_dimensional_bvk": [
+        "0",
+        "1/7",
+        "2/7",
+        "3/7",
+        "4/7",
+        "5/7",
+        "6/7"
+      ],
+      "one_dimensional_native_modulo_one": [
+        "0",
+        "1/7",
+        "2/7",
+        "3/7",
+        "4/7",
+        "5/7",
+        "6/7"
+      ],
+      "one_dimensional_pass": true,
+      "point_count_3d": 343,
+      "three_dimensional_pass": true
+    },
+    "8": {
+      "expected_shift": "7/16",
+      "one_dimensional_bvk": [
+        "0",
+        "1/8",
+        "1/4",
+        "3/8",
+        "1/2",
+        "5/8",
+        "3/4",
+        "7/8"
+      ],
+      "one_dimensional_native_modulo_one": [
+        "0",
+        "1/8",
+        "1/4",
+        "3/8",
+        "1/2",
+        "5/8",
+        "3/4",
+        "7/8"
+      ],
+      "one_dimensional_pass": true,
+      "point_count_3d": 512,
+      "three_dimensional_pass": true
+    },
+    "9": {
+      "expected_shift": "0",
+      "one_dimensional_bvk": [
+        "0",
+        "1/9",
+        "2/9",
+        "1/3",
+        "4/9",
+        "5/9",
+        "2/3",
+        "7/9",
+        "8/9"
+      ],
+      "one_dimensional_native_modulo_one": [
+        "0",
+        "1/9",
+        "2/9",
+        "1/3",
+        "4/9",
+        "5/9",
+        "2/3",
+        "7/9",
+        "8/9"
+      ],
+      "one_dimensional_pass": true,
+      "point_count_3d": 729,
+      "three_dimensional_pass": true
+    }
+  },
+  "archived_input_count": 94,
+  "archived_input_count_by_mesh": {
+    "1": 13,
+    "2": 13,
+    "3": 13,
+    "4": 13,
+    "5": 13,
+    "6": 13,
+    "7": 10,
+    "8": 5,
+    "9": 1
+  },
+  "archived_inputs": {
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/II/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "e1eec746f7150ba82ea11d79403ac6678c03857854288272ab6aaf0b5aa46b9c",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/III/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "6fa35133741c647f890713a2668c58c4838497c37cea4ba8e1db87d9643a3e0f",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/IV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "ef4969ebb412bdf98cfb90b0142f64dfaf6db1f5e5a1f93b7299d43ff9098204",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/IX/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "8d3dcf0053d43baa14680cf1d8e9ccd1703ff027d65dc2eda0a21c0add6248dc",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/Ih/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "3673de9e1094252aa04e9be64b58c01b6d74d50ffe8524ade7f47c1c876bdfdd",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/VI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "12ded1a9ebd970d01757ad96d2dca20c32d27a1e151b05c625336690464c4ba1",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/VII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "22f1b1a0b46583b5123d921b502edbb4adf154a7f9acd807ebc310a8c7ec8200",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/VIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "e99b144fba50d02766391517bdba46cc430ff384bdf6e72be68704690962fe98",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/XI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "f4f202455458245b653cf090dc5f136b209039b030534970b9df1b2351d93b1d",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/XIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "71d55e9b423d3a1eaea77e543bb11380fd6266fe34b4c4bbacafaaaf45908e74",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/XIV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "add45b45af393ecc80a11fa13c1d18419b54df324df35ffb9cd13634bf99e503",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/XV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "4f506a7ca1f5c757f8c9fcded51ac15ef8ec42a4ad1c5394a3fc0b8643e4d1e6",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k111-reduced/XVII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        1,
+        1,
+        1
+      ],
+      "passed": true,
+      "sha256": "d388c514939c0b4bf1304b4f764f54398c6579c87fc3887dfa57c037ec5b2d85",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/II/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "8de47e1ee964b16a73e7f9298f5efa9ff988dee169406443436eb5bde2b0b554",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/III/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "44d85dcb89dbc2d4b8ba7265309142da8a95602fcc7f1cd357a8e55aa215c1a9",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/IV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "ffab4041aac3433da46a348ea031b414cead5389e00a09f43e6ab03300fab7e8",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/IX/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "0be90948cf7312ee0cd87e9c43bb9449b858a274040deaabe65008c0798e59ce",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/Ih/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "b748035f369c4313b5928855e86d8c412e772a029e634c633af93463d7afbec8",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/VI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "d25ce8a2ccd6951aa6606d631cba892e7995becf8081a6773d78847b5f47fb87",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/VII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "a3ae9af9154ff0278f0f27482c15c5ca199656ef490a107b505a5ea360e0beac",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/VIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "1e0658ea7d318fa7b2891a560802204f69a3827c94f4158fb5d629d97a9b02b5",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/XI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "505248de4984b0b146f09a78640748977f3d84c2336274cac45fbf6ec5782473",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/XIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "463f307b0a9601408e6cad286112206c170affe736de8fc53663e14201f097b2",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/XIV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "1979900ed9d5383d6011c2d35d502d2c442c63d4efd7f3cc1b5109156a022cfd",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/XV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "4979ba32910aa29269ed1191149cd7828e463fddd0b193326a1d25eba765f235",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k222-reduced/XVII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "1/4",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        2,
+        2,
+        2
+      ],
+      "passed": true,
+      "sha256": "265692cdca09516e68b10022a5291326c1cc39fc664a0ad60191b15eb0999a1b",
+      "shifts": [
+        "1/4",
+        "1/4",
+        "1/4"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/II/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "553d95f78758fcbdf1b57fffae4ef7f1a1cde5ba83d418867ae08476ccb2096a",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/III/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "d8b9fa3021c6e499b5f6c4f4132a883d7e18ea0162a5e90432e1aeec3199d7f2",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/IV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "aedda079584e2c3ef4a832326a571f6ef69e45ac4909bda3a4f85b453f1727b2",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/IX/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "2c836fe73157e94633e9a09a88affd1b67dee9b00644540880d4d0c0b84ebc68",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/Ih/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "d4e2bc5b624b25370962ba3270abe8bd918d29601bf2d310f1003b40ea7a83b4",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/VI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "db5c777a01be81efb6faca8906a0118f36197f59a792cab36c6d541534c1c17a",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/VII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "820fe788e305e83d052d8990de6884ff695c8b0355703484435d8fdd91f83dab",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/VIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "a808ed5afdfb7992210dfe619b149e5b2944ba8d58d0f70f36e79890dd19fc86",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/XI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "f6c64b471c9d2e05dc6848311cd73091b1430ba7050117e809fd12cc6621cc6c",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/XIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "80455d5f796b8856c51c51809f872d737969bcd0ebe3d52f6ae4ba704203543c",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/XIV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "053e6efe38fb7c8d6a97a3c2339f0b7d5d04023d4b406e0f00dffe19240ac371",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/XV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "a7bcdd2947917662da2249de172ae36bf73402606051b6c9b041bb1da1f88b8e",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k333-reduced/XVII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "passed": true,
+      "sha256": "b9c78fbe495288fd1f98f07a96ff921ce5826e8c416be0db723c7c3e4a6e8220",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/II/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "544be2436965d6141d323939f6e1412dd8f67398e379b85a5be16d90f403ab8e",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/III/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "bd6d3e04afd51350ebc1ac374eb1d8108dd99abadd97214ecb81921b68cdda99",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/IV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "0723c5535a16e64344160637275c60bfda3c10b5b7108b407f04177a8d5fa1f9",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/IX/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "9bc6f48a010edbb170480d89cc3a84cfd7f7ae38f5d853e542770bbf5a6e4bc4",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/Ih/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "d73ebefb583462392cc6cb7ed11aa16db329853ec74a37e9ea42be059c2a0047",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/VI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "e78ec0408a935453c8dc56dc718a4aab2ee8a1d7a7c734a9ad5d7be3c674b707",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/VII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "f47b7a01b4e294a684ea90431d9114eaffbd92ce298a164dba06bbc983b476fa",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/VIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "160333392e48fa2b3a1fddb6e627be4516b56d49bbf7cb71e7a1063997691412",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/XI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "195189b39772fee2e0ec96fdd28a29e5e43faa73b5ba11cc70047f95630f486b",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/XIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "4d9e651f503c8b9e9427b9036869f7042e4a6d268e1e7c43b6cb0c1cbc80b492",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/XIV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "1d3bcb7c8eb872a4339bba187351c14755e631391c1a3f240f220956c41c1f90",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/XV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "7e08f3d931b08c6ab47b0883688420a982676ded6b5a28c361fa973af24a4211",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k444-reduced/XVII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "3/8",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "passed": true,
+      "sha256": "d4eefca6c552170552ece909a278f6ec8b5ff3a2b736fd8d80aa70bb45a96de6",
+      "shifts": [
+        "3/8",
+        "3/8",
+        "3/8"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/II/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "13cd9c9e6a420b6ad201063cd47e91328d3330a49c29ab2ebcb71361d2716ca8",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/III/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "bd3445823a868265ccb4db5624cf7344a0b7ded778caaf0f7ecde532c6d97c62",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/IV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "ddd5593c999fd3c3db2f439ee93d92427d8006e34dd14f5f574dea2c4fbbf037",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/IX/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "c6041c1716648388552fa3f36ff4ad032bfbd03b1b97866c496e6f27ef535a14",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/Ih/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "db5909708aac9a03312e7ea014455e3671a50586ae760c31d95a345c4d15393d",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/VI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "b7bbb936c7aa7b616cedf431e95b762fa8c9d51054a5486ba27c6e53733dc9d6",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/VII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "d68e8cdd71c53babaecf1f0ccc2c053098fec592373c080d8175b2585601bd5f",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/VIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "dc576910bfc877fc8525667f8831693a2a99a107297964c66a8c19169a6fb5a1",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/XI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "eae3a159b51991e3bca01d1acf40a907b6c3d86e2a9b272b4e9764528aa7cbd2",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/XIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "d2bc86382149ae024e3a9435a78206eb9c402b8bb09cfc8547be2dc905c4f4cd",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/XIV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "2491bb958424f66c7f657b57f359d047a6d84d5efb6bc3b497834e78e721d1a0",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/XV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "5ba6025ccfe164fa86d6a831c1a4088447ab7d5349c80770f80913f1602976b5",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k555-reduced/XVII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        5,
+        5,
+        5
+      ],
+      "passed": true,
+      "sha256": "d96bd4d23def4502938bfb11fe22cecaf885633f5a98d9c952e17f1064083992",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/II/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "c4e92ef8c08b5f2adc9dd2601ceb41ed08193a4ee435b41dd590bb8796449786",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/III/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "bead2111ea9fda0d7d409d0afce62f6016ce34f827479c20e1f913d82e3e46ce",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/IV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "fd2e7f3cdb08dca34ef42923e2be02e1e0d34493b773e21cdd1746bd3a6813db",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/IX/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "75c97b1e8f643552041035542a60dd78daf2fd819687dc5e109f7393299d9e9f",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/Ih/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "d508d1051a3e0d688b3b97d4f8196215693133f532023c77e1183265bd9e95fd",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/VI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "d219f7386c78adee564503f5a5cbbce80cad7a8afae3a0352d2edf112033e19e",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/VII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "25f89520f3384f2e28f0cc34b4963b32ae9650cef44d46850c95f22baa066893",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/VIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "8b9a87cf1d8a529c2bc83527c4f64c5ecfd54f730aaa7a514d935dd9d6af2359",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/XI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "a4fd2c02984b120426f5828c33edae6724e81f3d4dba87d85c9d18284eec7d7c",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/XIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "13382b2b906403ff555ef0be13d134291541020ab78f1f1f0771c339e4cdf624",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/XIV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "741f11dc8d20a25d02c7a049f0399e591a7949cf48e5a1bb37ecda0371a6b8fe",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/XV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "6bc93796ed4169cb48f7e43bfc81ee62525fc30c72737855dfd71878c3ec875a",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k666-reduced/XVII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "5/12",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "1/30000000000000000",
+      "max_text_rational_coordinate_residual_float": 3.3333333333333335e-17,
+      "mesh": [
+        6,
+        6,
+        6
+      ],
+      "passed": true,
+      "sha256": "eddcb6b149b2277af6442f727b5ea3c9a1ae76a1f3e883ffa1d31af4a4f4910e",
+      "shifts": [
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000",
+        "4166666666666667/10000000000000000"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k777-reduced/II/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        7,
+        7,
+        7
+      ],
+      "passed": true,
+      "sha256": "dc51b6f58558a3d04204a9bf47f0919e67862b5d781472d173758f01c24b8eb0",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k777-reduced/Ih/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        7,
+        7,
+        7
+      ],
+      "passed": true,
+      "sha256": "37280ffc05d5dc2a7815165f2b8c02a859ce60272d1ebd4eca663dae6fc0677d",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k777-reduced/VI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        7,
+        7,
+        7
+      ],
+      "passed": true,
+      "sha256": "57e3869d2da06b1ae254fd93d914d0d220bd648c1fc74f9bcd1639484e364636",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k777-reduced/VII-incomplete-20260718T211724/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        7,
+        7,
+        7
+      ],
+      "passed": true,
+      "sha256": "65202968ab3afd276c0d968122251c654ba2bafe74228ff1bf1758813c360822",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k777-reduced/VII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        7,
+        7,
+        7
+      ],
+      "passed": true,
+      "sha256": "65202968ab3afd276c0d968122251c654ba2bafe74228ff1bf1758813c360822",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k777-reduced/VIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        7,
+        7,
+        7
+      ],
+      "passed": true,
+      "sha256": "9a2e899be604e446b8b44ee171f14af2885544941dc4e171b9a2978b841b7786",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k777-reduced/XI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        7,
+        7,
+        7
+      ],
+      "passed": true,
+      "sha256": "5cae23315226bfd5152995766f4ecf652a2ef17ec29e1d3fb30545fa77f8c445",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k777-reduced/XIV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        7,
+        7,
+        7
+      ],
+      "passed": true,
+      "sha256": "a0847a971df7c7ff84b214007902dd052a9551b6f4dacdd2496dec4b99d7690e",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k777-reduced/XV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        7,
+        7,
+        7
+      ],
+      "passed": true,
+      "sha256": "8161d0efbae80536778c8e40c02f0f3df8cde0bb5b81d59da23bf6985c87c51c",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k777-reduced/XVII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        7,
+        7,
+        7
+      ],
+      "passed": true,
+      "sha256": "f6c8e5c1e1f917db080218eb70cfc61702545558d0d806755f88a3837aabf14d",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k888-reduced/Ih/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "7/16",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        8,
+        8,
+        8
+      ],
+      "passed": true,
+      "sha256": "9a85136e16c7c7d7cedaf72cd4a854facd5ecc32e34ebfc7b65fca1a3923cfa9",
+      "shifts": [
+        "7/16",
+        "7/16",
+        "7/16"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k888-reduced/VII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "7/16",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        8,
+        8,
+        8
+      ],
+      "passed": true,
+      "sha256": "2b882dbbfbc5191826bc85d6e059ba922b915a562fa840b3912ad82581616891",
+      "shifts": [
+        "7/16",
+        "7/16",
+        "7/16"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k888-reduced/VIII/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "7/16",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        8,
+        8,
+        8
+      ],
+      "passed": true,
+      "sha256": "f97ea9ae002aa16e2a8c4ccfbe0eb53a502e9876b0483a78a76f21f8bbb77d57",
+      "shifts": [
+        "7/16",
+        "7/16",
+        "7/16"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k888-reduced/XI/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "7/16",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        8,
+        8,
+        8
+      ],
+      "passed": true,
+      "sha256": "2c12ff323e11d3840e74aca8c72b297e2e8a5ce8cf3952d5fb85b847d893de6c",
+      "shifts": [
+        "7/16",
+        "7/16",
+        "7/16"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k888-reduced/XIV/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "7/16",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        8,
+        8,
+        8
+      ],
+      "passed": true,
+      "sha256": "35f01ad61f9f90216b42f4e0e6a429c3ed1cb933d11f5b1e275054a8100713de",
+      "shifts": [
+        "7/16",
+        "7/16",
+        "7/16"
+      ],
+      "spglib_reduction_requested": true
+    },
+    "DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/cp2k_native/k999-reduced/Ih/input.inp": {
+      "coordinates_equal_gamma_bvk": true,
+      "expected_shift": "0",
+      "gamma_centered_enabled": false,
+      "input_shifts_round_to_expected_binary64": true,
+      "max_text_rational_coordinate_residual": "0",
+      "max_text_rational_coordinate_residual_float": 0.0,
+      "mesh": [
+        9,
+        9,
+        9
+      ],
+      "passed": true,
+      "sha256": "d5a9b73b93ed4adcfe847382e816172c2253afa0708c6c75c3604cbf22ee9dac",
+      "shifts": [
+        "0",
+        "0",
+        "0"
+      ],
+      "spglib_reduction_requested": true
+    }
+  },
+  "interpretation": "Every archived native DMC-ICE13 MacDonald mesh is exactly the Gamma-supercell BvK folding grid before symmetry reduction.",
+  "proof_domain": "exact rational arithmetic modulo reciprocal lattice vectors",
+  "qualified_cp2k_source_revision": "8520b2e592cd04d35081ab4ad46d92c606071e23",
+  "schema": "periodic-gxtb-macdonald-bvk-equivalence-v1",
+  "source_excerpt": {
+    "authoritative_formula_present": true,
+    "file": "validation/macdonald_bvk_mesh_equivalence_20260720/cryssym_full_grid_gen_excerpt.F90",
+    "sha256": "bab0e9fa643323f8973087ebc25f11a91b8a8e7b3783194326f8b88d9b52697c"
+  },
+  "status": "PASS"
+}

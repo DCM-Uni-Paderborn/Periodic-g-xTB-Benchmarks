@@ -14,6 +14,10 @@ CP2K executable.
 ## Production contract
 
 - native primitive-cell Bloch sampling;
+- odd unshifted and even shifted MacDonald grids that are exactly the
+  reciprocal-space folding of Gamma-only Born--von Karman supercells, as
+  proved with exact arithmetic in
+  `validation/macdonald_bvk_mesh_equivalence_20260720/`;
 - SPGLIB irreducible-mesh reduction with exact internal full-mesh
   reconstruction and adjoint foldback;
 - `save_tblite` full-Fock DIIS;
@@ -29,14 +33,46 @@ CP2K executable.
 - `validation/explicit_cp2k_gamma_supercell_oracle_20260719/`: explicit
   Gamma-supercell/native-Bloch oracle;
 - `validation/three_route_k333_closure_20260719/`: three-route 3x3x3 closure;
+- `validation/tight_parity_k222_20260720/`: tight direct-CLI/native energy
+  parity and same-mesh relative-energy closure;
+- `validation/native_cli_full_parity_20260720/`: complete same-provider
+  direct-CLI/native parity for all 52 phase/mesh points from 1x1x1 through
+  4x4x4, with independent same-mesh ice-Ih referencing;
+- `validation/binary_provider_identity_20260720/`: build-level proof that the
+  direct CLI and qualified CP2K executable use the same clean provider source
+  revision and the same static provider archive;
+- `validation/macdonald_bvk_mesh_equivalence_20260720/`: source-level and
+  exact-rational proof that every archived native MacDonald mesh is the
+  Gamma-supercell BvK folding grid before symmetry reduction;
+- `validation/relative_energy_postprocessing_20260720/`: independent decimal
+  reconstruction of all complete native and direct-CLI relative-energy and
+  DMC-statistics tables from raw absolute outputs;
+- `validation/accuracy_equivalence_20260720/`: controlled direct-CLI
+  `ACCURACY 0.1`/`0.01` sensitivity and same-setting CP2K parity;
+- `validation/geometry_equivalence_20260720/`: cell and Cartesian-coordinate
+  identity between the CP2K and direct-CLI inputs;
+- `validation/mstore_accuracy_equivalence_20260720/`: independent confirmation
+  that the historical provider-branch comparison is insensitive to the two
+  tested SCC accuracy settings;
 - `validation/save_tblite_periodic_source_tests_20260719/`: provider
   source-level periodic regression tests;
+- `validation/cecl3_tolerance_recheck_20260720/`: targeted and complete
+  Hamiltonian-group rerun after a test-only correction of the inherited
+  nonperiodic CeCl3 finite-difference threshold;
 - `validation/provider_component_attribution_20260719/` and
   `validation/pbc_h0_anisotropy_attribution_20260719/`: controlled provider
   attribution;
 - `validation/dmc13_k222_viii_component_ablation_20260719/` and
   `validation/dmc13_k222_xvii_derivative_component_ablation_20260719/`:
   exchange/ACP response diagnostics.
+- `validation/implementation_audit_20260720/`: one machine-readable gate over
+  all completed exact implementation checks and the internally recomputed
+  adaptive statistics.
+
+The DMC reproduction package additionally stores the exact executed CP2K
+input beside every admitted native result.  Its assembler verifies the input
+digest and the qualified accuracy, SCC mixer, SCF threshold, mesh shift, and
+SPGLIB-reduction settings before an energy can enter a table.
 
 The manuscript and Supporting Information intentionally omit revision and
 artifact hashes; this repository is their canonical location.

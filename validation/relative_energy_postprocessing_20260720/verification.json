@@ -1,0 +1,32 @@
+{
+  "checks": {
+    "all_primitive_water_counts_valid": true,
+    "cli_relative_tables_reproduce": true,
+    "cli_statistics_reproduce": true,
+    "current_cli_complete_through_k444": true,
+    "native_gamma_through_k555_complete": true,
+    "native_relative_tables_reproduce": true,
+    "native_statistics_reproduce": true,
+    "no_incomplete_cli_mesh": true
+  },
+  "complete_current_cli_meshes": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "hartree_to_kjmol": "2625.4996394798254",
+  "incomplete_current_cli_meshes": [],
+  "maximum_cli_statistics_reproduction_residual_kj_mol_per_H2O": "2.453720644590505291666666666666666754E-11",
+  "maximum_cli_table_reproduction_residual_kj_mol_per_H2O": "2.5320044859680524691358024691358026571E-11",
+  "maximum_current_cli_minus_native_relative_energy_kj_mol_per_H2O": "0.00002141386824039053120956966666666666666666754",
+  "maximum_native_statistics_reproduction_residual_kj_mol_per_H2O": "2.5007573575728293150E-11",
+  "maximum_native_table_reproduction_residual_kj_mol_per_H2O": "2.80806326869455691595238095238095235595E-11",
+  "schema": "periodic-gxtb-relative-energy-postprocessing-v1",
+  "source_files": {
+    "dmc_references_sha256": "db305cb9d5a5407da36bf3fd62c9b432db9b6d5852a30be5ed6151e846a690b2",
+    "generated_native_relative_sha256": "2e7a5fab4f5f43bcf70a23ebc7cf04e64e8da130f324cabe899333d1dfe156c0",
+    "generated_statistics_sha256": "4fc63b67f55be8e4beeaf419a29ce4e8ced65055c394f886538d47bd13a44dcb"
+  },
+  "status": "PASS"
+}

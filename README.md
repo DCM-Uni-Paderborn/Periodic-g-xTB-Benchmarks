@@ -44,8 +44,8 @@ The uniform same-build MAE sequence is:
 
 All entries are in kJ mol-1 per H2O over the twelve non-reference phases and
 use ice Ih on the same mesh. The current phase-wise set through at most 8x8x8
-has ME -1.7696, MAE 1.8342, RMSE 2.2832, and MaxAE 5.4315 kJ mol-1 per H2O.
-It is not the final adaptive result: three of twelve phases currently satisfy
+has ME -1.6775, MAE 1.7478, RMSE 2.1950, and MaxAE 5.4315 kJ mol-1 per H2O.
+It is not the final adaptive result: eight of twelve phases currently satisfy
 the declared one-step condition
 `|R(N)-R(N-1)| <= 0.10 kJ mol-1 per H2O`.
 
@@ -53,6 +53,8 @@ Machine-readable values are in
 [`DMC-ICE13/data/`](DMC-ICE13/data/). The recalculation package for an
 independent `save_tblite` evaluation is in
 [`DMC-ICE13/reproduction/seidler_dmc13_recalculation/`](DMC-ICE13/reproduction/seidler_dmc13_recalculation/).
+The aggregate implementation gate is
+[`validation/implementation_audit_20260720/`](validation/implementation_audit_20260720/).
 
 ### LC10
 

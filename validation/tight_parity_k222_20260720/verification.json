@@ -1,0 +1,134 @@
+{
+  "interpretation": "Tightening both routes leaves the native energies unchanged at printed precision and changes the direct-CLI supercell energies only below 1e-9 hartree. The residual native/CLI difference therefore remains a tiny deterministic numerical path difference, not an SCF-stopping or unit-conversion error.",
+  "maximum_absolute_native_minus_cli_hartree_per_primitive_cell_accuracy_0.01": 1.0519966053834651e-07,
+  "maximum_absolute_native_minus_cli_hartree_per_primitive_cell_accuracy_0.1": 1.0520830073801335e-07,
+  "mesh": [
+    2,
+    2,
+    2
+  ],
+  "phases": {
+    "Ih": {
+      "absolute_parity_change_hartree": -9.515588317299262e-11,
+      "accuracy_0.01": {
+        "cp2k_native": {
+          "accuracy": 0.01,
+          "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+          "energy_hartree_per_primitive_cell": -917.6871143868951,
+          "eps_scf": 1e-10,
+          "input_sha256": "e1d9092f8b939d590b01b0b04464bf3086365b4dd25472dd1a8aab0052eb8067",
+          "output_sha256": "b01e602767d05cd0d943d0151a9195842715c724f77f0ddd798dd89fb014d6f0"
+        },
+        "direct_cli": {
+          "accuracy": 0.01,
+          "binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+          "density_convergence_e": 2e-07,
+          "energy_convergence_hartree": 1e-08,
+          "energy_hartree_per_primitive_cell": -917.6871143796553,
+          "energy_hartree_supercell": -7341.496915037243,
+          "input_sha256": "cc6ec119078ecd4769f50893aa7cd6128390cab0eb6f069d58d9972b0a1904b7",
+          "iterations": 9,
+          "process_output_sha256": "c6838dddbbb7b0dd69b61e10fb732e7895df3363db4d496b40f7c43c1ea97a76",
+          "recorded_accuracy": 0.01,
+          "result_sha256": "09feb8cfa3f4cc86417f0c638cc2c3b673ad32bc804f8912427314653a2e3dd2"
+        }
+      },
+      "accuracy_0.1": {
+        "cp2k_native": {
+          "accuracy": 0.1,
+          "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+          "energy_hartree_per_primitive_cell": -917.687114386895,
+          "eps_scf": 1e-09,
+          "input_sha256": "b748035f369c4313b5928855e86d8c412e772a029e634c633af93463d7afbec8",
+          "output_sha256": "350ee1a466a3bade4a9fda704c9717647573abebadc0d95cdcc37e2bde96b2e8"
+        },
+        "direct_cli": {
+          "accuracy": 0.1,
+          "binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+          "density_convergence_e": 2e-06,
+          "energy_convergence_hartree": 1e-07,
+          "energy_hartree_per_primitive_cell": -917.6871143795601,
+          "energy_hartree_supercell": -7341.4969150364805,
+          "input_sha256": "cc6ec119078ecd4769f50893aa7cd6128390cab0eb6f069d58d9972b0a1904b7",
+          "iterations": 8,
+          "process_output_sha256": "15d41eb1462b9d58259cd902ec1b4e882c249e4c269882f07c6e81f4dd0ad2d0",
+          "recorded_accuracy": null,
+          "result_sha256": "6fb79084ed2841a6ba5219acb089ccddd93e995c6e202e3849ee7b4148440fbe"
+        }
+      },
+      "cli_tight_minus_loose_hartree_per_primitive_cell": -9.526957001071423e-11,
+      "cp2k_tight_minus_loose_hartree": -1.1368683772161603e-13,
+      "native_minus_cli_hartree_per_primitive_cell_accuracy_0.01": -7.239805199787952e-09,
+      "native_minus_cli_hartree_per_primitive_cell_accuracy_0.1": -7.334961082960945e-09
+    },
+    "VII": {
+      "absolute_parity_change_hartree": -8.640199666842818e-12,
+      "accuracy_0.01": {
+        "cp2k_native": {
+          "accuracy": 0.01,
+          "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+          "energy_hartree_per_primitive_cell": -919.0581687422933,
+          "eps_scf": 1e-10,
+          "input_sha256": "e9ac3ddbd6ed71dc18361b00a900297df5099986331bb2a778098e7009b66b94",
+          "output_sha256": "ca9c52003f426e6ae02e450de89038d9d71a9b5ba6978eb448a9b8c14e16735c"
+        },
+        "direct_cli": {
+          "accuracy": 0.01,
+          "binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+          "density_convergence_e": 2e-07,
+          "energy_convergence_hartree": 1e-08,
+          "energy_hartree_per_primitive_cell": -919.0581686370937,
+          "energy_hartree_supercell": -7352.465349096749,
+          "input_sha256": "4de281e3ab3632f443b22f99162e80a3a327c0b8124489c015d4b68fa62d1d91",
+          "iterations": 9,
+          "process_output_sha256": "48afc4fb3937b85a9b52447ee7ce19dd55c793b50bbca6055715954a5d5f9d14",
+          "recorded_accuracy": 0.01,
+          "result_sha256": "7ea6fef2d83c1ddbd1a13b671eecddf87c416bfadc71b75aa755d9764e90baff"
+        }
+      },
+      "accuracy_0.1": {
+        "cp2k_native": {
+          "accuracy": 0.1,
+          "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+          "energy_hartree_per_primitive_cell": -919.0581687422933,
+          "eps_scf": 1e-09,
+          "input_sha256": "a3ae9af9154ff0278f0f27482c15c5ca199656ef490a107b505a5ea360e0beac",
+          "output_sha256": "10813dda0d7a05cc65b16f1a5cd5ad15b9bda19e345726a089cf92cd8934f7a6"
+        },
+        "direct_cli": {
+          "accuracy": 0.1,
+          "binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+          "density_convergence_e": 2e-06,
+          "energy_convergence_hartree": 1e-07,
+          "energy_hartree_per_primitive_cell": -919.058168637085,
+          "energy_hartree_supercell": -7352.46534909668,
+          "input_sha256": "4de281e3ab3632f443b22f99162e80a3a327c0b8124489c015d4b68fa62d1d91",
+          "iterations": 8,
+          "process_output_sha256": "af45f447b958c5e02cb7fdb6edda31da266d4974eb48b1c5164b0c4d169b1575",
+          "recorded_accuracy": null,
+          "result_sha256": "4a39f32c864856c1bd7daead8878d807b704c681b4b722cdc0c477986d680084"
+        }
+      },
+      "cli_tight_minus_loose_hartree_per_primitive_cell": -8.640199666842818e-12,
+      "cp2k_tight_minus_loose_hartree": 0.0,
+      "native_minus_cli_hartree_per_primitive_cell_accuracy_0.01": -1.0519966053834651e-07,
+      "native_minus_cli_hartree_per_primitive_cell_accuracy_0.1": -1.0520830073801335e-07,
+      "relative_energy_kj_mol_per_water_accuracy_0.01": {
+        "cp2k_native": -299.9752263171102,
+        "direct_cli": -299.97520488431314,
+        "native_minus_cli": -2.1432797041143203e-05
+      },
+      "relative_energy_kj_mol_per_water_accuracy_0.1": {
+        "cp2k_native": -299.9752263171351,
+        "direct_cli": -299.9752049032669,
+        "native_minus_cli": -2.1413868182662554e-05
+      }
+    }
+  },
+  "status": "PASS",
+  "strict_relative_energy_native_minus_cli_kj_mol_per_water": 2.1432797041143203e-05,
+  "tolerances": {
+    "absolute_energy_hartree_per_primitive_cell": 2e-07,
+    "relative_energy_kj_mol_per_water": 5e-05
+  }
+}

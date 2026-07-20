@@ -1,0 +1,21 @@
+{
+  "checks": {
+    "cli_link_uses_recorded_archive": true,
+    "direct_cli_source_clean": true,
+    "later_interface_change_not_entered_by_production_mesh": true,
+    "later_restart_change_not_entered_by_production_runs": true,
+    "same_blas_runtime": true,
+    "same_compiler_runtime": true,
+    "same_provider_archive_for_build_install_and_cp2k": true,
+    "same_provider_revision": true,
+    "save_provider_selected": true
+  },
+  "cp2k_binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+  "direct_cli_binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+  "provider_archive_sha256": "e5137bcf675a99e177c30006fa2ed54cd7eaa1ab65d3dcc2337701e6f7f81492",
+  "provider_revision": "15915c9435644eb257178ca8f8bf7220c38b1a84",
+  "schema": "periodic-gxtb-binary-provider-identity-verification-v1",
+  "snapshot_file": "remote_snapshot.json",
+  "snapshot_sha256": "9a97559ac17c1359c573ee2244265b4c9d1f682c25eb357428db250af99e1c01",
+  "status": "PASS"
+}

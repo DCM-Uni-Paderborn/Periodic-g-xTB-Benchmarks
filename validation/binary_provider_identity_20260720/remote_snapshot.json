@@ -1,0 +1,42 @@
+{
+  "capture_host": "terok.casus.science",
+  "captured_at": "2026-07-20T02:20:17+02:00",
+  "cp2k": {
+    "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+    "source_branch": "g-xTB-pbc",
+    "source_revision": "8520b2e592cd04d35081ab4ad46d92c606071e23",
+    "source_tree": "b6eb7aaa5bc3bd8a64e3602caaf4792533df9408",
+    "tblite_provider": "SAVE",
+    "tblite_revision_from_cmake": "15915c9435644eb257178ca8f8bf7220c38b1a84"
+  },
+  "direct_cli": {
+    "binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+    "link_rule_depends_on_build_tree_libtblite_archive": true,
+    "source_branch": "cp2k-integration",
+    "source_revision": "15915c9435644eb257178ca8f8bf7220c38b1a84",
+    "source_status_clean": true
+  },
+  "provider_archive": {
+    "build_tree_sha256": "e5137bcf675a99e177c30006fa2ed54cd7eaa1ab65d3dcc2337701e6f7f81492",
+    "cp2k_formal_link_record_sha256": "e5137bcf675a99e177c30006fa2ed54cd7eaa1ab65d3dcc2337701e6f7f81492",
+    "installed_sha256": "e5137bcf675a99e177c30006fa2ed54cd7eaa1ab65d3dcc2337701e6f7f81492"
+  },
+  "runtime": {
+    "cp2k_and_cli_same_gfortran": true,
+    "cp2k_and_cli_same_openblas": true
+  },
+  "successor_scope": {
+    "current_branch_revision": "10f4e246967de34cfcb2d26b9d587ecc00bbb2f4",
+    "qualified_revision": "8520b2e592cd04d35081ab4ad46d92c606071e23",
+    "changed_source_files": [
+      "src/kpoint_restart_transfer.F",
+      "src/tblite_interface.F"
+    ],
+    "interface_change_limited_to_general_mesh_inference": true,
+    "restart_change_limited_to_alias_projection_diagnostic": true,
+    "production_inputs_use_general_mesh": false,
+    "production_inputs_use_macdonald_mesh": true,
+    "production_inputs_use_restart": false
+  },
+  "schema": "periodic-gxtb-binary-provider-identity-v1"
+}

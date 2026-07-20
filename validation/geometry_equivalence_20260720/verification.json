@@ -1,0 +1,114 @@
+{
+  "interpretation": "The primitive structures used to generate every direct-CLI BvK supercell are identical to the corresponding CP2K-native cells and Cartesian coordinates at floating-point roundoff. Geometry conversion cannot explain the residual energy difference.",
+  "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+  "maximum_cell_difference_angstrom": 0.0,
+  "phase_count_including_Ih": 13,
+  "phases": [
+    {
+      "atom_count": 36,
+      "cp2k_input_sha256": "8de47e1ee964b16a73e7f9298f5efa9ff988dee169406443436eb5bde2b0b554",
+      "maximum_cartesian_coordinate_difference_angstrom": 0.0,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "II",
+      "primitive_poscar_sha256": "df58c1793e42fde72ca4b180ca8a064e9970b5cafb0375af132555c7ce6014ae"
+    },
+    {
+      "atom_count": 36,
+      "cp2k_input_sha256": "44d85dcb89dbc2d4b8ba7265309142da8a95602fcc7f1cd357a8e55aa215c1a9",
+      "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "III",
+      "primitive_poscar_sha256": "e02513be90d29d54c9a3b7b9d550a5b24f68d7cfa3ac49fceb6395c86a1c6352"
+    },
+    {
+      "atom_count": 48,
+      "cp2k_input_sha256": "ffab4041aac3433da46a348ea031b414cead5389e00a09f43e6ab03300fab7e8",
+      "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "IV",
+      "primitive_poscar_sha256": "87e98760385cf3674274809f5c0cf286d82d498ca32ed6ae628ab9788a8cfa4e"
+    },
+    {
+      "atom_count": 36,
+      "cp2k_input_sha256": "0be90948cf7312ee0cd87e9c43bb9449b858a274040deaabe65008c0798e59ce",
+      "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "IX",
+      "primitive_poscar_sha256": "1ff6d5c95fcdf733d13ba53e53335411da5f0f16ad0bc9349b9215ae6d08ade3"
+    },
+    {
+      "atom_count": 36,
+      "cp2k_input_sha256": "b748035f369c4313b5928855e86d8c412e772a029e634c633af93463d7afbec8",
+      "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "Ih",
+      "primitive_poscar_sha256": "9aa350879d43ac7445bef16ad619abbdc73a6d8f19a29ff329bf5e6b1113c9a5"
+    },
+    {
+      "atom_count": 30,
+      "cp2k_input_sha256": "d25ce8a2ccd6951aa6606d631cba892e7995becf8081a6773d78847b5f47fb87",
+      "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "VI",
+      "primitive_poscar_sha256": "bdbf876e7a1c12bc1c198fbbee3d47fd501037ed8e81c5458d4d4ba259d30ba2"
+    },
+    {
+      "atom_count": 36,
+      "cp2k_input_sha256": "a3ae9af9154ff0278f0f27482c15c5ca199656ef490a107b505a5ea360e0beac",
+      "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "VII",
+      "primitive_poscar_sha256": "b45fed8bcdd9050ca302bec8828e752859c700a23f60fcdec9229ad410e889fa"
+    },
+    {
+      "atom_count": 24,
+      "cp2k_input_sha256": "1e0658ea7d318fa7b2891a560802204f69a3827c94f4158fb5d629d97a9b02b5",
+      "maximum_cartesian_coordinate_difference_angstrom": 0.0,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "VIII",
+      "primitive_poscar_sha256": "aaec8cece8b97380b3bfedc019f0e268fa1e00f019d7f12de02790879244e453"
+    },
+    {
+      "atom_count": 24,
+      "cp2k_input_sha256": "505248de4984b0b146f09a78640748977f3d84c2336274cac45fbf6ec5782473",
+      "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "XI",
+      "primitive_poscar_sha256": "1d8179172ae08b30df8afcab7afe059423aba0a965490649110cfc45df5d1956"
+    },
+    {
+      "atom_count": 84,
+      "cp2k_input_sha256": "463f307b0a9601408e6cad286112206c170affe736de8fc53663e14201f097b2",
+      "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "XIII",
+      "primitive_poscar_sha256": "e312c0cda85b25ceeb4d8e022c270ab642d9b9033ad4309efe1dc9b707695a2c"
+    },
+    {
+      "atom_count": 36,
+      "cp2k_input_sha256": "1979900ed9d5383d6011c2d35d502d2c442c63d4efd7f3cc1b5109156a022cfd",
+      "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "XIV",
+      "primitive_poscar_sha256": "31a08202cdca25ce13ed9fb538367ff86fbe4558821ab34a7149d6e185a03a8c"
+    },
+    {
+      "atom_count": 30,
+      "cp2k_input_sha256": "4979ba32910aa29269ed1191149cd7828e463fddd0b193326a1d25eba765f235",
+      "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "XV",
+      "primitive_poscar_sha256": "8e03a362df5eba3f6a59021584b678bf7963501283e55ed40d83afcbe9c0962d"
+    },
+    {
+      "atom_count": 18,
+      "cp2k_input_sha256": "265692cdca09516e68b10022a5291326c1cc39fc664a0ad60191b15eb0999a1b",
+      "maximum_cartesian_coordinate_difference_angstrom": 8.881784197001252e-16,
+      "maximum_cell_difference_angstrom": 0.0,
+      "phase": "XVII",
+      "primitive_poscar_sha256": "19f9494c99dffcb5bfcd7d4c7dccf35fd4be806648b426c0f1816a05c7228681"
+    }
+  ],
+  "status": "PASS",
+  "tolerance_angstrom": 5e-13
+}

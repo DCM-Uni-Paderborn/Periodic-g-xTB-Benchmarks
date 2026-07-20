@@ -1,0 +1,78 @@
+{
+  "interpretation": "For the two controlled 1x1x1 cells, tightening direct save_tblite from accuracy 0.1 to 0.01 changes the total energy by at most 1.91e-10 hartree. CP2K-native at accuracy 0.1 agrees with the same-accuracy direct CLI to 2.02e-8 hartree.",
+  "maximum_accuracy_sensitivity_hartree": 1.9065282685915008e-10,
+  "maximum_cp2k_native_minus_same_accuracy_cli_hartree": 2.0149855117779225e-08,
+  "phases": {
+    "Ih": {
+      "cp2k_native_accuracy_0.1": {
+        "accuracy": 0.1,
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_hartree": -918.8798632829611,
+        "input_sha256": "3673de9e1094252aa04e9be64b58c01b6d74d50ffe8524ade7f47c1c876bdfdd",
+        "output_sha256": "5901ceb34aefc720eab35178a8a83bd87c5269dbb276e7b50c8901d857fd61b7"
+      },
+      "direct_cli_accuracy_0.01": {
+        "accuracy": 0.01,
+        "binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+        "density_convergence_e": 2e-07,
+        "energy_convergence_hartree": 1e-08,
+        "energy_hartree": -918.8798632958474,
+        "input_sha256": "9aa350879d43ac7445bef16ad619abbdc73a6d8f19a29ff329bf5e6b1113c9a5",
+        "iterations": 10,
+        "process_output_sha256": "de7e9da5bc01bcf2851a601e1284b5afd8334512ef98f1dcb3099efd0b55935c",
+        "result_sha256": "238559e6faf9062b45a04a89f0c4f4fde04e4c5879a579871c7aad1e89daeb81"
+      },
+      "direct_cli_accuracy_0.1": {
+        "accuracy": 0.1,
+        "binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+        "density_convergence_e": 2e-06,
+        "energy_convergence_hartree": 1e-07,
+        "energy_hartree": -918.8798632956567,
+        "input_sha256": "9aa350879d43ac7445bef16ad619abbdc73a6d8f19a29ff329bf5e6b1113c9a5",
+        "iterations": 8,
+        "process_output_sha256": "71443edf3b1d317942e86bd24e88313d025ca843638b407de6e09767b58d3c03",
+        "result_sha256": "fa9ef3511f2f6bdb1a8e46fcfdd6a5a742cd2b990366c398cf2fed35e6710834"
+      },
+      "native_minus_loose_hartree": 1.2695636542048305e-08,
+      "tight_minus_loose_hartree": -1.9065282685915008e-10
+    },
+    "VII": {
+      "cp2k_native_accuracy_0.1": {
+        "accuracy": 0.1,
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_hartree": -921.1279980369943,
+        "input_sha256": "22f1b1a0b46583b5123d921b502edbb4adf154a7f9acd807ebc310a8c7ec8200",
+        "output_sha256": "2d9112510cae837111b9de8df23c28a93ce658cf796edee0c2b7c91bbe9d39c3"
+      },
+      "direct_cli_accuracy_0.01": {
+        "accuracy": 0.01,
+        "binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+        "density_convergence_e": 2e-07,
+        "energy_convergence_hartree": 1e-08,
+        "energy_hartree": -921.1279980571632,
+        "input_sha256": "b45fed8bcdd9050ca302bec8828e752859c700a23f60fcdec9229ad410e889fa",
+        "iterations": 10,
+        "process_output_sha256": "6b23f8f78ac215142368de05c9a3ebe00722d08b86c807c52af10992104a07d8",
+        "result_sha256": "6acca12ff7f761f0c6f0bfd5e9ad15d698fef135019a67c1678584af7ea157ef"
+      },
+      "direct_cli_accuracy_0.1": {
+        "accuracy": 0.1,
+        "binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+        "density_convergence_e": 2e-06,
+        "energy_convergence_hartree": 1e-07,
+        "energy_hartree": -921.1279980571442,
+        "input_sha256": "b45fed8bcdd9050ca302bec8828e752859c700a23f60fcdec9229ad410e889fa",
+        "iterations": 8,
+        "process_output_sha256": "cec69339ec3968c757cc219b0ac52a1a582b060672baec941e4a989bbd804369",
+        "result_sha256": "3ece152c10d88c4152d3d6f6f20f154edc313d6d210b9dc446a03aba4631f6b9"
+      },
+      "native_minus_loose_hartree": 2.0149855117779225e-08,
+      "tight_minus_loose_hartree": -1.8985701899509877e-11
+    }
+  },
+  "status": "PASS",
+  "tolerances_hartree": {
+    "accuracy_sensitivity": 1e-08,
+    "cp2k_native_parity": 2e-07
+  }
+}

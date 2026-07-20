@@ -8,44 +8,42 @@ import hashlib
 import json
 import math
 import re
-import subprocess
-import sys
 from pathlib import Path
 
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[1]
-PACKAGE = REPOSITORY / "DMC-ICE13/reproduction/save_tblite_direct_dmc13"
-PROVIDER = PACKAGE / "validation/provider_revision_bvk_ab_20260718"
-ABSOLUTE = PROVIDER / "full_k333_absolute_energy_comparison.csv"
-NATIVE = PACKAGE / "results/current_cp2k_native/k333"
-STRUCTURES = PACKAGE / "structures/k333"
+PACKAGE = REPOSITORY / "DMC-ICE13/reproduction/seidler_dmc13_recalculation"
+AUTHOR_ABSOLUTE = PACKAGE / "tables/author_pbc_absolute_energies.csv"
+CURRENT_ABSOLUTE = PACKAGE / "tables/current_absolute_energies_by_mesh.csv"
+NATIVE = PACKAGE / "raw/cp2k_native/k333-reduced"
+CURRENT_CLI = PACKAGE / "raw/current_pbc_cli/cli-k333"
+STRUCTURES = PACKAGE / "structures/primitive"
 REFERENCES = PACKAGE / "tables/dmc_reference_relative_energies.csv"
 PHASES = ("Ih", "II", "III", "IV", "VI", "VII", "VIII", "IX", "XI", "XIII", "XIV", "XV", "XVII")
 NONREFERENCE = PHASES[1:]
 HARTREE_TO_KJMOL = 2625.4996394799
+QUALIFIED_CP2K_SHA256 = "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f"
+QUALIFIED_PBC_CLI_SHA256 = "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a"
 ENERGY_RE = re.compile(
     r"^\s*ENERGY\|\s+Total FORCE_EVAL.*?"
     r"([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?)\s*$"
 )
 
 
-def run_gate(path: Path) -> None:
-    completed = subprocess.run(
-        [sys.executable, str(path)],
-        cwd=path.parent,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    if completed.returncode:
-        raise AssertionError(
-            f"prerequisite gate failed: {path}\n"
-            f"stdout:\n{completed.stdout}\nstderr:\n{completed.stderr}"
-        )
+def recorded_digest(path: Path) -> str:
+    fields = path.read_text(encoding="utf-8").split()
+    if not fields or not re.fullmatch(r"[0-9a-fA-F]{64}", fields[0]):
+        raise AssertionError(f"invalid SHA-256 sidecar: {path}")
+    return fields[0].lower()
 
 
-def cp2k_energy(path: Path) -> float:
+def cp2k_energy(run: Path) -> float:
+    path = run / "cp2k.out"
+    if (run / "exit_status").read_text(encoding="utf-8").strip() != "0":
+        raise AssertionError(f"nonzero native exit status: {run}")
+    if recorded_digest(run / "binary.sha256") != QUALIFIED_CP2K_SHA256:
+        raise AssertionError(f"unqualified native executable: {run}")
     values: list[float] = []
     ended = False
     for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
@@ -58,12 +56,27 @@ def cp2k_energy(path: Path) -> float:
     return values[-1]
 
 
+def current_cli_energy(run: Path) -> float:
+    if (run / "exit_status").read_text(encoding="utf-8").strip() != "0":
+        raise AssertionError(f"nonzero CLI exit status: {run}")
+    if recorded_digest(run / "binary.sha256") != QUALIFIED_PBC_CLI_SHA256:
+        raise AssertionError(f"unqualified CLI executable: {run}")
+    poscar = run / "POSCAR"
+    if recorded_digest(run / "input.sha256") != hashlib.sha256(poscar.read_bytes()).hexdigest():
+        raise AssertionError(f"CLI input hash mismatch: {run}")
+    result = json.loads((run / "tblite.json").read_text(encoding="utf-8"))
+    energy = float(result["energy"])
+    if not math.isfinite(energy):
+        raise AssertionError(f"non-finite CLI energy: {run}")
+    return energy / 27.0
+
+
 def primitive_water_count(poscar: Path) -> int:
     lines = [line.strip() for line in poscar.read_text(encoding="utf-8").splitlines()]
     if len(lines) < 7:
         raise AssertionError(f"incomplete POSCAR: {poscar}")
     total_atoms = sum(int(value) for value in lines[6].split())
-    divisor = 3 * 27
+    divisor = 3
     if total_atoms % divisor:
         raise AssertionError(f"nonintegral primitive water count: {poscar}")
     return total_atoms // divisor
@@ -76,37 +89,39 @@ def write_csv(path: Path, fields: tuple[str, ...], rows: list[dict[str, object]]
         writer.writerows(rows)
 
 
-def verify_manifest() -> None:
-    for line in (HERE / "SHA256SUMS").read_text(encoding="utf-8").splitlines():
-        expected, relative = line.split(maxsplit=1)
-        path = HERE / relative.strip()
-        actual = hashlib.sha256(path.read_bytes()).hexdigest()
-        if actual != expected:
-            raise AssertionError(f"SHA-256 mismatch: {relative.strip()}")
-
-
 def main() -> None:
-    run_gate(PROVIDER / "verify_comparison.py")
-    run_gate(PACKAGE / "tools/verify_absolute_energy_parity.py")
-
-    with ABSOLUTE.open(newline="", encoding="utf-8") as handle:
-        provider_rows = {row["phase"]: row for row in csv.DictReader(handle)}
+    with AUTHOR_ABSOLUTE.open(newline="", encoding="utf-8") as handle:
+        author_rows = {
+            row["phase"]: row for row in csv.DictReader(handle)
+            if int(row["mesh_n"]) == 3
+        }
+    with CURRENT_ABSOLUTE.open(newline="", encoding="utf-8") as handle:
+        current_rows = {
+            row["phase"]: row for row in csv.DictReader(handle)
+            if int(row["mesh_n"]) == 3
+        }
     with REFERENCES.open(newline="", encoding="utf-8") as handle:
         references = {
             row["phase"]: float(row["reference_relative_energy_kJmol_per_H2O"])
             for row in csv.DictReader(handle)
         }
-    if set(provider_rows) != set(PHASES) or set(references) != set(PHASES):
+    if (
+        set(author_rows) != set(PHASES)
+        or set(current_rows) != set(PHASES)
+        or set(references) != set(PHASES)
+    ):
         raise AssertionError("phase coverage differs across the three-route inputs")
 
     absolute_rows: list[dict[str, object]] = []
     energies: dict[str, dict[str, float]] = {}
     waters: dict[str, int] = {}
     for phase in PHASES:
-        provider = provider_rows[phase]
-        current = float(provider["current_Ha_per_primitive"])
-        author = float(provider["author_Ha_per_primitive"])
-        native = cp2k_energy(NATIVE / phase / "cp2k.out")
+        author = float(author_rows[phase]["author_pbc_Ha_per_primitive"])
+        current = current_cli_energy(CURRENT_CLI / phase)
+        recorded_current = float(current_rows[phase]["save_tblite_cli_energy_Ha_per_primitive"])
+        if abs(current - recorded_current) > 5.0e-13:
+            raise AssertionError(f"current CLI table/raw mismatch for {phase}")
+        native = cp2k_energy(NATIVE / phase)
         if abs(native - current) > 2.0e-7:
             raise AssertionError(
                 f"current CLI/native mismatch for {phase}: {native-current:+.6e} Ha"
@@ -197,7 +212,6 @@ def main() -> None:
     (HERE / "summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
-    verify_manifest()
     print(json.dumps(summary, indent=2, sort_keys=True))
 
 

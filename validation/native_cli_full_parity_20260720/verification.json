@@ -1,0 +1,63 @@
+{
+  "absolute_tolerance_Ha_per_primitive": "2E-7",
+  "checks": {
+    "all_absolute_energy_differences_within_tolerance": true,
+    "all_cli_accuracy_qualifications_pass": true,
+    "all_cli_calculations_use_accuracy_0.1": true,
+    "all_same_mesh_ih_referenced_differences_within_tolerance": true,
+    "all_three_provenance_hashes_are_sha256": true,
+    "exactly_52_unique_required_points": true,
+    "reported_absolute_differences_reproduce": true
+  },
+  "interpretation": "The complete same-provider direct save_tblite CLI and CP2K-native matrix agrees within the declared absolute and independently reconstructed same-mesh relative-energy tolerances.",
+  "maximum_absolute_difference_Ha_per_primitive": "1.11525310E-7",
+  "maximum_absolute_difference_mesh": 4,
+  "maximum_absolute_difference_phase": "VII",
+  "maximum_relative_difference_kJ_mol_per_H2O": "0.00002141386824039053120956966666666666666666754",
+  "maximum_relative_difference_mesh": 2,
+  "maximum_relative_difference_phase": "VII",
+  "maximum_reported_difference_reproduction_residual_Ha": "8.48166E-16",
+  "meshes": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "per_mesh": {
+    "1": {
+      "maximum_absolute_difference_Ha_per_primitive": "3.0494448E-8",
+      "maximum_absolute_difference_phase": "XIII",
+      "maximum_relative_difference_kJ_mol_per_H2O": "0.00000163092055596700209446143333333333333333246",
+      "maximum_relative_difference_phase": "VII",
+      "point_count": 13
+    },
+    "2": {
+      "maximum_absolute_difference_Ha_per_primitive": "1.05208301E-7",
+      "maximum_absolute_difference_phase": "VII",
+      "maximum_relative_difference_kJ_mol_per_H2O": "0.00002141386824039053120956966666666666666666754",
+      "maximum_relative_difference_phase": "VII",
+      "point_count": 13
+    },
+    "3": {
+      "maximum_absolute_difference_Ha_per_primitive": "1.02470153E-7",
+      "maximum_absolute_difference_phase": "VII",
+      "maximum_relative_difference_kJ_mol_per_H2O": "0.00001705507040596001052005455000000000000000000",
+      "maximum_relative_difference_phase": "VII",
+      "point_count": 13
+    },
+    "4": {
+      "maximum_absolute_difference_Ha_per_primitive": "1.11525310E-7",
+      "maximum_absolute_difference_phase": "VII",
+      "maximum_relative_difference_kJ_mol_per_H2O": "0.000018722655189225801882951849999999999999997374",
+      "maximum_relative_difference_phase": "VII",
+      "point_count": 13
+    }
+  },
+  "phase_count_per_mesh": 13,
+  "point_count": 52,
+  "relative_tolerance_kJ_mol_per_H2O": "0.00005",
+  "schema": "periodic-gxtb-native-cli-full-parity-v1",
+  "source_table": "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/pbc_cli_vs_cp2k_native_absolute_parity.csv",
+  "source_table_sha256": "31a6ce6caa33a6f67cafc07fd84e006a9dc1dfc9ad1618b7692b94457b144005",
+  "status": "PASS"
+}

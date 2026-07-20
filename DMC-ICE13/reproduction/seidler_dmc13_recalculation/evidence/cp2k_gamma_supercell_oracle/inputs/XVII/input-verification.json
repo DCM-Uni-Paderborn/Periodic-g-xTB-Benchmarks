@@ -1,0 +1,10 @@
+{
+  "atom_count": 144,
+  "cell_max_abs_delta_angstrom": 0.0,
+  "coordinate_max_abs_delta_angstrom": 0.0,
+  "elements_and_order_equal": true,
+  "explicit_kpoints_section_present": false,
+  "periodic_xyz": true,
+  "status": "PASS",
+  "tolerance_angstrom": 5e-12
+}

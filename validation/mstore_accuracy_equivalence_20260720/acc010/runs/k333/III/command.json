@@ -1,0 +1,14 @@
+[
+  "/Users/tkuehne/Documents/g-xTB/save_tblite_mstore_inorganic_audit_20260719/build-release-v4/app/tblite",
+  "run",
+  "--method",
+  "gxtb",
+  "--acc",
+  "0.1",
+  "--iterations",
+  "300",
+  "--no-restart",
+  "--json",
+  "result.json",
+  "/Users/tkuehne/Documents/g-xTB/Periodic-g-xTB-Part-I-sync/validation/mstore_accuracy_equivalence_20260720/acc010/structures/k333/III/POSCAR"
+]

@@ -33,17 +33,21 @@ shift in the versioned inputs.
   error, adjacent change, and convergence state for every phase;
 - `data/dmc_ice13_gxtb_current_adaptive_statistics.csv`: aggregate statistics
   for that current set, explicitly marked non-final;
-- `data/dmc_ice13_gxtb_phase_vii_current.csv`: current Ice-VII sequence, with
-  the non-adjacent 8x8x8 anchor distinguished from an adjacent-pair test;
+- `data/dmc_ice13_gxtb_phase_vii_current.csv`: current Ice-VII sequence,
+  including the qualified 7x7x7--8x8x8 adjacent pair;
 - `data/dmc_ice13_published_dft_absolute_energies.csv`: published DMC/DFT
   reference data used for the comparison context;
 - `data/geometries.json` and `poscars/`: canonical benchmark geometries.
 
 The current uniform MAEs are 163.8345, 88.6814, 34.0485, 11.3655, and
 4.3464 kJ mol-1 per H2O from Gamma through 5x5x5. The present phase-wise set
-through at most 8x8x8 has MAE 1.8342 kJ mol-1 per H2O. It is not final because
-only Ice IV, Ice IX, and Ice XIII currently pass the declared adjacent-pair
-criterion.
+through at most 8x8x8 has MAE 1.7478 kJ mol-1 per H2O. It is not final because
+Ice VII, Ice XI, Ice XIV, and Ice XVII have not yet passed; Ice II, Ice III,
+Ice IV, Ice VI, Ice VIII, Ice IX, Ice XIII, and Ice XV do pass the declared
+adjacent-pair criterion. The table and statistics are regenerated from
+qualified raw endpoints with `scripts/evaluate_adaptive_set.py`, which always
+reports the delta of the selected endpoint rather than carrying forward the
+preceding mesh delta.
 
 ## Inputs and figures
 

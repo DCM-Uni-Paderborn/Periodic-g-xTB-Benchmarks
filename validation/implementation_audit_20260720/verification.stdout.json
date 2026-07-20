@@ -1,0 +1,147 @@
+{
+  "completed_gate_count": 17,
+  "completed_gates": {
+    "accuracy_equivalence": {
+      "file": "validation/accuracy_equivalence_20260720/verification.json",
+      "passed": true,
+      "sha256": "8df7b6893bd614af80134ca379e2ff72df904c6d7ed6d24416c85372d5cda3f4",
+      "status": "PASS"
+    },
+    "adaptive_statistics_internal_consistency": {
+      "files": [
+        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv",
+        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv"
+      ],
+      "passed": true,
+      "sha256": {
+        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv": "b6e32e6ba8977382b2856f72c148e6880e52dac15b0e411a05f2449216a1cf9a",
+        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv": "4d705d8576ea06e4c1672e1b981f52bbd104d59b63d50dc08697f5f2f1437340"
+      },
+      "status": "PASS"
+    },
+    "binary_provider_identity": {
+      "file": "validation/binary_provider_identity_20260720/verification.json",
+      "passed": true,
+      "sha256": "042f5ff884b4ef1585247cddece0401a35a8a532941d612abf22dd4e1bd82cd2",
+      "status": "PASS"
+    },
+    "cecl3_tolerance_recheck": {
+      "file": "validation/cecl3_tolerance_recheck_20260720/verification.json",
+      "passed": true,
+      "sha256": "5a231790d2b2b6f9956252ae373ecca08de31c4e45c4f5e4511fe32b4579ba34",
+      "status": "PASS"
+    },
+    "derivative_component_ablation": {
+      "file": "validation/dmc13_k222_xvii_derivative_component_ablation_20260719/verification.json",
+      "passed": true,
+      "sha256": "f2ec4954b7ccade986b2adb03a7bf6485d39d431d4154021f7f749cf6b45fb34",
+      "status": "PASS"
+    },
+    "energy_component_ablation": {
+      "file": "validation/dmc13_k222_viii_component_ablation_20260719/verification.json",
+      "passed": true,
+      "sha256": "b0bdd59ad76314ba394f4b478591bcd31a2c6c9d7116655cd67907556fa0bc1c",
+      "status": "PASS"
+    },
+    "geometry_equivalence": {
+      "file": "validation/geometry_equivalence_20260720/verification.json",
+      "passed": true,
+      "sha256": "dd3775c03536e4bd42c39721971fdb246b9a0d7e9fe896036282dcc1c81cb7f3",
+      "status": "PASS"
+    },
+    "h0_anisotropy_attribution": {
+      "file": "validation/pbc_h0_anisotropy_attribution_20260719/verification.json",
+      "passed": true,
+      "sha256": "bc3b998a6b074ad48fef5f0c26b80b8948b590a98726d2ed639abdca923a56fd",
+      "status": "PASS"
+    },
+    "lowk_derivatives_and_partial_pbc": {
+      "file": "validation/gxtb_final_lowk_derivatives_20260719/verification.reproduced.json",
+      "passed": true,
+      "sha256": "8670fc8fa49cf1be839943a4269d410eede9d4a96e19bf25273839c31f6e83af",
+      "status": "passed"
+    },
+    "macdonald_gamma_bvk_mesh_equivalence": {
+      "file": "validation/macdonald_bvk_mesh_equivalence_20260720/verification.json",
+      "passed": true,
+      "sha256": "eb1320e289bc0499d12a5307a246fabd077a4a62d7a60ec3a89a19b7001a41f4",
+      "status": "PASS"
+    },
+    "mstore_accuracy_equivalence": {
+      "file": "validation/mstore_accuracy_equivalence_20260720/verification.json",
+      "passed": true,
+      "sha256": "1a5109eea0fe977799543bd6367c8f36e7ff17e2bc28285b3b1a4896d63703c0",
+      "status": "PASS"
+    },
+    "native_cli_tight_k222": {
+      "file": "validation/tight_parity_k222_20260720/verification.json",
+      "passed": true,
+      "sha256": "8be151e41b007816e10fab648566c59eef768a64f82563b7c9c09360a5453c95",
+      "status": "PASS"
+    },
+    "native_gamma_bvk_oracle": {
+      "file": "validation/explicit_cp2k_gamma_supercell_oracle_20260719/verification.reproduced.json",
+      "passed": true,
+      "sha256": "f9cd68f5f38f9eae81f2987ca7353d3ed6a20a2b11f916212c32a5fe16006b7e",
+      "status": "PASS"
+    },
+    "periodic_source_tests": {
+      "file": "validation/save_tblite_periodic_source_tests_20260719/results.json",
+      "inherited_nonperiodic_cecl3_residual_identical_to_author_pbc": true,
+      "passed": true,
+      "required_test_groups": [
+        "current_h0_diamond",
+        "current_h0_supercell",
+        "current_h0_gradient",
+        "current_wignerseitz",
+        "current_exchange",
+        "current_acp",
+        "current_coulomb_charge",
+        "current_coulomb_multipole",
+        "current_dispersion",
+        "current_repulsion",
+        "current_gxtb"
+      ],
+      "sha256": "01fcb169d52c2b074efdeef143a7ee35e63b3005b8a58f5d077327c75537032a",
+      "status": "PASS"
+    },
+    "provider_component_attribution": {
+      "file": "validation/provider_component_attribution_20260719/verification.json",
+      "passed": true,
+      "sha256": "a64c37ed84a31c84db288469d08a8206921d5c2bfcbed7d537123df6202d9650",
+      "status": "PASS"
+    },
+    "relative_energy_postprocessing": {
+      "file": "validation/relative_energy_postprocessing_20260720/verification.json",
+      "passed": true,
+      "sha256": "4fb04e354f314eb8f253d2e6fb3512689a53cc44d56e0df3abe335e44e000ce5",
+      "status": "PASS"
+    },
+    "three_route_k333_closure": {
+      "file": "validation/three_route_k333_closure_20260719/summary.json",
+      "passed": true,
+      "sha256": "a4c48434b5d9cb76ef7b32ff7cb71ff41ae774df484e982b38b0f9aaba806a71",
+      "status": "PASS"
+    }
+  },
+  "current_adaptive_set": {
+    "converged_phase_count": 8,
+    "largest_mesh_n": 8,
+    "mae_kj_mol_per_water": 1.7478320054785,
+    "maxae_kj_mol_per_water": 5.431453685894,
+    "me_kj_mol_per_water": -1.6774711340908333,
+    "phase_count": 12,
+    "rmse_kj_mol_per_water": 2.1949814063598367
+  },
+  "current_adaptive_set_is_final": false,
+  "interpretation": "All completed exact implementation gates pass. The DMC-ICE13 adaptive statistic remains provisional until the listed phase-local endpoints finish.",
+  "pending_diagnostic_endpoint": "direct current-pbc CLI XIII 4x4x4",
+  "pending_science_endpoints": [
+    "ice VII 9x9x9 after same-build ice Ih 9x9x9",
+    "ice XI 7x7x7",
+    "ice XIV 8x8x8",
+    "ice XVII 7x7x7"
+  ],
+  "schema": "periodic-gxtb-part-i-implementation-audit-v1",
+  "status": "PASS"
+}

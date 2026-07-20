@@ -1,0 +1,237 @@
+{
+  "executable_sha256": "8df9fcc990f15600f0b99316602d1d6adfad43f85a2b0203ae14aad44ad4b1aa",
+  "interpretation": "The independently rebuilt historical mstore-inorganic executable is energetically unchanged to far below the qualified tolerance when its direct CLI accuracy is tightened from 0.1 to 0.01. The mstore-inorganic/pbc DMC difference is therefore a model-source difference, not an SCC stopping-threshold artifact.",
+  "maximum_accuracy_sensitivity_hartree_supercell": 2.4064785945003306e-12,
+  "maximum_accuracy_sensitivity_phase": "XIII",
+  "mesh": [
+    3,
+    3,
+    3
+  ],
+  "phase_count_including_Ih": 13,
+  "phases": {
+    "II": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -24772.20900792075,
+        "energy_hartree_supercell": -910.3618898347423,
+        "input_sha256": "9c6fc3c088893d7413933ffd4ae6adeeb30bac20c9275e3ca73ccfe590039ff0",
+        "process_output_sha256": "956cbd7d669c7eddf8cadb11eaa1b985afa7fdc326b63a3f183dc0f893509fa0",
+        "result_sha256": "784ce0060d9cf5dcfa7f5669ad546170cf6a9c85797f6077053b6e44b5835f5d"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -24772.20900792075,
+        "energy_hartree_supercell": -910.3618898347423,
+        "input_sha256": "9c6fc3c088893d7413933ffd4ae6adeeb30bac20c9275e3ca73ccfe590039ff0",
+        "process_output_sha256": "686232d069fd45f79b8341d9baea08121f6aabc2d4c7b87cd507d4cf723232b2",
+        "result_sha256": "784ce0060d9cf5dcfa7f5669ad546170cf6a9c85797f6077053b6e44b5835f5d"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    },
+    "III": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -24772.386737649715,
+        "energy_hartree_supercell": -910.3684212818123,
+        "input_sha256": "9bf8e1381f7d38b8042bcaee4d3c3112520b647ce612cc447efe6435e26c7732",
+        "process_output_sha256": "35cb2ed596971dd3871b35853ac81d9ce9176986ffdaf1ae1b93ef0e02b9a682",
+        "result_sha256": "0142e8dcc9d168ac1a9d08123e8fe71b3fec78ee6f6133d20fdc14596e5c7cbd"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -24772.386737649715,
+        "energy_hartree_supercell": -910.3684212818123,
+        "input_sha256": "9bf8e1381f7d38b8042bcaee4d3c3112520b647ce612cc447efe6435e26c7732",
+        "process_output_sha256": "642c61b22bce433639b50114ac3e15ff68ac77c321e3c62d2f5d731b8d29b4e6",
+        "result_sha256": "0142e8dcc9d168ac1a9d08123e8fe71b3fec78ee6f6133d20fdc14596e5c7cbd"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    },
+    "IV": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -33029.29386051842,
+        "energy_hartree_supercell": -1213.8041613145747,
+        "input_sha256": "1213f0675a27713d0093568cdbdc8b50e8159e4154e42b0a491d0f77e5cf96ab",
+        "process_output_sha256": "437bde240f34f6a42b11ba1bff28705f970d35be1f62b910edface565fd8b698",
+        "result_sha256": "02a875b1ce4838020e682dc007d41941e1d805ca9c198201a9c8d6fe109467ad"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -33029.29386051842,
+        "energy_hartree_supercell": -1213.8041613145747,
+        "input_sha256": "1213f0675a27713d0093568cdbdc8b50e8159e4154e42b0a491d0f77e5cf96ab",
+        "process_output_sha256": "14782501f727c6773e6bb979bfe00db327047e1cd0c66d95ac3b29a0d10572e6",
+        "result_sha256": "02a875b1ce4838020e682dc007d41941e1d805ca9c198201a9c8d6fe109467ad"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    },
+    "IX": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -24772.516876874448,
+        "energy_hartree_supercell": -910.3732038101097,
+        "input_sha256": "c65ee97797664282f7e987860a895bc4d30d33af8d190c41aa96ba78b0f984e5",
+        "process_output_sha256": "f71f5cf9753e35ec4a023cda132b2359c8dd8c67e69251dec5d1c52c7fce8ee9",
+        "result_sha256": "9d93b4c1b93403e1a86d719220529a9d39f053ed90bf259fce83ee86b308f17d"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -24772.516876874448,
+        "energy_hartree_supercell": -910.3732038101097,
+        "input_sha256": "c65ee97797664282f7e987860a895bc4d30d33af8d190c41aa96ba78b0f984e5",
+        "process_output_sha256": "26a1b0106e9faf6a69101dc82c5cdc561ce615c1f63e6482191799086ff2eea6",
+        "result_sha256": "9d93b4c1b93403e1a86d719220529a9d39f053ed90bf259fce83ee86b308f17d"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    },
+    "Ih": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -24772.174455952565,
+        "energy_hartree_supercell": -910.3606200733317,
+        "input_sha256": "390e6e2f86de77f0cb13c88f92ee287058d834466e56977c66c145bd4f14ba14",
+        "process_output_sha256": "ac96a95947906e8334340db97ca3058e9674a2c4ae7629588efe2f6d8e3fa720",
+        "result_sha256": "0b73af206d417114a1bd8ab1927b0f658aede0e14fdd91fa336e3086a47d1a53"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -24772.174455952565,
+        "energy_hartree_supercell": -910.3606200733317,
+        "input_sha256": "390e6e2f86de77f0cb13c88f92ee287058d834466e56977c66c145bd4f14ba14",
+        "process_output_sha256": "b5d9dc6f1ed0f5e371ef19d851947b69fe24cfe523744f4ee76324be341ccfd2",
+        "result_sha256": "0b73af206d417114a1bd8ab1927b0f658aede0e14fdd91fa336e3086a47d1a53"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    },
+    "VI": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -20644.08669988983,
+        "energy_hartree_supercell": -758.6561931564056,
+        "input_sha256": "77dcb209d6002de61674716b9e4084d2620dd1de648b719926306b0d47ea25f8",
+        "process_output_sha256": "2e90e8849e0fd879cf4c3d1708372eebbc6621cef829d31dfde5a4e653b54c5d",
+        "result_sha256": "9a36c9ebf69adfab87535842b04ccd6f02bcd36e8e5729f5e4059a6e347a0847"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -20644.08669988983,
+        "energy_hartree_supercell": -758.6561931564056,
+        "input_sha256": "77dcb209d6002de61674716b9e4084d2620dd1de648b719926306b0d47ea25f8",
+        "process_output_sha256": "8085599e1a91241f95c67035c1794b6f1864c0f0f373ce827233ca80a6bc50d0",
+        "result_sha256": "9a36c9ebf69adfab87535842b04ccd6f02bcd36e8e5729f5e4059a6e347a0847"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    },
+    "VII": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -24781.731768295205,
+        "energy_hartree_supercell": -910.7118448237447,
+        "input_sha256": "8e7314d0d1920535e14a86ae92013aa5f19e35f835533c4c5b5152186aa75235",
+        "process_output_sha256": "2966b90e64d103b985b1f3338ec6a7a482b22b38154396fd4bba6f0e61117069",
+        "result_sha256": "f14ad261b44fcf03970644ef4d85d7c49ea702be264505ca46475f864e830c7c"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -24781.731768295205,
+        "energy_hartree_supercell": -910.7118448237447,
+        "input_sha256": "8e7314d0d1920535e14a86ae92013aa5f19e35f835533c4c5b5152186aa75235",
+        "process_output_sha256": "b1f4f0feea1d160b61ae3c95fa68d4a0c1fe48000535cd44c3706326b689df84",
+        "result_sha256": "f14ad261b44fcf03970644ef4d85d7c49ea702be264505ca46475f864e830c7c"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    },
+    "VIII": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -16516.404243755045,
+        "energy_hartree_supercell": -606.9666607371095,
+        "input_sha256": "9bd1a82532940e5f98fb6e04cc291787e0ea73d9ab34ae89de69867e9bf21398",
+        "process_output_sha256": "453d263bd637a1d352622af48e40412774834dd7511581b544050b8ab7149a7f",
+        "result_sha256": "76d2112aa0b7898a8d192a28271620619da202b69f6f0216eb47f2814bf56eef"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -16516.404243755045,
+        "energy_hartree_supercell": -606.9666607371095,
+        "input_sha256": "9bd1a82532940e5f98fb6e04cc291787e0ea73d9ab34ae89de69867e9bf21398",
+        "process_output_sha256": "f3422098ad845a28ffe6f8981a7a8b665d4f2eed1672748ef2ef7fa328eeabcf",
+        "result_sha256": "76d2112aa0b7898a8d192a28271620619da202b69f6f0216eb47f2814bf56eef"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    },
+    "XI": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -16517.347225468846,
+        "energy_hartree_supercell": -607.0013146759158,
+        "input_sha256": "c7ebc2fbbb67b620ef93d11a03adfcb9e8f54c2604931ee36842b670d9caa4f5",
+        "process_output_sha256": "6402abbded103bb58cdf85551493ee0bd9ab0d611c1fe38a048a42ed5d278656",
+        "result_sha256": "81f9f34536e4f82d987b2a0e6032a33c87bc6dc7de7b0384909d35d42ee4e999"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -16517.347225468846,
+        "energy_hartree_supercell": -607.0013146759158,
+        "input_sha256": "c7ebc2fbbb67b620ef93d11a03adfcb9e8f54c2604931ee36842b670d9caa4f5",
+        "process_output_sha256": "593944fe2d6f5847859d2f11a7e3deb488bde00e60547f07c95868817d66b87e",
+        "result_sha256": "81f9f34536e4f82d987b2a0e6032a33c87bc6dc7de7b0384909d35d42ee4e999"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    },
+    "XIII": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -57801.61285075857,
+        "energy_hartree_supercell": -2124.1700929250064,
+        "input_sha256": "37b1d93ec726b6e50c401f66bd1c4eca2ff9ae6073a351aedeb1d03d21cc9fd4",
+        "process_output_sha256": "b9e2cde290fa1843c5ad2713df47328f0fd0d59679110fc923bafa789ffb1458",
+        "result_sha256": "90b51d8baafcc7a0c672cf5b6f2e9315980017b7784fc89821bac043bb02f4af"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -57801.6128507585,
+        "energy_hartree_supercell": -2124.170092925004,
+        "input_sha256": "37b1d93ec726b6e50c401f66bd1c4eca2ff9ae6073a351aedeb1d03d21cc9fd4",
+        "process_output_sha256": "4c7e6011d522d99b4e7af6ac830580758663ceadae43261f7c4046fd9124dc5f",
+        "result_sha256": "1cf9308d274edeb118aba8b3a79ba471e5f9abb3e020d5795bdf945fb822e610"
+      },
+      "tight_minus_loose_hartree_supercell": -2.4064785945003306e-12
+    },
+    "XIV": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -24777.33029461992,
+        "energy_hartree_supercell": -910.550093649604,
+        "input_sha256": "06ef5467deadd2e61959f6997effdac1b11a6d1ebe61c673d9197a79566363ab",
+        "process_output_sha256": "fbbe34861777251c0c08a9f2a955520d23287fb883358e166dd7abd2f8598ca7",
+        "result_sha256": "840c2306186c3186ccf9d181cf692ce3feac8d5af846af5663623cd713d4e62e"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -24777.33029461992,
+        "energy_hartree_supercell": -910.550093649604,
+        "input_sha256": "06ef5467deadd2e61959f6997effdac1b11a6d1ebe61c673d9197a79566363ab",
+        "process_output_sha256": "5711936e81a854f0528de07fd00589e85ab7052ebd9bea36e8fadc3097ce3e2f",
+        "result_sha256": "840c2306186c3186ccf9d181cf692ce3feac8d5af846af5663623cd713d4e62e"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    },
+    "XV": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -20644.088996855942,
+        "energy_hartree_supercell": -758.6562775683533,
+        "input_sha256": "ddcea98e071c52b4125a28a8b2329840e386ca491346213bb671b6025a523c89",
+        "process_output_sha256": "c80402374d60ff4e6db611a3aa1a8954e0d53962396f7843c92510a5e40e6de9",
+        "result_sha256": "5f69dcaba3edba31ab66c8d8fdceb85e89f32c4fd6538dc77819d35186a705e6"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -20644.088996855942,
+        "energy_hartree_supercell": -758.6562775683533,
+        "input_sha256": "ddcea98e071c52b4125a28a8b2329840e386ca491346213bb671b6025a523c89",
+        "process_output_sha256": "f05423a7605041f4b509130b07c534c05a89eb9d3dec444ce37814ced0736598",
+        "result_sha256": "5f69dcaba3edba31ab66c8d8fdceb85e89f32c4fd6538dc77819d35186a705e6"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    },
+    "XVII": {
+      "accuracy_0.01": {
+        "energy_eV_supercell": -12386.388372012649,
+        "energy_hartree_supercell": -455.19137687587954,
+        "input_sha256": "89506fdd1b60dcacf9184a9fc61f1dab567cf4fa9ac8d14e49045147acf12f02",
+        "process_output_sha256": "a32a3d6cfe1d25cf40219772f907634e2aa15f2024edc491137d74f309a45268",
+        "result_sha256": "0ce1101199a0faa3af2e0faf2797504098347d0024dcdf7c0fd13f93ea56db90"
+      },
+      "accuracy_0.1": {
+        "energy_eV_supercell": -12386.388372012649,
+        "energy_hartree_supercell": -455.19137687587954,
+        "input_sha256": "89506fdd1b60dcacf9184a9fc61f1dab567cf4fa9ac8d14e49045147acf12f02",
+        "process_output_sha256": "8f7e991d824536b8b089147e2196ca0746314c34a9f32845f639ce64c2f26c07",
+        "result_sha256": "0ce1101199a0faa3af2e0faf2797504098347d0024dcdf7c0fd13f93ea56db90"
+      },
+      "tight_minus_loose_hartree_supercell": 0.0
+    }
+  },
+  "status": "PASS",
+  "tolerance_hartree_supercell": 1e-10
+}

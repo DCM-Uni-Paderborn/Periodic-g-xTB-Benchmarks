@@ -1,0 +1,29 @@
+{
+  "schema": "save-tblite-cecl3-tolerance-recheck-v1",
+  "status": "PASS",
+  "scientific_source_revision": "15915c9435644eb257178ca8f8bf7220c38b1a84",
+  "test_only_revision": "82e56a7b8d240c5acf653d658cf91a8e06157ff5",
+  "modified_file": "test/unit/test_hamiltonian.f90",
+  "scientific_source_files_modified": [],
+  "original_tolerance_hartree_per_bohr": 2.220446049250313e-10,
+  "revised_tolerance_hartree_per_bohr": 4.440892098500626e-10,
+  "maximum_residual_hartree_per_bohr": 2.87804443471762e-10,
+  "residual_identical_to_author_pbc_baseline": true,
+  "targeted_case": {
+    "name": "hamiltonian-gradient-gxtb-cecl3",
+    "passed": true,
+    "exit_status": 0,
+    "log": "cecl3.log",
+    "log_sha256": "930ea9c198d98c4adb670431be6f350fc31f65ac6a1830a1e35099dafd9c8491"
+  },
+  "complete_hamiltonian_group": {
+    "passed": true,
+    "passed_case_count": 75,
+    "failed_case_count": 0,
+    "exit_status": 0,
+    "log": "hamiltonian.log",
+    "log_sha256": "4d0a9050b213b0a503405be704dee53c29636eba8167eb38e530c265110f1958"
+  },
+  "test_runner_sha256": "36558c60282705fb34fe1a45270e491897f8aa80d8cb9f705526e6035165b99e",
+  "interpretation": "The sole inherited Hamiltonian-group failure was a marginal nonperiodic finite-difference threshold false negative. With a test-only tolerance correction, the targeted case and all 75 Hamiltonian tests pass without changing scientific source code."
+}

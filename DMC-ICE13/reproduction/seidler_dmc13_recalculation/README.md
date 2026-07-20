@@ -3,16 +3,29 @@
 This compact package is intended for an independent rerun with any selected
 `save_tblite` executable.  It contains all 13 DMC-ICE13 cells in absolute
 Cartesian Angstrom coordinates, the published Ih-referenced DMC energies, and
-the absolute energies obtained with the final author `pbc` provider, the
-current CP2K-integration provider, and CP2K-native Bloch k points.
+the absolute energies obtained with the author `pbc` snapshot, the current
+CP2K-integration provider, CP2K-native Bloch k points, and the historical
+`mstore-inorganic` branch.  `REQUEST_TO_AUTHORS.md` is a ready-to-send request
+for an independent two-branch rerun; `EXPECTED_RESULTS.md` gives the acceptance
+checks and explains which conclusions follow from each comparison.
+`MODEL_SOURCE_DIFFERENCES.md` inventories the model-relevant source history
+that separates `mstore-inorganic` from `pbc`.
+
+The author `pbc` snapshot (`c932120...`) and the later pbc-derived integration
+provider (`15915c...`) are deliberately separate entries.  CP2K-native parity
+must be judged against the latter exact source state; the former is retained
+to measure the smaller intervening provider-revision shift.
 
 The primitive structures live under `structures/primitive`.  Explicit
 Gamma-centred Born--von Karman cells are generated without changing atom
-order by `scripts/build_bvk_from_poscar.py`; its output is checked against the
-archived `1 x 1 x 1` through `4 x 4 x 4` cells with exact species/order and a
-maximum cell/coordinate tolerance of `5e-12` Angstrom.  This avoids
-shipping additional multi-gigabyte dense-mesh copies while retaining a fully
-deterministic structure definition.
+order by `scripts/build_bvk_from_poscar.py`.  Every actually evaluated current
+CLI input from `1 x 1 x 1` through `4 x 4 x 4` is retained under `raw`, checked
+byte-for-byte against its recorded input SHA-256, and compared with the
+deterministic generator using exact species/order and a maximum cell/coordinate
+tolerance of `5e-12` Angstrom.  The historical `2 x 2 x 2` and `3 x 3 x 3`
+branch-comparison POSCARs are checked independently against the same generator.
+This retains both the exact evaluated inputs and a compact deterministic route
+to recreate them.
 
 Run one phase with a chosen executable, for example:
 
@@ -28,17 +41,91 @@ tblite run --method gxtb --acc 0.1 --iterations 300 --no-restart \
   --json result.json POSCAR
 ```
 
-`tables/current_absolute_energies_by_mesh.csv` contains every available
-absolute current-CLI and CP2K-native value from `1^3` through `4^3`.
-`tables/author_pbc_absolute_energies.csv` contains the complete final author
-`pbc` direct-CLI series at `2^3` and `3^3`.  The companion relative table and
-the direct three-route `3^3` closure distinguish provider-model changes from
-the much smaller CP2K-native integration residual.
+`0.1` is the primary parity setting because it is the value used by the
+qualified CP2K-native DMC-ICE13 inputs.  A second run with `--accuracy 0.01`
+is an optional tighter SCC-convergence sensitivity check; it must not be mixed
+silently into the same-setting parity matrix.  The assembler reparses the
+printed energy and density thresholds from every direct-CLI text output and
+rejects a parity mesh unless all thirteen runs correspond to `0.1`.
+
+Run the requested complete matrix for one executable sequentially with:
+
+```text
+python3 scripts/run_branch_matrix.py /path/to/tblite results/pbc
+python3 scripts/run_branch_matrix.py /path/to/tblite results/mstore-inorganic
+```
+
+After both branches finish, create the direct return table with:
+
+```text
+python3 scripts/summarize_author_results.py \
+  results/pbc results/mstore-inorganic results/independent_branch_comparison.csv
+```
+
+## Comparison tables
+
+- `tables/cp2k_native_absolute_energies_by_mesh.csv` contains every presently
+  completed, hash-qualified CP2K-native absolute energy through `8^3`, the
+  exact executed input, and its independently verified settings state.
+- `tables/cp2k_native_relative_energies_by_mesh.csv` applies the same-mesh ice
+  Ih reference only when both required absolute outputs are qualified.
+- `tables/pbc_cli_vs_cp2k_native_absolute_parity.csv` is the direct absolute
+  current-`pbc` CLI versus CP2K-native comparison for the complete 52-point
+  matrix from `1^3` through `4^3`.
+- `tables/current_cli_convergence_provenance.csv` records the convergence
+  thresholds printed by every direct-CLI run and infers the effective
+  `--acc` value independently of filenames or launcher descriptions.
+- `tables/author_pbc_absolute_energies.csv` and its relative companion contain
+  the complete author-`pbc` snapshot series at `2^3` and `3^3`.
+- `tables/mstore_inorganic_relative_energies_by_mesh.csv` contains the
+  independently rebuilt historical `mstore-inorganic` results.  A mesh enters
+  the statistics table only after all twelve non-reference phases and Ih are
+  present with one binary hash.
+- `tables/mstore_inorganic_absolute_energies.csv` retains the corresponding
+  absolute supercell and primitive-cell energies together with every input,
+  output, and executable hash.
+- `tables/mstore_vs_pbc_relative_differences.csv` is the shortest direct view
+  of the branch effect for every phase and common mesh; it also states both
+  effective CLI accuracies and whether they are identical for that row.
+- `tables/all_branch_relative_energy_comparison.csv` and
+  `tables/branch_comparison_statistics.csv` collect the branch-resolved values
+  without hiding incomplete meshes.
+- `tables/three_route_absolute_energies_k333.csv` and its relative companion
+  give the direct current-CLI, author-`pbc`, and CP2K-native `3^3` closure.
+
+The `raw` directory retains the source outputs, exact evaluated CLI POSCARs,
+exact executed CP2K inputs, input/binary hashes, and exit states used to
+assemble the new tables.  Running `scripts/assemble_comparison_tables.py`
+rejects incomplete CP2K outputs, a non-matching input or executable hash, and
+inputs that do not use the qualified `ACCURACY`, SCC mixer, SCF threshold,
+MacDonald shift, and SPGLIB-reduced native-k settings.
+`prepare_package.py` independently converts scaled CP2K coordinates where
+needed and verifies cell vectors, species order, and Cartesian positions
+against the canonical primitive POSCAR for every admitted native endpoint.
+
+The compact `evidence` directory contains the independently reproducible
+three-route `3^3` closure and the CP2K native-k versus explicit Gamma-BvK
+oracle, including their raw inputs, outputs, verification summaries, and hash
+manifests.  Historical table rows whose original raw output was not retained
+remain explicitly identified by the hashes stored in the tables.
+
+`sources.json` records the exact source states and executable hashes used in
+this package.  The historical `mstore-inorganic` build required only a
+dependency-fetch repair for the obsolete `mctc-lib` wrap; the
+`save_tblite` source revision itself was not modified.  This diagnostic build
+is therefore suitable for locating the model-revision difference, while the
+requested clean author builds remain the decisive independent check.
+
+`comparison_workbook.xlsx` provides the same data in a convenient review
+workbook; CSV files remain the machine-readable source of truth.
+`comparison_summary.json` gives the compact machine-readable conclusion,
+source states, numerical parity checks, and complete-mesh statistics.
 
 All generated files are covered by `SHA256SUMS`.  Rebuild and verify the
 package from its authoritative parent archive with:
 
 ```text
-python3 prepare_package.py
+python3 scripts/assemble_comparison_tables.py
+python3 prepare_package.py --refresh-manifest-only
 shasum -a 256 -c SHA256SUMS
 ```
