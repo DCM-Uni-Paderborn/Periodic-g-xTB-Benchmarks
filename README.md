@@ -43,8 +43,10 @@ The uniform same-build MAE sequence is:
 | 5x5x5 | -4.2818 | 4.3464 | 8.2379 | 26.8510 |
 
 All entries are in kJ mol-1 per H2O over the twelve non-reference phases and
-use ice Ih on the same mesh. The current phase-wise set through at most 8x8x8
-has ME -1.6762, MAE 1.7466, RMSE 2.1944, and MaxAE 5.4315 kJ mol-1 per H2O.
+use ice Ih on the same mesh. The qualified phase-wise progress MAEs at mesh
+limits 6x6x6, 7x7x7, and 8x8x8 are 2.3596, 1.8643, and 1.7466 kJ mol-1 per
+H2O. The current phase-wise set through at most 8x8x8 has ME -1.6762,
+MAE 1.7466, RMSE 2.1944, and MaxAE 5.4315 kJ mol-1 per H2O.
 It is not the final adaptive result: nine of twelve phases currently satisfy
 the declared one-step condition
 `|R(N)-R(N-1)| <= 0.10 kJ mol-1 per H2O`.

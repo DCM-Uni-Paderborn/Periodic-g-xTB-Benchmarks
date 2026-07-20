@@ -43,6 +43,29 @@ def read_fixed_mesh_rows(path: Path) -> list[dict[str, str]]:
     return rows
 
 
+def read_progress_rows(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    if not rows:
+        raise ValueError(f"phase-wise progress table is empty: {path}")
+    previous_mesh = 0
+    for row in rows:
+        mesh = int(row["mesh_limit_n"])
+        mae = float(row["mae_kj_mol_per_water"])
+        if mesh <= previous_mesh:
+            raise ValueError("phase-wise mesh limits must be strictly increasing")
+        if int(row["phase_count"]) != 12:
+            raise ValueError(f"phase-wise mesh {mesh} lacks twelve comparisons")
+        if not 0 <= int(row["converged_phase_count"]) <= 12:
+            raise ValueError(f"phase-wise mesh {mesh} has an invalid pass count")
+        if not math.isfinite(mae) or mae <= 0.0:
+            raise ValueError(f"phase-wise mesh {mesh} has an invalid MAE")
+        if row["qualification"] != "PASS":
+            raise ValueError(f"phase-wise mesh {mesh} is not qualified")
+        previous_mesh = mesh
+    return rows
+
+
 def tex_float(value: float) -> str:
     return f"{value:.10g}"
 
@@ -50,11 +73,13 @@ def tex_float(value: float) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("fixed_mesh_csv", type=Path)
+    parser.add_argument("progress_csv", type=Path)
     parser.add_argument("adaptive_statistics_csv", type=Path)
     parser.add_argument("output", type=Path)
     args = parser.parse_args()
 
     fixed_rows = read_fixed_mesh_rows(args.fixed_mesh_csv)
+    progress_rows = read_progress_rows(args.progress_csv)
     adaptive = read_single_row(args.adaptive_statistics_csv)
     if int(adaptive["phase_count"]) != 12:
         raise ValueError("adaptive statistics do not contain twelve phase comparisons")
@@ -71,15 +96,45 @@ def main() -> None:
     if (declared_final == "true") != (converged == 12):
         raise ValueError("final_result and converged_phase_count disagree")
 
+    fixed_last_mesh = int(fixed_rows[-1]["mesh_n"])
+    progress_meshes = [int(row["mesh_limit_n"]) for row in progress_rows]
+    expected_progress_meshes = list(
+        range(fixed_last_mesh + 1, progress_meshes[-1] + 1)
+    )
+    if progress_meshes != expected_progress_meshes:
+        raise ValueError("phase-wise progress does not continue the fixed sequence")
+    if progress_meshes[-1] != largest_mesh:
+        raise ValueError("latest progress mesh and adaptive statistics disagree")
+    latest_progress = progress_rows[-1]
+    if int(latest_progress["converged_phase_count"]) != converged:
+        raise ValueError("latest progress pass count and adaptive statistics disagree")
+    if not math.isclose(
+        float(latest_progress["mae_kj_mol_per_water"]),
+        adaptive_mae,
+        rel_tol=0.0,
+        abs_tol=1.0e-12,
+    ):
+        raise ValueError("latest progress MAE and adaptive statistics disagree")
+
     fixed_maes = [float(row["mae_kj_mol_per_water"]) for row in fixed_rows]
-    adaptive_x = len(fixed_rows) + 1
-    ticks = ",".join(str(index) for index in range(1, adaptive_x + 1))
-    labels = [r"$\Gamma$"] + [rf"${int(row['mesh_n'])}^3$" for row in fixed_rows[1:]]
-    labels.append(rf"adaptive $\leq{largest_mesh}^3$")
+    progress_maes = [float(row["mae_kj_mol_per_water"]) for row in progress_rows]
+    all_meshes = [int(row["mesh_n"]) for row in fixed_rows] + progress_meshes
+    ticks = ",".join(str(mesh) for mesh in all_meshes)
+    labels = [r"$\Gamma$"] + [rf"${mesh}^3$" for mesh in all_meshes[1:]]
     ticklabels = ",".join(labels)
-    coordinates = "\n".join(
-        f"  ({index},{tex_float(mae)})"
-        for index, mae in enumerate(fixed_maes, start=1)
+    fixed_coordinates = "\n".join(
+        f"  ({int(row['mesh_n'])},{tex_float(mae)})"
+        for row, mae in zip(fixed_rows, fixed_maes, strict=True)
+    )
+    progress_coordinates = "\n".join(
+        f"  ({int(row['mesh_limit_n'])},{tex_float(mae)})"
+        for row, mae in zip(progress_rows, progress_maes, strict=True)
+    )
+    progress_labels = "\n".join(
+        rf"\node[anchor=south,font=\small] at "
+        rf"(axis cs:{int(row['mesh_limit_n'])},{tex_float(mae * 1.10)}) "
+        rf"{{{mae:.3f}}};"
+        for row, mae in zip(progress_rows, progress_maes, strict=True)
     )
 
     source = rf"""\begin{{tikzpicture}}
@@ -87,7 +142,7 @@ def main() -> None:
   width=\columnwidth,
   height=0.76\columnwidth,
   xmin=0.65,
-  xmax={adaptive_x + 0.35:.2f},
+  xmax={all_meshes[-1] + 0.35:.2f},
   ymin=1.3,
   ymax=220,
   xtick={{{ticks}}},
@@ -111,16 +166,19 @@ def main() -> None:
   mark=*,
   mark size=2pt,
 ] coordinates {{
-{coordinates}
+{fixed_coordinates}
 }};
 \node[anchor=west,font=\small] at (axis cs:1.18,{tex_float(fixed_maes[0])}) {{{fixed_maes[0]:.1f}}};
 \addplot[
   red!70!black,
-  only marks,
+  thick,
+  dashed,
   mark=diamond*,
   mark size=3pt,
-] coordinates {{({adaptive_x},{tex_float(adaptive_mae)})}};
-\node[anchor=south east,font=\small] at (axis cs:{adaptive_x}.0,{tex_float(adaptive_mae * 1.12)}) {{{adaptive_mae:.3f}}};
+] coordinates {{
+{progress_coordinates}
+}};
+{progress_labels}
 \end{{semilogyaxis}}
 \end{{tikzpicture}}
 """
@@ -130,7 +188,8 @@ def main() -> None:
     temporary.write_text(source, encoding="utf-8")
     temporary.replace(args.output)
     print(
-        f"fixed_meshes={len(fixed_rows)} adaptive_mesh={largest_mesh} "
+        f"fixed_meshes={len(fixed_rows)} progress_meshes={len(progress_rows)} "
+        f"adaptive_mesh={largest_mesh} "
         f"converged={converged}/12 mae={adaptive_mae:.12f} final={declared_final}"
     )
 

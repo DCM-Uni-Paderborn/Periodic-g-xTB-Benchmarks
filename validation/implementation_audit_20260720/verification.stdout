@@ -1,5 +1,5 @@
 {
-  "completed_gate_count": 27,
+  "completed_gate_count": 28,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -139,6 +139,23 @@
         "current_gxtb"
       ],
       "sha256": "01fcb169d52c2b074efdeef143a7ee35e63b3005b8a58f5d077327c75537032a",
+      "status": "PASS"
+    },
+    "phasewise_progress_internal_consistency": {
+      "converged_phase_counts": [
+        5,
+        8,
+        9
+      ],
+      "file": "DMC-ICE13/data/dmc_ice13_gxtb_phasewise_progress.csv",
+      "latest_matches_current_adaptive_statistics": true,
+      "mesh_limits": [
+        6,
+        7,
+        8
+      ],
+      "passed": true,
+      "sha256": "ab64fd14241c1fee6ab516701d6ceeb0b8334ab69153595b66d91ebc761026fc",
       "status": "PASS"
     },
     "provider_component_attribution": {

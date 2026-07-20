@@ -117,6 +117,7 @@ def main() -> None:
 
     adaptive_relative = "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv"
     statistics_relative = "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv"
+    progress_relative = "DMC-ICE13/data/dmc_ice13_gxtb_phasewise_progress.csv"
     native_absolute_relative = (
         "DMC-ICE13/reproduction/seidler_dmc13_recalculation/"
         "tables/cp2k_native_absolute_energies_by_mesh.csv"
@@ -125,6 +126,8 @@ def main() -> None:
         rows = list(csv.DictReader(handle))
     with (ROOT / statistics_relative).open(newline="", encoding="utf-8") as handle:
         statistics = next(csv.DictReader(handle))
+    with (ROOT / progress_relative).open(newline="", encoding="utf-8") as handle:
+        progress_rows = list(csv.DictReader(handle))
     with (ROOT / native_absolute_relative).open(newline="", encoding="utf-8") as handle:
         native_absolute_rows = list(csv.DictReader(handle))
 
@@ -215,6 +218,63 @@ def main() -> None:
         "convergence_criterion_valid": convergence_criterion_valid,
         "adaptive_tolerance_kj_mol_per_water": ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER,
         "final_state_consistent": final_state_consistent,
+    }
+
+    expected_progress_limits = [6, 7, 8]
+    progress_limits = [int(row["mesh_limit_n"]) for row in progress_rows]
+    progress_pass_counts = [
+        int(row["converged_phase_count"]) for row in progress_rows
+    ]
+    progress_match = (
+        progress_limits == expected_progress_limits
+        and len(progress_rows) == len(expected_progress_limits)
+        and all(int(row["phase_count"]) == len(EXPECTED_PHASES) for row in progress_rows)
+        and all(row["qualification"] == "PASS" for row in progress_rows)
+        and progress_pass_counts == sorted(progress_pass_counts)
+        and progress_pass_counts[-1] == calculated["converged_phase_count"]
+        and all(
+            math.isfinite(float(row[field]))
+            for row in progress_rows
+            for field in (
+                "me_kj_mol_per_water",
+                "mae_kj_mol_per_water",
+                "rmse_kj_mol_per_water",
+                "maxae_kj_mol_per_water",
+            )
+        )
+        and math.isclose(
+            float(progress_rows[-1]["me_kj_mol_per_water"]),
+            calculated["me_kj_mol_per_water"],
+            rel_tol=0.0,
+            abs_tol=1.0e-12,
+        )
+        and math.isclose(
+            float(progress_rows[-1]["mae_kj_mol_per_water"]),
+            calculated["mae_kj_mol_per_water"],
+            rel_tol=0.0,
+            abs_tol=1.0e-12,
+        )
+        and math.isclose(
+            float(progress_rows[-1]["rmse_kj_mol_per_water"]),
+            calculated["rmse_kj_mol_per_water"],
+            rel_tol=0.0,
+            abs_tol=1.0e-12,
+        )
+        and math.isclose(
+            float(progress_rows[-1]["maxae_kj_mol_per_water"]),
+            calculated["maxae_kj_mol_per_water"],
+            rel_tol=0.0,
+            abs_tol=1.0e-12,
+        )
+    )
+    gate_results["phasewise_progress_internal_consistency"] = {
+        "status": "PASS" if progress_match else "FAIL",
+        "passed": progress_match,
+        "file": progress_relative,
+        "sha256": sha256(ROOT / progress_relative),
+        "mesh_limits": progress_limits,
+        "converged_phase_counts": progress_pass_counts,
+        "latest_matches_current_adaptive_statistics": progress_match,
     }
 
     ih_meshes = {

@@ -33,6 +33,9 @@ shift in the versioned inputs.
   error, adjacent change, and convergence state for every phase;
 - `data/dmc_ice13_gxtb_current_adaptive_statistics.csv`: aggregate statistics
   for that current set, explicitly marked non-final;
+- `data/dmc_ice13_gxtb_phasewise_progress.csv`: reproducible phase-wise
+  progress snapshots at mesh limits 6x6x6, 7x7x7, and 8x8x8, including the
+  selected mesh of every phase and every still-pending next endpoint;
 - `data/dmc_ice13_gxtb_phase_vii_current.csv`: current Ice-VII sequence,
   including the qualified 7x7x7--8x8x8 adjacent pair;
 - `data/dmc_ice13_published_dft_absolute_energies.csv`: published DMC/DFT
@@ -40,8 +43,10 @@ shift in the versioned inputs.
 - `data/geometries.json` and `poscars/`: canonical benchmark geometries.
 
 The current uniform MAEs are 163.8345, 88.6814, 34.0485, 11.3655, and
-4.3464 kJ mol-1 per H2O from Gamma through 5x5x5. The present phase-wise set
-through at most 8x8x8 has MAE 1.7466 kJ mol-1 per H2O. It is not final because
+4.3464 kJ mol-1 per H2O from Gamma through 5x5x5.  The qualified phase-wise
+progress values at mesh limits 6x6x6, 7x7x7, and 8x8x8 are 2.3596, 1.8643,
+and 1.7466 kJ mol-1 per H2O. The present phase-wise set through at most 8x8x8
+is not final because
 Ice VII, Ice XI, and Ice XIV have not yet passed; Ice II, Ice III, Ice IV,
 Ice VI, Ice VIII, Ice IX, Ice XIII, Ice XV, and Ice XVII do pass the declared
 adjacent-pair criterion. The table and statistics are regenerated from
@@ -55,6 +60,7 @@ adaptive statistics rather than edited numerically:
 ```bash
 python3 scripts/make_dmc_adaptive_frontier_tex.py \
   data/dmc_ice13_gxtb_same_build_fixed_mesh_mae.csv \
+  data/dmc_ice13_gxtb_phasewise_progress.csv \
   data/dmc_ice13_gxtb_current_adaptive_statistics.csv \
   figures/dmc_ice13_gxtb_adaptive_frontier_mae.tex
 ```

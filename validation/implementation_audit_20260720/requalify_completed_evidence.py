@@ -25,6 +25,7 @@ QUALIFIED_CLI_SHA256 = (
 )
 
 STANDARD_VERIFIERS = (
+    ("adaptive_progress", "DMC-ICE13/scripts/evaluate_adaptive_progress.py"),
     ("accuracy_equivalence", "validation/accuracy_equivalence_20260720/verify_accuracy_equivalence.py"),
     ("binary_provider_identity", "validation/binary_provider_identity_20260720/verify_binary_provider_identity.py"),
     ("cecl3_tolerance_recheck", "validation/cecl3_tolerance_recheck_20260720/verify_cecl3_tolerance_recheck.py"),
@@ -297,7 +298,7 @@ def main() -> None:
     aggregate = json.loads((HERE / "verification.json").read_text(encoding="utf-8"))
     aggregate_valid = (
         aggregate.get("status") == "PASS"
-        and aggregate.get("completed_gate_count") == 27
+        and aggregate.get("completed_gate_count") == 28
         and all(
             item.get("passed") is True
             for item in aggregate.get("completed_gates", {}).values()
