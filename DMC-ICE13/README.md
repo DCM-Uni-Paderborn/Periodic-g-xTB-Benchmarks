@@ -49,6 +49,16 @@ qualified raw endpoints with `scripts/evaluate_adaptive_set.py`, which always
 reports the delta of the selected endpoint rather than carrying forward the
 preceding mesh delta.
 
+The manuscript TikZ convergence figure is generated from the uniform and
+adaptive statistics rather than edited numerically:
+
+```bash
+python3 scripts/make_dmc_adaptive_frontier_tex.py \
+  data/dmc_ice13_gxtb_same_build_fixed_mesh_mae.csv \
+  data/dmc_ice13_gxtb_current_adaptive_statistics.csv \
+  figures/dmc_ice13_gxtb_adaptive_frontier_mae.tex
+```
+
 ## Inputs and figures
 
 - `gxtb_spglib_inputs/`: native-Bloch SPGLIB-reduced production inputs;
