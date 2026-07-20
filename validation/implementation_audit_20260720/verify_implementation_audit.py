@@ -38,6 +38,7 @@ def main() -> None:
         "macdonald_gamma_bvk_mesh_equivalence": "validation/macdonald_bvk_mesh_equivalence_20260720/verification.json",
         "native_cli_full_k111_to_k444_parity": "validation/native_cli_full_parity_20260720/verification.json",
         "native_cli_inprocess_derivative_parity": "validation/native_cli_inprocess_derivatives_20260720/verification.json",
+        "native_restart_equivalence": "validation/gxtb_restart_equivalence_20260720/verification.json",
         "relative_energy_postprocessing": "validation/relative_energy_postprocessing_20260720/verification.json",
         "native_cli_tight_k222": "validation/tight_parity_k222_20260720/verification.json",
         "accuracy_equivalence": "validation/accuracy_equivalence_20260720/verification.json",

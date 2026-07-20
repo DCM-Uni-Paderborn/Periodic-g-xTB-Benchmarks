@@ -1,5 +1,5 @@
 {
-  "completed_gate_count": 20,
+  "completed_gate_count": 21,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -95,6 +95,12 @@
       "file": "validation/explicit_cp2k_gamma_supercell_oracle_20260719/verification.reproduced.json",
       "passed": true,
       "sha256": "f9cd68f5f38f9eae81f2987ca7353d3ed6a20a2b11f916212c32a5fe16006b7e",
+      "status": "PASS"
+    },
+    "native_restart_equivalence": {
+      "file": "validation/gxtb_restart_equivalence_20260720/verification.json",
+      "passed": true,
+      "sha256": "eed808563084a1cbff2b2e7400adc27a036ef9aeb322f6b75505c9cc804402b8",
       "status": "PASS"
     },
     "periodic_source_tests": {

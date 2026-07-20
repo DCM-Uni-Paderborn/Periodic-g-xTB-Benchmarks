@@ -9,6 +9,8 @@ their individual tolerances, the following independent checks:
   through `4 x 4 x 4`;
 - in-process direct-CLI parity for energy, Cartesian gradients, and the tested
   periodic virial using the qualified CP2K and CLI binaries;
+- strict same-mesh and validated regular-mesh restart equivalence against
+  independent cold-start energies and SCF iteration counts;
 - source-level and exact-arithmetic equivalence of every archived MacDonald
   grid to the corresponding Gamma-supercell BvK folding grid;
 - build-level identity of the provider source, static provider archive, and

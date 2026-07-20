@@ -1,5 +1,5 @@
 {
-  "completed_gate_count": 18,
+  "completed_gate_count": 21,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -79,6 +79,12 @@
       "sha256": "3ce9f86da29a895c8233da6c334b4beb9e360bdc5e9ec4ec45f98140399ed214",
       "status": "PASS"
     },
+    "native_cli_inprocess_derivative_parity": {
+      "file": "validation/native_cli_inprocess_derivatives_20260720/verification.json",
+      "passed": true,
+      "sha256": "9f869c851c120c9cc0b607be7b4da7fac3916df348e77d56c702dd6aa8abda02",
+      "status": "PASS"
+    },
     "native_cli_tight_k222": {
       "file": "validation/tight_parity_k222_20260720/verification.json",
       "passed": true,
@@ -89,6 +95,12 @@
       "file": "validation/explicit_cp2k_gamma_supercell_oracle_20260719/verification.reproduced.json",
       "passed": true,
       "sha256": "f9cd68f5f38f9eae81f2987ca7353d3ed6a20a2b11f916212c32a5fe16006b7e",
+      "status": "PASS"
+    },
+    "native_restart_equivalence": {
+      "file": "validation/gxtb_restart_equivalence_20260720/verification.json",
+      "passed": true,
+      "sha256": "eed808563084a1cbff2b2e7400adc27a036ef9aeb322f6b75505c9cc804402b8",
       "status": "PASS"
     },
     "periodic_source_tests": {
@@ -115,6 +127,12 @@
       "file": "validation/provider_component_attribution_20260719/verification.json",
       "passed": true,
       "sha256": "a64c37ed84a31c84db288469d08a8206921d5c2bfcbed7d537123df6202d9650",
+      "status": "PASS"
+    },
+    "qualified_build_head_delta": {
+      "file": "validation/qualified_build_head_delta_20260720/verification.json",
+      "passed": true,
+      "sha256": "49aec878bd4d9e48471d198175f90140769dae89421b257425e25b079ee72231",
       "status": "PASS"
     },
     "relative_energy_postprocessing": {

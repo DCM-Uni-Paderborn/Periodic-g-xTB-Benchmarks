@@ -1,0 +1,108 @@
+{
+  "cases": {
+    "cold3": {
+      "checks": {
+        "binary_is_qualified": true,
+        "energy_matches_archived_expectation": true,
+        "exit_status_zero": true,
+        "expected_restart_message_present": true,
+        "input_hash_matches": true,
+        "mesh_declared": true,
+        "program_ended": true,
+        "scf_converged": true,
+        "singleton_cpu_affinity_proven": true,
+        "step_count_matches_archived_expectation": true
+      },
+      "energy_hartree": -40.46886607069243,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "scf_steps": 12,
+      "status": "PASS"
+    },
+    "cold4": {
+      "checks": {
+        "binary_is_qualified": true,
+        "energy_matches_archived_expectation": true,
+        "exit_status_zero": true,
+        "expected_restart_message_present": true,
+        "input_hash_matches": true,
+        "mesh_declared": true,
+        "program_ended": true,
+        "scf_converged": true,
+        "singleton_cpu_affinity_proven": true,
+        "step_count_matches_archived_expectation": true
+      },
+      "energy_hartree": -40.468551982577395,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "scf_steps": 11,
+      "status": "PASS"
+    },
+    "same3": {
+      "checks": {
+        "binary_is_qualified": true,
+        "energy_matches_archived_expectation": true,
+        "exit_status_zero": true,
+        "expected_restart_message_present": true,
+        "input_hash_matches": true,
+        "mesh_declared": true,
+        "program_ended": true,
+        "scf_converged": true,
+        "singleton_cpu_affinity_proven": true,
+        "step_count_matches_archived_expectation": true
+      },
+      "energy_hartree": -40.46886607069243,
+      "mesh": [
+        3,
+        3,
+        3
+      ],
+      "scf_steps": 1,
+      "status": "PASS"
+    },
+    "transfer4": {
+      "checks": {
+        "binary_is_qualified": true,
+        "energy_matches_archived_expectation": true,
+        "exit_status_zero": true,
+        "expected_restart_message_present": true,
+        "input_hash_matches": true,
+        "mesh_declared": true,
+        "program_ended": true,
+        "scf_converged": true,
+        "singleton_cpu_affinity_proven": true,
+        "step_count_matches_archived_expectation": true
+      },
+      "energy_hartree": -40.46855198257739,
+      "mesh": [
+        4,
+        4,
+        4
+      ],
+      "scf_steps": 7,
+      "status": "PASS"
+    }
+  },
+  "equivalence": {
+    "cross_mesh_energy_equivalent": true,
+    "cross_mesh_transfer_reduces_scf_steps": true,
+    "cross_mesh_transfer_vs_cold_abs_energy_difference_hartree": 7.105427357601002e-15,
+    "energy_tolerance_hartree": 1e-12,
+    "raw_file_count": 26,
+    "raw_manifest_complete_and_valid": true,
+    "restart_payload_hash_matches": true,
+    "same_mesh_abs_energy_difference_hartree": 0.0,
+    "same_mesh_energy_equivalent": true,
+    "same_mesh_restart_reduces_scf_steps": true
+  },
+  "interpretation": "A strict same-mesh restart is energy-identical to its source and converges in one SCF step. A validated 3x3x3-to-4x4x4 BvK transfer reaches the independent cold 4x4x4 energy within the declared tolerance while reducing the SCF iteration count.",
+  "qualified_binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+  "schema": "periodic-gxtb-restart-equivalence-v1",
+  "status": "PASS"
+}
