@@ -47,6 +47,7 @@ STANDARD_VERIFIERS = (
 )
 
 MANIFESTS = (
+    "validation/cecl3_tolerance_recheck_20260720/SHA256SUMS",
     "validation/explicit_cp2k_gamma_supercell_oracle_20260719/SHA256SUMS",
     "validation/three_route_k333_closure_20260719/SHA256SUMS",
     "validation/gxtb_final_lowk_derivatives_20260719/SHA256SUMS",
@@ -148,6 +149,14 @@ def check_manifest(relative: str) -> dict:
             raise RuntimeError(f"manifest path escapes its evidence directory: {written_path}")
         if not candidate.is_file():
             raise RuntimeError(f"manifest member is missing: {candidate.relative_to(ROOT)}")
+        repository_path = candidate.relative_to(ROOT).as_posix()
+        tracked = subprocess.run(
+            ["git", "ls-files", "--error-unmatch", "--", repository_path],
+            cwd=ROOT,
+            capture_output=True,
+        )
+        if tracked.returncode != 0:
+            raise RuntimeError(f"manifest member is not Git-tracked: {repository_path}")
         actual = sha256_file(candidate)
         if actual != expected:
             raise RuntimeError(f"manifest mismatch: {candidate.relative_to(ROOT)}")
@@ -156,6 +165,7 @@ def check_manifest(relative: str) -> dict:
         "name": f"manifest:{relative}",
         "status": "PASS",
         "entry_count": len(entries),
+        "tracked_entry_count": len(entries),
         "manifest_sha256": sha256_file(manifest),
     }
 
