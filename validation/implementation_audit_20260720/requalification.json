@@ -429,17 +429,17 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "dffa529f137841f6b3ace3f82a9d4100dc869b0c8bd264b833c9e619aa8f98f0"
+      "stdout_sha256": "7521d6bd28cb2feda37b08c357465200608d98875dae5fc732c1dc1c04912950"
     },
     {
       "all_completed_gates_pass": true,
       "completed_gate_count": 30,
       "name": "aggregate_semantics",
       "status": "PASS",
-      "verification_sha256": "dffa529f137841f6b3ace3f82a9d4100dc869b0c8bd264b833c9e619aa8f98f0"
+      "verification_sha256": "7521d6bd28cb2feda37b08c357465200608d98875dae5fc732c1dc1c04912950"
     }
   ],
-  "interpretation": "Every completed Part-I verifier was executed again from a clean tracked checkout. Regenerated JSON, derived tables, aggregate gates, and selected SHA-256 manifests reproduce the archived evidence exactly. The remaining sub-cap DMC-ICE13 endpoints and the explicitly cap-limited phase are science calculations, not missing implementation-verification gates.",
+  "interpretation": "Every completed Part-I verifier was executed again from a clean tracked checkout. Regenerated JSON, derived tables, aggregate gates, and selected SHA-256 manifests reproduce the archived evidence exactly. The remaining sub-cap DMC-ICE13 endpoints and the explicitly cap-limited phase are science calculations; any separately declared pending diagnostic remains outside the set of completed implementation-verification gates.",
   "schema": "periodic-gxtb-part-i-completed-evidence-requalification-v1",
   "status": "PASS",
   "tracked_checkout_clean_after_reproduction": true
