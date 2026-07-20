@@ -372,11 +372,11 @@
       "tracked_entry_count": 9
     },
     {
-      "entry_count": 26,
-      "manifest_sha256": "318e8acc99433381fa5d0273549578acccb017158c2b21329433e88c3313feec",
+      "entry_count": 30,
+      "manifest_sha256": "c3da74e2ad80a6774f5f745eb162877cc50e6621e1789e91c6adaeaca00a3a81",
       "name": "manifest:validation/explicit_cp2k_gamma_supercell_oracle_20260719/SHA256SUMS",
       "status": "PASS",
-      "tracked_entry_count": 26
+      "tracked_entry_count": 30
     },
     {
       "entry_count": 5,
