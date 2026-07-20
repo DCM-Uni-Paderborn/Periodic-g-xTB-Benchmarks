@@ -31,3 +31,13 @@ the much larger DMC-ICE13 deviations.
 The complete machine-readable comparison is in `verification.json`; raw
 inputs, outputs, executable and input hashes, and affinity evidence are kept
 under `inputs/` and `results/`.
+
+The reusable `scripts/make_gamma_supercell_input.py` generator reproduces the
+archived ice-XVII input and its verification record byte for byte.  It also
+provides the independently gated 288-atom ice-VII input under `inputs/VII/`.
+Ice VII is the phase with the largest residual in the complete direct-CLI
+versus native-CP2K matrix.  `scripts/run_vii_gamma_oracle.sh` therefore stages
+the corresponding explicit-Gamma calculation with the same qualified binary,
+input-hash gate, singleton CPU affinity, and conservative memory gate.  Its
+raw result and three-route comparison are added only after normal termination;
+the completed ice-XVII oracle above remains the current published result.

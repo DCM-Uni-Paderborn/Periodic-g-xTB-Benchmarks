@@ -1,4 +1,6 @@
-8b0d6ba1cea5ad686d1f9c123f16d7d334b5839daaebbe3b229f499e9189816a  ./README.md
+faa713cc0b532d9cb65863fa86d9d6d387e994093da381d5a9732b6bcd725066  ./README.md
+59ff85a356e531ec2bf0e47dd3e32064ab521cde1cf6f12e8d4b5a362248d8af  ./inputs/VII/input-verification.json
+6481b70e1a437e92247649e06ff90798358f0606dedf60c07b11e4ecab557a21  ./inputs/VII/input.inp
 b00cb9382bd70d0e6c9f3a1d1adb6026d3bc1bc34e070cb7a220f08156d92482  ./inputs/XVII/input-verification.json
 bfd43e54957647f6ad6b8df8c13f2b9dbc34cde41038ea55b4ec5c63c8abbec1  ./inputs/XVII/input.inp
 17446bfc858d189bb9e48745c7e14b470ba2b72bc56e7db50afa2864a101b8c7  ./inputs/direct_cli_k222/POSCAR
@@ -23,4 +25,6 @@ d21ea1a35f1fbb0ef322bef8637fe2d271e236ce26f764baf421c20b83114a80  ./results/nati
 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ./results/native_k222/launcher.log
 f83a1050634092bdb90a0ce34dae4046d2f7e5dabff6e92ea7a8ef34dbe6944c  ./scripts/compare_gamma_supercell_oracle.py
 3476072b98abd38d4e72fbfe9174021a6443027790ba053ec1e0f8f4161809b4  ./scripts/compare_native_symmetry_cli.py
+5035cb5b207f3e11c16913d421a8962d6475b50654bb133003f7c7aad3e7266f  ./scripts/make_gamma_supercell_input.py
+6826b41189c3888a3eea31d9a78eb5b85ffcceafe99d3eaf20e50eb5d92cdf2b  ./scripts/run_vii_gamma_oracle.sh
 f9cd68f5f38f9eae81f2987ca7353d3ed6a20a2b11f916212c32a5fe16006b7e  ./verification.json
