@@ -44,15 +44,14 @@ The uniform same-build MAE sequence is:
 
 All entries are in kJ mol-1 per H2O over the twelve non-reference phases and
 use ice Ih on the same mesh. The qualified phase-wise progress MAEs at mesh
-limits 6x6x6, 7x7x7, and 8x8x8 are 2.3596, 1.8643, and 1.7298 kJ mol-1 per
-H2O. The current phase-wise set through at most 8x8x8 has ME -1.6594,
-MAE 1.7298, RMSE 2.1812, and MaxAE 5.4315 kJ mol-1 per H2O.
-It is not the final adaptive result: nine of twelve phases currently satisfy
+limits 6x6x6, 7x7x7, and 8x8x8 are 2.3596, 1.8681, and 1.7410 kJ mol-1 per
+H2O. The current phase-wise set through at most 8x8x8 has ME -1.6125,
+MAE 1.7410, RMSE 2.1827, and MaxAE 5.4315 kJ mol-1 per H2O.
+It is not a fully phase-wise-converged result: ten of twelve phases satisfy
 the declared one-step condition
 `|R(N)-R(N-1)| <= 0.10 kJ mol-1 per H2O`.
-The Part-I sequence is currently capped at 8x8x8: ice VII and ice XIV remain
-unresolved at that cap, while only the still-missing sub-cap endpoint for ice
-XI remains scheduled.
+The Part-I sequence is capped at 8x8x8: ice VII and ice XIV remain unresolved
+at that cap, and no native endpoint is running or waiting.
 
 Machine-readable values are in
 [`DMC-ICE13/data/`](DMC-ICE13/data/). The recalculation package for an

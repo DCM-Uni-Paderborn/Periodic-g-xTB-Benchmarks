@@ -54,12 +54,11 @@ silently treating the cap as a convergence criterion.
 
 The current uniform MAEs are 163.8345, 88.6814, 34.0485, 11.3655, and
 4.3464 kJ mol-1 per H2O from Gamma through 5x5x5.  The qualified phase-wise
-progress values at mesh limits 6x6x6, 7x7x7, and 8x8x8 are 2.3596, 1.8643,
-and 1.7298 kJ mol-1 per H2O. The present phase-wise set through at most 8x8x8
-is not final because
-Ice VII, Ice XI, and Ice XIV have not yet passed; Ice II, Ice III, Ice IV,
-Ice VI, Ice VIII, Ice IX, Ice XIII, Ice XV, and Ice XVII do pass the declared
-adjacent-pair criterion. The table and statistics are regenerated from
+progress values at mesh limits 6x6x6, 7x7x7, and 8x8x8 are 2.3596, 1.8681,
+and 1.7410 kJ mol-1 per H2O. The present phase-wise set through at most 8x8x8
+is not final because Ice VII and Ice XIV have not passed. Ice II, Ice III,
+Ice IV, Ice VI, Ice VIII, Ice IX, Ice XI, Ice XIII, Ice XV, and Ice XVII do
+pass the declared adjacent-pair criterion. The table and statistics are regenerated from
 qualified raw endpoints with `scripts/evaluate_adaptive_set.py`, which always
 reports the delta of the selected endpoint rather than carrying forward the
 preceding mesh delta.

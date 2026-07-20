@@ -74,6 +74,11 @@ python3 scripts/summarize_author_results.py \
 
 ## Comparison tables
 
+- `CURRENT_DMC_ICE13_STATUS.md` is the human-readable build-consistent
+  phase table at the declared `8^3` cap, including the newly qualifying XI
+  `8^3` endpoint, current and previous mixed MAEs, and the same-mesh paper
+  comparator.
+
 - `tables/cp2k_native_absolute_energies_by_mesh.csv` contains every presently
   completed, hash-qualified CP2K-native absolute energy through `8^3`, the
   exact executed input, and its independently verified settings state.
