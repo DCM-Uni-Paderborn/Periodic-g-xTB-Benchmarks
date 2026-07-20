@@ -24,11 +24,13 @@ same-mesh or validated BvK-transfer acceptance marker.  The latter remains an
 exact restart route and is included because the formal selector test requests
 that mode explicitly.
 
-The already-running ice-Ih `9 x 9 x 9` endpoint predates checkpoint activation
-and is therefore not restartable.  It is left untouched.  The queued ice-VII,
-ice-XIV, ice-XI, and ice-XVII inputs write a checkpoint after every completed
-SCF cycle; once the first such cycle has completed, this validated procedure
-can resume them without redoing the completed cycles.
+At the time of this archived gate, the ice-Ih `9 x 9 x 9` endpoint predated
+checkpoint activation and was therefore not restartable.  That calculation was
+subsequently stopped and `9 x 9 x 9` removed from the active Part-I schedule.
+The ice-VII `9 x 9 x 9` input remains here only as immutable restart-safety
+evidence; it is not queued.  The active sub-cap ice-XIV and ice-XI inputs write
+a checkpoint after every completed SCF cycle, so the validated procedure can
+resume them after their first completed cycle without repeating it.
 
 Run the archived gate from the repository root with
 
