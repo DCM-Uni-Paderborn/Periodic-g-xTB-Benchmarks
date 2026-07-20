@@ -1,5 +1,5 @@
 {
-  "check_count": 41,
+  "check_count": 42,
   "checks": [
     {
       "command": [
@@ -365,6 +365,17 @@
       "status": "PASS"
     },
     {
+      "command": [
+        "bash",
+        "<repository>/validation/explicit_cp2k_gamma_supercell_oracle_20260719/scripts/evaluate_vii_gamma_oracle.sh"
+      ],
+      "name": "ice_vii_explicit_gamma_supercell_oracle",
+      "returncode": 0,
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "976616b08854febca9cf4741840486add49861f08170a69f1d3950df84db06a2"
+    },
+    {
       "entry_count": 9,
       "manifest_sha256": "06ee48de8ef9afdeed08da322196a50ee5df0452a3d28d88ebb16528373b25aa",
       "name": "manifest:validation/cecl3_tolerance_recheck_20260720/SHA256SUMS",
@@ -372,11 +383,11 @@
       "tracked_entry_count": 9
     },
     {
-      "entry_count": 31,
-      "manifest_sha256": "1bfb9bbcaf3a9d9d121783af4853c71355968b7663b8e14f2c6bceb097cddf88",
+      "entry_count": 38,
+      "manifest_sha256": "21bed60dc983ae118353b9ca81ba69a2bfa3f0f2ce84a8fafee0b2df866579db",
       "name": "manifest:validation/explicit_cp2k_gamma_supercell_oracle_20260719/SHA256SUMS",
       "status": "PASS",
-      "tracked_entry_count": 31
+      "tracked_entry_count": 38
     },
     {
       "entry_count": 5,
@@ -429,14 +440,14 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "378cef8b00d42ea1197b7f68686fb05d94d8b587d52a027ec344773f36e52f4e"
+      "stdout_sha256": "2d1f8831d549995fc4b37b3ebf4ee2dcc3b4009694a001aa34ec416d0bf9efb8"
     },
     {
       "all_completed_gates_pass": true,
-      "completed_gate_count": 30,
+      "completed_gate_count": 31,
       "name": "aggregate_semantics",
       "status": "PASS",
-      "verification_sha256": "378cef8b00d42ea1197b7f68686fb05d94d8b587d52a027ec344773f36e52f4e"
+      "verification_sha256": "2d1f8831d549995fc4b37b3ebf4ee2dcc3b4009694a001aa34ec416d0bf9efb8"
     }
   ],
   "interpretation": "Every completed Part-I verifier was executed again from a clean tracked checkout. Regenerated JSON, derived tables, aggregate gates, and selected SHA-256 manifests reproduce the archived evidence exactly. The remaining sub-cap DMC-ICE13 endpoints and the explicitly cap-limited phase are science calculations; any separately declared pending diagnostic remains outside the set of completed implementation-verification gates.",
