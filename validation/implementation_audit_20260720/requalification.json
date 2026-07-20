@@ -1,5 +1,5 @@
 {
-  "check_count": 42,
+  "check_count": 45,
   "checks": [
     {
       "command": [
@@ -376,6 +376,27 @@
       "stdout_sha256": "976616b08854febca9cf4741840486add49861f08170a69f1d3950df84db06a2"
     },
     {
+      "command": [
+        "python3",
+        "validation/dmc13_xvii_full_derivatives_20260718/verify_current_binary_requalification.py",
+        "validation/dmc13_xvii_full_derivatives_20260718/current_binary_requalification",
+        "--output",
+        "<temporary>/current-derivatives.json"
+      ],
+      "name": "dmc13_xvii_same_binary_derivatives",
+      "returncode": 0,
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "bf7d15deb2cd11b5cf418f242c2523ae0730bea895c6eb4b6732a2a8e158a9e8"
+    },
+    {
+      "actual_sha256": "bf7d15deb2cd11b5cf418f242c2523ae0730bea895c6eb4b6732a2a8e158a9e8",
+      "expected_sha256": "bf7d15deb2cd11b5cf418f242c2523ae0730bea895c6eb4b6732a2a8e158a9e8",
+      "json_identical": true,
+      "name": "current_binary_derivatives_reproduced_json",
+      "status": "PASS"
+    },
+    {
       "entry_count": 9,
       "manifest_sha256": "06ee48de8ef9afdeed08da322196a50ee5df0452a3d28d88ebb16528373b25aa",
       "name": "manifest:validation/cecl3_tolerance_recheck_20260720/SHA256SUMS",
@@ -411,6 +432,13 @@
       "tracked_entry_count": 33
     },
     {
+      "entry_count": 41,
+      "manifest_sha256": "8bb036c47dfbcdce2dbe8e43d60689d4de86aa18cf9703d277e4ae8155414d2b",
+      "name": "manifest:validation/dmc13_xvii_full_derivatives_20260718/CURRENT_BINARY_SHA256SUMS",
+      "status": "PASS",
+      "tracked_entry_count": 41
+    },
+    {
       "entry_count": 115,
       "manifest_sha256": "8ba3f7d8b274d6f5853cacae6e57fcd45f08d3c239007e60acdebcf196667008",
       "name": "manifest:validation/mstore_pbc_component_ablation_20260720/SHA256SUMS",
@@ -440,17 +468,17 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "2d1f8831d549995fc4b37b3ebf4ee2dcc3b4009694a001aa34ec416d0bf9efb8"
+      "stdout_sha256": "24a10f23d06dcf15d1a42a1ae53a9f53b2f94abd880326ccae3ce1ced473a8dc"
     },
     {
       "all_completed_gates_pass": true,
-      "completed_gate_count": 31,
+      "completed_gate_count": 32,
       "name": "aggregate_semantics",
       "status": "PASS",
-      "verification_sha256": "2d1f8831d549995fc4b37b3ebf4ee2dcc3b4009694a001aa34ec416d0bf9efb8"
+      "verification_sha256": "24a10f23d06dcf15d1a42a1ae53a9f53b2f94abd880326ccae3ce1ced473a8dc"
     }
   ],
-  "interpretation": "Every completed Part-I verifier was executed again from a clean tracked checkout. Regenerated JSON, derived tables, aggregate gates, and selected SHA-256 manifests reproduce the archived evidence exactly. The remaining sub-cap DMC-ICE13 endpoints and the explicitly cap-limited phase are science calculations; any separately declared pending diagnostic remains outside the set of completed implementation-verification gates.",
+  "interpretation": "Every completed Part-I verifier was executed again from a clean tracked checkout. Regenerated JSON, derived tables, aggregate gates, and selected SHA-256 manifests reproduce the archived evidence exactly. The remaining sub-cap DMC-ICE13 endpoints and the explicitly cap-limited phase are science calculations; all declared implementation diagnostics are complete.",
   "schema": "periodic-gxtb-part-i-completed-evidence-requalification-v1",
   "status": "PASS",
   "tracked_checkout_clean_after_reproduction": true
