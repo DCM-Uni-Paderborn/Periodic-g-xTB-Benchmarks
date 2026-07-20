@@ -65,7 +65,7 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "678ed0bd708ef07a17508a6a41d3826c6731ad553ae485a347f4fe3dd0cb9b15"
+      "stdout_sha256": "866cf15411642faa9ed845e781df684cf7e5097e20b4f1714fc61e550e0e7ded"
     },
     {
       "command": [
@@ -389,14 +389,14 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "c709f3de9db518c797bc4d59e3e04c374357abea56c478abf171a059bfad7110"
+      "stdout_sha256": "ea307757cc26329ee8a941f5a599fa7557d38517ebf2f1f885c593ddc47e5fe6"
     },
     {
       "all_completed_gates_pass": true,
       "completed_gate_count": 27,
       "name": "aggregate_semantics",
       "status": "PASS",
-      "verification_sha256": "c709f3de9db518c797bc4d59e3e04c374357abea56c478abf171a059bfad7110"
+      "verification_sha256": "ea307757cc26329ee8a941f5a599fa7557d38517ebf2f1f885c593ddc47e5fe6"
     }
   ],
   "interpretation": "Every completed Part-I verifier was executed again from a clean tracked checkout. Regenerated JSON, derived tables, aggregate gates, and selected SHA-256 manifests reproduce the archived evidence exactly. The remaining adaptive DMC-ICE13 endpoints are science calculations, not missing implementation-verification gates.",
