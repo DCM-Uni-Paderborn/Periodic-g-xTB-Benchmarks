@@ -12,7 +12,10 @@ checks and explains which conclusions follow from each comparison.
 that separates `mstore-inorganic` from `pbc`.  The reciprocal one-patch
 evidence under `evidence/wigner_seitz_self_image_attribution/` further
 identifies the Wigner--Seitz self-image-index correction as the dominant
-causal source of their different sparse-mesh exchange energies.
+causal source of their different sparse-mesh exchange energies.  The
+reciprocal test under `evidence/second_order_mic_attribution/` attributes the
+entire remaining source-state residual to the later minimum-image form of the
+periodic second-order Coulomb term, within SCC numerical resolution.
 
 The author `pbc` snapshot (`c932120...`) and the later pbc-derived integration
 provider (`15915c...`) are deliberately separate entries.  CP2K-native parity
@@ -109,7 +112,8 @@ against the canonical primitive POSCAR for every admitted native endpoint.
 The compact `evidence` directory contains the independently reproducible
 three-route `3^3` closure, the CP2K native-k versus explicit Gamma-BvK oracle,
 the exchange/ACP component ablation, and reciprocal Wigner--Seitz one-patch
-tests, including raw inputs, outputs, verification summaries, and hash
+and second-order minimum-image one-patch tests, including raw inputs, outputs,
+verification summaries, and hash
 manifests.  Historical table rows whose original raw output was not retained
 remain explicitly identified by the hashes stored in the tables.
 

@@ -14,6 +14,8 @@ their individual tolerances, the following independent checks:
 - operational restart recovery with singleton affinity, immutable checkpoint
   preservation, explicit CP2K acceptance markers, and the quoted-file-name
   negative control;
+- reciprocal source-patch attribution of the historical Wigner--Seitz
+  self-image error and the remaining second-order minimum-image model change;
 - Git-aware completeness and hash verification of the independent Seidler
   recalculation package, including all raw text outputs;
 - source-level and exact-arithmetic equivalence of every archived MacDonald

@@ -1,0 +1,4 @@
+provider,relative_energy_kj_mol_per_H2O
+pbc-correct,-300.067320330933
+mstore-wsc-corrected,-305.888458118205
+pbc-without-mic,-305.888469079012

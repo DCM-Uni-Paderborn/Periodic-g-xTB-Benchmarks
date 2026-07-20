@@ -1,5 +1,5 @@
 {
-  "completed_gate_count": 26,
+  "completed_gate_count": 27,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -165,10 +165,16 @@
       "sha256": "0657842e4029703b3ce19e33432a62909feb5f791213037da9cd25137e688c3a",
       "status": "PASS"
     },
+    "second_order_mic_attribution": {
+      "file": "validation/second_order_mic_attribution_20260720/verification.json",
+      "passed": true,
+      "sha256": "8cfb778fda14e1bde2bac99c06e0a83c60357a5833134e0e372c8c3f7bc0e1b5",
+      "status": "PASS"
+    },
     "seidler_package_tracking": {
       "file": "validation/seidler_package_tracking_20260720/verification.json",
       "passed": true,
-      "sha256": "e74ede8b377ae5c75743c9fb63da214d35bcf19627fd56b3e9eb8cde797e0c30",
+      "sha256": "b3a6e50c726d1d9b426bedb321f6c3876102ed7762a516793f66ffd85b541180",
       "status": "PASS"
     },
     "three_route_k333_closure": {

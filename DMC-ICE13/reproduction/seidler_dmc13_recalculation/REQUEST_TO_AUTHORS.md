@@ -59,6 +59,14 @@ Our present evidence is:
    reproduces the archived author-`pbc` Ih and VII energies within `2e-12 Eh`.
    Patch, raw outputs, hashes, and verifier are in
    `evidence/wigner_seitz_self_image_attribution/`.
+7. A second reciprocal one-patch build resolves the post-WSC residual.  With
+   the Wigner--Seitz correction present in both source states, reverting only
+   the later minimum-image second-order Coulomb variant on `pbc` changes the
+   ice-VII-minus-Ih value by `5.8211487 kJ mol-1 H2O-1`.  It then agrees with
+   WSC-corrected `mstore-inorganic` within
+   `1.10e-5 kJ mol-1 H2O-1`, explaining `99.99981%` of the residual.  The
+   inverse patch, matching build options, raw outputs, hashes, and verifier
+   are in `evidence/second_order_mic_attribution/`.
 
 Could you please run the following two independent series with your own clean
 builds?

@@ -1,0 +1,829 @@
+diff --git a/src/tblite/coulomb/charge/effective.f90 b/src/tblite/coulomb/charge/effective.f90
+index 7607e16..b415913 100644
+--- a/src/tblite/coulomb/charge/effective.f90
++++ b/src/tblite/coulomb/charge/effective.f90
+@@ -46,9 +46,11 @@ module tblite_coulomb_charge_effective
+       real(wp), allocatable :: hubbard_cn(:)
+       !> Exponent of radius dependent hubbard scaling
+       real(wp) :: hubbard_exp
+-       !> Exponent of Coulomb kernel
+-       real(wp) :: gexp
+-    contains
++      !> Exponent of Coulomb kernel
++      real(wp) :: gexp
++      !> Long-range cutoff
++      real(wp) :: rcut
++   contains
+       !> Evaluate Coulomb matrix
+       procedure :: get_coulomb_matrix
+       !> Evaluate uncontracted derivatives of Coulomb matrix
+@@ -107,6 +109,7 @@ subroutine new_effective_coulomb(self, mol, gexp, hubbard, &
+    end do
+ 
+    self%gexp = gexp
++   self%rcut = 25.0_wp
+ 
+    if (present(nshell)) then
+       allocate(self%hubbard(mshell, mol%nid))
+@@ -160,11 +163,11 @@ subroutine get_coulomb_matrix(self, mol, cache, amat)
+ 
+    amat(:, :) = 0.0_wp
+ 
+-    if (any(mol%periodic)) then
+-       call get_amat_3d(mol, self%nshell, self%offset, self%hubbard, &
+-          & self%hubbard_cn, self%hubbard_exp, self%average, self%gexp, &
+-          & cache%cn, cache%wsc, cache%alpha, amat)
+-    else
++   if (any(mol%periodic)) then
++      call get_amat_3d(mol, self%nshell, self%offset, self%hubbard, &
++         & self%hubbard_cn, self%hubbard_exp, self%average, self%gexp, &
++         & cache%cn, self%rcut, cache%wsc, cache%alpha, amat)
++   else
+       call get_amat_0d(mol, self%nshell, self%offset, self%hubbard, &
+          & self%hubbard_cn, self%hubbard_exp, self%average, self%gexp, & 
+          & cache%cn, amat)
+@@ -182,7 +185,8 @@ subroutine get_dir_trans(lattice, alpha, trans)
+    !> Translation vectors
+    real(wp), allocatable, intent(out) :: trans(:, :)
+ 
+-   call get_lattice_points([.true.], lattice, get_dir_cutoff(alpha, .false.), trans)
++   ! call get_lattice_points([.true.], lattice, get_dir_cutoff(alpha, .false.), trans)
++   call get_lattice_points([.true.], lattice, 25.0_wp, trans)
+ 
+ end subroutine get_dir_trans
+ 
+@@ -199,8 +203,8 @@ subroutine get_rec_trans(lattice, alpha, volume, trans)
+ 
+    real(wp) :: rec_lat(3, 3)
+ 
+-    rec_lat = twopi*transpose(matinv_3x3(lattice))
+-    call get_lattice_points([.true.], rec_lat, get_rec_cutoff(alpha, volume, .false.), trans)
++   rec_lat = twopi*transpose(matinv_3x3(lattice))
++   call get_lattice_points([.true.], rec_lat, get_rec_cutoff(alpha, volume, .false.), trans)
+ 
+ end subroutine get_rec_trans
+ 
+@@ -286,7 +290,7 @@ end subroutine get_amat_0d
+ 
+ !> Evaluate the coulomb matrix for 3D systems
+ subroutine get_amat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+-   & average, gexp, cn, wsc, alpha, amat)
++   & average, gexp, cn, rcut, wsc, alpha, amat)
+    !> Molecular structure data
+    type(structure_type), intent(in) :: mol
+    !> Number of shells per atom
+@@ -305,6 +309,8 @@ subroutine get_amat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+    real(wp), intent(in) :: gexp
+    !> Coordination number
+    real(wp), intent(in) :: cn(:)
++   !> Long-range cutoff
++   real(wp), intent(in) :: rcut
+    !> Wigner-Seitz cell
+    type(wignerseitz_cell), intent(in) :: wsc
+    !> Convergence factor
+@@ -314,7 +320,7 @@ subroutine get_amat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+ 
+    integer :: iat, jat, izp, jzp, img, ii, jj, ish, jsh
+    real(wp) :: sqrtcni, sqrtcnj, scalei, scalej
+-   real(wp) :: vec(3), gam, hubi, hubj, wsw, dtmp, rtmp, stmp, vol, aval
++   real(wp) :: vec(3), gam, hubi, hubj, wsw, dtmp, rtmp, vol, aval
+    real(wp), allocatable :: dtrans(:, :), rtrans(:, :)
+ 
+    vol = abs(matdet_3x3(mol%lattice))
+@@ -323,9 +329,9 @@ subroutine get_amat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+ 
+    !$omp parallel do default(none) schedule(runtime) shared(amat) &
+    !$omp shared(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp) &
+-   !$omp shared(average, gexp, cn, wsc, dtrans, rtrans, alpha, vol) &
++   !$omp shared(average, gexp, cn, wsc, dtrans, rtrans, alpha, vol, rcut) &
+    !$omp private(iat, izp, jat, jzp, ii, jj, ish, jsh, scalei, scalej) &
+-   !$omp private(sqrtcni, sqrtcnj, hubi, hubj, gam, wsw, vec, dtmp, rtmp, stmp, aval)
++   !$omp private(sqrtcni, sqrtcnj, hubi, hubj, gam, wsw, vec, dtmp, rtmp, aval)
+    do iat = 1, mol%nat
+       izp = mol%id(iat)
+       ii = offset(iat)
+@@ -339,18 +345,16 @@ subroutine get_amat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+          sqrtcnj = sqrt(cn(jat) + cn_reg**2) - cn_reg
+          scalej = 1.0_wp + hubbard_cn(jzp) * sqrtcnj
+          wsw = 1.0_wp / real(wsc%nimg(jat, iat), wp)
+-         vec = mol%xyz(:, iat) - mol%xyz(:, jat)
+-         call get_amat_dir_3d(vec, alpha, dtrans, dtmp)
+-         call get_amat_rec_3d(vec, vol, alpha, rtrans, rtmp)
+          do img = 1, wsc%nimg(jat, iat)
+             vec = mol%xyz(:, iat) - mol%xyz(:, jat) - wsc%trans(:, wsc%tridx(img, jat, iat))
++            call get_amat_rec_3d(vec, vol, alpha, 0.0_wp, rtrans, rtmp)
+             do ish = 1, nshell(iat)
+                hubi = hubbard(ish, izp) * scalei
+                do jsh = 1, nshell(jat)
+                   hubj = hubbard(jsh, jzp) * scalej
+                   gam = average%value(hubi, hubj)
+-                  call get_amat_wsc_3d(vec, gam, hubbard_exp, gexp, stmp)
+-                  aval = (dtmp + rtmp + stmp) * wsw
++                  call get_amat_dir_3d(vec, gam, hubbard_exp, gexp, rcut, alpha, dtrans, dtmp)
++                  aval = (dtmp + rtmp) * wsw
+                   amat(jj+jsh, ii+ish) = amat(jj+jsh, ii+ish) + aval
+                   amat(ii+ish, jj+jsh) = amat(ii+ish, jj+jsh) + aval
+                end do
+@@ -359,25 +363,23 @@ subroutine get_amat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+       end do
+ 
+       wsw = 1.0_wp / real(wsc%nimg(iat, iat), wp)
+-      vec = 0.0_wp
+-      call get_amat_dir_3d(vec, alpha, dtrans, dtmp)
+-      call get_amat_rec_3d(vec, vol, alpha, rtrans, rtmp)
+-      rtmp = rtmp - 2 * alpha / sqrtpi
+       do img = 1, wsc%nimg(iat, iat)
+          vec = wsc%trans(:, wsc%tridx(img, iat, iat))
++         call get_amat_rec_3d(vec, vol, alpha, 0.0_wp, rtrans, rtmp)
++         rtmp = rtmp - 2 * alpha / sqrtpi
+          do ish = 1, nshell(iat)
+             hubi = hubbard(ish, izp) * scalei
+             do jsh = 1, ish-1
+                hubj = hubbard(jsh, izp) * scalei
+                gam = average%value(hubi, hubj)
+-               call get_amat_wsc_3d(vec, gam, hubbard_exp, gexp, stmp)
+-               aval = (dtmp + rtmp + stmp + gam) * wsw
++               call get_amat_dir_3d(vec, gam, hubbard_exp, gexp, rcut, alpha, dtrans, dtmp)
++               aval = (dtmp + rtmp + gam) * wsw
+                amat(ii+jsh, ii+ish) = amat(ii+jsh, ii+ish) + aval
+                amat(ii+ish, ii+jsh) = amat(ii+ish, ii+jsh) + aval
+             end do
+             gam = hubi
+-            call get_amat_wsc_3d(vec, gam, hubbard_exp, gexp, stmp)
+-            aval = (dtmp + rtmp + stmp + gam) * wsw
++            call get_amat_dir_3d(vec, gam, hubbard_exp, gexp, rcut, alpha, dtrans, dtmp)
++            aval = (dtmp + rtmp + gam) * wsw
+             amat(ii+ish, ii+ish) = amat(ii+ish, ii+ish) + aval
+          end do
+       end do
+@@ -386,10 +388,18 @@ subroutine get_amat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+ 
+ end subroutine get_amat_3d
+ 
+-!> Calculate direct space Ewald contribution for a pair under 3D periodic boundary conditions
+-subroutine get_amat_dir_3d(rij, alp, trans, amat)
++!> Calculate real space contributions for a pair under 3D periodic boundary conditions
++subroutine get_amat_dir_3d(rij, gam, hubbard_exp, gexp, rcut, alp, trans, amat)
+    !> Distance between pair
+    real(wp), intent(in) :: rij(3)
++   !> Hubbard parameter
++   real(wp), intent(in) :: gam
++   !> Exponent of radius-dependent hubbard scaling
++   real(wp), intent(in) :: hubbard_exp
++   !> Exponent for interaction kernel
++   real(wp), intent(in) :: gexp
++   !> Long-range cutoff
++   real(wp), intent(in) :: rcut
+    !> Convergence factor
+    real(wp), intent(in) :: alp
+    !> Translation vectors to consider
+@@ -398,7 +408,7 @@ subroutine get_amat_dir_3d(rij, alp, trans, amat)
+    real(wp), intent(out) :: amat
+ 
+    integer :: itr
+-   real(wp) :: vec(3), r1
++   real(wp) :: vec(3), r1, tmp, fcut, kernel, damp
+ 
+    amat = 0.0_wp
+ 
+@@ -406,43 +416,29 @@ subroutine get_amat_dir_3d(rij, alp, trans, amat)
+       vec(:) = rij + trans(:, itr)
+       r1 = norm2(vec)
+       if (r1 < eps) cycle
+-      amat = amat + erfc(alp*r1)/r1
+-   end do
+ 
+-end subroutine get_amat_dir_3d
+-
+-!> Calculate Wigner-Seitz averaged short range correction for a pair
+-subroutine get_amat_wsc_3d(rij, gam, hubbard_exp, gexp, amat)
+-   !> Distance between pair
+-   real(wp), intent(in) :: rij(3)
+-   !> Hubbard parameter
+-   real(wp), intent(in) :: gam
+-   !> Exponent of radius-dependent hubbard scaling
+-   real(wp), intent(in) :: hubbard_exp
+-   !> Exponent for interaction kernel
+-   real(wp), intent(in) :: gexp
+-   !> Interaction matrix element
+-   real(wp), intent(out) :: amat
++      fcut = fsmooth(r1, rcut)
+ 
+-   real(wp) :: r1, damp
++      damp = exp(-gexp * hubbard_exp * r1)
+ 
+-   amat = 0.0_wp
++      kernel = 1.0_wp / (r1**gexp + gam**(-gexp) * damp * fcut)**(1.0_wp/gexp)
+ 
+-   r1 = norm2(rij)
+-   if (r1 < eps) return
+-   damp = exp(-gexp * hubbard_exp * r1)
+-   amat = 1.0_wp/(r1**gexp + gam**(-gexp) * damp)**(1.0_wp/gexp) - 1.0_wp/r1
++      tmp = kernel - erf(alp * r1) / r1
++      amat = amat + tmp
++   end do
+ 
+-end subroutine get_amat_wsc_3d
++end subroutine get_amat_dir_3d
+ 
+ !> Calculate reciprocal space contributions for a pair under 3D periodic boundary conditions
+-subroutine get_amat_rec_3d(rij, vol, alp, trans, amat)
++subroutine get_amat_rec_3d(rij, vol, alp, qpc, trans, amat)
+    !> Distance between pair
+    real(wp), intent(in) :: rij(3)
+    !> Volume of cell
+    real(wp), intent(in) :: vol
+    !> Convergence factor
+    real(wp), intent(in) :: alp
++   !> Pseudo-quadrupole contribution
++   real(wp), intent(in) :: qpc
+    !> Translation vectors to consider
+    real(wp), intent(in) :: trans(:, :)
+    !> Interaction matrix element
+@@ -466,6 +462,43 @@ subroutine get_amat_rec_3d(rij, vol, alp, trans, amat)
+ 
+ end subroutine get_amat_rec_3d
+ 
++pure function fsmooth(r1, rcut) result(fcut)
++   real(wp), intent(in) :: r1
++   real(wp), intent(in) :: rcut
++   real(wp) :: fcut
++
++   real(wp), parameter :: offset = 1.0_wp
++   real(wp), parameter :: c(*) = [-6.0_wp, 15.0_wp, -10.0_wp, 1.0_wp]
++   real(wp) :: xrel
++
++   if (r1 < rcut - offset) then
++      fcut = 1.0_wp
++   else if (r1 > rcut) then
++      fcut = 0.0_wp
++   else
++      xrel = (r1 - (rcut - offset)) / offset
++      fcut = c(1)*xrel**5 + c(2)*xrel**4 + c(3)*xrel**3 + c(4)
++   end if
++end function fsmooth
++
++pure function dsmooth(r1, rcut) result(dcut)
++   real(wp), intent(in) :: r1
++   real(wp), intent(in) :: rcut
++   real(wp) :: dcut
++
++   real(wp), parameter :: offset = 1.0_wp
++   real(wp), parameter :: c(*) = [-6.0_wp, 15.0_wp, -10.0_wp, 1.0_wp]
++   real(wp) :: xrel
++
++   if (r1 < rcut - offset .or. r1 > rcut) then
++      dcut = 0.0_wp
++   else
++      xrel = (r1 - (rcut - offset)) / offset
++      dcut = (5*c(1)*xrel**4 + 4*c(2)*xrel**3 + 3*c(3)*xrel**2) / offset
++   end if
++
++end function dsmooth
++
+ 
+ !> Evaluate uncontracted derivatives of Coulomb matrix
+ subroutine get_coulomb_derivs(self, mol, cache, qat, qsh, dadr, dadL, &
+@@ -496,13 +529,13 @@ subroutine get_coulomb_derivs(self, mol, cache, qat, qsh, dadr, dadL, &
+          if (allocated(self%refqsh)) then
+             call get_damat_3d(mol, self%nshell, self%offset, self%hubbard, & 
+                & self%hubbard_cn, self%hubbard_exp, self%average, self%gexp, &
+-               & cache%cn, cache%wsc, cache%alpha, qsh, &
++               & cache%cn, self%rcut, cache%wsc, cache%alpha, qsh, &
+                & dadr, dadL, atrace, dadcn, datracedcn, &
+                & self%refqsh, cache%sigma_self)
+          else
+             call get_damat_3d(mol, self%nshell, self%offset, self%hubbard, & 
+                & self%hubbard_cn, self%hubbard_exp, self%average, self%gexp, &
+-               & cache%cn, cache%wsc, cache%alpha, qsh, &
++               & cache%cn, self%rcut, cache%wsc, cache%alpha, qsh, &
+                & dadr, dadL, atrace, dadcn, datracedcn)
+          end if
+       else
+@@ -514,7 +547,7 @@ subroutine get_coulomb_derivs(self, mol, cache, qat, qsh, dadr, dadL, &
+       if (any(mol%periodic)) then
+          call get_damat_3d(mol, self%nshell, self%offset, self%hubbard, &
+             & self%hubbard_cn, self%hubbard_exp, self%average, self%gexp, &
+-            & cache%cn, cache%wsc, cache%alpha, qat, &
++            & cache%cn, self%rcut, cache%wsc, cache%alpha, qat, &
+             & dadr, dadL, atrace, dadcn, datracedcn)
+       else
+          call get_damat_0d(mol, self%nshell, self%offset, self%hubbard, &
+@@ -674,7 +707,7 @@ end subroutine get_damat_0d
+ 
+ !> Evaluate uncontracted derivatives of Coulomb matrix for 3D periodic system
+ subroutine get_damat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+-      & average, gexp, cn, wsc, alpha, qvec, dadr, dadL, atrace, dadcn, &
++      & average, gexp, cn, rcut, wsc, alpha, qvec, dadr, dadL, atrace, dadcn, &
+       & datracedcn, refqsh, sigma_self)
+    !> Molecular structure data
+    type(structure_type), intent(in) :: mol
+@@ -694,6 +727,8 @@ subroutine get_damat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+    real(wp), intent(in) :: gexp
+    !> Coordination number
+    real(wp), intent(in) :: cn(:)
++   !> Long-range cutoff
++   real(wp), intent(in) :: rcut
+    !> Wigner-Seitz image information
+    type(wignerseitz_cell), intent(in) :: wsc
+    !> Convergence factor for Ewald sum
+@@ -718,7 +753,7 @@ subroutine get_damat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+    integer :: iat, jat, izp, jzp, img, ii, jj, ish, jsh
+    real(wp) :: sqrtcni, sqrtcnj, scalei, scalej, dscaleidcn, dscalejdcn
+    real(wp) :: vol, gam, hubi, hubj, wsw, vec(3), dG(3), dS(3, 3)
+-   real(wp) :: dGd(3), dSd(3, 3), dGr(3), dSr(3, 3), dGw(3), dSw(3, 3)
++   real(wp) :: dGd(3), dSd(3, 3), dGr(3), dSr(3, 3)
+    real(wp) :: dhubidcn, dhubjdcn, dgami, dgamj, dtmpdgam
+    real(wp) :: isigma_self(3, 3)
+    real(wp), allocatable :: itrace(:, :), didr(:, :, :), didL(:, :, :)
+@@ -741,11 +776,11 @@ subroutine get_damat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+ 
+    !$omp parallel default(none) shared(atrace, dadr, dadL, dadcn, datracedcn) &
+    !$omp shared(mol, wsc, alpha, vol, dtrans, rtrans, qvec, nshell, offset) &
+-   !$omp shared(hubbard, hubbard_cn, hubbard_exp, cn, average, gexp) &
++   !$omp shared(hubbard, hubbard_cn, hubbard_exp, cn, average, gexp, rcut) &
+    !$omp shared(do_sigma_self, sigma_self, refqsh) &
+    !$omp private(iat, izp, jat, jzp, img, ii, jj, ish, jsh, wsw, vec, gam) &
+    !$omp private(scalei, scalej, sqrtcni, sqrtcnj, hubi, hubj, dG, dS) &
+-   !$omp private(dGr, dSr, dGd, dSd, dGw, dSw, itrace, didr, didL, didcn, ditracedcn, isigma_self) &
++   !$omp private(dGr, dSr, dGd, dSd, itrace, didr, didL, didcn, ditracedcn, isigma_self) &
+    !$omp private(dscaleidcn, dscalejdcn, dhubidcn, dhubjdcn, dgami, dgamj, dtmpdgam)
+    allocate(itrace, source=atrace)
+    allocate(didr, source=dadr)
+@@ -764,18 +799,14 @@ subroutine get_damat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+       do jat = 1, iat-1
+          jzp = mol%id(jat)
+          jj = offset(jat)
+-
+          ! Coordination number scaling
+          sqrtcnj = sqrt(cn(jat) + cn_reg**2) - cn_reg
+          scalej = 1.0_wp + hubbard_cn(jzp) * sqrtcnj
+          dscalejdcn = 0.5_wp * hubbard_cn(jzp) / (sqrtcnj + cn_reg)
+-
+-         wsw = 1.0_wp / real(wsc%nimg(jat, iat), wp)
+-         vec = mol%xyz(:, iat) - mol%xyz(:, jat)
+-         call get_damat_dir_3d(vec, alpha, dtrans, dGd, dSd)
+-         call get_damat_rec_3d(vec, vol, alpha, rtrans, dGr, dSr)
+          do img = 1, wsc%nimg(jat, iat)
+             vec = mol%xyz(:, iat) - mol%xyz(:, jat) - wsc%trans(:, wsc%tridx(img, jat, iat))
++            wsw = 1.0_wp / real(wsc%nimg(jat, iat), wp)
++            call get_damat_rec_3d(vec, vol, alpha, 0.0_wp, rtrans, dGr, dSr)
+             do ish = 1, nshell(iat)
+                hubi = hubbard(ish, izp) * scalei
+                dhubidcn = hubbard(ish, izp) * dscaleidcn
+@@ -785,9 +816,9 @@ subroutine get_damat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+                   gam = average%value(hubi, hubj)
+                   dgami = average%deriv(hubi, hubj) * dhubidcn
+                   dgamj = average%deriv(hubj, hubi) * dhubjdcn
+-                  call get_damat_wsc_3d(vec, gam, hubbard_exp, gexp, dGw, dSw, dtmpdgam)
+-                  dG = (dGd + dGr + dGw) * wsw
+-                  dS = (dSd + dSr + dSw) * wsw
++                  call get_damat_dir_3d(vec, gam, hubbard_exp, gexp, rcut, alpha, dtrans, dGd, dSd, dtmpdgam)
++                  dG = (dGd + dGr) * wsw
++                  dS = (dSd + dSr) * wsw
+                   itrace(:, ii+ish) = +dG*qvec(jj+jsh) + itrace(:, ii+ish)
+                   itrace(:, jj+jsh) = -dG*qvec(ii+ish) + itrace(:, jj+jsh)
+                   didr(:, iat, jj+jsh) = +dG*qvec(ii+ish) + didr(:, iat, jj+jsh)
+@@ -804,11 +835,9 @@ subroutine get_damat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+       end do
+ 
+       wsw = 1.0_wp / real(wsc%nimg(iat, iat), wp)
+-      vec = 0.0_wp
+-      call get_damat_dir_3d(vec, alpha, dtrans, dGd, dSd)
+-      call get_damat_rec_3d(vec, vol, alpha, rtrans, dGr, dSr)
+       do img = 1, wsc%nimg(iat, iat)
+          vec = wsc%trans(:, wsc%tridx(img, iat, iat))
++         call get_damat_rec_3d(vec, vol, alpha, 0.0_wp, rtrans, dGr, dSr)
+          do ish = 1, nshell(iat)
+             hubi = hubbard(ish, izp) * scalei
+             dhubidcn = hubbard(ish, izp) * dscaleidcn
+@@ -818,8 +847,8 @@ subroutine get_damat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+                gam = average%value(hubi, hubj)
+                dgami = average%deriv(hubi, hubj) * dhubidcn
+                dgamj = average%deriv(hubj, hubi) * dhubjdcn
+-               call get_damat_wsc_3d(vec, gam, hubbard_exp, gexp, dGw, dSw, dtmpdgam)
+-               dS = (dSd + dSr + dSw) * wsw
++               call get_damat_dir_3d(vec, gam, hubbard_exp, gexp, rcut, alpha, dtrans, dGd, dSd, dtmpdgam)
++               dS = (dSd + dSr) * wsw
+                didL(:, :, ii+jsh) = +dS*qvec(ii+ish) + didL(:, :, ii+jsh)
+                didL(:, :, ii+ish) = +dS*qvec(ii+jsh) + didL(:, :, ii+ish)
+                if (do_sigma_self) then
+@@ -832,8 +861,8 @@ subroutine get_damat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+                ditracedcn(ii+jsh) = -(dtmpdgam*wsw+wsw)*dgamj*qvec(ii+ish) + ditracedcn(ii+jsh)
+             end do
+             gam = hubi
+-            call get_damat_wsc_3d(vec, gam, hubbard_exp, gexp, dGw, dSw, dtmpdgam)
+-            dS = (dSd + dSr + dSw) * wsw
++            call get_damat_dir_3d(vec, gam, hubbard_exp, gexp, rcut, alpha, dtrans, dGd, dSd, dtmpdgam)
++            dS = (dSd + dSr) * wsw
+             didL(:, :, ii+ish) = +dS*qvec(ii+ish) + didL(:, :, ii+ish)
+             if (do_sigma_self) then
+                isigma_self(:, :) = isigma_self(:, :) + dS * qvec(ii+ish) * refqsh(ii+ish)
+@@ -857,10 +886,18 @@ subroutine get_damat_3d(mol, nshell, offset, hubbard, hubbard_cn, hubbard_exp, &
+ end subroutine get_damat_3d
+ 
+ 
+-!> Calculate direct space Ewald contribution for a pair under 3D periodic boundary conditions
+-subroutine get_damat_dir_3d(rij, alp, trans, dg, ds)
++!> Calculate real space contributions for a pair under 3D periodic boundary conditions
++subroutine get_damat_dir_3d(rij, gam, hubbard_exp, gexp, rcut, alp, trans, dg, ds, dgam)
+    !> Distance between pair
+    real(wp), intent(in) :: rij(3)
++   !> Undamped Hubbard parameter
++   real(wp), intent(in) :: gam
++   !> Exponent of radius-dependent Hubbard scaling
++   real(wp), intent(in) :: hubbard_exp
++   !> Exponent for interaction kernel
++   real(wp), intent(in) :: gexp
++   !> Long-range cutoff
++   real(wp), intent(in) :: rcut
+    !> Convergence factor
+    real(wp), intent(in) :: alp
+    !> Translation vectors to consider
+@@ -869,12 +906,16 @@ subroutine get_damat_dir_3d(rij, alp, trans, dg, ds)
+    real(wp), intent(out) :: dg(3)
+    !> Derivative with respect to strain deformations
+    real(wp), intent(out) :: ds(3, 3)
++   !> Derivative with respect to Hubbard parameter
++   real(wp), intent(out) :: dgam
+ 
+    integer :: itr
+-   real(wp) :: vec(3), r1, r2, dtmp, alp2
++   real(wp) :: vec(3), r1, r2, alp2, fcut, dcut
++   real(wp) :: damp, ainv, inv, kernel, gtmp, atmp
+ 
+    dg(:) = 0.0_wp
+    ds(:, :) = 0.0_wp
++   dgam = 0.0_wp
+ 
+    alp2 = alp*alp
+ 
+@@ -883,66 +924,42 @@ subroutine get_damat_dir_3d(rij, alp, trans, dg, ds)
+       r1 = norm2(vec)
+       if (r1 < eps) cycle
+       r2 = r1*r1
+-      dtmp = -erfc(alp*r1)/(r2*r1) - 2*alp*exp(-r2*alp2)/(sqrtpi*r2)
+-      dg(:) = dg + dtmp * vec
+-      ds(:, :) = ds + dtmp * spread(vec, 1, 3) * spread(vec, 2, 3)
+-   end do
+ 
+-end subroutine get_damat_dir_3d
++      fcut = fsmooth(r1, rcut)
++      dcut = dsmooth(r1, rcut)
+ 
+-!> Calculate Wigner-Seitz averaged short range correction for a pair
+-subroutine get_damat_wsc_3d(rij, gam, hubbard_exp, gexp, dg, ds, dgam)
+-   !> Distance between pair
+-   real(wp), intent(in) :: rij(3)
+-   !> Hubbard parameter
+-   real(wp), intent(in) :: gam
+-   !> Exponent of radius-dependent Hubbard scaling
+-   real(wp), intent(in) :: hubbard_exp
+-   !> Exponent for interaction kernel
+-   real(wp), intent(in) :: gexp
+-   !> Derivative with respect to cartesian displacements
+-   real(wp), intent(out) :: dg(3)
+-   !> Derivative with respect to strain deformations
+-   real(wp), intent(out) :: ds(3, 3)
+-   !> Derivative with respect to Hubbard parameter
+-   real(wp), intent(out) :: dgam
++      damp = exp(-gexp * hubbard_exp * r1)
++      ainv = gam**(-gexp) * damp
++      inv = 1.0_wp / (r1**gexp + ainv * fcut)
+ 
+-   real(wp) :: r1, r2, damp, ainv, inv, kernel, dtmp
++      ! kernel value
++      kernel = inv**(1.0_wp/gexp)
+ 
+-   dg(:) = 0.0_wp
+-   ds(:, :) = 0.0_wp
+-   dgam = 0.0_wp
+-
+-   r1 = norm2(rij)
+-   if (r1 < eps) return
+-   r2 = r1*r1
++      ! derivative w.r.t. the undamped Hubbard parameter gam
++      dgam = dgam + fcut * inv * kernel * gam**(-gexp-1.0_wp) * damp
++      gtmp = (-r1**(gexp-2.0_wp) + hubbard_exp * ainv * fcut / r1 &
++         & - ainv * dcut / (gexp * r1)) * inv * kernel
+ 
+-   damp = exp(-gexp * hubbard_exp * r1)
+-   ainv = gam**(-gexp) * damp
+-   inv = 1.0_wp / (r1**gexp + ainv)
+-   kernel = inv**(1.0_wp/gexp)
++      ! derivative of -erf(alp*r)/r
++      atmp = -2.0_wp*alp*exp(-r2*alp2)/(sqrtpi*r2) + erf(r1*alp)/(r2*r1)
+ 
+-   ! derivative w.r.t. the undamped Hubbard parameter gam
+-   dgam = inv * kernel * gam**(-gexp-1.0_wp) * damp
+-
+-   ! derivative of (kernel - 1/r) w.r.t. r1
+-   dtmp = (-r1**(gexp-2.0_wp) + hubbard_exp * ainv / r1) * inv * kernel &
+-      & + 1.0_wp/(r2*r1)
+-
+-   dg(:) = dtmp * rij
+-   ds(:, :) = dtmp * spread(rij, 1, 3) * spread(rij, 2, 3)
++      dg(:) = dg + (gtmp + atmp) * vec
++      ds(:, :) = ds + (gtmp + atmp) * spread(vec, 1, 3) * spread(vec, 2, 3)
++   end do
+ 
+-end subroutine get_damat_wsc_3d
++end subroutine get_damat_dir_3d
+ 
+ 
+ !> Calculate reciprocal space contributions for a pair under 3D periodic boundary conditions
+-subroutine get_damat_rec_3d(rij, vol, alp, trans, dg, ds)
++subroutine get_damat_rec_3d(rij, vol, alp, qpc, trans, dg, ds)
+    !> Distance between pair
+    real(wp), intent(in) :: rij(3)
+    !> Cell volume
+    real(wp), intent(in) :: vol
+    !> Convergence factor
+    real(wp), intent(in) :: alp
++   !> Pseudo-quadrupole contribution
++   real(wp), intent(in) :: qpc
+    !> Translation vectors to consider
+    real(wp), intent(in) :: trans(:, :)
+    !> Derivative with respect to cartesian displacements
+@@ -951,7 +968,7 @@ subroutine get_damat_rec_3d(rij, vol, alp, trans, dg, ds)
+    real(wp), intent(out) :: ds(3, 3)
+ 
+    integer :: itr
+-   real(wp) :: fac, vec(3), g2, gv, expk, sink, cosk, alp2
++   real(wp) :: fac, vec(3), g2, gv, expk, sink, cosk, alp2, fqp
+    real(wp), parameter :: unity(3, 3) = reshape(&
+       & [1, 0, 0, 0, 1, 0, 0, 0, 1], shape(unity))
+ 
+@@ -959,6 +976,7 @@ subroutine get_damat_rec_3d(rij, vol, alp, trans, dg, ds)
+    ds(:, :) = 0.0_wp
+    fac = 4*pi/vol
+    alp2 = alp*alp
++   fqp = 2*qpc*qpc
+ 
+    do itr = 1, size(trans, 2)
+       vec(:) = trans(:, itr)
+@@ -970,8 +988,8 @@ subroutine get_damat_rec_3d(rij, vol, alp, trans, dg, ds)
+       sink = sin(gv) * expk
+       dg(:) = dg - sink * vec
+       ds(:, :) = ds + cosk &
+-         & * ((2.0_wp/g2 + 0.5_wp/alp2) * spread(vec, 1, 3)*spread(vec, 2, 3) &
+-         &     - unity)
++         & * ((2.0_wp/g2 + 0.5_wp/alp2 + 0.5_wp*fqp) * spread(vec, 1, 3)*spread(vec, 2, 3) &
++         &     - unity * (1.0_wp + g2*fqp))
+    end do
+ 
+ end subroutine get_damat_rec_3d
+diff --git a/src/tblite/coulomb/charge/type.f90 b/src/tblite/coulomb/charge/type.f90
+index dd167ce..4391595 100644
+--- a/src/tblite/coulomb/charge/type.f90
++++ b/src/tblite/coulomb/charge/type.f90
+@@ -126,12 +126,12 @@ subroutine update(self, mol, cache)
+    call taint(cache, ptr)
+    call ptr%update(mol)
+ 
+-    if (any(mol%periodic)) then
+-       vol = abs(matdet_3x3(mol%lattice))
+-       call get_alpha(mol%lattice, ptr%alpha, .false.)
+-       ptr%rcut = get_dir_cutoff(ptr%alpha, .false.)
+-       ptr%kcut = get_rec_cutoff(ptr%alpha, vol, .false.)
+-    end if
++   if (any(mol%periodic)) then
++      vol = abs(matdet_3x3(mol%lattice))
++      call get_alpha(mol%lattice, ptr%alpha, .true.)
++      ptr%rcut = get_dir_cutoff(ptr%alpha, .true.)
++      ptr%kcut = get_rec_cutoff(ptr%alpha, vol, .true.)
++   end if
+ 
+    if (.not.allocated(ptr%amat)) then
+       allocate(ptr%amat(sum(self%nshell), sum(self%nshell)))
+diff --git a/src/tblite/coulomb/thirdorder/twobody.f90 b/src/tblite/coulomb/thirdorder/twobody.f90
+index 2be0408..1147622 100644
+--- a/src/tblite/coulomb/thirdorder/twobody.f90
++++ b/src/tblite/coulomb/thirdorder/twobody.f90
+@@ -163,9 +163,9 @@ subroutine update(self, mol, cache)
+ 
+    if (any(mol%periodic)) then
+       vol = abs(matdet_3x3(mol%lattice))
+-      call get_alpha(mol%lattice, ptr%alpha, .false.)
+-      ptr%rcut = get_dir_cutoff(ptr%alpha, .false.)
+-      ptr%kcut = get_rec_cutoff(ptr%alpha, vol, .false.)
++      call get_alpha(mol%lattice, ptr%alpha, .true.)
++      ptr%rcut = get_dir_cutoff(ptr%alpha, .true.)
++      ptr%kcut = get_rec_cutoff(ptr%alpha, vol, .true.)
+    end if
+ 
+    if (.not.allocated(ptr%taumat)) then
+diff --git a/test/cli/06a-gfn1xtb.json b/test/cli/06a-gfn1xtb.json
+index 65e989b..891f4ad 100644
+--- a/test/cli/06a-gfn1xtb.json
++++ b/test/cli/06a-gfn1xtb.json
+@@ -1,83 +1,83 @@
+ {
+   "version":  "0.6.0",
+-  "energy":    -1.9360924258990057E+01,
++  "energy":    -1.9359689234333409E+01,
+   "energies": [
+-    -3.3909958700822025E+00,
+-    -3.3909958751799838E+00,
+-    -3.3909961614968687E+00,
+-    -3.3909961751827211E+00,
+-    -4.8307847896851491E-01,
+-    -4.8307787861687213E-01,
+-    -4.8307917732393407E-01,
+-    -4.8307845534481492E-01,
+-    -4.8307780611617651E-01,
+-    -4.8307912787674967E-01,
+-    -4.8307763059309777E-01,
+-    -4.8307917165038072E-01,
+-    -4.8307907189057192E-01,
+-    -4.8307786250306400E-01,
+-    -4.8307765508975548E-01,
+-    -4.8307786107435352E-01
++    -3.3882994753839011E+00,
++    -3.3882994924685379E+00,
++    -3.3882998322689195E+00,
++    -3.3882998478650528E+00,
++    -4.8387446165010783E-01,
++    -4.8387357759491140E-01,
++    -4.8387511456321808E-01,
++    -4.8387444177569539E-01,
++    -4.8387349764898868E-01,
++    -4.8387506512869777E-01,
++    -4.8387334347407551E-01,
++    -4.8387514243682256E-01,
++    -4.8387502590124221E-01,
++    -4.8387377948561094E-01,
++    -4.8387337262320507E-01,
++    -4.8387376406442439E-01
+   ],
+   "virial": [
+-     1.1186913893866303E-01,
+-    -1.2086724378462647E-06,
+-    -2.9811878891049675E-07,
+-    -1.2086724378463100E-06,
+-     1.1180264865368550E-01,
+-     9.0711285078168079E-06,
+-    -2.9811878888267342E-07,
+-     9.0711285078168282E-06,
+-     1.1205480340311375E-01
++     1.4962603433149557E-01,
++    -1.2229218038058089E-06,
++    -2.8595765333953730E-07,
++    -1.2229218037988700E-06,
++     1.4954608503203040E-01,
++     8.7989340849467263E-06,
++    -2.8595765333945598E-07,
++     8.7989340849467805E-06,
++     1.4979718020465466E-01
+   ],
+   "gradient": [
+-    -7.6014424129884905E-03,
+-    -7.5405892936793208E-03,
+-    -7.6151541858812113E-03,
+-    -7.6015925767055192E-03,
+-     7.5390475001803191E-03,
+-     7.6171222890000240E-03,
+-     7.6170192737929346E-03,
+-    -7.5390020973978749E-03,
+-     7.6015667684794811E-03,
+-     7.6138757825501228E-03,
+-     7.5424541421784458E-03,
+-    -7.6015757709853443E-03,
+-     9.1196726380239710E-03,
+-     3.4007842798932197E-03,
+-    -4.9371966514440120E-03,
+-     3.4202218731797791E-03,
+-    -4.9591951538158008E-03,
+-     9.1588947309891641E-03,
+-    -4.9317703698806932E-03,
+-     9.1058993173394019E-03,
+-     3.4000924117370871E-03,
+-     9.1190073339316325E-03,
+-    -3.4003982474724711E-03,
+-     4.9367111692736904E-03,
+-     3.4208582376803217E-03,
+-     4.9600147030272575E-03,
+-    -9.1603441575896054E-03,
+-    -4.9316069252418361E-03,
+-    -9.1055852691155487E-03,
+-    -3.4000978057385162E-03,
+-    -3.4199280499574653E-03,
+-    -4.9572818215481559E-03,
+-    -9.1551650970345105E-03,
+-     4.9260768725384119E-03,
+-     9.0980624866314960E-03,
+-    -3.3957236111009825E-03,
+-     4.9275190440464089E-03,
+-    -9.1005885463503050E-03,
+-     3.3967865095975544E-03,
+-    -9.1289635760094818E-03,
+-    -3.4049857729160859E-03,
+-    -4.9422355302525690E-03,
+-    -3.4190989307238944E-03,
+-     4.9562477212112266E-03,
+-     9.1536838569172812E-03,
+-    -9.1298482142358889E-03,
+-     3.4051160518340628E-03,
+-     4.9426350740324095E-03
++    -7.2994865578723481E-03,
++    -7.2385716220302538E-03,
++    -7.3130260584274428E-03,
++    -7.2996183029251987E-03,
++     7.2370289492834144E-03,
++     7.3149867431103240E-03,
++     7.3150746506070140E-03,
++    -7.2369256567202276E-03,
++     7.2994586635512686E-03,
++     7.3119334790059517E-03,
++     7.2403776290652861E-03,
++    -7.2994566825565627E-03,
++     8.4070430255276038E-03,
++     3.8937410631208801E-03,
++    -4.8622469292404326E-03,
++     3.9131414698206054E-03,
++    -4.8844980841547146E-03,
++     8.4463400253224994E-03,
++    -4.8570011292917601E-03,
++     8.3932271304739854E-03,
++     3.8931314184713068E-03,
++     8.4063772391825900E-03,
++    -3.8933614623574771E-03,
++     4.8617629584242622E-03,
++     3.9137804039356501E-03,
++     4.8853232120871217E-03,
++    -8.4477969963376136E-03,
++    -4.8568375421540475E-03,
++    -8.3929111357230416E-03,
++    -3.8931310907929584E-03,
++    -3.9128280382394430E-03,
++    -4.8826038967235219E-03,
++    -8.4426247598977308E-03,
++     4.8512908086904751E-03,
++     8.3853905368848625E-03,
++    -3.8887767186432391E-03,
++     4.8527310646899321E-03,
++    -8.3879183345686101E-03,
++     3.8898452375211727E-03,
++    -8.4163598255731272E-03,
++    -3.8979586545944446E-03,
++    -4.8672953464590375E-03,
++    -3.9119982402909832E-03,
++     4.8815642478447921E-03,
++     8.4411413659056019E-03,
++    -8.4172425051131251E-03,
++     3.8980960781129924E-03,
++     4.8676881700483437E-03
+   ]
+ }
+diff --git a/test/unit/test_coulomb_charge.f90 b/test/unit/test_coulomb_charge.f90
+index a65bbda..206395a 100644
+--- a/test/unit/test_coulomb_charge.f90
++++ b/test/unit/test_coulomb_charge.f90
+@@ -106,7 +106,7 @@ subroutine collect_coulomb_charge(testsuite)
+       new_unittest("energy-shell-eff-gfn1-m07", test_e_effective_gfn1_m07_shell), &
+       new_unittest("energy-atom-eff-gfn2-m01", test_e_effective_gfn2_m02_atom), &
+       new_unittest("energy-atom-eff-gfn2-oxacb-pbc", test_e_effective_gfn2_oxacb_atom), &
+-      ! new_unittest("energy-atom-eff-gfn2-oxacb-sc", test_e_effective_gfn2_oxacb_sc_atom), &
++      new_unittest("energy-atom-eff-gfn2-oxacb-sc", test_e_effective_gfn2_oxacb_sc_atom), &
+       new_unittest("energy-shell-eff-gxtb-lih", test_e_effective_gxtb_lih_shell), &
+       new_unittest("energy-atom-eff-gxtb-m01", test_e_effective_gxtb_m01_atom), &
+       new_unittest("energy-shell-eff-gxtb-m01", test_e_effective_gxtb_m01_shell), &
+@@ -115,12 +115,12 @@ subroutine collect_coulomb_charge(testsuite)
+       new_unittest("energy-atom-gam-gfn1-m10", test_e_gamma_gfn1_m10_atom), &
+       new_unittest("energy-shell-gam-gfn2-m13", test_e_gamma_gfn2_m13_shell), &
+       new_unittest("energy-atom-eff-gxtb-oxacb-pbc", test_e_effective_gxtb_oxacb_atom), &
+-      ! new_unittest("energy-atom-eff-gxtb-oxacb-sc", test_e_effective_gxtb_oxacb_sc_atom), &
++      new_unittest("energy-atom-eff-gxtb-oxacb-sc", test_e_effective_gxtb_oxacb_sc_atom), &
+       ! new_unittest("energy-shell-eff-gxtb-co2-pbc + sc", test_e_effective_gxtb_co2_sc_shell), &
+-      ! new_unittest("energy-atom-eff-gfn2-nacl-sc", test_e_effective_gfn2_nacl_sc_atom), &
+-      ! new_unittest("energy-atom-eff-gxtb-nacl-sc", test_e_effective_gxtb_nacl_sc_atom), &
+-      ! new_unittest("energy-atom-eff-gfn2-zno-sc", test_e_effective_gfn2_zno_sc_atom), &
+-      ! new_unittest("energy-atom-eff-gxtb-zno-sc", test_e_effective_gxtb_zno_sc_atom), &
++      new_unittest("energy-atom-eff-gfn2-nacl-sc", test_e_effective_gfn2_nacl_sc_atom), &
++      new_unittest("energy-atom-eff-gxtb-nacl-sc", test_e_effective_gxtb_nacl_sc_atom), &
++      new_unittest("energy-atom-eff-gfn2-zno-sc", test_e_effective_gfn2_zno_sc_atom), &
++      new_unittest("energy-atom-eff-gxtb-zno-sc", test_e_effective_gxtb_zno_sc_atom), &
+       new_unittest("potential-atom-eff-gxtb-m01", test_p_effective_gxtb_m01_atom), &
+       new_unittest("potential-shell-eff-gxtb-m01", test_p_effective_gxtb_m01_shell), &
+       new_unittest("potential-atom-eff-gxtb-m02", test_p_effective_gxtb_m02_atom), &
+@@ -1694,9 +1694,9 @@ subroutine test_e_effective_gfn2_oxacb_atom(error)
+    real(wp), allocatable :: qsh(:)
+ 
+    call get_structure(mol, "X23", "oxacb")
+-   call test_generic(error, mol, qat, qsh, make_coulomb_e2, 0.10237790936564231_wp)
++   call test_generic(error, mol, qat, qsh, make_coulomb_e2, 9.3625573068822049E-002_wp)
+ 
+- end subroutine test_e_effective_gfn2_oxacb_atom
++end subroutine test_e_effective_gfn2_oxacb_atom
+ 
+ 
+ subroutine test_e_effective_gxtb_lih_shell(error)
+@@ -1836,7 +1836,7 @@ subroutine test_e_effective_gxtb_oxacb_atom(error)
+    real(wp), allocatable :: qsh(:)
+ 
+    call get_structure(mol, "X23", "oxacb")
+-   call test_generic(error, mol, qat, qsh, make_coulomb_e_gxtb, 9.6815007439836259E-002_wp)
++   call test_generic(error, mol, qat, qsh, make_coulomb_e_gxtb, 9.2758914072151838E-002_wp)
+ 
+ end subroutine test_e_effective_gxtb_oxacb_atom
+ 

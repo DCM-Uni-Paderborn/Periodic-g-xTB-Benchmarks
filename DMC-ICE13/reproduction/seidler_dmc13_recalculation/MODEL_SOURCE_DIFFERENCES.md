@@ -128,13 +128,23 @@ Applying only the inverse correction to the exact historical
 `mstore-inorganic` source changes the relative energy from -151.9480 to
 -305.8885 kJ mol-1 per H2O.  The two independently obtained shifts differ by
 only 0.3524 kJ mol-1 per H2O and each accounts for more than 95% of the full
-historical branch gap.  The remaining 5.8 kJ mol-1 per H2O is left assigned to
-the aggregate of all other source and dependency differences rather than
-overinterpreted.
+historical branch gap.
+
+The remaining post-WSC difference is also resolved by a reciprocal one-patch
+test.  Reverting only the later minimum-image variant of the second-order
+periodic Coulomb term on the author-`pbc` source changes the same relative
+energy from -300.0673203 to -305.8884691 kJ mol-1 per H2O.  The independently
+WSC-corrected `mstore-inorganic` result is -305.8884581 kJ mol-1 per H2O.
+The residual is therefore only -0.00001096 kJ mol-1 per H2O, so this second
+source change explains 99.99981% of the 5.82114 kJ mol-1 per H2O post-WSC
+difference.  Identical Release compiler and dependency settings, the inverse
+source patch, raw outputs, and the independent verifier are archived in
+`evidence/second_order_mic_attribution/`.
 
 Thus the apparently better sparse-mesh DMC error and convergence of the older
-lineage were largely caused by missing or misassigned periodic self-image
-exchange.  They are not evidence that the corrected `pbc` Hamiltonian or the
-CP2K-native interface is wrong.  The source patch, reciprocal raw outputs,
-binary/input hashes, and an independent 76-check verifier are archived in
-`evidence/wigner_seitz_self_image_attribution/`.
+lineage were dominated by missing or misassigned periodic self-image
+exchange; its small remaining difference is a separately identified
+second-order Hamiltonian change.  Neither is evidence that the corrected
+`pbc` Hamiltonian or the CP2K-native interface is wrong.  The Wigner--Seitz
+source patch, reciprocal raw outputs, binary/input hashes, and independent
+verifier are archived in `evidence/wigner_seitz_self_image_attribution/`.

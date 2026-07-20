@@ -37,6 +37,7 @@ STANDARD_VERIFIERS = (
     ("mstore_accuracy_equivalence", "validation/mstore_accuracy_equivalence_20260720/verify_mstore_accuracy_equivalence.py"),
     ("mstore_pbc_component_ablation", "validation/mstore_pbc_component_ablation_20260720/evaluate_component_matrix.py"),
     ("wigner_seitz_self_image_attribution", "validation/wigner_seitz_self_image_attribution_20260720/evaluate_wsc_attribution.py"),
+    ("second_order_mic_attribution", "validation/second_order_mic_attribution_20260720/evaluate_second_order_mic_attribution.py"),
     ("native_cli_full_parity", "validation/native_cli_full_parity_20260720/verify_native_cli_full_parity.py"),
     ("native_cli_inprocess_derivatives", "validation/native_cli_inprocess_derivatives_20260720/verify_inprocess_derivative_parity.py"),
     ("pbc_h0_attribution", "validation/pbc_h0_anisotropy_attribution_20260719/verify_h0_attribution.py"),
@@ -56,6 +57,7 @@ MANIFESTS = (
     "validation/gxtb_final_lowk_derivatives_20260719/SHA256SUMS",
     "validation/mstore_pbc_component_ablation_20260720/SHA256SUMS",
     "validation/wigner_seitz_self_image_attribution_20260720/SHA256SUMS",
+    "validation/second_order_mic_attribution_20260720/SHA256SUMS",
 )
 
 
@@ -295,7 +297,7 @@ def main() -> None:
     aggregate = json.loads((HERE / "verification.json").read_text(encoding="utf-8"))
     aggregate_valid = (
         aggregate.get("status") == "PASS"
-        and aggregate.get("completed_gate_count") == 26
+        and aggregate.get("completed_gate_count") == 27
         and all(
             item.get("passed") is True
             for item in aggregate.get("completed_gates", {}).values()

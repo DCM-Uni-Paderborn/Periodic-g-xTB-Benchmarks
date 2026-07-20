@@ -1,5 +1,5 @@
 {
-  "classification": "The exact current pbc-derived CLI and CP2K-native implementation are numerically equivalent for all 52 required parity points on the complete 1x1x1 through 4x4x4 matrices; mstore-inorganic and pbc are distinct model source states.",
+  "classification": "The exact current pbc-derived CLI and CP2K-native implementation are numerically equivalent for all 52 required parity points on the complete 1x1x1 through 4x4x4 matrices. Reciprocal source-patch tests attribute the historical mstore-inorganic/pbc sparse-mesh separation to the Wigner--Seitz exchange self-image correction plus the later minimum-image second-order Coulomb form, not to the CP2K interface.",
   "complete_branch_statistics": [
     {
       "mae_kj_mol_per_H2O": "163.834465429086",
@@ -186,6 +186,17 @@
     "maximum_relative_difference_kJ_mol_per_H2O": 1.705504558913e-05,
     "status": "PASS"
   },
+  "historical_branch_causality_k222_ice_VII_minus_Ih": {
+    "mstore_wsc_corrected_kj_mol_per_H2O": -305.8884581182048,
+    "pbc_correct_kj_mol_per_H2O": -300.0673203309328,
+    "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O": 5.821137787272057,
+    "pbc_without_minimum_image_second_order_kj_mol_per_H2O": -305.8884690790122,
+    "pbc_without_minimum_image_second_order_minus_mstore_wsc_corrected_kj_mol_per_H2O": -1.096080735481386e-05,
+    "post_wsc_residual_explained_percent": 99.99981170678731,
+    "second_order_mic_evidence": "evidence/second_order_mic_attribution/verification.json",
+    "status": "PASS",
+    "wigner_seitz_evidence": "evidence/wigner_seitz_self_image_attribution/verification.json"
+  },
   "schema_version": 1,
   "source_states": {
     "author_branch_heads_observed_utc": "2026-07-20T01:54:33Z",
@@ -204,6 +215,10 @@
     "historical_mstore_inorganic_macos_cli_sha256": "8df9fcc990f15600f0b99316602d1d6adfad43f85a2b0203ae14aad44ad4b1aa",
     "historical_mstore_inorganic_source": "be87ef681acd880705d83b8b1f7c19b58ca5ea85",
     "mstore_pbc_merge_base": "84274bd621502365ab62fad486162300d5534469",
+    "second_order_mic_evidence": "evidence/second_order_mic_attribution/verification.json",
+    "second_order_mic_reverted_commit": "083f22030f0be7abff3e3d27b35c141c04c2aa6d",
+    "second_order_mic_test_tree": "d56a0195324b25c99a8971987d13a10d9f9aa678",
+    "second_order_mic_test_cli_sha256": "1355ba96a0b5ae491a4dbe5015eda072b355f70e675ccb95c3411b16498a6827",
     "wigner_seitz_fix_commit": "30b04691e0afd1e89d7d74977e679a54fc32f288",
     "wigner_seitz_fix_evidence": "evidence/wigner_seitz_self_image_attribution/verification.json",
     "wigner_seitz_mstore_corrected_cli_sha256": "59ba4d5a646c6f6f1d1b5d6be008edea1007c49382b8a389247a8debc065f38a",

@@ -56,11 +56,15 @@ independent `save_tblite` evaluation is in
 The aggregate implementation gate is
 [`validation/implementation_audit_20260720/`](validation/implementation_audit_20260720/).
 Direct current-provider CLI/native parity passes for all 52 points through
-4x4x4.  Reciprocal one-patch builds additionally attribute more than 95% of
-the much larger historical `mstore-inorganic`/`pbc` sparse-mesh difference to
-the corrected Wigner--Seitz self-image index used by periodic exchange; the
-raw evidence is in
-[`validation/wigner_seitz_self_image_attribution_20260720/`](validation/wigner_seitz_self_image_attribution_20260720/).
+4x4x4.  Reciprocal one-patch builds attribute the dominant historical
+`mstore-inorganic`/`pbc` sparse-mesh difference to the corrected
+Wigner--Seitz self-image index used by periodic exchange.  A second reciprocal
+patch test attributes the complete post-WSC residual to the later
+minimum-image second-order Coulomb variant, leaving only
+`1.10e-5 kJ mol-1 H2O-1`.  The raw evidence is in
+[`validation/wigner_seitz_self_image_attribution_20260720/`](validation/wigner_seitz_self_image_attribution_20260720/)
+and
+[`validation/second_order_mic_attribution_20260720/`](validation/second_order_mic_attribution_20260720/).
 
 ### LC10
 
