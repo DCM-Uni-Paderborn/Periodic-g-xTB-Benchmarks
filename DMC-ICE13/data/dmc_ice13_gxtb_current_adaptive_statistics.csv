@@ -1,2 +1,2 @@
 scope,phase_count,converged_phase_count,largest_mesh_n,me_kj_mol_per_water,mae_kj_mol_per_water,rmse_kj_mol_per_water,maxae_kj_mol_per_water,final_result
-current_qualified_phasewise_set,12,9,8,-1.659445271496,1.729806142884,2.181245022323,5.431453685894,false
+current_qualified_phasewise_set,12,9,8,-1.619854713298,1.733618175732,2.181660123280,5.431453685894,false

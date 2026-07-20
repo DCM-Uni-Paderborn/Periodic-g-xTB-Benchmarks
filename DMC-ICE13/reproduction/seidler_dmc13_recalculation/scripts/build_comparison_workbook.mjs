@@ -104,7 +104,7 @@ const methodLabels = ["CP2K-native", "current pbc CLI", "author pbc", "mstore-in
 summary.getRange("A12:E12").values = [["Mesh", ...methodLabels]];
 const helperValues = [];
 const helperFormulas = [];
-for (const mesh of [2, 3]) {
+for (const mesh of [1, 2, 3]) {
   helperValues.push([mesh, null, null, null, null]);
   const formulas = [null];
   for (const method of methods) {
@@ -113,16 +113,16 @@ for (const mesh of [2, 3]) {
   }
   helperFormulas.push(formulas);
 }
-summary.getRange("A13:E14").values = helperValues;
-summary.getRange("A13:E14").formulas = helperFormulas;
+summary.getRange("A13:E15").values = helperValues;
+summary.getRange("A13:E15").formulas = helperFormulas;
 summary.getRange("A12:E12").format = {
   fill: navy,
   font: { bold: true, color: "#FFFFFF" },
 };
-summary.getRange("A12:E14").format.borders = { preset: "all", style: "thin", color: border };
-summary.getRange("B13:E14").format.numberFormat = "0.0000";
+summary.getRange("A12:E15").format.borders = { preset: "all", style: "thin", color: border };
+summary.getRange("B13:E15").format.numberFormat = "0.0000";
 
-const chart = summary.charts.add("line", summary.getRange("A12:E14"));
+const chart = summary.charts.add("line", summary.getRange("A12:E15"));
 chart.title = "Low-mesh DMC-ICE13 branch comparison";
 chart.hasLegend = true;
 chart.xAxis = { axisType: "textAxis" };

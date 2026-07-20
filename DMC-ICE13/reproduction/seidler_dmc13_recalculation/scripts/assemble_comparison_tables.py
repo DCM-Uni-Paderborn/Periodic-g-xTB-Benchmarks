@@ -18,6 +18,7 @@ PHASES = ("Ih", "II", "III", "IV", "VI", "VII", "VIII", "IX", "XI", "XIII", "XIV
 HARTREE_TO_KJMOL = 2625.4996394798254
 QUALIFIED_CP2K_SHA256 = "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f"
 QUALIFIED_PBC_CLI_SHA256 = "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a"
+QUALIFIED_MSTORE_CLI_SHA256 = "8df9fcc990f15600f0b99316602d1d6adfad43f85a2b0203ae14aad44ad4b1aa"
 PARITY_TOLERANCE_HA_PER_PRIMITIVE = 2.0e-7
 PARITY_RELATIVE_TOLERANCE_KJMOL_PER_WATER = 5.0e-5
 PARITY_CLI_ACCURACY = 0.1
@@ -72,14 +73,36 @@ def cp2k_energy(path: Path) -> float | None:
     if not path.is_file():
         return None
     value = None
-    ended = False
-    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+    last_start = -1
+    last_energy = -1
+    last_end = -1
+    for index, line in enumerate(
+        path.read_text(encoding="utf-8", errors="replace").splitlines()
+    ):
+        if "PROGRAM STARTED AT" in line:
+            last_start = index
         match = ENERGY_PATTERN.search(line)
         if match:
             value = float(match.group(1))
+            last_energy = index
         if "PROGRAM ENDED AT" in line:
-            ended = True
-    return value if ended else None
+            last_end = index
+    normally_ended_latest_segment = (
+        last_start >= 0
+        and last_energy > last_start
+        and last_end > last_energy
+    )
+    return value if normally_ended_latest_segment else None
+
+
+def cp2k_exit_status(path: Path) -> int | None:
+    """Return an archived integer process status, or None if it is unusable."""
+    if not path.is_file():
+        return None
+    text = path.read_text(encoding="utf-8", errors="replace").strip()
+    if not re.fullmatch(r"[-+]?\d+", text):
+        return None
+    return int(text)
 
 
 def cli_convergence(path: Path) -> tuple[float, float]:
@@ -232,6 +255,7 @@ def main() -> None:
             run = RAW / "cp2k_native" / mesh_id / phase
             output = run / "cp2k.out"
             energy = cp2k_energy(output)
+            exit_status = cp2k_exit_status(run / "exit_status")
             binary_hash = read_sidecar_hash(run / "binary.sha256")
             input_hash = read_sidecar_hash(run / "input.sha256")
             input_file = run / "input.inp"
@@ -241,6 +265,7 @@ def main() -> None:
             input_settings_qualified = cp2k_input_qualified(input_file, mesh)
             qualified = (
                 energy is not None
+                and exit_status == 0
                 and binary_hash == QUALIFIED_CP2K_SHA256
                 and input_hash_matches
                 and input_settings_qualified
@@ -258,6 +283,8 @@ def main() -> None:
                 "input_sha256": input_hash,
                 "input_file": input_file.relative_to(PACKAGE),
                 "input_settings_qualification": "PASS",
+                "exit_status": exit_status,
+                "normal_termination_qualification": "PASS",
                 "output_sha256": sha256(output),
                 "raw_output": output.relative_to(PACKAGE),
                 "qualification": "PASS",
@@ -288,6 +315,7 @@ def main() -> None:
             "mesh_n", "mesh_id", "phase", "water_molecules_primitive",
             "cp2k_native_energy_Ha_per_primitive", "cp2k_binary_sha256",
             "input_sha256", "input_file", "input_settings_qualification",
+            "exit_status", "normal_termination_qualification",
             "output_sha256", "raw_output", "qualification",
         ),
     )
@@ -563,9 +591,10 @@ def main() -> None:
     mstore_rows = []
     mstore_accuracy_by_key: dict[tuple[int, str], float] = {}
     mstore_root = RAW / "mstore_inorganic_cli"
-    for mesh in (2, 3):
+    for mesh in (1, 2, 3):
         energies = {}
         binary_hashes = set()
+        qualified_phases = set()
         for phase in PHASES:
             run = mstore_root / f"k{mesh}{mesh}{mesh}" / phase
             result = run / "result.json"
@@ -575,6 +604,10 @@ def main() -> None:
             energy = float(json.loads(result.read_text(encoding="utf-8"))["energy"])
             binary_hash = read_sidecar_hash(run / "binary.sha256")
             input_hash = read_sidecar_hash(run / "input.sha256")
+            archived_input = run / "POSCAR"
+            input_hash_consistent = (
+                archived_input.is_file() and input_hash == sha256(archived_input)
+            )
             energy_convergence, density_convergence = cli_convergence(run / "process.out")
             accuracy_from_energy = energy_convergence / 1.0e-6
             accuracy_from_density = density_convergence / 2.0e-5
@@ -586,6 +619,9 @@ def main() -> None:
             )
             energies[phase] = energy
             binary_hashes.add(binary_hash)
+            exact_binary = binary_hash == QUALIFIED_MSTORE_CLI_SHA256
+            if exact_binary and input_hash_consistent and accuracy_consistent:
+                qualified_phases.add(phase)
             mstore_accuracy_by_key[(mesh, phase)] = accuracy_from_energy
             mstore_absolute_rows.append({
                 "mesh_n": mesh,
@@ -603,9 +639,11 @@ def main() -> None:
                 "raw_result": result.relative_to(PACKAGE),
                 "qualification": (
                     "PASS"
-                    if binary_hash and accuracy_consistent
-                    else "MISSING_BINARY_HASH"
-                    if not binary_hash
+                    if exact_binary and input_hash_consistent and accuracy_consistent
+                    else "WRONG_BINARY_HASH"
+                    if not exact_binary
+                    else "INPUT_HASH_MISMATCH"
+                    if not input_hash_consistent
                     else "INCONSISTENT_ACCURACY"
                 ),
             })
@@ -627,7 +665,12 @@ def main() -> None:
                 "dmc_reference_kj_mol_per_H2O": f"{references[phase]:.6f}",
                 "error_kj_mol_per_H2O": f"{error:.12f}",
                 "absolute_error_kj_mol_per_H2O": f"{abs(error):.12f}",
-                "qualification": "PASS" if len(binary_hashes) == 1 else "MIXED_BINARY_HASHES",
+                "qualification": (
+                    "PASS"
+                    if binary_hashes == {QUALIFIED_MSTORE_CLI_SHA256}
+                    and qualified_phases == set(energies)
+                    else "UNQUALIFIED_INPUTS"
+                ),
             }
             mstore_rows.append(row)
             comparison_rows.append(row)
@@ -668,7 +711,7 @@ def main() -> None:
         (str(row["method"]), int(row["mesh_n"]), str(row["phase"])): row
         for row in comparison_rows
     }
-    for mesh in (2, 3):
+    for mesh in (1, 2, 3):
         for phase in PHASES[1:]:
             pbc = comparison_index.get(("current pbc CLI", mesh, phase))
             mstore = comparison_index.get(("historical mstore-inorganic CLI", mesh, phase))

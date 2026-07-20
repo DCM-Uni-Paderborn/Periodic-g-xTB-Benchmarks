@@ -18,18 +18,19 @@
  DBCSR| Split modifier for TAS multiplication algorithm                  1.0E+00 (U)
 
 
-  **** **** ******  **  PROGRAM STARTED AT               2026-07-18 18:29:48.142
+  **** **** ******  **  PROGRAM STARTED AT               2026-07-20 15:07:24.153
  ***** ** ***  *** **   PROGRAM STARTED ON                                 terok
  **    ****   ******    PROGRAM STARTED BY                              kuehne88
- ***** **    ** ** **   PROGRAM PROCESS ID                               2959459
-  **** **  *******  **  PROGRAM STARTED IN                        /home/kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                               3569566
+  **** **  *******  **  PROGRAM STARTED IN /home/kuehne88/work/gxtb-native-bvk-2
+                                           0260718/runs/k777-reduced/XI
 
  CP2K| version string:                 CP2K version 2026.2 (Development Version)
- CP2K| source code revision number:                                      fc1a7e7
+ CP2K| source code revision number:                                    8520b2e59
  CP2K| cp2kflags: omp parallel scalapack spglib s_dftd3 mctc-lib tblite tblite_g
  CP2K|            xtb
  CP2K| is freely available from                            https://www.cp2k.org/
- CP2K| Program compiled at                                   2026-07-18 15:12:39
+ CP2K| Program compiled at                                   2026-07-18 23:48:15
  CP2K| Program compiled on                                                 terok
  CP2K| Program compiled for                                               x86_64
  CP2K| Data directory path                            /usr/local/share/cp2k/data
@@ -66,12 +67,12 @@
  MEMORY| system memory details [Kb]
  MEMORY|                        rank 0           min           max       average
  MEMORY| MemTotal            528104804     528104804     528104804     528104804
- MEMORY| MemFree             206290276     206290276     206290276     206290276
+ MEMORY| MemFree             521748908     521748908     521748908     521748908
  MEMORY| Buffers                    20            20            20            20
- MEMORY| Cached                 403228        403228        403228        403228
- MEMORY| Slab                  1553520       1553520       1553520       1553520
- MEMORY| SReclaimable           273084        273084        273084        273084
- MEMORY| MemLikelyFree       206966608     206966608     206966608     206966608
+ MEMORY| Cached                3322464       3322464       3322464       3322464
+ MEMORY| Slab                  1800364       1800364       1800364       1800364
+ MEMORY| SReclaimable           525752        525752        525752        525752
+ MEMORY| MemLikelyFree       525597144     525597144     525597144     525597144
 
 
  *** WARNING in environment.F:1098 :: FFT library FFTW3 is not available. ***
@@ -146,40 +147,40 @@
   ------------------------------------------------------------------------------
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
-     1 GXTB-Raw    0.10E+01 2742.2     0.84856274      -611.0433452435 -6.11E+02
+     1 GXTB-Raw    0.10E+01 2726.2     0.84856274      -611.0433452435 -6.11E+02
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
-     2 GXTB-Simple 0.20E+00   75.8     0.09877405      -611.2279804378 -1.85E-01
+     2 GXTB-Simple 0.20E+00   64.5     0.09877405      -611.2279804378 -1.85E-01
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
-     3 GXTB-Simple 0.20E+00   75.6     0.08456163      -611.3579421471 -1.30E-01
+     3 GXTB-Simple 0.20E+00   64.5     0.08456163      -611.3579421471 -1.30E-01
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
-     4 GXTB-FDIIS  0.10E+01   75.9     0.41810130      -611.6514897255 -2.94E-01
+     4 GXTB-FDIIS  0.10E+01   64.5     0.41810130      -611.6514897255 -2.94E-01
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
-     5 GXTB-FDIIS  0.10E+01   75.5     0.01708214      -611.6518723558 -3.83E-04
+     5 GXTB-FDIIS  0.10E+01   64.3     0.01708214      -611.6518723558 -3.83E-04
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
-     6 GXTB-FDIIS  0.10E+01   75.2     0.00181708      -611.6518994526 -2.71E-05
+     6 GXTB-FDIIS  0.10E+01   64.4     0.00181708      -611.6518994526 -2.71E-05
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
-     7 GXTB-FDIIS  0.10E+01   76.6     0.00029145      -611.6518998209 -3.68E-07
+     7 GXTB-FDIIS  0.10E+01   64.3     0.00029145      -611.6518998209 -3.68E-07
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
-     8 GXTB-FDIIS  0.10E+01   79.2     0.00002885      -611.6518998246 -3.68E-09
+     8 GXTB-FDIIS  0.10E+01   64.5     0.00002885      -611.6518998246 -3.68E-09
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
-     9 GXTB-FDIIS  0.10E+01   79.6     0.00000039      -611.6518998246 -1.14E-12
+     9 GXTB-FDIIS  0.10E+01   64.6     0.00000039      -611.6518998246 -1.14E-12
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
-    10 GXTB-FDIIS  0.10E+01   78.2     0.00000002      -611.6518998246 -1.14E-13
+    10 GXTB-FDIIS  0.10E+01   64.5     0.00000002      -611.6518998246 -1.14E-13
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
-    11 GXTB-FDIIS  0.10E+01   76.9     3.0822E-09      -611.6518998246  1.14E-13
+    11 GXTB-FDIIS  0.10E+01   64.6     3.0822E-09      -611.6518998246  1.14E-13
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
  GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
-    12 GXTB-FDIIS  0.10E+01   77.7     7.8859E-10      -611.6518998246  0.00E+00
+    12 GXTB-FDIIS  0.10E+01   64.5     7.8859E-10      -611.6518998246  0.00E+00
 
   *** SCF run converged in    12 steps ***
 
@@ -229,7 +230,7 @@
  Host                                                  1           0           0
  -------------------------------------------------------------------------------
 
- MEMORY| Estimated peak process memory [MiB]                               54706
+ MEMORY| Estimated peak process memory [MiB]                               54709
 
  -------------------------------------------------------------------------------
  -                                                                             -
@@ -240,7 +241,7 @@
  ROUTINE             CALLS      AVE VOLUME [Bytes]
  MP_Group                1
  MP_Bcast           175452                      7.
- MP_Allreduce       245010                   2974.
+ MP_Allreduce       245022                   3641.
  MP_Sync                 1
  MP_Wait            146200
  MP_ISend           204680                   2639.
@@ -333,25 +334,26 @@
  -------------------------------------------------------------------------------
  SUBROUTINE                       CALLS  ASD         SELF TIME        TOTAL TIME
                                 MAXIMUM       AVERAGE  MAXIMUM  AVERAGE  MAXIMUM
- CP2K                                 1  1.0    0.209    0.209 3652.022 3652.022
- qs_energies                          1  2.0    0.002    0.002 3651.760 3651.760
- scf_env_do_scf                       1  3.0    0.000    0.000 3588.215 3588.215
- scf_env_do_scf_inner_loop           12  4.0   74.461   74.461 3588.215 3588.215
- qs_ks_update_qs_env                 12  5.0    0.000    0.000 2912.231 2912.231
- rebuild_ks_matrix                   12  6.0    0.000    0.000 2911.940 2911.940
- build_tblite_ks_matrix              12  7.0 2746.817 2746.817 2911.940 2911.940
- rskp_transform                   15112  6.6  628.106  628.106  628.106  628.106
- qs_scf_new_mos_kp                   12  5.0    0.000    0.000  434.975  434.975
- do_general_diag_kp                  12  6.0    1.392    1.392  434.975  434.975
- kpoint_density_transform            12  7.0    0.025    0.025  157.239  157.239
- transform_dmat                    4116  8.0  154.684  154.684  154.684  154.684
+ CP2K                                 1  1.0    0.222    0.222 3498.128 3498.128
+ qs_energies                          1  2.0    0.001    0.001 3497.846 3497.846
+ scf_env_do_scf                       1  3.0    0.000    0.000 3436.684 3436.684
+ scf_env_do_scf_inner_loop           12  4.0   65.246   65.246 3436.684 3436.684
+ qs_ks_update_qs_env                 12  5.0    0.000    0.000 2873.957 2873.957
+ rebuild_ks_matrix                   12  6.0    0.000    0.000 2873.678 2873.678
+ build_tblite_ks_matrix              12  7.0 2732.861 2732.861 2873.678 2873.678
+ rskp_transform                   15112  6.6  514.624  514.624  514.624  514.624
+ qs_scf_new_mos_kp                   12  5.0    0.000    0.000  355.207  355.207
+ do_general_diag_kp                  12  6.0    1.324    1.324  355.207  355.207
+ kpoint_density_transform            12  7.0    0.018    0.018  138.522  138.522
+ transform_dmat                    4116  8.0  136.279  136.279  136.279  136.279
  -------------------------------------------------------------------------------
 
  The number of warnings for this run is : 1
  
  -------------------------------------------------------------------------------
-  **** **** ******  **  PROGRAM ENDED AT                 2026-07-18 19:30:41.723
+  **** **** ******  **  PROGRAM ENDED AT                 2026-07-20 16:05:44.095
  ***** ** ***  *** **   PROGRAM RAN ON                                     terok
  **    ****   ******    PROGRAM RAN BY                                  kuehne88
- ***** **    ** ** **   PROGRAM PROCESS ID                               2959459
-  **** **  *******  **  PROGRAM STOPPED IN                        /home/kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                               3569566
+  **** **  *******  **  PROGRAM STOPPED IN /home/kuehne88/work/gxtb-native-bvk-2
+                                           0260718/runs/k777-reduced/XI

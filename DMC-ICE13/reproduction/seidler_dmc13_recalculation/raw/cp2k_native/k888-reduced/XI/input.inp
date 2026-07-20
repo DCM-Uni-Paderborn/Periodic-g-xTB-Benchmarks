@@ -39,7 +39,10 @@
         ALPHA 0.2
       &END MIXING
       &PRINT
-        &RESTART OFF
+        &RESTART ON
+          &EACH
+            QS_SCF 1
+          &END EACH
         &END RESTART
       &END PRINT
     &END SCF

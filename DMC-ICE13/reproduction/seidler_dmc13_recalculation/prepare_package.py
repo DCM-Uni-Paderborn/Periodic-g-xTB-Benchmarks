@@ -221,7 +221,7 @@ def verify_supercell_builder(rows: list[dict[str, object]]) -> None:
                         f"phase={phase} mesh={mesh} "
                         f"cell={cell_difference:.3e} coordinates={coordinate_difference:.3e}"
                     )
-                if mesh in (2, 3):
+                if mesh in (1, 2, 3):
                     archived = HERE / "raw" / "mstore_inorganic_cli" / f"k{mesh}{mesh}{mesh}" / phase / "POSCAR"
                     if not archived.is_file():
                         raise FileNotFoundError(f"missing archived BvK input: {archived}")

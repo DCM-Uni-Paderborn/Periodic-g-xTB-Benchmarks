@@ -43,6 +43,9 @@ silently treating the cap as a convergence criterion.
   selected mesh of every phase and every still-pending next endpoint;
 - `data/dmc_ice13_completion_ledger.csv`: deduplication ledger for newly
   qualified endpoints and the aggregate state reported after each completion;
+  `scripts/verify_completion_ledger.py` verifies chronology, unique endpoint
+  and notification identities, aggregate continuity, exact build hashes, and
+  every referenced raw input/output proof;
 - `data/dmc_ice13_gxtb_phase_vii_current.csv`: current Ice-VII sequence,
   including the qualified 7x7x7--8x8x8 adjacent pair;
 - `data/dmc_ice13_published_dft_absolute_energies.csv`: published DMC/DFT

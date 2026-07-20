@@ -19,6 +19,10 @@ EXPECTED_PHASES = (
 ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER = 0.10
 MAXIMUM_ADAPTIVE_MESH = 8
 PENDING_DIAGNOSTIC_ENDPOINTS = ()
+QUALIFIED_CP2K_SHA256 = (
+    "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f"
+)
+SEIDLER_PACKAGE = Path("DMC-ICE13/reproduction/seidler_dmc13_recalculation")
 
 
 def load_json(relative: str) -> dict:
@@ -137,6 +141,53 @@ def main() -> None:
     with (ROOT / native_absolute_relative).open(newline="", encoding="utf-8") as handle:
         native_absolute_rows = list(csv.DictReader(handle))
 
+    native_endpoint_checks = []
+    for row in native_absolute_rows:
+        output = ROOT / SEIDLER_PACKAGE / row["raw_output"]
+        status_file = output.parent / "exit_status"
+        output_text = (
+            output.read_text(encoding="utf-8", errors="replace")
+            if output.is_file()
+            else ""
+        )
+        passed = (
+            row.get("qualification") == "PASS"
+            and row.get("cp2k_binary_sha256") == QUALIFIED_CP2K_SHA256
+            and row.get("exit_status") == "0"
+            and row.get("normal_termination_qualification") == "PASS"
+            and status_file.is_file()
+            and status_file.read_text(encoding="utf-8", errors="replace").strip() == "0"
+            and "PROGRAM ENDED AT" in output_text
+            and output.is_file()
+            and sha256(output) == row.get("output_sha256")
+        )
+        native_endpoint_checks.append({
+            "mesh_n": int(row["mesh_n"]),
+            "phase": row["phase"],
+            "passed": passed,
+            "raw_output": row["raw_output"],
+        })
+    native_endpoint_qualification_pass = bool(native_endpoint_checks) and all(
+        item["passed"] for item in native_endpoint_checks
+    )
+    gate_results["native_endpoint_build_and_termination"] = {
+        "status": "PASS" if native_endpoint_qualification_pass else "FAIL",
+        "passed": native_endpoint_qualification_pass,
+        "file": native_absolute_relative,
+        "sha256": sha256(ROOT / native_absolute_relative),
+        "qualified_cp2k_sha256": QUALIFIED_CP2K_SHA256,
+        "endpoint_count": len(native_endpoint_checks),
+        "failed_endpoints": [
+            item for item in native_endpoint_checks if not item["passed"]
+        ],
+        "requirements": [
+            "exact qualified CP2K binary SHA-256",
+            "archived process exit status 0",
+            "PROGRAM ENDED AT marker",
+            "raw output SHA-256 matches table",
+        ],
+    }
+
     phases = [row["phase"] for row in rows]
     phase_matrix_valid = (
         len(phases) == len(EXPECTED_PHASES)
@@ -145,6 +196,27 @@ def main() -> None:
     )
     convergence_values_valid = all(
         row["phase_converged"].strip().lower() in {"true", "false"}
+        for row in rows
+    )
+    native_by_key = {
+        (int(row["mesh_n"]), row["phase"]): row
+        for row in native_absolute_rows
+    }
+    native_keys_unique = len(native_by_key) == len(native_absolute_rows)
+    same_mesh_phase_ih_pairs_valid = native_keys_unique and all(
+        (int(row["mesh_n"]), row["phase"]) in native_by_key
+        and (int(row["mesh_n"]), "Ih") in native_by_key
+        and native_by_key[(int(row["mesh_n"]), row["phase"])]["qualification"]
+        == "PASS"
+        and native_by_key[(int(row["mesh_n"]), "Ih")]["qualification"] == "PASS"
+        and native_by_key[(int(row["mesh_n"]), row["phase"])][
+            "cp2k_binary_sha256"
+        ]
+        == QUALIFIED_CP2K_SHA256
+        and native_by_key[(int(row["mesh_n"]), "Ih")]["cp2k_binary_sha256"]
+        == QUALIFIED_CP2K_SHA256
+        and native_by_key[(int(row["mesh_n"]), row["phase"])]["exit_status"] == "0"
+        and native_by_key[(int(row["mesh_n"]), "Ih")]["exit_status"] == "0"
         for row in rows
     )
     convergence_criterion_valid = convergence_values_valid
@@ -188,6 +260,7 @@ def main() -> None:
     )
     adaptive_match = (
         phase_matrix_valid
+        and same_mesh_phase_ih_pairs_valid
         and convergence_criterion_valid
         and final_state_consistent
         and calculated["phase_count"] == int(statistics["phase_count"])
@@ -221,6 +294,8 @@ def main() -> None:
             native_absolute_relative: sha256(ROOT / native_absolute_relative),
         },
         "phase_matrix_valid": phase_matrix_valid,
+        "native_endpoint_keys_unique": native_keys_unique,
+        "same_mesh_phase_and_ih_exact_build_pairs_valid": same_mesh_phase_ih_pairs_valid,
         "convergence_criterion_valid": convergence_criterion_valid,
         "adaptive_tolerance_kj_mol_per_water": ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER,
         "final_state_consistent": final_state_consistent,

@@ -25,7 +25,16 @@ QUALIFIED_CLI_SHA256 = (
 )
 
 STANDARD_VERIFIERS = (
+    (
+        "seidler_native_table_assembly",
+        "DMC-ICE13/reproduction/seidler_dmc13_recalculation/scripts/assemble_comparison_tables.py",
+    ),
+    (
+        "native_termination_filter",
+        "validation/implementation_audit_20260720/verify_native_termination_filter.py",
+    ),
     ("adaptive_progress", "DMC-ICE13/scripts/evaluate_adaptive_progress.py"),
+    ("completion_ledger", "DMC-ICE13/scripts/verify_completion_ledger.py"),
     ("accuracy_equivalence", "validation/accuracy_equivalence_20260720/verify_accuracy_equivalence.py"),
     ("binary_provider_identity", "validation/binary_provider_identity_20260720/verify_binary_provider_identity.py"),
     ("cecl3_tolerance_recheck", "validation/cecl3_tolerance_recheck_20260720/verify_cecl3_tolerance_recheck.py"),
@@ -341,7 +350,7 @@ def main() -> None:
     aggregate = json.loads((HERE / "verification.json").read_text(encoding="utf-8"))
     aggregate_valid = (
         aggregate.get("status") == "PASS"
-        and aggregate.get("completed_gate_count") == 32
+        and aggregate.get("completed_gate_count") == 33
         and all(
             item.get("passed") is True
             for item in aggregate.get("completed_gates", {}).values()
@@ -366,6 +375,26 @@ def main() -> None:
             + final_status
         )
 
+    pending_science = list(aggregate.get("pending_science_endpoints", []))
+    capped_unresolved = list(aggregate.get("capped_unresolved_phases", []))
+    if pending_science:
+        science_state = (
+            "The remaining sub-cap DMC-ICE13 endpoints are science calculations; "
+            "all declared implementation diagnostics are complete."
+        )
+    elif capped_unresolved:
+        science_state = (
+            "All endpoints permitted by the declared 8x8x8 Part-I cap are complete. "
+            "The capped phases "
+            + ", ".join(capped_unresolved)
+            + " remain explicitly non-converged rather than being mislabelled as passing."
+        )
+    else:
+        science_state = (
+            "All declared implementation diagnostics and DMC-ICE13 science endpoints "
+            "are complete."
+        )
+
     payload = {
         "schema": "periodic-gxtb-part-i-completed-evidence-requalification-v1",
         "status": "PASS",
@@ -375,9 +404,8 @@ def main() -> None:
         "interpretation": (
             "Every completed Part-I verifier was executed again from a clean tracked "
             "checkout. Regenerated JSON, derived tables, aggregate gates, and selected "
-            "SHA-256 manifests reproduce the archived evidence exactly. The remaining "
-            "sub-cap DMC-ICE13 endpoints and the explicitly cap-limited phases are science "
-            "calculations; all declared implementation diagnostics are complete."
+            "SHA-256 manifests reproduce the archived evidence exactly. "
+            + science_state
         ),
     }
     OUTPUT.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")

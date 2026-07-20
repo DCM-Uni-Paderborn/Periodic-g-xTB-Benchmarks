@@ -49,6 +49,8 @@ their individual tolerances, the following independent checks:
   nonperiodic CeCl3 finite-difference threshold false negative;
 - exact geometry equivalence and internal consistency of the current adaptive
   DMC-ICE13 statistics;
+- exact qualified-build identity, archived exit status zero, normal CP2K end
+  marker, and raw-output hash identity for every admitted native endpoint;
 - deterministic reconstruction of the qualified phase-wise progress values at
   mesh limits 6x6x6, 7x7x7, and 8x8x8 and identity of the latest snapshot with
   the current adaptive phase table;
@@ -74,7 +76,9 @@ python3 validation/implementation_audit_20260720/requalify_completed_evidence.py
 The resulting `requalification.json` records every invoked check and its
 deterministic output hashes.  The driver refuses to start from a dirty tracked
 checkout and fails if any regenerated evidence differs from the published
-files.
+files.  It also rebuilds the native energy tables, exercises synthetic and
+archived negative termination cases, and validates the chronological
+completion ledger against its referenced raw endpoint files.
 
 `verification.json` reports the completed qualification gates separately from
 the still-running science endpoints. The direct CLI/native diagnostic matrix

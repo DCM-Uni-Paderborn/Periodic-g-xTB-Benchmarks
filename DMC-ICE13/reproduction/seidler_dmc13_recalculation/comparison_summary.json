@@ -101,6 +101,15 @@
       "rmse_kj_mol_per_H2O": "21.957916768965"
     },
     {
+      "mae_kj_mol_per_H2O": "130.899820154311",
+      "maxae_kj_mol_per_H2O": "264.186245399110",
+      "me_kj_mol_per_H2O": "-127.290755088539",
+      "mesh_n": 1,
+      "method": "historical mstore-inorganic CLI",
+      "phase_count": 12,
+      "rmse_kj_mol_per_H2O": "155.257907693709"
+    },
+    {
       "mae_kj_mol_per_H2O": "48.710763704892",
       "maxae_kj_mol_per_H2O": "156.937965741842",
       "me_kj_mol_per_H2O": "-46.837497635311",

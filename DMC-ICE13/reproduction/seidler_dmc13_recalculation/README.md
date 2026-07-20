@@ -88,7 +88,8 @@ python3 scripts/summarize_author_results.py \
 - `tables/author_pbc_absolute_energies.csv` and its relative companion contain
   the complete author-`pbc` snapshot series at `2^3` and `3^3`.
 - `tables/mstore_inorganic_relative_energies_by_mesh.csv` contains the
-  independently rebuilt historical `mstore-inorganic` results.  A mesh enters
+  independently rebuilt historical `mstore-inorganic` results at Gamma,
+  `2^3`, and `3^3`.  A mesh enters
   the statistics table only after all twelve non-reference phases and Ih are
   present with one binary hash.
 - `tables/mstore_inorganic_absolute_energies.csv` retains the corresponding
@@ -111,9 +112,14 @@ python3 scripts/summarize_author_results.py \
 The `raw` directory retains the source outputs, exact evaluated CLI POSCARs,
 exact executed CP2K inputs, input/binary hashes, and exit states used to
 assemble the new tables.  Running `scripts/assemble_comparison_tables.py`
-rejects incomplete CP2K outputs, a non-matching input or executable hash, and
-inputs that do not use the qualified `ACCURACY`, SCC mixer, SCF threshold,
-MacDonald shift, and SPGLIB-reduced native-k settings.
+rejects incomplete CP2K outputs, any run without an archived integer exit
+status of zero, a non-matching input or executable hash, and inputs that do not
+use the qualified `ACCURACY`, SCC mixer, SCF threshold, MacDonald shift, and
+SPGLIB-reduced native-k settings.  The generated absolute-energy table exposes
+the exit status and normal-termination qualification for every admitted row.
+For concatenated output, the last program segment itself must contain the
+ordered start marker, final energy, and end marker; a new incomplete segment
+cannot inherit an older successful end marker.
 `prepare_package.py` independently converts scaled CP2K coordinates where
 needed and verifies cell vectors, species order, and Cartesian positions
 against the canonical primitive POSCAR for every admitted native endpoint.
@@ -139,6 +145,13 @@ author builds remain the decisive independent check.
 
 `comparison_workbook.xlsx` provides the same data in a convenient review
 workbook; CSV files remain the machine-readable source of truth.
+`dmc_ice13_small_mesh_energy_matrix.xlsx` is the compact two-panel view: one
+worksheet lists the published DMC cohesive energies beside qualified
+CP2K-native, current-`pbc` CLI, and historical `mstore-inorganic` absolute
+energies; the second lists their Ih-referenced relative energies.  The matrix
+covers Gamma through `4^3` for CP2K-native/current `pbc`, includes the
+historical `mstore-inorganic` Gamma, `2^3`, and `3^3` results, and leaves only
+the uncomputed historical `mstore-inorganic` `4^3` column explicitly blank.
 `comparison_summary.json` gives the compact machine-readable conclusion,
 source states, numerical parity checks, and complete-mesh statistics.
 

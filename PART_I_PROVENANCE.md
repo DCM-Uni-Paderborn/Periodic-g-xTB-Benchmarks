@@ -76,7 +76,11 @@ CP2K executable.
 The DMC reproduction package additionally stores the exact executed CP2K
 input beside every admitted native result.  Its assembler verifies the input
 digest and the qualified accuracy, SCC mixer, SCF threshold, mesh shift, and
-SPGLIB-reduction settings before an energy can enter a table.
+SPGLIB-reduction settings before an energy can enter a table.  Admission also
+requires the exact qualified CP2K executable hash, archived process exit status
+zero, and an ordered start--energy--end sequence in the last program segment.
+The aggregate audit independently requires every adaptive phase value and its
+same-mesh ice-Ih reference to satisfy those build and termination conditions.
 
 The manuscript and Supporting Information intentionally omit revision and
 artifact hashes; this repository is their canonical location.
