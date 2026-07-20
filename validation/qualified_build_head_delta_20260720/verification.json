@@ -1,6 +1,6 @@
 {
   "checks": {
-    "all_production_inputs_macdonald_mopac_no_restart": true,
+    "all_production_inputs_macdonald_mopac_cold_start": true,
     "cp2k_changed_files_exact": true,
     "cp2k_general_mesh_change_is_explicitly_guarded": true,
     "cp2k_restart_change_is_alias_projection_only": true,
@@ -18,20 +18,24 @@
     "tests/xTB/regtest-tblite-gxtb/TEST_FILES.toml"
   ],
   "cp2k_patch_sha256": "159f4edd58269d3019869da4d21f2fde662df274b1824bf3d898894cc8298b6c",
-  "interpretation": "The successor commits do not enter the archived DMC-ICE13 energy path; a full energy rerun is not required solely because the integration branches advanced.",
+  "interpretation": "The successor commits do not enter the archived DMC-ICE13 energy path; all production evaluations are cold-start MACDONALD/MOPAC calculations. A PRINT/RESTART section that only writes checkpoints does not read a restart and therefore does not activate the changed restart-transfer path. A full energy rerun is not required solely because the integration branches advanced.",
   "metadata_sha256": "74c2a70b45eaacbc795d669e5935f16f60c6af04c920c6dc680c90d973e64e02",
   "nonconforming_production_inputs": [],
   "production_input_count": 93,
   "production_input_mode_counts": {
+    "checkpoint_output_off": 92,
+    "checkpoint_output_on": 1,
     "macdonald": 93,
     "mopac_guess": 93,
-    "not_general": 93,
-    "restart_off": 93
+    "no_ext_restart": 93,
+    "no_restart_filename": 93,
+    "no_restart_guess": 93,
+    "not_general": 93
   },
   "save_tblite_changed_files": [
     "test/unit/test_hamiltonian.f90"
   ],
   "save_tblite_patch_sha256": "028be87b5880fd0e40ae21d7b3e35017782d34991db05606b3d1afc8be4bc96e",
-  "schema": "periodic-gxtb-qualified-build-head-delta-verification-v1",
+  "schema": "periodic-gxtb-qualified-build-head-delta-verification-v2",
   "status": "PASS"
 }

@@ -92,7 +92,7 @@
     "macdonald_gamma_bvk_mesh_equivalence": {
       "file": "validation/macdonald_bvk_mesh_equivalence_20260720/verification.json",
       "passed": true,
-      "sha256": "41287f02831a92afefacf75ba9602c87a9e645e8af9c05bd0916d3f3c6d78488",
+      "sha256": "617d29b09bc52defdfae337d7680604370e274fadae547cf2270ca9133f9f2ac",
       "status": "PASS"
     },
     "mstore_accuracy_equivalence": {
@@ -195,7 +195,7 @@
     "qualified_build_head_delta": {
       "file": "validation/qualified_build_head_delta_20260720/verification.json",
       "passed": true,
-      "sha256": "49aec878bd4d9e48471d198175f90140769dae89421b257425e25b079ee72231",
+      "sha256": "908550982948d53f3d7713c2784d38bc935df0e60980a427378f38ff496dc0f0",
       "status": "PASS"
     },
     "relative_energy_postprocessing": {

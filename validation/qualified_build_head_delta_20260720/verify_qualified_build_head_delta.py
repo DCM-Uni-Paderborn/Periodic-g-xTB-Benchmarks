@@ -62,8 +62,35 @@ def main() -> None:
             "macdonald": bool(re.search(r"^\s*SCHEME\s+MACDONALD\b", text, re.MULTILINE)),
             "not_general": not bool(re.search(r"^\s*SCHEME\s+GENERAL\b", text, re.MULTILINE)),
             "mopac_guess": bool(re.search(r"^\s*SCF_GUESS\s+MOPAC\b", text, re.MULTILINE)),
-            "restart_off": bool(re.search(r"^\s*&RESTART\s+OFF\b", text, re.MULTILINE)),
+            "no_ext_restart": not bool(
+                re.search(r"^\s*&EXT_RESTART\b", text, re.MULTILINE)
+            ),
+            "no_restart_guess": not bool(
+                re.search(r"^\s*SCF_GUESS\s+RESTART\b", text, re.MULTILINE)
+            ),
+            "no_restart_filename": not bool(
+                re.search(
+                    r"^\s*(?:WFN_)?RESTART_FILE_NAME\b",
+                    text,
+                    re.MULTILINE,
+                )
+            ),
+            "checkpoint_output_on": bool(
+                re.search(r"^\s*&RESTART\s+ON\b", text, re.MULTILINE)
+            ),
+            "checkpoint_output_off": bool(
+                re.search(r"^\s*&RESTART\s+OFF\b", text, re.MULTILINE)
+            ),
         }
+
+    energy_path_keys = (
+        "macdonald",
+        "not_general",
+        "mopac_guess",
+        "no_ext_restart",
+        "no_restart_guess",
+        "no_restart_filename",
+    )
 
     identity_path = ROOT / "validation" / "binary_provider_identity_20260720" / "verification.json"
     identity = json.loads(identity_path.read_text())
@@ -83,8 +110,11 @@ def main() -> None:
         "production_input_count_sufficient": (
             len(inputs) >= metadata["minimum_archived_production_input_count"]
         ),
-        "all_production_inputs_macdonald_mopac_no_restart": bool(inputs)
-        and all(all(values.values()) for values in input_checks.values()),
+        "all_production_inputs_macdonald_mopac_cold_start": bool(inputs)
+        and all(
+            all(values[key] for key in energy_path_keys)
+            for values in input_checks.values()
+        ),
         "qualified_binary_identity_gate_passes": identity.get("status") == "PASS",
         "qualified_provider_revision_matches": (
             identity.get("provider_revision")
@@ -97,14 +127,16 @@ def main() -> None:
     }
     status = "PASS" if all(checks.values()) else "FAIL"
     nonconforming_inputs = [
-        path for path, values in input_checks.items() if not all(values.values())
+        path
+        for path, values in input_checks.items()
+        if not all(values[key] for key in energy_path_keys)
     ]
     input_mode_counts = {
         key: sum(values[key] for values in input_checks.values())
-        for key in ("macdonald", "not_general", "mopac_guess", "restart_off")
+        for key in (*energy_path_keys, "checkpoint_output_on", "checkpoint_output_off")
     }
     result = {
-        "schema": "periodic-gxtb-qualified-build-head-delta-verification-v1",
+        "schema": "periodic-gxtb-qualified-build-head-delta-verification-v2",
         "status": status,
         "checks": checks,
         "cp2k_changed_files": cp2k_files,
@@ -117,7 +149,10 @@ def main() -> None:
         "metadata_sha256": sha256(HERE / "metadata.json"),
         "interpretation": (
             "The successor commits do not enter the archived DMC-ICE13 energy path; "
-            "a full energy rerun is not required solely because the integration branches advanced."
+            "all production evaluations are cold-start MACDONALD/MOPAC calculations. "
+            "A PRINT/RESTART section that only writes checkpoints does not read a "
+            "restart and therefore does not activate the changed restart-transfer path. "
+            "A full energy rerun is not required solely because the integration branches advanced."
         ),
     }
     (HERE / "verification.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")

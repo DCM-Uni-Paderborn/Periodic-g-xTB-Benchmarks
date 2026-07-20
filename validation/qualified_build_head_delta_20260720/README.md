@@ -12,10 +12,13 @@ The CP2K successor changes two source paths:
 - inconsistent redundant aliases in a written k-point restart are projected
   onto the canonical BvK subspace instead of aborting the checkpoint.
 
-The archived DMC-ICE13 production inputs use `MACDONALD`, `SCF_GUESS MOPAC`,
-and `RESTART OFF`.  Consequently, neither new CP2K branch enters those energy
-evaluations.  The `save_tblite` successor changes only the numerical tolerance
-of the inherited nonperiodic CeCl3 unit test; no provider source file changes.
+The archived DMC-ICE13 production inputs use `MACDONALD` and cold-start
+`SCF_GUESS MOPAC`; none contains `EXT_RESTART`, `SCF_GUESS RESTART`, or a
+restart-file input.  A `PRINT/RESTART ON` section is allowed because it only
+writes a checkpoint and does not activate the restart-transfer energy path.
+Consequently, neither new CP2K branch enters those energy evaluations.  The
+`save_tblite` successor changes only the numerical tolerance of the inherited
+nonperiodic CeCl3 unit test; no provider source file changes.
 
 This proves that updating the two branches does not by itself require a full
 DMC-ICE13 energy rerun.  The new restart behavior still receives separate
