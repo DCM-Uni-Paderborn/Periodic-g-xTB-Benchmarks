@@ -1,0 +1,22 @@
+range=be87ef681acd880705d83b8b1f7c19b58ca5ea85..c932120d2580811901de6a1fe3f89b943c251766
+paths=src/tblite/xtb/gxtb.f90 src/tblite/xtb/h0.f90 src/tblite/exchange src/tblite/acp src/tblite/coulomb/charge src/tblite/basis/q-vszp.f90 src/tblite/xtb/singlepoint.f90 src/tblite/wignerseitz.f90
+fe7479d094c63687de85a16841bb3fbe59430e9e g-xTB implementation 040426
+4bb996902209b6f0cc3ea006616193c47f5cb4ba g-xTB implementation 180426
+f9d230950fc5ceb2454cd89c4c2cad748fbbc1cd g-xTB implementation 210426
+b4b2b79506e31d0b962f9dc9dcb90c0dc3771908 Bugfix: Add regularization to the sqrt(CN) in the basis set construction
+1d06f6d0a973e78ae3522ddfd30b8b9056d5cdc1 Bugfix: raise error if scf does not converge
+c141b1f6c5fbb507a4d0060e6449c162f618e32a g-xTB implmenentation 080626 - consistent with tblite main branch
+694c80e4d3d42aef82995e812af627765bfa7707 fix 3d charge effective deriv
+bfc082a1ad042efa891d6ab81dc4f6d02a229f0e fix coulomb charge sigma
+975a19218be8b8ba0b6f2fb8944d244a3d57ede1 simplify self-interaction removal
+a88c76fc2d0f38c7d232c4b4d33b2c9ef75c8dcc Exchange (#6)
+1e5fb8bde39c5dff4bfd26bd2dd38539303dcb40 remove basis filter and alternative smoothing functions
+4a3bc7a8488b03536a5e6d2a93ba541575b723b9 fix h0 sigma
+593d55321cb3a04134d029d118345d77e6dcdf54 Add 3D ACPs (#7)
+fdec8480d15f6cc07d999e735eed01b716a8a7c4 acp gradient tests fixed
+69efcea732c0cd80b9dca52245e3005a2fc41755 pbc update (#8)
+620020b119e6bbb61fe5005d50f8d8a4c78f7513 rebase cleanup
+99056fdd3ccab5ccdcc1a6b499f3671a3360f2f6 small fix
+30b04691e0afd1e89d7d74977e679a54fc32f288 fix wsc self-image indexing
+083f22030f0be7abff3e3d27b35c141c04c2aa6d add mic variant to 2nd order term
+143046c5185aa6b8c82f9fca992e70b3a4082ae5 fix 3d exchange sigma

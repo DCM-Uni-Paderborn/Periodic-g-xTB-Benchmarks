@@ -1,6 +1,6 @@
 # Why `mstore-inorganic` and `pbc` are separate model states
 
-The historical `mstore-inorganic` revision and the later `pbc` revision are
+The older-lineage `mstore-inorganic` revision and the later `pbc` revision are
 not two front ends for an otherwise identical Hamiltonian.  The source history
 between the exact revisions recorded in `sources.json` contains model-relevant
 changes in all of the following areas:
@@ -50,6 +50,10 @@ git log --reverse --format='%H %s' \
      src/tblite/wignerseitz.f90
 ```
 
+The literal output for the branch tips observed on 2026-07-20 is retained in
+`model_path_commits_mstore_to_pbc.txt`; the independently queried remote tips
+are in `author_branch_heads_20260720.txt`.
+
 The numerical evidence in this package is decisive: the complete `2^3` and
 `3^3` relative-energy matrices differ by many kJ mol-1 per water molecule,
 whereas the current pbc-derived CLI and CP2K-native implementation agree near
@@ -59,13 +63,13 @@ CP2K interface to the later pbc-derived provider.
 
 | Source state | `2^3` MAE | `3^3` MAE |
 |---|---:|---:|
-| historical `mstore-inorganic` | 48.7108 | 17.8306 |
+| older-lineage `mstore-inorganic` | 48.7108 | 17.8306 |
 | current pbc-derived CLI | 88.6814 | 34.0485 |
 | CP2K-native with the same current provider | 88.6814 | 34.0485 |
 
 All entries are in kJ mol-1 per H2O.  Both branches have now been evaluated at
 CLI accuracy `0.1` for the complete `2^3` and `3^3` matrices.  In addition, an
-independently rebuilt historical `mstore-inorganic` executable was evaluated
+independently rebuilt `mstore-inorganic` executable was evaluated
 at `3^3` with both `0.1` and `0.01`; the largest absolute total-energy change
 was only `2.41e-12 Eh` per explicit supercell.  The corresponding controlled
 pbc-derived sensitivity test changes total energies by less than `2e-10 Eh`.
