@@ -11,6 +11,8 @@ their individual tolerances, the following independent checks:
   periodic virial using the qualified CP2K and CLI binaries;
 - strict same-mesh and validated regular-mesh restart equivalence against
   independent cold-start energies and SCF iteration counts;
+- Git-aware completeness and hash verification of the independent Seidler
+  recalculation package, including all raw text outputs;
 - source-level and exact-arithmetic equivalence of every archived MacDonald
   grid to the corresponding Gamma-supercell BvK folding grid;
 - build-level identity of the provider source, static provider archive, and

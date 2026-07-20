@@ -1,0 +1,54 @@
+xTB calculator
+ | self-consistent screened Coulomb + Pauli repulsion
+ | Coulomb electrostatics and tight-binding
+ |  * onsite first-order tight-binding
+ |  * isotropic Klopman-Ohno-Mataga-Nishimoto electrostatics
+ |  * erf-damped anisotropic electrostatics
+ |  * two-body third-order tight-binding
+ |  * onsite fourth-order tight-binding
+ | self-consistent DFT-D4Srev dispersion
+ | Mulliken and onsite Fock exchange + bond-order correlation
+
+core increment energy         -4.4433547021248E+04 Eh
+dispersion energy              9.6333191993509E-01 Eh
+molecular charge               0.0000000000000E+00 e
+number of electrons            5.1199999999682E+03 e
+number of unpaired electrons   0.0000000000000E+00 e
+wavefunction                   restricted
+integral cutoff                2.6907767250513E+01 bohr
+energy convergence             1.0000000000000E-07 Eh
+density convergence            2.0000000000000E-06 e
+
+------------------------------------------------------------
+  cycle        total energy    energy error   density error
+------------------------------------------------------------
+      1     -48917.94253131  -4.4853588E+03   0.0000000E+00
+      2     -48922.99196504  -5.0494337E+00   2.5668551E-03
+      3     -48926.24374964  -3.2517846E+00   2.0771629E-03
+      4     -48932.49978257  -6.2560329E+00   1.6829764E-03
+      5     -48932.57492536  -7.5142789E-02   9.4205441E-05
+      6     -48932.57706117  -2.1358082E-03   2.1627720E-05
+      7     -48932.57707887  -1.7697786E-05   3.0781664E-06
+      8     -48932.57707905  -1.8144783E-07   3.5118523E-07
+      9     -48932.57707907  -2.2257154E-08   5.0261601E-08
+------------------------------------------------------------
+
+electronic energy             -4.4999933897433E+03 Eh
+total energy                  -4.8932577079071E+04 Eh
+
+Post processing:
+ | Mayer-Wiberg bond orders
+
+ total:                           10 min,42.554 sec
+ - increment                              0.000 sec (  0%)
+ - repulsion                              0.429 sec (  0%)
+ - dispersion                      1 min,35.758 sec ( 14%)
+ - coulomb                         3 min,50.094 sec ( 35%)
+ - exchange                               0.908 sec (  0%)
+ - hamiltonian                            6.203 sec (  0%)
+ - acp                             1 min, 9.049 sec ( 10%)
+ - spin polarization                      0.000 sec (  0%)
+ - post processing                        2.360 sec (  0%)
+ - scc                             3 min,52.506 sec ( 36%)
+
+[Info] JSON dump of results written to 'tblite.json'

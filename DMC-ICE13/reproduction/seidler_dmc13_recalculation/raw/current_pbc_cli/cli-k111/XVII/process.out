@@ -1,0 +1,53 @@
+xTB calculator
+ | self-consistent screened Coulomb + Pauli repulsion
+ | Coulomb electrostatics and tight-binding
+ |  * onsite first-order tight-binding
+ |  * isotropic Klopman-Ohno-Mataga-Nishimoto electrostatics
+ |  * erf-damped anisotropic electrostatics
+ |  * two-body third-order tight-binding
+ |  * onsite fourth-order tight-binding
+ | self-consistent DFT-D4Srev dispersion
+ | Mulliken and onsite Fock exchange + bond-order correlation
+
+core increment energy         -4.1656450332420E+02 Eh
+dispersion energy              2.6129671797690E-03 Eh
+molecular charge               0.0000000000000E+00 e
+number of electrons            4.7999999999701E+01 e
+number of unpaired electrons   0.0000000000000E+00 e
+wavefunction                   restricted
+integral cutoff                2.6907767250513E+01 bohr
+energy convergence             1.0000000000000E-07 Eh
+density convergence            2.0000000000000E-06 e
+
+------------------------------------------------------------
+  cycle        total energy    energy error   density error
+------------------------------------------------------------
+      1     -459.6022806060  -4.3040390E+01   0.0000000E+00
+      2     -459.6336242585  -3.1343653E-02   2.7095594E-02
+      3     -459.6543626528  -2.0738394E-02   2.1926126E-02
+      4     -459.6967750363  -4.2412383E-02   1.7750482E-02
+      5     -459.6969830732  -2.0803694E-04   5.8459116E-04
+      6     -459.6969956044  -1.2531178E-05   1.7699857E-04
+      7     -459.6969956422  -3.7874294E-08   1.7030959E-05
+      8     -459.6969956430  -7.7960038E-10   7.0638806E-07
+------------------------------------------------------------
+
+electronic energy             -4.3135105286000E+01 Eh
+total energy                  -4.5969699564302E+02 Eh
+
+Post processing:
+ | Mayer-Wiberg bond orders
+
+ total:                                   0.306 sec
+ - increment                              0.000 sec (  0%)
+ - repulsion                              0.001 sec (  0%)
+ - dispersion                             0.168 sec ( 54%)
+ - coulomb                                0.019 sec (  6%)
+ - exchange                               0.000 sec (  0%)
+ - hamiltonian                            0.038 sec ( 12%)
+ - acp                                    0.073 sec ( 23%)
+ - spin polarization                      0.000 sec (  0%)
+ - post processing                        0.000 sec (  0%)
+ - scc                                    0.005 sec (  1%)
+
+[Info] JSON dump of results written to '/home/kuehne88/work/dmc13-cli-gamma-requalification-20260719/results/final_linux_cli_gamma/k111/XVII/result.json'

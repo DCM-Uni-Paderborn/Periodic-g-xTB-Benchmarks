@@ -1,5 +1,5 @@
 {
-  "completed_gate_count": 21,
+  "completed_gate_count": 22,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -139,6 +139,12 @@
       "file": "validation/relative_energy_postprocessing_20260720/verification.json",
       "passed": true,
       "sha256": "f66d2df11afce60f1cad51f263e9f3a627e55bb181c9bef256044b55504b72ae",
+      "status": "PASS"
+    },
+    "seidler_package_tracking": {
+      "file": "validation/seidler_package_tracking_20260720/verification.json",
+      "passed": true,
+      "sha256": "4916793bcc92f7faac1c88d50d10ff25bda0a79ae5420e62870057f65a3f1603",
       "status": "PASS"
     },
     "three_route_k333_closure": {
