@@ -48,6 +48,17 @@ Our present evidence is:
    `-148.1194 kJ mol-1 H2O-1`.  It collapses by `98.57%` when exchange is
    disabled, but by only `4.28%` when ACP alone is disabled.  The complete raw
    matrix and verifier are in `evidence/mstore_pbc_component_ablation/`.
+6. Reciprocal one-patch builds identify the dominant exchange-path difference
+   as the Wigner--Seitz self-image-index correction in `30b04691e0af`.  With
+   all other `pbc` build inputs held fixed, the correction shifts the
+   ice-VII-minus-Ih `2 x 2 x 2` energy by
+   `-153.5880 kJ mol-1 H2O-1`; applying only the same correction to the exact
+   `mstore-inorganic` source shifts it by `-153.9405 kJ mol-1 H2O-1`.  These
+   reciprocal shifts agree within `0.3524 kJ mol-1 H2O-1` and explain more
+   than 95% of the full branch gap.  The corrected same-build `pbc` executable
+   reproduces the archived author-`pbc` Ih and VII energies within `2e-12 Eh`.
+   Patch, raw outputs, hashes, and verifier are in
+   `evidence/wigner_seitz_self_image_attribution/`.
 
 Could you please run the following two independent series with your own clean
 builds?
@@ -85,6 +96,8 @@ Please also report:
 - the precise settings used for the lower DMC-ICE13 error quoted previously;
 - whether those values were produced by `mstore-inorganic`, `pbc`, or another
   source state.
+- whether your clean builds reproduce the reciprocal Wigner--Seitz attribution
+  in `evidence/wigner_seitz_self_image_attribution/`.
 
 The `c932120...` build should first be compared with
 `tables/author_pbc_absolute_energies.csv`.  The `15915c...` build should then

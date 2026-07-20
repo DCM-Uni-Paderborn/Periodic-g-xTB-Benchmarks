@@ -1,5 +1,5 @@
 {
-  "completed_gate_count": 25,
+  "completed_gate_count": 26,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -19,8 +19,8 @@
       "passed": true,
       "phase_matrix_valid": true,
       "sha256": {
-        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv": "b6e32e6ba8977382b2856f72c148e6880e52dac15b0e411a05f2449216a1cf9a",
-        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv": "4d705d8576ea06e4c1672e1b981f52bbd104d59b63d50dc08697f5f2f1437340",
+        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv": "0ffda372a03acab7d2d496cacb1fb877bce724dcbc9e728c7d1a33cc3c381437",
+        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv": "f7d59fc6afe5de83370803f3f065200c5c3e5912e4b0620f82fe3e4daff7b9bb",
         "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/cp2k_native_absolute_energies_by_mesh.csv": "3769f1b6c7b5cb614becf8156eab80127e9508c526cf2bd01def50d5abe744a0"
       },
       "status": "PASS"
@@ -46,7 +46,7 @@
     "dmc13_discrepancy_attribution": {
       "file": "validation/dmc13_discrepancy_attribution_20260720/verification.json",
       "passed": true,
-      "sha256": "6ba2ace1fea6f544e18937b78221e92f52c11c9917e54ec7ebe76026da54e14c",
+      "sha256": "678ed0bd708ef07a17508a6a41d3826c6731ad553ae485a347f4fe3dd0cb9b15",
       "status": "PASS"
     },
     "energy_component_ablation": {
@@ -176,16 +176,22 @@
       "passed": true,
       "sha256": "a4c48434b5d9cb76ef7b32ff7cb71ff41ae774df484e982b38b0f9aaba806a71",
       "status": "PASS"
+    },
+    "wigner_seitz_self_image_attribution": {
+      "file": "validation/wigner_seitz_self_image_attribution_20260720/verification.json",
+      "passed": true,
+      "sha256": "322e40607797176f39494655485b22f87347f33a6829135f030252df070ee8fe",
+      "status": "PASS"
     }
   },
   "current_adaptive_set": {
-    "converged_phase_count": 8,
+    "converged_phase_count": 9,
     "largest_mesh_n": 8,
-    "mae_kj_mol_per_water": 1.7478320054785,
+    "mae_kj_mol_per_water": 1.746596161474,
     "maxae_kj_mol_per_water": 5.431453685894,
-    "me_kj_mol_per_water": -1.6774711340908333,
+    "me_kj_mol_per_water": -1.6762352900863335,
     "phase_count": 12,
-    "rmse_kj_mol_per_water": 2.1949814063598367
+    "rmse_kj_mol_per_water": 2.194370359121619
   },
   "current_adaptive_set_is_final": false,
   "interpretation": "All completed exact implementation gates pass. The DMC-ICE13 adaptive statistic remains provisional until the listed phase-local endpoints finish.",
@@ -193,8 +199,7 @@
   "pending_science_endpoints": [
     "ice VII 9x9x9 after same-build ice Ih 9x9x9",
     "ice XI 7x7x7",
-    "ice XIV 8x8x8",
-    "ice XVII 7x7x7"
+    "ice XIV 8x8x8"
   ],
   "schema": "periodic-gxtb-part-i-implementation-audit-v1",
   "status": "PASS"

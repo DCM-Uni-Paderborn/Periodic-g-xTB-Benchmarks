@@ -9,7 +9,10 @@ CP2K-integration provider, CP2K-native Bloch k points, and the historical
 for an independent two-branch rerun; `EXPECTED_RESULTS.md` gives the acceptance
 checks and explains which conclusions follow from each comparison.
 `MODEL_SOURCE_DIFFERENCES.md` inventories the model-relevant source history
-that separates `mstore-inorganic` from `pbc`.
+that separates `mstore-inorganic` from `pbc`.  The reciprocal one-patch
+evidence under `evidence/wigner_seitz_self_image_attribution/` further
+identifies the Wigner--Seitz self-image-index correction as the dominant
+causal source of their different sparse-mesh exchange energies.
 
 The author `pbc` snapshot (`c932120...`) and the later pbc-derived integration
 provider (`15915c...`) are deliberately separate entries.  CP2K-native parity
@@ -104,8 +107,9 @@ needed and verifies cell vectors, species order, and Cartesian positions
 against the canonical primitive POSCAR for every admitted native endpoint.
 
 The compact `evidence` directory contains the independently reproducible
-three-route `3^3` closure and the CP2K native-k versus explicit Gamma-BvK
-oracle, including their raw inputs, outputs, verification summaries, and hash
+three-route `3^3` closure, the CP2K native-k versus explicit Gamma-BvK oracle,
+the exchange/ACP component ablation, and reciprocal Wigner--Seitz one-patch
+tests, including raw inputs, outputs, verification summaries, and hash
 manifests.  Historical table rows whose original raw output was not retained
 remain explicitly identified by the hashes stored in the tables.
 

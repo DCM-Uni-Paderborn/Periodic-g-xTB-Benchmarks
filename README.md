@@ -44,8 +44,8 @@ The uniform same-build MAE sequence is:
 
 All entries are in kJ mol-1 per H2O over the twelve non-reference phases and
 use ice Ih on the same mesh. The current phase-wise set through at most 8x8x8
-has ME -1.6775, MAE 1.7478, RMSE 2.1950, and MaxAE 5.4315 kJ mol-1 per H2O.
-It is not the final adaptive result: eight of twelve phases currently satisfy
+has ME -1.6762, MAE 1.7466, RMSE 2.1944, and MaxAE 5.4315 kJ mol-1 per H2O.
+It is not the final adaptive result: nine of twelve phases currently satisfy
 the declared one-step condition
 `|R(N)-R(N-1)| <= 0.10 kJ mol-1 per H2O`.
 
@@ -55,6 +55,12 @@ independent `save_tblite` evaluation is in
 [`DMC-ICE13/reproduction/seidler_dmc13_recalculation/`](DMC-ICE13/reproduction/seidler_dmc13_recalculation/).
 The aggregate implementation gate is
 [`validation/implementation_audit_20260720/`](validation/implementation_audit_20260720/).
+Direct current-provider CLI/native parity passes for all 52 points through
+4x4x4.  Reciprocal one-patch builds additionally attribute more than 95% of
+the much larger historical `mstore-inorganic`/`pbc` sparse-mesh difference to
+the corrected Wigner--Seitz self-image index used by periodic exchange; the
+raw evidence is in
+[`validation/wigner_seitz_self_image_attribution_20260720/`](validation/wigner_seitz_self_image_attribution_20260720/).
 
 ### LC10
 

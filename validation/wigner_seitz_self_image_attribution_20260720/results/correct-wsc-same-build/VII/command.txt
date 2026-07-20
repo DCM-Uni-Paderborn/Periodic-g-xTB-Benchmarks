@@ -1,0 +1,1 @@
+/Users/tkuehne/Documents/g-xTB/wsc-index-attribution-20260720/correct-wsc-same-build-tblite run --method gxtb --acc 0.1 --iterations 300 --no-restart --json result.json /Users/tkuehne/.cache/gxtb-part-i-working/DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/mstore_inorganic_cli/k222/VII/POSCAR 

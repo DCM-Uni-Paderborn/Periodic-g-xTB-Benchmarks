@@ -53,6 +53,7 @@ def main() -> None:
         "geometry_equivalence": "validation/geometry_equivalence_20260720/verification.json",
         "mstore_accuracy_equivalence": "validation/mstore_accuracy_equivalence_20260720/verification.json",
         "mstore_pbc_component_ablation": "validation/mstore_pbc_component_ablation_20260720/verification.json",
+        "wigner_seitz_self_image_attribution": "validation/wigner_seitz_self_image_attribution_20260720/verification.json",
         "dmc13_discrepancy_attribution": "validation/dmc13_discrepancy_attribution_20260720/verification.json",
         "three_route_k333_closure": "validation/three_route_k333_closure_20260719/summary.json",
         "lowk_derivatives_and_partial_pbc": "validation/gxtb_final_lowk_derivatives_20260719/verification.reproduced.json",

@@ -30,12 +30,14 @@ their individual tolerances, the following independent checks:
 - full-grid, K290, SPGLIB, and time-reversal equivalence;
 - analytic energy, force, virial, and stress paths, including 1D and 2D PBC;
 - exchange/ACP component ablations and model-provider attribution;
+- reciprocal Wigner--Seitz one-patch builds that reproduce the author `pbc`
+  energies and explain more than 95% of the historical sparse-mesh branch gap;
 - source-level periodic Hamiltonian, exchange, ACP, Coulomb, dispersion,
   repulsion, and Wigner--Seitz tests;
 - the complete 75-case Hamiltonian group after resolving the inherited
   nonperiodic CeCl3 finite-difference threshold false negative;
 - exact geometry equivalence and internal consistency of the current adaptive
-  DMC-ICE13 statistics.
+  DMC-ICE13 statistics;
 - independent reconstruction of the numerical hierarchy separating the
   CLI/native residual, pbc source-state evolution, `mstore-inorganic` model
   evolution, and the still-provisional dense-mesh DMC statistic.

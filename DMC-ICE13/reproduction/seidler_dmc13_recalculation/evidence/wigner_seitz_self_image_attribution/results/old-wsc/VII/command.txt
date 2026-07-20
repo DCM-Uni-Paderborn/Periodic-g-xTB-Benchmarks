@@ -1,0 +1,1 @@
+/tmp/save_tblite_pbc_wsc_old_20260720/build5/app/tblite run --method gxtb --acc 0.1 --iterations 300 --no-restart --json result.json /Users/tkuehne/.cache/gxtb-part-i-working/DMC-ICE13/reproduction/seidler_dmc13_recalculation/raw/mstore_inorganic_cli/k222/VII/POSCAR 

@@ -111,3 +111,30 @@ fixed-density energy decomposition.  Complete raw outputs, input and binary
 hashes, parameters, and the independent verifier are included under
 `evidence/mstore_pbc_component_ablation/` and in the repository-level
 validation directory of the same name.
+
+The exchange classification has also been resolved at source-line level by
+reciprocal one-patch builds.  In the historical `get_pairs` routine, removal
+of the zero-distance origin compacted the distance array, but the selected
+position in that compact array was returned as though it were the original
+translation index.  For periodic self-images, exchange consequently received
+the zero translation or another incorrect image.  Revision `30b04691e0af`
+introduces an `orig` map and returns `orig(pos)`.
+
+For ice VII relative to same-mesh Ih at `2^3`, replacing only this routine in
+an otherwise identical author-`pbc` build changes the relative energy from
+-146.4793 to -300.0673 kJ mol-1 per H2O.  The corrected same-build result
+reproduces the archived author-`pbc` absolute energies within `2e-12 Eh`.
+Applying only the inverse correction to the exact historical
+`mstore-inorganic` source changes the relative energy from -151.9480 to
+-305.8885 kJ mol-1 per H2O.  The two independently obtained shifts differ by
+only 0.3524 kJ mol-1 per H2O and each accounts for more than 95% of the full
+historical branch gap.  The remaining 5.8 kJ mol-1 per H2O is left assigned to
+the aggregate of all other source and dependency differences rather than
+overinterpreted.
+
+Thus the apparently better sparse-mesh DMC error and convergence of the older
+lineage were largely caused by missing or misassigned periodic self-image
+exchange.  They are not evidence that the corrected `pbc` Hamiltonian or the
+CP2K-native interface is wrong.  The source patch, reciprocal raw outputs,
+binary/input hashes, and an independent 76-check verifier are archived in
+`evidence/wigner_seitz_self_image_attribution/`.

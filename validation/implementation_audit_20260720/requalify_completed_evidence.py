@@ -36,6 +36,7 @@ STANDARD_VERIFIERS = (
     ("macdonald_bvk_mesh_equivalence", "validation/macdonald_bvk_mesh_equivalence_20260720/verify_macdonald_bvk_mesh.py"),
     ("mstore_accuracy_equivalence", "validation/mstore_accuracy_equivalence_20260720/verify_mstore_accuracy_equivalence.py"),
     ("mstore_pbc_component_ablation", "validation/mstore_pbc_component_ablation_20260720/evaluate_component_matrix.py"),
+    ("wigner_seitz_self_image_attribution", "validation/wigner_seitz_self_image_attribution_20260720/evaluate_wsc_attribution.py"),
     ("native_cli_full_parity", "validation/native_cli_full_parity_20260720/verify_native_cli_full_parity.py"),
     ("native_cli_inprocess_derivatives", "validation/native_cli_inprocess_derivatives_20260720/verify_inprocess_derivative_parity.py"),
     ("pbc_h0_attribution", "validation/pbc_h0_anisotropy_attribution_20260719/verify_h0_attribution.py"),
@@ -54,6 +55,7 @@ MANIFESTS = (
     "validation/three_route_k333_closure_20260719/SHA256SUMS",
     "validation/gxtb_final_lowk_derivatives_20260719/SHA256SUMS",
     "validation/mstore_pbc_component_ablation_20260720/SHA256SUMS",
+    "validation/wigner_seitz_self_image_attribution_20260720/SHA256SUMS",
 )
 
 
@@ -293,7 +295,7 @@ def main() -> None:
     aggregate = json.loads((HERE / "verification.json").read_text(encoding="utf-8"))
     aggregate_valid = (
         aggregate.get("status") == "PASS"
-        and aggregate.get("completed_gate_count") == 25
+        and aggregate.get("completed_gate_count") == 26
         and all(
             item.get("passed") is True
             for item in aggregate.get("completed_gates", {}).values()

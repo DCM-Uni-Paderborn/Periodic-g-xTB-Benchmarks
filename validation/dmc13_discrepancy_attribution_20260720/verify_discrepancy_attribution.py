@@ -183,6 +183,9 @@ def main() -> None:
     mstore_component = load_json(
         "validation/mstore_pbc_component_ablation_20260720/verification.json"
     )
+    wsc_attribution = load_json(
+        "validation/wigner_seitz_self_image_attribution_20260720/verification.json"
+    )
 
     checks = {
         "complete_cli_native_matrix": len(parity_rows) == 52
@@ -230,6 +233,21 @@ def main() -> None:
         )
         > 98.0
         and float(mstore_component["gap_reduction_percent"]["no_acp"]) < 10.0,
+        "wsc_self_image_attribution_passes": wsc_attribution["status"] == "PASS",
+        "wsc_self_image_fix_explains_branch_gap": float(
+            wsc_attribution["attribution"]["pbc_side_gap_explained_percent"]
+        )
+        > 95.0
+        and float(
+            wsc_attribution["attribution"]["inverse_side_gap_explained_percent"]
+        )
+        > 95.0,
+        "reciprocal_wsc_shifts_agree": float(
+            wsc_attribution["attribution"][
+                "reciprocal_shift_difference_kj_mol_per_H2O"
+            ]
+        )
+        <= 0.5,
         "adaptive_statistics_reproduce": len(adaptive_rows) == 12
         and adaptive_converged == int(adaptive_declared["converged_phase_count"])
         and math.isclose(
@@ -268,6 +286,7 @@ def main() -> None:
                 ],
                 "gap_reduction_percent": mstore_component["gap_reduction_percent"],
             },
+            "wigner_seitz_self_image_attribution": wsc_attribution["attribution"],
         },
         "provider_path_attribution": {
             "fraction_of_provider_gap_accounted_for_by_h0": h0[
@@ -300,9 +319,11 @@ def main() -> None:
             "too small to explain a kJ/mol-scale DMC difference. The pbc source "
             "snapshots are measurably distinct, while mstore-inorganic is a much "
             "larger provider-model change dominated in the tested ablation by the "
-            "periodic H0/exchange path. The lower previously quoted author result "
-            "still requires exact source and executable provenance; the ongoing "
-            "dense-mesh adaptive pbc result remains provisional."
+            "periodic exchange path. Reciprocal one-patch builds attribute more than "
+            "95% of that historical sparse-mesh branch gap to corrected Wigner--Seitz "
+            "self-image indexing. The lower previously quoted author result still "
+            "requires exact source and executable provenance; the ongoing dense-mesh "
+            "adaptive pbc result remains provisional."
         ),
     }
     output = HERE / "verification.json"

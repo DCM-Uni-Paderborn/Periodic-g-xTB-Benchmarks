@@ -10,6 +10,8 @@ converged accuracy estimates:
   provider;
 - `mstore-inorganic` versus the current pbc-derived provider at identical
   structures, meshes, and CLI accuracy;
+- reciprocal one-patch Wigner--Seitz builds that causally isolate the dominant
+  historical periodic self-image exchange difference;
 - the still-provisional dense-mesh adaptive DMC-ICE13 statistic.
 
 Run from the repository root with
@@ -18,7 +20,8 @@ Run from the repository root with
 python3 validation/dmc13_discrepancy_attribution_20260720/verify_discrepancy_attribution.py
 ```
 
-The resulting `verification.json` deliberately leaves the provenance of the
-previously quoted lower author result open.  Its purpose is narrower and
+The resulting `verification.json` leaves the exact provenance of the
+previously quoted lower author result open while identifying the dominant
+source-line cause of the historical sparse-mesh trend.  Its purpose is
 testable: to show which numerical scales can and cannot originate in the
 CP2K-native interface.

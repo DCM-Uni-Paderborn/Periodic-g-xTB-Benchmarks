@@ -87,6 +87,18 @@ corresponding exact-source, self-consistent runs are archived in
 changes between the branches as the origin of their different sparse-mesh
 behavior; it does not implicate the CP2K interface.
 
+Reciprocal one-patch builds identify the dominant exchange-path change more
+precisely.  The `30b04691e0af` Wigner--Seitz fix preserves the original
+translation index after the zero-distance origin is removed from a compacted
+distance list.  Switching only that routine in the `pbc` build shifts the
+ice-VII-minus-Ih `2^3` energy by `-153.5880 kJ mol-1 H2O-1`; switching only the
+same routine in the historical `mstore-inorganic` build shifts it by
+`-153.9405 kJ mol-1 H2O-1`.  The reciprocal shifts agree within
+`0.3524 kJ mol-1 H2O-1` and explain more than 95% of the full branch gap.
+The corrected same-build `pbc` executable reproduces the archived author-`pbc`
+Ih and VII absolute energies within `2e-12 Eh`.  Full raw evidence and the
+verifier are under `evidence/wigner_seitz_self_image_attribution/`.
+
 The `mstore-inorganic` numbers were produced from the source revision in
 `sources.json`.  A direct remote-head check on 2026-07-20 confirmed that this
 revision is still the tip of `lmseidler/save_tblite:mstore-inorganic`; the word
@@ -100,12 +112,14 @@ independently controlled.
 
 ## 3. Which source state produced the previously quoted lower DMC error?
 
-This is still open.  A lower error from `mstore-inorganic` at a sparse mesh
-does not establish its converged accuracy, and neither sparse-mesh value is a
-substitute for the ongoing dense-grid CP2K-native series.  The requested
-author rerun should identify the exact source revision, executable hash,
-structures, `--acc` value, mesh convention, and post-processing used for the
-previously quoted result.
+The lower sparse-mesh trend is now consistent with the historical
+`mstore-inorganic` Wigner--Seitz behavior, but the exact provenance of the
+previously quoted benchmark number is still open.  A lower error from that
+source state does not establish its converged accuracy, and neither
+sparse-mesh value substitutes for the ongoing dense-grid CP2K-native series.
+The requested author rerun should identify the exact source revision,
+executable hash, structures, `--acc` value, mesh convention, and
+post-processing used for the quoted result.
 
 The decisive diagnostic sequence is therefore:
 
