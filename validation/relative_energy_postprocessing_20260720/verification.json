@@ -25,7 +25,7 @@
   "schema": "periodic-gxtb-relative-energy-postprocessing-v1",
   "source_files": {
     "dmc_references_sha256": "db305cb9d5a5407da36bf3fd62c9b432db9b6d5852a30be5ed6151e846a690b2",
-    "generated_native_relative_sha256": "35c041f3d2db21552effbc54ea299b10bd9a9680c38e163dbf652d5eb585cc0b",
+    "generated_native_relative_sha256": "5ca54d0b013c78d346393e3ef18d8e6e70b1db478dcbac63dad2a362daae742d",
     "generated_statistics_sha256": "ee064cce1d564715b0647bb6a6fa3125f02c22c99ffcf7c07eb564a06d265d15"
   },
   "status": "PASS"
