@@ -30,6 +30,17 @@ number reported in the Part-I manuscript and Supporting Information.
 `CLI_SHA256SUMS` independently covers every retained direct-CLI input and raw
 output.
 
+`run_current_binary_requalification.sh` repeats the complete ice-XVII
+full-grid/reduced-grid and central-difference sequence only after the capped
+DMC-ICE13 endpoint queue has finished.  All six runs use the same qualified
+CP2K executable.  After archiving that campaign, run
+`verify_current_binary_requalification.py CAMPAIGN_ROOT`; the verifier checks
+the executable and input hashes of every run, reconstructs the Cartesian
+displacement and homogeneous strain from the inputs, and independently gates
+energy, all 54 force components, all nine stress components, and both finite
+differences.  The optional `--inputs-only` mode validates the manifest and
+perturbation geometry before any production calculation is available.
+
 The corresponding CP2K implementation is on `g-xTB-pbc`; exact source
 revisions are intentionally recorded here in the repository rather than in
 the manuscript.
