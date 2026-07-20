@@ -27,10 +27,13 @@
     "provider_gap_is_h0_attributed": true,
     "reciprocal_wsc_shifts_agree": true,
     "same_accuracy_branch_comparison": true,
+    "second_order_mic_attribution_passes": true,
+    "second_order_mic_closes_remaining_gap_in_two_phases": true,
+    "wsc_residual_matches_second_order_mic_test": true,
     "wsc_self_image_attribution_passes": true,
     "wsc_self_image_fix_explains_branch_gap": true
   },
-  "classification": "The complete current-provider CLI/native residual is numerical and far too small to explain a kJ/mol-scale DMC difference. The pbc source snapshots are measurably distinct, while mstore-inorganic is a much larger provider-model change dominated in the tested ablation by the periodic exchange path. Reciprocal one-patch builds attribute more than 95% of that historical sparse-mesh branch gap to corrected Wigner--Seitz self-image indexing. The lower previously quoted author result still requires exact source and executable provenance; the ongoing dense-mesh adaptive pbc result remains provisional.",
+  "classification": "The complete current-provider CLI/native residual is numerical and far too small to explain a kJ/mol-scale DMC difference. The pbc source snapshots are measurably distinct, while mstore-inorganic is a much larger provider-model change dominated in the tested ablation by the periodic exchange path. Reciprocal one-patch builds attribute more than 95% of that historical sparse-mesh branch gap to corrected Wigner--Seitz self-image indexing. The remaining source-state residual is reproduced by the later minimum-image form of the second-order Coulomb term and is removed to below 5e-5 kJ/mol/H2O independently for ice VII and XVII. Thus the tested mstore-inorganic/pbc source-state difference is causally classified; assigning a separately quoted author benchmark still requires its exact source and executable provenance. The ongoing dense-mesh adaptive pbc result remains provisional.",
   "cp2k_native_vs_current_pbc": {
     "maximum_absolute_difference_Ha_per_primitive": 1.11525309876e-07,
     "maximum_absolute_difference_mesh": 4,
@@ -75,6 +78,40 @@
       "2": 48.71076370489208,
       "3": 17.830623485071584
     },
+    "second_order_minimum_image_attribution": {
+      "interpretation": "After independently correcting the historical Wigner--Seitz self-image index, the remaining pbc/mstore relative-energy difference is reproduced by the later minimum-image second-order Coulomb variant. Reverting only that source change on pbc removes the residual to numerical SCC noise independently for ice VII and the smaller ice XVII cross-check.",
+      "phase_resolved_attribution": {
+        "VII": {
+          "mic_variant_shift_kj_mol_per_H2O": 5.821148748079412,
+          "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O": 5.821137787272057,
+          "pbc_without_mic_minus_mstore_wsc_corrected_kj_mol_per_H2O": -1.096080735481386e-05,
+          "relative_energies_kj_mol_per_H2O": {
+            "mstore-wsc-corrected": -305.8884581182048,
+            "pbc-correct": -300.0673203309328,
+            "pbc-without-mic": -305.8884690790122
+          },
+          "residual_explained_percent": 99.99981170678731
+        },
+        "XVII": {
+          "mic_variant_shift_kj_mol_per_H2O": 0.16420702397967554,
+          "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O": 0.1642062343415147,
+          "pbc_without_mic_minus_mstore_wsc_corrected_kj_mol_per_H2O": -7.89638160841762e-07,
+          "relative_energies_kj_mol_per_H2O": {
+            "mstore-wsc-corrected": -51.723327684318626,
+            "pbc-correct": -51.55912144997711,
+            "pbc-without-mic": -51.723328473956784
+          },
+          "residual_explained_percent": 99.99951911803835
+        }
+      },
+      "source": {
+        "hybrid_tree": "d56a0195324b25c99a8971987d13a10d9f9aa678",
+        "patch_sha256": "548858893ab921230852d2c005ec7196ea2ad326d9877b92d4d10785da395ac6",
+        "pbc_head": "c932120d2580811901de6a1fe3f89b943c251766",
+        "reverted_commit": "083f22030f0be7abff3e3d27b35c141c04c2aa6d"
+      },
+      "wsc_residual_minus_mic_test_residual_kj_mol_per_H2O": -4.922817709029914e-11
+    },
     "wigner_seitz_self_image_attribution": {
       "correct_pbc_minus_historical_mstore_kj_mol_per_H2O": -148.1193545890646,
       "inverse_side_gap_explained_percent": 96.06996816623244,
@@ -90,7 +127,7 @@
     "fraction_of_provider_gap_accounted_for_by_h0": 0.9999999939770375,
     "gap_reduction_when_exchange_disabled_percent": 98.31145327457459
   },
-  "schema": "periodic-gxtb-dmc13-discrepancy-attribution-v1",
+  "schema": "periodic-gxtb-dmc13-discrepancy-attribution-v2",
   "source_files": {
     "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv": "0ffda372a03acab7d2d496cacb1fb877bce724dcbc9e728c7d1a33cc3c381437",
     "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv": "f7d59fc6afe5de83370803f3f065200c5c3e5912e4b0620f82fe3e4daff7b9bb",

@@ -186,6 +186,21 @@ def main() -> None:
     wsc_attribution = load_json(
         "validation/wigner_seitz_self_image_attribution_20260720/verification.json"
     )
+    second_order_mic = load_json(
+        "validation/second_order_mic_attribution_20260720/verification.json"
+    )
+
+    mic_phase_attribution = second_order_mic["phase_resolved_attribution"]
+    wsc_residual = float(
+        wsc_attribution["attribution"][
+            "mstore_correct_wsc_minus_pbc_correct_wsc_kj_mol_per_H2O"
+        ]
+    )
+    mic_vii_residual = float(
+        mic_phase_attribution["VII"][
+            "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O"
+        ]
+    )
 
     checks = {
         "complete_cli_native_matrix": len(parity_rows) == 52
@@ -248,6 +263,30 @@ def main() -> None:
             ]
         )
         <= 0.5,
+        "second_order_mic_attribution_passes": second_order_mic["status"] == "PASS"
+        and all(second_order_mic["checks"].values()),
+        "wsc_residual_matches_second_order_mic_test": math.isclose(
+            wsc_residual,
+            -mic_vii_residual,
+            rel_tol=0.0,
+            abs_tol=1.0e-8,
+        ),
+        "second_order_mic_closes_remaining_gap_in_two_phases": set(
+            mic_phase_attribution
+        )
+        == {"VII", "XVII"}
+        and all(
+            float(result["residual_explained_percent"]) > 99.999
+            and abs(
+                float(
+                    result[
+                        "pbc_without_mic_minus_mstore_wsc_corrected_kj_mol_per_H2O"
+                    ]
+                )
+            )
+            < 5.0e-5
+            for result in mic_phase_attribution.values()
+        ),
         "adaptive_statistics_reproduce": len(adaptive_rows) == 12
         and adaptive_converged == int(adaptive_declared["converged_phase_count"])
         and math.isclose(
@@ -261,7 +300,7 @@ def main() -> None:
     }
     passed = all(checks.values())
     payload = {
-        "schema": "periodic-gxtb-dmc13-discrepancy-attribution-v1",
+        "schema": "periodic-gxtb-dmc13-discrepancy-attribution-v2",
         "status": "PASS" if passed else "FAIL",
         "checks": checks,
         "cp2k_native_vs_current_pbc": {
@@ -287,6 +326,14 @@ def main() -> None:
                 "gap_reduction_percent": mstore_component["gap_reduction_percent"],
             },
             "wigner_seitz_self_image_attribution": wsc_attribution["attribution"],
+            "second_order_minimum_image_attribution": {
+                "wsc_residual_minus_mic_test_residual_kj_mol_per_H2O": (
+                    wsc_residual + mic_vii_residual
+                ),
+                "source": second_order_mic["source"],
+                "phase_resolved_attribution": mic_phase_attribution,
+                "interpretation": second_order_mic["interpretation"],
+            },
         },
         "provider_path_attribution": {
             "fraction_of_provider_gap_accounted_for_by_h0": h0[
@@ -321,9 +368,13 @@ def main() -> None:
             "larger provider-model change dominated in the tested ablation by the "
             "periodic exchange path. Reciprocal one-patch builds attribute more than "
             "95% of that historical sparse-mesh branch gap to corrected Wigner--Seitz "
-            "self-image indexing. The lower previously quoted author result still "
-            "requires exact source and executable provenance; the ongoing dense-mesh "
-            "adaptive pbc result remains provisional."
+            "self-image indexing. The remaining source-state residual is reproduced "
+            "by the later minimum-image form of the second-order Coulomb term and is "
+            "removed to below 5e-5 kJ/mol/H2O independently for ice VII and XVII. "
+            "Thus the tested mstore-inorganic/pbc source-state difference is causally "
+            "classified; assigning a separately quoted author benchmark still "
+            "requires its exact source and executable provenance. The ongoing "
+            "dense-mesh adaptive pbc result remains provisional."
         ),
     }
     output = HERE / "verification.json"
