@@ -29,6 +29,11 @@
       "sha256": "b01ccd8705f755ea04d6240004fa3151f5b14d1c165ae2444c8bdee43ef6e96e"
     },
     {
+      "id": "dmc13_adaptive_frontier_figure_source",
+      "path": "DMC-ICE13/figures/dmc_ice13_gxtb_adaptive_frontier_mae.tex",
+      "sha256": "01314175ea7661ac79c2072eebf26197415f2baf7ac0dd233e251cdbbf279b79"
+    },
+    {
       "id": "lc10_final_per_solid_data",
       "path": "LC10/data/lc10_gxtb_final.csv",
       "sha256": "20c9b701dd1e78e5fb14149928e28d73ffd715d6f500caecda222f83ae7e8ee7"
