@@ -1,0 +1,13 @@
+{
+  "checkpoint": "/home/kuehne88/work/gxtb-native-bvk-20260718/validation/restart-helper-positive-v6/restart-source-20260720T025748Z.kp",
+  "checkpoint_sha256": "a7c5135aeee3c2e97691b3a762b6f0385b31cbf0de8a46e4b23ef1633ab4cec5",
+  "checkpoint_size_bytes": 45100,
+  "original_input": "/home/kuehne88/work/cp2k-gxtb-part-II-51e8698e-20260717/selector-smoke-formal/restart/CH4_gxtb_kp_restart_3.inp",
+  "original_input_sha256": "3fc129bb04934b48c4ac2243079760c91f3756a9e154c949b8b0724daffa7b92",
+  "restart_input": "/home/kuehne88/work/gxtb-native-bvk-20260718/validation/restart-helper-positive-v6/restart-20260720T025748Z.inp",
+  "restart_input_sha256": "0c42078f4995ca01cea4e72e1dfb8552c6c24d480eb773e2b25e534a67711eb9",
+  "restart_mode": "strict_same_mesh",
+  "scf_guess": "RESTART",
+  "schema": "cp2k-strict-same-mesh-restart-input-v1",
+  "wfn_restart_file_name": "restart-source-20260720T025748Z.kp"
+}

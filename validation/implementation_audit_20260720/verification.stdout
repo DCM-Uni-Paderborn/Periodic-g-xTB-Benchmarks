@@ -1,5 +1,5 @@
 {
-  "completed_gate_count": 22,
+  "completed_gate_count": 23,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -145,6 +145,12 @@
       "file": "validation/relative_energy_postprocessing_20260720/verification.json",
       "passed": true,
       "sha256": "f66d2df11afce60f1cad51f263e9f3a627e55bb181c9bef256044b55504b72ae",
+      "status": "PASS"
+    },
+    "restart_operational_safety": {
+      "file": "validation/restart_operational_safety_20260720/verification.json",
+      "passed": true,
+      "sha256": "0657842e4029703b3ce19e33432a62909feb5f791213037da9cd25137e688c3a",
       "status": "PASS"
     },
     "seidler_package_tracking": {

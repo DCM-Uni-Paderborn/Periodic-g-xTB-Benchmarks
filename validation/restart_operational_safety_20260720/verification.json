@@ -1,0 +1,89 @@
+{
+  "cases": {
+    "known_unquoted_strict_restart": {
+      "checks": {
+        "acceptance_marker": true,
+        "energy_matches_reference": true,
+        "exit_status_zero": true,
+        "input_hash_matches": true,
+        "one_scf_step": true,
+        "program_ended": true,
+        "qualified_binary": true,
+        "singleton_cpu_affinity": true,
+        "unquoted_restart_name": true
+      },
+      "status": "PASS"
+    },
+    "quoted_name_negative_control": {
+      "checks": {
+        "cold_guess_step_count": true,
+        "energy_still_matches_after_cold_convergence": true,
+        "exit_status_zero": true,
+        "input_hash_matches": true,
+        "missing_file_warning": true,
+        "no_acceptance_marker": true,
+        "program_ended": true,
+        "qualified_binary": true,
+        "quoted_restart_name": true,
+        "singleton_cpu_affinity": true
+      },
+      "status": "PASS"
+    },
+    "recovery_helper_positive_control": {
+      "checks": {
+        "energy_matches_reference": true,
+        "exit_status_zero": true,
+        "input_hash_matches": true,
+        "one_scf_step": true,
+        "program_ended": true,
+        "qualified_binary": true,
+        "recorded_mode_matches": true,
+        "restart_writing_remains_enabled": true,
+        "singleton_cpu_affinity": true,
+        "source_checkpoint_identity": true,
+        "unquoted_restart_name": true,
+        "validated_transfer_marker": true,
+        "wrapper_acceptance_pass": true
+      },
+      "status": "PASS"
+    }
+  },
+  "integrity": {
+    "VII_checkpoint_writing_enabled": true,
+    "VII_cold_start_remains_explicit": true,
+    "VII_input_hash_matches": true,
+    "VII_macdonald_mesh_matches": true,
+    "VII_project_matches_mesh": true,
+    "XIV_checkpoint_writing_enabled": true,
+    "XIV_cold_start_remains_explicit": true,
+    "XIV_input_hash_matches": true,
+    "XIV_macdonald_mesh_matches": true,
+    "XIV_project_matches_mesh": true,
+    "XI_checkpoint_writing_enabled": true,
+    "XI_cold_start_remains_explicit": true,
+    "XI_input_hash_matches": true,
+    "XI_macdonald_mesh_matches": true,
+    "XI_project_matches_mesh": true,
+    "XVII_checkpoint_writing_enabled": true,
+    "XVII_cold_start_remains_explicit": true,
+    "XVII_input_hash_matches": true,
+    "XVII_macdonald_mesh_matches": true,
+    "XVII_project_matches_mesh": true,
+    "input_manifest_has_exact_endpoint_set": true,
+    "raw_manifest_complete_and_valid": true,
+    "reference_checkpoint_exists": true,
+    "reference_checkpoint_hash_matches_archived_source": true,
+    "remote_manifest_includes_exact_endpoint_set": true,
+    "remote_tool_set_matches_archived_tools": true,
+    "safe_input_generated": true,
+    "safe_path_is_unquoted": true,
+    "scf_guess_changed_to_restart": true,
+    "tool_manifest_complete_and_valid": true,
+    "unsafe_path_rejected": true
+  },
+  "interpretation": "An unquoted k-point checkpoint is accepted and reproduces the reference energy in one SCF step. Quoting the same WFN_RESTART_FILE_NAME causes a silent cold-guess fallback despite exit status zero. The recovery helpers therefore emit only safe unquoted names, preserve the source checkpoint, and require an explicit CP2K k-point restart acceptance marker.",
+  "qualified_binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+  "reference_checkpoint_sha256": "a7c5135aeee3c2e97691b3a762b6f0385b31cbf0de8a46e4b23ef1633ab4cec5",
+  "schema": "periodic-gxtb-restart-operational-safety-v1",
+  "status": "PASS"
+}
