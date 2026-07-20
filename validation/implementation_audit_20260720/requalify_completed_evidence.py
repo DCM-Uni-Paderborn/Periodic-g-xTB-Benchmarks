@@ -336,8 +336,9 @@ def main() -> None:
             "Every completed Part-I verifier was executed again from a clean tracked "
             "checkout. Regenerated JSON, derived tables, aggregate gates, and selected "
             "SHA-256 manifests reproduce the archived evidence exactly. The remaining "
-            "sub-cap DMC-ICE13 endpoints and the explicitly cap-limited phase are "
-            "science calculations, not missing implementation-verification gates."
+            "sub-cap DMC-ICE13 endpoints and the explicitly cap-limited phase are science "
+            "calculations; any separately declared pending diagnostic remains outside the "
+            "set of completed implementation-verification gates."
         ),
     }
     OUTPUT.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")

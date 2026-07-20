@@ -18,6 +18,9 @@ EXPECTED_PHASES = (
 )
 ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER = 0.10
 MAXIMUM_ADAPTIVE_MESH = 8
+PENDING_DIAGNOSTIC_ENDPOINT = (
+    "ice VII explicit CP2K Gamma-supercell 2x2x2 oracle"
+)
 
 
 def load_json(relative: str) -> dict:
@@ -315,14 +318,19 @@ def main() -> None:
         "pending_science_endpoints": pending_science_endpoints,
         "maximum_adaptive_mesh": MAXIMUM_ADAPTIVE_MESH,
         "capped_unresolved_phases": capped_unresolved_phases,
-        "pending_diagnostic_endpoint": None,
+        "pending_diagnostic_endpoint": PENDING_DIAGNOSTIC_ENDPOINT,
         "interpretation": (
             "All completed exact implementation gates pass and the DMC-ICE13 adaptive "
             "statistic is final."
-            if declared_final and not pending_science_endpoints
+            if (
+                declared_final
+                and not pending_science_endpoints
+                and PENDING_DIAGNOSTIC_ENDPOINT is None
+            )
             else "All completed exact implementation gates pass. The DMC-ICE13 adaptive "
             "statistic remains provisional while listed sub-cap endpoints are pending or "
-            "a phase remains unresolved at the declared mesh cap."
+            "a phase remains unresolved at the declared mesh cap; the separately listed "
+            "diagnostic endpoint is not yet a completed gate."
         ),
     }
     output_path = HERE / "verification.json"
