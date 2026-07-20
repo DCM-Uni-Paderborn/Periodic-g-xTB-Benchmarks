@@ -1,0 +1,107 @@
+{
+  "archived_qualification_absolute_differences": {
+    "analytic_force_Ha_per_bohr": 0.0,
+    "analytic_virial_Ha": 1.1968950830443248e-10,
+    "energy_Ha": 0.0
+  },
+  "expected_binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+  "finite_difference": {
+    "analytic_force_Ha_per_bohr": -0.00371118943,
+    "atom_one_based": 1,
+    "component_zero_based": 0,
+    "finite_difference_force_Ha_per_bohr": -0.003711206116855273,
+    "force_absolute_difference_Ha_per_bohr": 1.6686855272996653e-08,
+    "xx_absolute_difference_Ha": 6.9671507255397724e-06,
+    "xx_analytic_virial_Ha": 0.09061103873907463,
+    "xx_finite_difference_virial_Ha": 0.09061800588980017
+  },
+  "full_minus_reduced": {
+    "energy_Ha": 0.0,
+    "force_component_count": 54,
+    "maximum_force_Ha_per_bohr": 0.0,
+    "maximum_stress_bar": 0.0,
+    "rms_force_Ha_per_bohr": 0.0,
+    "rms_stress_bar": 0.0,
+    "stress_component_count": 9
+  },
+  "input_geometry": {
+    "force": {
+      "atom_zero_based": 0,
+      "component_zero_based": 0,
+      "midpoint_maximum_difference_A": 2.220446049250313e-16,
+      "signed_span_A": 0.0010000000000012221
+    },
+    "strain": {
+      "maximum_non_x_cell_change_A": 0.0,
+      "negative_strain": -5.0000012903709624e-05,
+      "positive_strain": 5.0000012903635614e-05,
+      "signed_span": 0.00010000002580734524
+    }
+  },
+  "integrity": {
+    "input_manifest_entries_verified": 7,
+    "input_sha256": {
+      "force-minus": "eb04c83f11983fb61b5803a331ca476723e2d48f1a29481aacd7db3cc186955f",
+      "force-plus": "a4a8ab5217baecc4a499f696ffce6d07d3f209993d5e06c859b08d0f3a6a71f7",
+      "full": "e68f8e27be79a96670108b24d1f1a899e6294e3349a7d94fa5d93743524d6758",
+      "reduced": "7a84dbcc0a705da46ca8f8971b0e6e842517578f5790f520d35fa39933df1744",
+      "strain-minus": "ed2048e88b7d2febd2e20bb4c3552ec89a1201d1ddb2a234dd5041aedfab15a9",
+      "strain-plus": "08a7594e2957bd2d98be2385d6663665998283ae460d0120a3720b2b6b35e5df"
+    },
+    "run_provenance": {
+      "force-minus": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_Ha": -458.9613867430192,
+        "input_sha256": "eb04c83f11983fb61b5803a331ca476723e2d48f1a29481aacd7db3cc186955f",
+        "output_sha256": "bb2dcf7e6ee7f27cf895ce05734280ad8c1666c7945c03168094cdd722188c7e"
+      },
+      "force-plus": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_Ha": -458.96137972985605,
+        "input_sha256": "a4a8ab5217baecc4a499f696ffce6d07d3f209993d5e06c859b08d0f3a6a71f7",
+        "output_sha256": "d095ed2cef196d5b3193e961145947eb181b1e82c0ef37b99992cc801b1b0efb"
+      },
+      "full": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_Ha": -458.96138326370647,
+        "input_sha256": "e68f8e27be79a96670108b24d1f1a899e6294e3349a7d94fa5d93743524d6758",
+        "output_sha256": "289c30a45999a68cdd5c0b6d3227cbe9ba67692455b582ea5122b5cd7153a848"
+      },
+      "reduced": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_Ha": -458.96138326370647,
+        "input_sha256": "7a84dbcc0a705da46ca8f8971b0e6e842517578f5790f520d35fa39933df1744",
+        "output_sha256": "4afbc6051c4e4b430e0f5e427d1192a1eb90d957ed456cb4962697cff8a00156"
+      },
+      "strain-minus": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_Ha": -458.9613877891555,
+        "input_sha256": "ed2048e88b7d2febd2e20bb4c3552ec89a1201d1ddb2a234dd5041aedfab15a9",
+        "output_sha256": "b85c01cfedb32432fc78d45a06bb6346dda2a921a646120c69fa7aa450b10d64"
+      },
+      "strain-plus": {
+        "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+        "energy_Ha": -458.96137872735255,
+        "input_sha256": "08a7594e2957bd2d98be2385d6663665998283ae460d0120a3720b2b6b35e5df",
+        "output_sha256": "1c0ea913acf5ad17e97854c5f9b9327d72e3978f258b0295434184b9f5f79ac5"
+      }
+    },
+    "runs_verified": 6
+  },
+  "interpretation": "All six calculations use one SHA-256-qualified CP2K executable. The explicit full mesh and SPGLIB-reduced mesh agree for energy, forces, and stress, while independently reconstructed central differences validate the force and homogeneous-strain response.",
+  "schema": "periodic-gxtb-part-i-current-binary-derivatives-v1",
+  "status": "PASS",
+  "thresholds": {
+    "archived_energy_absolute_difference_Ha": 5e-10,
+    "archived_force_absolute_difference_Ha_per_bohr": 5e-09,
+    "archived_virial_absolute_difference_Ha": 5e-07,
+    "force_displacement_span_absolute_tolerance_A": 5e-10,
+    "force_finite_difference_absolute_difference_Ha_per_bohr": 5e-07,
+    "full_minus_reduced_energy_Ha": 1e-12,
+    "full_minus_reduced_maximum_force_Ha_per_bohr": 1e-09,
+    "full_minus_reduced_maximum_stress_bar": 1e-05,
+    "input_geometry_absolute_tolerance_A": 5e-10,
+    "strain_span_absolute_tolerance": 5e-10,
+    "stress_finite_difference_absolute_difference_Ha": 5e-05
+  }
+}

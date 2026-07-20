@@ -59,6 +59,7 @@ MANIFESTS = (
     "validation/three_route_k333_closure_20260719/SHA256SUMS",
     "validation/gxtb_final_lowk_derivatives_20260719/SHA256SUMS",
     "validation/dmc13_xvii_full_derivatives_20260718/CLI_SHA256SUMS",
+    "validation/dmc13_xvii_full_derivatives_20260718/CURRENT_BINARY_SHA256SUMS",
     "validation/mstore_pbc_component_ablation_20260720/SHA256SUMS",
     "validation/wigner_seitz_self_image_attribution_20260720/SHA256SUMS",
     "validation/second_order_mic_attribution_20260720/SHA256SUMS",
@@ -295,6 +296,39 @@ def main() -> None:
             )
         )
 
+        current_derivative_root = (
+            ROOT
+            / "validation/dmc13_xvii_full_derivatives_20260718"
+            / "current_binary_requalification"
+        )
+        current_derivative_output = temporary_dir / "current-derivatives.json"
+        checks.append(
+            run_check(
+                "dmc13_xvii_same_binary_derivatives",
+                [
+                    PYTHON,
+                    "validation/dmc13_xvii_full_derivatives_20260718/verify_current_binary_requalification.py",
+                    str(current_derivative_root),
+                    "--output",
+                    str(current_derivative_output),
+                ],
+                [
+                    PYTHON,
+                    "validation/dmc13_xvii_full_derivatives_20260718/verify_current_binary_requalification.py",
+                    "validation/dmc13_xvii_full_derivatives_20260718/current_binary_requalification",
+                    "--output",
+                    "<temporary>/current-derivatives.json",
+                ],
+            )
+        )
+        checks.append(
+            compare_json(
+                current_derivative_output,
+                current_derivative_root / "verification.json",
+                "current_binary_derivatives_reproduced_json",
+            )
+        )
+
     for relative in MANIFESTS:
         checks.append(check_manifest(relative))
 
@@ -307,7 +341,7 @@ def main() -> None:
     aggregate = json.loads((HERE / "verification.json").read_text(encoding="utf-8"))
     aggregate_valid = (
         aggregate.get("status") == "PASS"
-        and aggregate.get("completed_gate_count") == 31
+        and aggregate.get("completed_gate_count") == 32
         and all(
             item.get("passed") is True
             for item in aggregate.get("completed_gates", {}).values()
@@ -343,8 +377,7 @@ def main() -> None:
             "checkout. Regenerated JSON, derived tables, aggregate gates, and selected "
             "SHA-256 manifests reproduce the archived evidence exactly. The remaining "
             "sub-cap DMC-ICE13 endpoints and the explicitly cap-limited phase are science "
-            "calculations; any separately declared pending diagnostic remains outside the "
-            "set of completed implementation-verification gates."
+            "calculations; all declared implementation diagnostics are complete."
         ),
     }
     OUTPUT.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")

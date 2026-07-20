@@ -2,7 +2,7 @@
   "capped_unresolved_phases": [
     "VII"
   ],
-  "completed_gate_count": 31,
+  "completed_gate_count": 32,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -56,6 +56,12 @@
       "file": "validation/dmc13_xvii_full_derivatives_20260718/verification.json",
       "passed": true,
       "sha256": "120e9c2a30ac912865a00f4557056316d2fe31eac8f077ab2990df652a988db3",
+      "status": "PASS"
+    },
+    "dmc13_xvii_same_binary_derivatives": {
+      "file": "validation/dmc13_xvii_full_derivatives_20260718/current_binary_requalification/verification.json",
+      "passed": true,
+      "sha256": "bf7d15deb2cd11b5cf418f242c2523ae0730bea895c6eb4b6732a2a8e158a9e8",
       "status": "PASS"
     },
     "energy_component_ablation": {
@@ -240,9 +246,7 @@
   "current_adaptive_set_is_final": false,
   "interpretation": "All completed exact implementation gates pass. The DMC-ICE13 adaptive statistic remains provisional while listed sub-cap endpoints are pending or a phase remains unresolved at the declared mesh cap; the separately listed diagnostic endpoint is not yet a completed gate.",
   "maximum_adaptive_mesh": 8,
-  "pending_diagnostic_endpoints": [
-    "ice XVII same-binary full/reduced energy-force-stress and central-difference requalification"
-  ],
+  "pending_diagnostic_endpoints": [],
   "pending_science_endpoints": [
     "ice XI 7x7x7",
     "ice XIV 8x8x8"

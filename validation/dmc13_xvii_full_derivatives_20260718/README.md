@@ -43,6 +43,18 @@ energy, all 54 force components, all nine stress components, and both finite
 differences.  The optional `--inputs-only` mode validates the manifest and
 perturbation geometry before any production calculation is available.
 
+The completed campaign is archived in `current_binary_requalification/`.
+Full-grid and symmetry-reduced energy, all force components, and all stress
+components are identical at the printed precision.  The atom-1 x-force is
+`-0.00371118943 Ha bohr-1`, compared with the independent central difference
+`-0.003711206116855273 Ha bohr-1` (absolute residual
+`1.6686855272996653e-8 Ha bohr-1`).  The analytic xx virial is
+`0.09061103873907463 Ha`, compared with the homogeneous-strain central
+difference `0.09061800588980017 Ha` (absolute residual
+`6.9671507255397724e-6 Ha`).  `CURRENT_BINARY_SHA256SUMS` covers the verifier,
+launcher, manifest, inputs, raw outputs, provenance records, and reproduced
+JSON result.
+
 The corresponding CP2K implementation is on `g-xTB-pbc`; exact source
 revisions are intentionally recorded here in the repository rather than in
 the manuscript.

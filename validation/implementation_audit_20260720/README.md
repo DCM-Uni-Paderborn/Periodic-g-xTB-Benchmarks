@@ -36,6 +36,10 @@ their individual tolerances, the following independent checks:
 - the complete ice-XVII native-$2\times2\times2$ full-grid/SPGLIB derivative
   identity, independent collective-displacement and homogeneous-strain finite
   differences, and direct 144-atom `save_tblite` CLI derivative comparison;
+- frozen-production-binary repetition of the complete ice-XVII full-grid,
+  symmetry-reduced, force-displacement, and homogeneous-strain sequence, with
+  exact executable and input hashes and independent force/stress finite
+  differences;
 - exchange/ACP component ablations and model-provider attribution;
 - reciprocal Wigner--Seitz one-patch builds that reproduce the author `pbc`
   energies and explain more than 95% of the historical sparse-mesh branch gap;
@@ -74,7 +78,8 @@ files.
 
 `verification.json` reports the completed qualification gates separately from
 the still-running science endpoints. The direct CLI/native diagnostic matrix
-is complete through `4 x 4 x 4`. A passing audit therefore
+is complete through `4 x 4 x 4`, and no declared implementation diagnostic
+remains pending. A passing audit therefore
 does not turn the provisional adaptive DMC-ICE13 statistic into a final one.
 
 The pending science endpoints are derived from the qualified adaptive table,

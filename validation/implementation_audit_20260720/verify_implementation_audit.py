@@ -18,12 +18,7 @@ EXPECTED_PHASES = (
 )
 ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER = 0.10
 MAXIMUM_ADAPTIVE_MESH = 8
-PENDING_DIAGNOSTIC_ENDPOINTS = (
-    (
-        "ice XVII same-binary full/reduced energy-force-stress and "
-        "central-difference requalification"
-    ),
-)
+PENDING_DIAGNOSTIC_ENDPOINTS = ()
 
 
 def load_json(relative: str) -> dict:
@@ -70,6 +65,7 @@ def main() -> None:
         "energy_component_ablation": "validation/dmc13_k222_viii_component_ablation_20260719/verification.json",
         "derivative_component_ablation": "validation/dmc13_k222_xvii_derivative_component_ablation_20260719/verification.json",
         "dmc13_xvii_full_derivatives": "validation/dmc13_xvii_full_derivatives_20260718/verification.json",
+        "dmc13_xvii_same_binary_derivatives": "validation/dmc13_xvii_full_derivatives_20260718/current_binary_requalification/verification.json",
         "provider_component_attribution": "validation/provider_component_attribution_20260719/verification.json",
         "h0_anisotropy_attribution": "validation/pbc_h0_anisotropy_attribution_20260719/verification.json",
         "cecl3_tolerance_recheck": "validation/cecl3_tolerance_recheck_20260720/verification.reproduced.json",
