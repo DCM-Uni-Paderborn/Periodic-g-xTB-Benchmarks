@@ -1,5 +1,5 @@
 {
-  "completed_gate_count": 19,
+  "completed_gate_count": 20,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -77,6 +77,12 @@
       "file": "validation/native_cli_full_parity_20260720/verification.json",
       "passed": true,
       "sha256": "3ce9f86da29a895c8233da6c334b4beb9e360bdc5e9ec4ec45f98140399ed214",
+      "status": "PASS"
+    },
+    "native_cli_inprocess_derivative_parity": {
+      "file": "validation/native_cli_inprocess_derivatives_20260720/verification.json",
+      "passed": true,
+      "sha256": "9f869c851c120c9cc0b607be7b4da7fac3916df348e77d56c702dd6aa8abda02",
       "status": "PASS"
     },
     "native_cli_tight_k222": {

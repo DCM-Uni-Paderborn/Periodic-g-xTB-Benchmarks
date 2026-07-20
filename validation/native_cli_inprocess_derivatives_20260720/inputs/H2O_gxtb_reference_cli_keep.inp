@@ -1,0 +1,55 @@
+&GLOBAL
+  PRINT_LEVEL MEDIUM
+  PROJECT H2O_gxtb_reference_cli
+  RUN_TYPE ENERGY_FORCE
+&END GLOBAL
+
+&FORCE_EVAL
+  STRESS_TENSOR ANALYTICAL
+  &DFT
+    &QS
+      EPS_DEFAULT 1.0E-12
+      METHOD xTB
+      &XTB
+        GFN_TYPE TBLITE
+        &TBLITE
+          ACCURACY 1.0
+          METHOD GXTB
+          &REFERENCE_CLI
+            CHECK_ENERGY T
+            CHECK_FORCES T
+            CHECK_VIRIAL T
+            ERROR_LIMIT 1.0E-5
+            PROGRAM_NAME /home/kuehne88/work/gxtb-cli-current
+            STOP_ON_ERROR T
+            KEEP_FILES T
+          &END REFERENCE_CLI
+        &END TBLITE
+      &END XTB
+    &END QS
+    &SCF
+      EPS_SCF 1.0E-10
+      MAX_SCF 200
+      SCF_GUESS MOPAC
+      &MIXING
+        ALPHA 0.2
+        METHOD DIRECT_P_MIXING
+      &END MIXING
+      &PRINT
+        &RESTART OFF
+        &END RESTART
+      &END PRINT
+    &END SCF
+  &END DFT
+  &SUBSYS
+    &CELL
+      ABC 10.0 10.0 10.0
+      PERIODIC XYZ
+    &END CELL
+    &COORD
+      O 5.000000 5.000000 5.000000
+      H 5.758602 5.000000 5.504284
+      H 4.241398 5.000000 5.504284
+    &END COORD
+  &END SUBSYS
+&END FORCE_EVAL

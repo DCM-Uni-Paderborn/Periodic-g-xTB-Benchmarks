@@ -1,0 +1,4 @@
+program_name=/home/kuehne88/work/gxtb-cli-current
+resolved_path=/home/kuehne88/work/gxtb-provenance-d933e083-15915c94-20260717-v2/save_tblite-build/app/tblite
+sha256=f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a
+mode=-rwxr-xr-x owner=kuehne88 group=fwu size=9000224 mtime=2026-07-17 16:31:50.988000000 +0200

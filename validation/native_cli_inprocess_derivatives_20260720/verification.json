@@ -1,0 +1,116 @@
+{
+  "cases": {
+    "h2o_periodic_gamma": {
+      "absolute_energy_difference_hartree": 3.420552729949122e-11,
+      "checks": {
+        "cp2k_binary_sha256": true,
+        "energy_difference_within_limit": true,
+        "executed_input_sha256": true,
+        "exit_zero": true,
+        "gradient_max_within_limit": true,
+        "method_gxtb": true,
+        "printed_cli_energy_consistent": true,
+        "printed_cp_energy_consistent": true,
+        "program_ended": true,
+        "reference_cli_stop_on_error": true,
+        "reported_energy_difference_consistent": true,
+        "virial_max_within_limit": true
+      },
+      "cli_energy_hartree": -76.4920860505552,
+      "cli_gradient_file_sha256": "44af4f0a78e44fd35702bf1f13ae9d31516e838c6b0e45985bf56640b315fce3",
+      "cli_json_sha256": "407662381f36169b32592afe948294fa297b249d96fd6afb8dbd8d81afb3b741",
+      "cp2k_energy_hartree": -76.492086050521,
+      "gradient_difference_max_hartree_per_bohr": 1.30940576127e-06,
+      "gradient_difference_sum_hartree_per_bohr": 3.064500432866e-06,
+      "input_sha256": "c695a03c993a66f190ef82bd2d78a73142c46a7721ba803d937468d5159977f3",
+      "output_sha256": "6601d234739f17076803b075c98b26801592811f26eee21b4a1589e953502850",
+      "reported_absolute_energy_difference_hartree": 3.420552729949e-11,
+      "status": "PASS",
+      "virial_difference_max_hartree": 1.243500821119e-06,
+      "virial_difference_sum_hartree": 1.881985224179e-06
+    },
+    "o2_triplet_molecular": {
+      "absolute_energy_difference_hartree": 6.480149750132114e-12,
+      "checks": {
+        "cp2k_binary_sha256": true,
+        "energy_difference_within_limit": true,
+        "executed_input_sha256": true,
+        "exit_zero": true,
+        "gradient_max_within_limit": true,
+        "method_gxtb": true,
+        "printed_cli_energy_consistent": true,
+        "printed_cp_energy_consistent": true,
+        "program_ended": true,
+        "reference_cli_stop_on_error": true,
+        "reported_energy_difference_consistent": true,
+        "virial_max_within_limit": true
+      },
+      "cli_energy_hartree": -150.34083895130834,
+      "cli_gradient_file_sha256": "c2ad8a12fac98c0f25251651904d7beaba78bdd827c12923e64887e51b3cf0fb",
+      "cli_json_sha256": "bb94cb4308a86a7a6ec4be2557d1c79ba842638b743199ab360e13a8558710a9",
+      "cp2k_energy_hartree": -150.34083895130186,
+      "gradient_difference_max_hartree_per_bohr": 3.284103147483e-06,
+      "gradient_difference_sum_hartree_per_bohr": 6.568206295046e-06,
+      "input_sha256": "bcdfc92c22d84edc87b4d0054cb310a1b12c778e46d7057617945382769d3bc0",
+      "output_sha256": "ae3034aa5bec7ae0ccceaf94670b664520a091e0345866cdbfa3a040ecc1210b",
+      "reported_absolute_energy_difference_hartree": 6.480149750132e-12,
+      "status": "PASS",
+      "virial_difference_max_hartree": null,
+      "virial_difference_sum_hartree": null
+    }
+  },
+  "checks": {
+    "h2o_passes": true,
+    "independent_o2_cli_passes": true,
+    "inprocess_cli_program_identity_passes": true,
+    "o2_passes": true,
+    "preflight_failure_classified": true,
+    "raw_manifest_passes": true
+  },
+  "independent_o2_direct_cli": {
+    "checks": {
+      "cli_binary_sha256": true,
+      "energy_matches_inprocess_cli": true,
+      "exit_zero": true,
+      "gradient_file_matches_inprocess_cli": true,
+      "input_sha256": true,
+      "result_json_matches_inprocess_cli": true
+    },
+    "energy_hartree": -150.34083895130834,
+    "gradient_file_sha256": "c2ad8a12fac98c0f25251651904d7beaba78bdd827c12923e64887e51b3cf0fb",
+    "result_json_sha256": "bb94cb4308a86a7a6ec4be2557d1c79ba842638b743199ab360e13a8558710a9"
+  },
+  "inprocess_cli_program_identity": {
+    "checks": {
+      "program_name_matches_inputs": true,
+      "resolved_cli_sha256_qualified": true
+    },
+    "record": {
+      "mode": "-rwxr-xr-x owner=kuehne88 group=fwu size=9000224 mtime=2026-07-17 16:31:50.988000000 +0200",
+      "program_name": "/home/kuehne88/work/gxtb-cli-current",
+      "resolved_path": "/home/kuehne88/work/gxtb-provenance-d933e083-15915c94-20260717-v2/save_tblite-build/app/tblite",
+      "sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a"
+    },
+    "record_sha256": "3128f2812ea1e1e8414433765751b8597a4bfd3d07a3189160f697d8b6021cf6"
+  },
+  "interpretation": "The qualified CP2K-native path reproduces direct save_tblite energies, Cartesian gradients, and the tested periodic virial within the predeclared component limits.",
+  "limits": {
+    "energy_hartree": 1e-09,
+    "gradient_hartree_per_bohr": 1e-05,
+    "virial_hartree": 1e-05
+  },
+  "preflight_program_path_failure": {
+    "failure_is_input_length_only": true,
+    "failure_precedes_energy_evaluation": true,
+    "failure_retained": true
+  },
+  "qualified_cp2k_binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+  "qualified_direct_cli_binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+  "raw_manifest": {
+    "file": "RAW_SHA256SUMS",
+    "file_count": 46,
+    "sha256": "d97ab66608de494e08202bee7217a2e3b39a13401bbb808bf6b81813e8477de0"
+  },
+  "schema": "periodic-gxtb-native-cli-inprocess-derivative-parity-v1",
+  "status": "PASS"
+}

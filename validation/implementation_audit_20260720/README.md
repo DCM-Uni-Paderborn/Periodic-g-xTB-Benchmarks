@@ -7,6 +7,8 @@ their individual tolerances, the following independent checks:
 - direct save_tblite CLI versus CP2K-native absolute-energy and independently
   reconstructed relative-energy parity for all 52 points from `1 x 1 x 1`
   through `4 x 4 x 4`;
+- in-process direct-CLI parity for energy, Cartesian gradients, and the tested
+  periodic virial using the qualified CP2K and CLI binaries;
 - source-level and exact-arithmetic equivalence of every archived MacDonald
   grid to the corresponding Gamma-supercell BvK folding grid;
 - build-level identity of the provider source, static provider archive, and
