@@ -1,0 +1,4 @@
+observed_utc=2026-07-20T01:54:33Z
+command=git ls-remote https://github.com/lmseidler/save_tblite.git refs/heads/pbc refs/heads/mstore-inorganic
+be87ef681acd880705d83b8b1f7c19b58ca5ea85	refs/heads/mstore-inorganic
+c932120d2580811901de6a1fe3f89b943c251766	refs/heads/pbc

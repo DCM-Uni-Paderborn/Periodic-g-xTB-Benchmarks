@@ -188,6 +188,9 @@
   },
   "schema_version": 1,
   "source_states": {
+    "author_branch_heads_observed_utc": "2026-07-20T01:54:33Z",
+    "author_mstore_inorganic_branch_head": "be87ef681acd880705d83b8b1f7c19b58ca5ea85",
+    "author_pbc_branch_head": "c932120d2580811901de6a1fe3f89b943c251766",
     "author_pbc_executable_sha256": "not-recorded-in-historical-author-archive",
     "author_pbc_source": "c932120d2580811901de6a1fe3f89b943c251766",
     "author_repository": "https://github.com/lmseidler/save_tblite",
@@ -197,7 +200,7 @@
     "current_save_tblite_linux_cli_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
     "current_save_tblite_repository": "https://github.com/DCM-Uni-Paderborn/save_tblite/tree/cp2k-integration",
     "current_save_tblite_source": "15915c9435644eb257178ca8f8bf7220c38b1a84",
-    "historical_mstore_inorganic_build_note": "The save_tblite source was unchanged; only the dead mctc-lib dependency wrap was redirected to grimme-lab/mctc-lib v0.5.2 so that the historical revision could be compiled.",
+    "historical_mstore_inorganic_build_note": "The tested revision remains the tip of lmseidler/save_tblite:mstore-inorganic at the recorded observation time. The save_tblite source was unchanged; only the dead mctc-lib dependency wrap was redirected to grimme-lab/mctc-lib v0.5.2 so that the older-lineage branch could be compiled.",
     "historical_mstore_inorganic_macos_cli_sha256": "8df9fcc990f15600f0b99316602d1d6adfad43f85a2b0203ae14aad44ad4b1aa",
     "historical_mstore_inorganic_source": "be87ef681acd880705d83b8b1f7c19b58ca5ea85"
   }

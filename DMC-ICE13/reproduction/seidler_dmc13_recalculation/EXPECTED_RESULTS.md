@@ -76,12 +76,16 @@ the largest `c932120...` versus `15915c...` shift is
 Those values are far larger than the current-CLI/CP2K numerical residual, but
 far smaller than the historical `mstore-inorganic`/`pbc` model shift.
 
-The `mstore-inorganic` numbers were produced from the historical source
-revision in `sources.json`.  Its obsolete dependency locator was repaired to
-permit compilation, but no `save_tblite` source file was changed.  We ask the
-authors to repeat this comparison with their own clean builds so that branch
-history, dependency state, and executable provenance are independently
-controlled.
+The `mstore-inorganic` numbers were produced from the source revision in
+`sources.json`.  A direct remote-head check on 2026-07-20 confirmed that this
+revision is still the tip of `lmseidler/save_tblite:mstore-inorganic`; the word
+"historical" elsewhere in this package describes its older code lineage, not
+a stale local branch or an invented reconstruction.  The same check identifies
+`c932120...` as the tip of `lmseidler/save_tblite:pbc`.  The obsolete dependency
+locator of the former was repaired to permit compilation, but no `save_tblite`
+source file was changed.  We ask the authors to repeat this comparison with
+their own clean builds so that dependency state and executable provenance are
+independently controlled.
 
 ## 3. Which source state produced the previously quoted lower DMC error?
 

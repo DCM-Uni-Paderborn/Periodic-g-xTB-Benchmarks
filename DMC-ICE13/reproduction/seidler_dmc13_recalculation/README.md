@@ -110,11 +110,15 @@ manifests.  Historical table rows whose original raw output was not retained
 remain explicitly identified by the hashes stored in the tables.
 
 `sources.json` records the exact source states and executable hashes used in
-this package.  The historical `mstore-inorganic` build required only a
-dependency-fetch repair for the obsolete `mctc-lib` wrap; the
-`save_tblite` source revision itself was not modified.  This diagnostic build
-is therefore suitable for locating the model-revision difference, while the
-requested clean author builds remain the decisive independent check.
+this package.  It also records that the tested `mstore-inorganic` and `pbc`
+revisions were still the respective upstream branch tips when checked on
+2026-07-20; the literal remote query is archived in
+`author_branch_heads_20260720.txt`.  Here, "historical" denotes the older code
+lineage rather than a stale local branch.  The `mstore-inorganic` build required only a
+dependency-fetch repair for the obsolete `mctc-lib` wrap; the `save_tblite`
+source revision itself was not modified.  This diagnostic build is therefore
+suitable for locating the model-revision difference, while the requested clean
+author builds remain the decisive independent check.
 
 `comparison_workbook.xlsx` provides the same data in a convenient review
 workbook; CSV files remain the machine-readable source of truth.

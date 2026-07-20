@@ -9,9 +9,11 @@ structures, atom order, units, mesh convention, convergence settings, and DMC
 references and provides absolute energies before any relative-energy
 post-processing.
 
-Three source states are kept separate in the package:
+Three source states are kept separate in the package.  The first two revisions
+were independently confirmed as the corresponding upstream branch tips on
+2026-07-20:
 
-- historical `mstore-inorganic` at `be87ef681acd...`;
+- older-lineage `mstore-inorganic` at `be87ef681acd...`;
 - the upstream author `pbc` snapshot at `c932120d258...`;
 - the later pbc-derived CP2K-integration provider at `15915c943564...`, which
   is the provider linked into the qualified CP2K executable.
