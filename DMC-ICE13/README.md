@@ -63,6 +63,11 @@ python3 scripts/make_dmc_adaptive_frontier_tex.py \
   data/dmc_ice13_gxtb_phasewise_progress.csv \
   data/dmc_ice13_gxtb_current_adaptive_statistics.csv \
   figures/dmc_ice13_gxtb_adaptive_frontier_mae.tex
+
+python3 scripts/make_dmc_adaptive_frontier_plot.py \
+  data/dmc_ice13_gxtb_same_build_fixed_mesh_mae.csv \
+  data/dmc_ice13_gxtb_phasewise_progress.csv \
+  figures/dmc_ice13_gxtb_adaptive_frontier_mae
 ```
 
 ## Inputs and figures
