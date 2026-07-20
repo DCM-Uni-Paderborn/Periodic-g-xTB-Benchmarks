@@ -8,14 +8,20 @@
       "status": "PASS"
     },
     "adaptive_statistics_internal_consistency": {
+      "adaptive_tolerance_kj_mol_per_water": 0.1,
+      "convergence_criterion_valid": true,
       "files": [
         "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv",
-        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv"
+        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv",
+        "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/cp2k_native_absolute_energies_by_mesh.csv"
       ],
+      "final_state_consistent": true,
       "passed": true,
+      "phase_matrix_valid": true,
       "sha256": {
         "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv": "b6e32e6ba8977382b2856f72c148e6880e52dac15b0e411a05f2449216a1cf9a",
-        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv": "4d705d8576ea06e4c1672e1b981f52bbd104d59b63d50dc08697f5f2f1437340"
+        "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv": "4d705d8576ea06e4c1672e1b981f52bbd104d59b63d50dc08697f5f2f1437340",
+        "DMC-ICE13/reproduction/seidler_dmc13_recalculation/tables/cp2k_native_absolute_energies_by_mesh.csv": "3769f1b6c7b5cb614becf8156eab80127e9508c526cf2bd01def50d5abe744a0"
       },
       "status": "PASS"
     },

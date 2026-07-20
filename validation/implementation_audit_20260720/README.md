@@ -44,3 +44,10 @@ python3 validation/implementation_audit_20260720/verify_implementation_audit.py
 the still-running science endpoints. The direct CLI/native diagnostic matrix
 is complete through `4 x 4 x 4`. A passing audit therefore
 does not turn the provisional adaptive DMC-ICE13 statistic into a final one.
+
+The pending science endpoints are derived from the qualified adaptive table,
+not from a predeclared mesh schedule. The audit fails closed unless the table
+contains exactly the twelve DMC-ICE13 polymorphs, every convergence flag agrees
+with the one-step threshold of `0.10 kJ mol-1` per water, and the declared final
+state agrees with the number of converged phases. A missing same-build ice-Ih
+reference is inserted ahead of the corresponding phase endpoint automatically.

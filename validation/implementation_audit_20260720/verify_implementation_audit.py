@@ -12,6 +12,11 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
+EXPECTED_PHASES = (
+    "II", "III", "IV", "VI", "VII", "VIII",
+    "IX", "XI", "XIII", "XIV", "XV", "XVII",
+)
+ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER = 0.10
 
 
 def load_json(relative: str) -> dict:
@@ -107,10 +112,43 @@ def main() -> None:
 
     adaptive_relative = "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv"
     statistics_relative = "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv"
+    native_absolute_relative = (
+        "DMC-ICE13/reproduction/seidler_dmc13_recalculation/"
+        "tables/cp2k_native_absolute_energies_by_mesh.csv"
+    )
     with (ROOT / adaptive_relative).open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
     with (ROOT / statistics_relative).open(newline="", encoding="utf-8") as handle:
         statistics = next(csv.DictReader(handle))
+    with (ROOT / native_absolute_relative).open(newline="", encoding="utf-8") as handle:
+        native_absolute_rows = list(csv.DictReader(handle))
+
+    phases = [row["phase"] for row in rows]
+    phase_matrix_valid = (
+        len(phases) == len(EXPECTED_PHASES)
+        and len(phases) == len(set(phases))
+        and set(phases) == set(EXPECTED_PHASES)
+    )
+    convergence_values_valid = all(
+        row["phase_converged"].strip().lower() in {"true", "false"}
+        for row in rows
+    )
+    convergence_criterion_valid = convergence_values_valid
+    for row in rows:
+        converged = row["phase_converged"].strip().lower() == "true"
+        delta_text = row["absolute_adjacent_delta_kj_mol_per_water"].strip()
+        delta = None if not delta_text else float(delta_text)
+        if converged:
+            convergence_criterion_valid = (
+                convergence_criterion_valid
+                and delta is not None
+                and delta <= ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER
+            )
+        elif delta is not None:
+            convergence_criterion_valid = (
+                convergence_criterion_valid
+                and delta > ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER
+            )
 
     errors = [float(row["error_kj_mol_per_water"]) for row in rows]
     abs_errors = [abs(value) for value in errors]
@@ -127,8 +165,18 @@ def main() -> None:
         ),
         "maxae_kj_mol_per_water": max(abs_errors),
     }
+    declared_final_text = statistics["final_result"].strip().lower()
+    declared_final_valid = declared_final_text in {"true", "false"}
+    declared_final = declared_final_text == "true"
+    final_state_consistent = (
+        declared_final_valid
+        and declared_final == (calculated["converged_phase_count"] == len(EXPECTED_PHASES))
+    )
     adaptive_match = (
-        calculated["phase_count"] == int(statistics["phase_count"])
+        phase_matrix_valid
+        and convergence_criterion_valid
+        and final_state_consistent
+        and calculated["phase_count"] == int(statistics["phase_count"])
         and calculated["converged_phase_count"] == int(statistics["converged_phase_count"])
         and calculated["largest_mesh_n"] == int(statistics["largest_mesh_n"])
         and all(
@@ -152,12 +200,37 @@ def main() -> None:
     gate_results["adaptive_statistics_internal_consistency"] = {
         "status": "PASS" if adaptive_match else "FAIL",
         "passed": adaptive_match,
-        "files": [adaptive_relative, statistics_relative],
+        "files": [adaptive_relative, statistics_relative, native_absolute_relative],
         "sha256": {
             adaptive_relative: sha256(ROOT / adaptive_relative),
             statistics_relative: sha256(ROOT / statistics_relative),
+            native_absolute_relative: sha256(ROOT / native_absolute_relative),
         },
+        "phase_matrix_valid": phase_matrix_valid,
+        "convergence_criterion_valid": convergence_criterion_valid,
+        "adaptive_tolerance_kj_mol_per_water": ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER,
+        "final_state_consistent": final_state_consistent,
     }
+
+    ih_meshes = {
+        int(row["mesh_n"])
+        for row in native_absolute_rows
+        if row["phase"] == "Ih" and row["qualification"] == "PASS"
+    }
+    pending_science_endpoints = []
+    for row in rows:
+        if row["phase_converged"].strip().lower() == "true":
+            continue
+        selected_mesh = int(row["mesh_n"])
+        delta_text = row["absolute_adjacent_delta_kj_mol_per_water"].strip()
+        required_mesh = selected_mesh + 1 if delta_text or selected_mesh == 1 else selected_mesh - 1
+        endpoint = f"ice {row['phase']} {required_mesh}x{required_mesh}x{required_mesh}"
+        if required_mesh not in ih_meshes:
+            endpoint += (
+                f" after same-build ice Ih "
+                f"{required_mesh}x{required_mesh}x{required_mesh}"
+            )
+        pending_science_endpoints.append(endpoint)
 
     all_completed_gates_pass = all(item["passed"] for item in gate_results.values())
     output = {
@@ -166,16 +239,14 @@ def main() -> None:
         "completed_gate_count": len(gate_results),
         "completed_gates": gate_results,
         "current_adaptive_set": calculated,
-        "current_adaptive_set_is_final": statistics["final_result"].strip().lower() == "true",
-        "pending_science_endpoints": [
-            "ice VII 9x9x9 after same-build ice Ih 9x9x9",
-            "ice XI 7x7x7",
-            "ice XIV 8x8x8",
-            "ice XVII 7x7x7",
-        ],
+        "current_adaptive_set_is_final": declared_final,
+        "pending_science_endpoints": pending_science_endpoints,
         "pending_diagnostic_endpoint": None,
         "interpretation": (
-            "All completed exact implementation gates pass. The DMC-ICE13 adaptive "
+            "All completed exact implementation gates pass and the DMC-ICE13 adaptive "
+            "statistic is final."
+            if declared_final and not pending_science_endpoints
+            else "All completed exact implementation gates pass. The DMC-ICE13 adaptive "
             "statistic remains provisional until the listed phase-local endpoints finish."
         ),
     }
