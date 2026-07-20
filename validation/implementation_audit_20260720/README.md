@@ -29,7 +29,8 @@ their individual tolerances, the following independent checks:
 - independent decimal reconstruction of BvK normalization, per-water
   referencing, unit conversion, DMC errors, and aggregate statistics;
 - same-accuracy and tighter-SCC comparisons;
-- native Bloch k points versus an explicit CP2K Gamma-point BvK supercell;
+- native Bloch k points versus explicit CP2K Gamma-point BvK supercells for
+  both ice XVII and the high-residual ice-VII case;
 - full-grid, K290, SPGLIB, and time-reversal equivalence;
 - analytic energy, force, virial, and stress paths, including 1D and 2D PBC;
 - the complete ice-XVII native-$2\times2\times2$ full-grid/SPGLIB derivative

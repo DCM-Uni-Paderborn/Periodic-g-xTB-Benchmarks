@@ -288,6 +288,12 @@ def main() -> None:
                 "gamma_supercell_oracle_reproduced_json",
             )
         )
+        checks.append(
+            run_check(
+                "ice_vii_explicit_gamma_supercell_oracle",
+                ["bash", str(oracle_root / "scripts/evaluate_vii_gamma_oracle.sh")],
+            )
+        )
 
     for relative in MANIFESTS:
         checks.append(check_manifest(relative))
@@ -301,7 +307,7 @@ def main() -> None:
     aggregate = json.loads((HERE / "verification.json").read_text(encoding="utf-8"))
     aggregate_valid = (
         aggregate.get("status") == "PASS"
-        and aggregate.get("completed_gate_count") == 30
+        and aggregate.get("completed_gate_count") == 31
         and all(
             item.get("passed") is True
             for item in aggregate.get("completed_gates", {}).values()

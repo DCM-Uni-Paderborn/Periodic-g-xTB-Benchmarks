@@ -19,7 +19,6 @@ EXPECTED_PHASES = (
 ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER = 0.10
 MAXIMUM_ADAPTIVE_MESH = 8
 PENDING_DIAGNOSTIC_ENDPOINTS = (
-    "ice VII explicit CP2K Gamma-supercell 2x2x2 oracle",
     (
         "ice XVII same-binary full/reduced energy-force-stress and "
         "central-difference requalification"
@@ -58,6 +57,7 @@ def main() -> None:
         "native_cli_tight_k222": "validation/tight_parity_k222_20260720/verification.json",
         "accuracy_equivalence": "validation/accuracy_equivalence_20260720/verification.json",
         "native_gamma_bvk_oracle": "validation/explicit_cp2k_gamma_supercell_oracle_20260719/verification.reproduced.json",
+        "native_gamma_bvk_oracle_ice_vii": "validation/explicit_cp2k_gamma_supercell_oracle_20260719/verification-vii.json",
         "geometry_equivalence": "validation/geometry_equivalence_20260720/verification.json",
         "mstore_accuracy_equivalence": "validation/mstore_accuracy_equivalence_20260720/verification.json",
         "mstore_pbc_component_ablation": "validation/mstore_pbc_component_ablation_20260720/verification.json",

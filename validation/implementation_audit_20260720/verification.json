@@ -2,7 +2,7 @@
   "capped_unresolved_phases": [
     "VII"
   ],
-  "completed_gate_count": 30,
+  "completed_gate_count": 31,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -130,6 +130,12 @@
       "sha256": "f9cd68f5f38f9eae81f2987ca7353d3ed6a20a2b11f916212c32a5fe16006b7e",
       "status": "PASS"
     },
+    "native_gamma_bvk_oracle_ice_vii": {
+      "file": "validation/explicit_cp2k_gamma_supercell_oracle_20260719/verification-vii.json",
+      "passed": true,
+      "sha256": "976616b08854febca9cf4741840486add49861f08170a69f1d3950df84db06a2",
+      "status": "PASS"
+    },
     "native_restart_equivalence": {
       "file": "validation/gxtb_restart_equivalence_20260720/verification.json",
       "passed": true,
@@ -235,7 +241,6 @@
   "interpretation": "All completed exact implementation gates pass. The DMC-ICE13 adaptive statistic remains provisional while listed sub-cap endpoints are pending or a phase remains unresolved at the declared mesh cap; the separately listed diagnostic endpoint is not yet a completed gate.",
   "maximum_adaptive_mesh": 8,
   "pending_diagnostic_endpoints": [
-    "ice VII explicit CP2K Gamma-supercell 2x2x2 oracle",
     "ice XVII same-binary full/reduced energy-force-stress and central-difference requalification"
   ],
   "pending_science_endpoints": [

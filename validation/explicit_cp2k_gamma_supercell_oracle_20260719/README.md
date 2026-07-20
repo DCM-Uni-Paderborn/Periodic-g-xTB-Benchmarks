@@ -36,11 +36,14 @@ The reusable `scripts/make_gamma_supercell_input.py` generator reproduces the
 archived ice-XVII input and its verification record byte for byte.  It also
 provides the independently gated 288-atom ice-VII input under `inputs/VII/`.
 Ice VII is the phase with the largest residual in the complete direct-CLI
-versus native-CP2K matrix.  `scripts/run_vii_gamma_oracle.sh` therefore stages
-the corresponding explicit-Gamma calculation with the same qualified binary,
-input-hash gate, singleton CPU affinity, and conservative memory gate.  Its
-raw result and three-route comparison are added only after normal termination;
-`scripts/evaluate_vii_gamma_oracle.sh` then compares that result with the
-already qualified native and direct-CLI routes using exact input and executable
-hashes.  The completed ice-XVII oracle above remains the current published
-result.
+versus native-CP2K matrix.  `scripts/run_vii_gamma_oracle.sh` stages the
+corresponding explicit-Gamma calculation with the same qualified binary,
+input-hash gate, singleton CPU affinity, and conservative memory gate.  The
+calculation terminated normally and the independent three-route check in
+`verification-vii.json` passes: native Bloch sampling and the explicit CP2K
+Gamma supercell differ by `1.192184981846367e-7` hartree per primitive cell,
+while the maximum pairwise difference among native CP2K, Gamma-supercell CP2K,
+and direct `save_tblite` is the same value and remains below the conservative
+`2e-7`-hartree gate.  Ice VII therefore independently confirms the conclusion
+from ice XVII that neither the native k-space transform nor k-point symmetry
+reduction explains the much larger benchmark deviation.

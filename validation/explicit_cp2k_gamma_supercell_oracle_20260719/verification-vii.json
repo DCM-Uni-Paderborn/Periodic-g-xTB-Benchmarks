@@ -1,0 +1,31 @@
+{
+  "deltas_hartree_per_primitive": {
+    "gamma_minus_cli": 1.4010197446623351e-08,
+    "native_minus_cli": -1.0520830073801335e-07,
+    "native_minus_gamma": -1.192184981846367e-07
+  },
+  "direct_cli_per_primitive_hartree": -919.058168637085,
+  "direct_cli_total_hartree": -7352.46534909668,
+  "gamma_oracle_alignment": "direct_cli",
+  "gamma_supercell_cp2k_per_primitive_hartree": -919.0581686230748,
+  "gamma_supercell_cp2k_total_hartree": -7352.465348984599,
+  "maximum_absolute_pairwise_delta_hartree": 1.192184981846367e-07,
+  "native_cp2k_hartree": -919.0581687422933,
+  "parity_tolerance_hartree": 2e-07,
+  "provenance": {
+    "direct_cli": {
+      "binary_sha256": "f0c66f82385f33367b9988a9f04959b77992e0139f60b47211e35b90bbebb38a",
+      "input_sha256": "4de281e3ab3632f443b22f99162e80a3a327c0b8124489c015d4b68fa62d1d91"
+    },
+    "gamma_supercell_cp2k": {
+      "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+      "input_sha256": "6481b70e1a437e92247649e06ff90798358f0606dedf60c07b11e4ecab557a21"
+    },
+    "native_cp2k": {
+      "binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+      "input_sha256": "a3ae9af9154ff0278f0f27482c15c5ca199656ef490a107b505a5ea360e0beac"
+    }
+  },
+  "replicas": 8,
+  "status": "PASS"
+}
