@@ -68,7 +68,11 @@ validate_result() {
 run_case() {
   local name=$1 input="$campaign/inputs/$1/input.inp" result="$campaign/runs/$1"
   [[ -s $input ]]
-  [[ ! -e $result ]]
+  if [[ -e $result ]]; then
+    validate_result "$result"
+    log "qualified $name already present"
+    return
+  fi
   wait_for_memory
   log "launching $name on singleton CPU $cpu"
   bash "$root/launch_pinned_cp2k.sh" "gxtb-xvii-$name" "$cpu" "$binary" "$input" "$result"

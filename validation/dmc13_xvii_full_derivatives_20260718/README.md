@@ -33,7 +33,9 @@ output.
 `run_current_binary_requalification.sh` repeats the complete ice-XVII
 full-grid/reduced-grid and central-difference sequence only after the capped
 DMC-ICE13 endpoint queue has finished.  All six runs use the same qualified
-CP2K executable.  After archiving that campaign, run
+CP2K executable.  A case that was completed early under the same hash and
+singleton-affinity gates is validated and reused rather than run twice.  After
+archiving that campaign, run
 `verify_current_binary_requalification.py CAMPAIGN_ROOT`; the verifier checks
 the executable and input hashes of every run, reconstructs the Cartesian
 displacement and homogeneous strain from the inputs, and independently gates
