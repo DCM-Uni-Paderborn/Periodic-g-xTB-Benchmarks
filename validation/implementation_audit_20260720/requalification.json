@@ -10,7 +10,7 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "a287b768267da725af1c23560ac753533b76f5a9a885ca26848e5e562fcd253a"
+      "stdout_sha256": "803021255d14b3a100a0f2f561f125250d6095248d65772a8e429e1d0193591b"
     },
     {
       "command": [
@@ -21,7 +21,7 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "61ce32aa9fdcfa95742485fa36acd7ed7277fceaa855f21ba9da5fd77f5ba473"
+      "stdout_sha256": "4b76c6a6adbf68d9f1273a6b3105a4ce43bc037ebdce83d2ecace1a26cae6f11"
     },
     {
       "command": [
@@ -32,7 +32,7 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "0bc26dce5dce428b6449facafbf7b3f6395feee426963847e912868ce95b5a6f"
+      "stdout_sha256": "7592a1deb612a58b10dbceffc22100986c004a1898705fd7c36051db0415e573"
     },
     {
       "command": [
@@ -43,7 +43,7 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "deede2a71d1142e530aca100f3930ff790a2e8059724eb93703c4cdc1e595cdc"
+      "stdout_sha256": "de16c4b23725ccb2ff38e9fe56d5a58619c29a4f6c64bf5cefd9e1d56d8e8a81"
     },
     {
       "command": [
@@ -120,7 +120,7 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "70667f4e1f247188f3c262db4c6a4bcdcc2226ed7e04af51b9d054128f8d3bdd"
+      "stdout_sha256": "506ac2a37b01e010e2e3826e37f9adba4fe20e78622d583fd535a1e2b1ca28f5"
     },
     {
       "command": [
@@ -274,7 +274,7 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "47bc5df4145001dad2355d447a20b07d1f1b944a143eec23e4a85173fa4e110f"
+      "stdout_sha256": "ad08f4e752bf73907eaa7d8ed0c38c15808f0519c169bf47f34811c300c09211"
     },
     {
       "command": [
@@ -307,7 +307,7 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "15af37195be6c129cd7640a059c1590a20144a24cacfd1648bad5896496248aa"
+      "stdout_sha256": "7b3c786ec72a5bb5d9bec3fecc9d29f2a2171f59ba5bf2d220435a9d65777c46"
     },
     {
       "command": [
@@ -501,17 +501,17 @@
       "returncode": 0,
       "status": "PASS",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_sha256": "22efd839ce30a5cca11e704a9f93e78701aa78648e60b896fcd20770d3c53963"
+      "stdout_sha256": "2a283ec81feb5a78106a214c5eb02410240d09067e5aa4f6cd8f4f94f4967b95"
     },
     {
       "all_completed_gates_pass": true,
       "completed_gate_count": 33,
       "name": "aggregate_semantics",
       "status": "PASS",
-      "verification_sha256": "22efd839ce30a5cca11e704a9f93e78701aa78648e60b896fcd20770d3c53963"
+      "verification_sha256": "2a283ec81feb5a78106a214c5eb02410240d09067e5aa4f6cd8f4f94f4967b95"
     }
   ],
-  "interpretation": "Every completed Part-I verifier was executed again from a clean tracked checkout. Regenerated JSON, derived tables, aggregate gates, and selected SHA-256 manifests reproduce the archived evidence exactly. The remaining sub-cap DMC-ICE13 endpoints are science calculations; all declared implementation diagnostics are complete.",
+  "interpretation": "Every completed Part-I verifier was executed again from a clean tracked checkout. Regenerated JSON, derived tables, aggregate gates, and selected SHA-256 manifests reproduce the archived evidence exactly. All endpoints permitted by the declared 8x8x8 Part-I cap are complete. The capped phases VII, XIV remain explicitly non-converged rather than being mislabelled as passing.",
   "schema": "periodic-gxtb-part-i-completed-evidence-requalification-v1",
   "status": "PASS",
   "tracked_checkout_clean_after_reproduction": true
