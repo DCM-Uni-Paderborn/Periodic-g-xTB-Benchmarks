@@ -43,6 +43,20 @@ Run from the repository root with
 python3 validation/implementation_audit_20260720/verify_implementation_audit.py
 ```
 
+For a stronger clean-checkout qualification that actually reruns every
+completed child verifier, regenerates the derived low-k, three-route, and
+Gamma-supercell results, checks the selected SHA-256 manifests, and requires
+the tracked worktree to remain unchanged, run
+
+```bash
+python3 validation/implementation_audit_20260720/requalify_completed_evidence.py
+```
+
+The resulting `requalification.json` records every invoked check and its
+deterministic output hashes.  The driver refuses to start from a dirty tracked
+checkout and fails if any regenerated evidence differs from the published
+files.
+
 `verification.json` reports the completed qualification gates separately from
 the still-running science endpoints. The direct CLI/native diagnostic matrix
 is complete through `4 x 4 x 4`. A passing audit therefore
