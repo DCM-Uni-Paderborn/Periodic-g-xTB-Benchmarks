@@ -36,6 +36,9 @@ their individual tolerances, the following independent checks:
   nonperiodic CeCl3 finite-difference threshold false negative;
 - exact geometry equivalence and internal consistency of the current adaptive
   DMC-ICE13 statistics.
+- independent reconstruction of the numerical hierarchy separating the
+  CLI/native residual, pbc source-state evolution, `mstore-inorganic` model
+  evolution, and the still-provisional dense-mesh DMC statistic.
 
 Run from the repository root with
 

@@ -30,6 +30,7 @@ STANDARD_VERIFIERS = (
     ("cecl3_tolerance_recheck", "validation/cecl3_tolerance_recheck_20260720/verify_cecl3_tolerance_recheck.py"),
     ("energy_component_ablation", "validation/dmc13_k222_viii_component_ablation_20260719/verify_component_ablation.py"),
     ("derivative_component_ablation", "validation/dmc13_k222_xvii_derivative_component_ablation_20260719/verify_derivative_component_ablation.py"),
+    ("dmc13_discrepancy_attribution", "validation/dmc13_discrepancy_attribution_20260720/verify_discrepancy_attribution.py"),
     ("geometry_equivalence", "validation/geometry_equivalence_20260720/verify_geometry_equivalence.py"),
     ("restart_equivalence", "validation/gxtb_restart_equivalence_20260720/verify_restart_equivalence.py"),
     ("macdonald_bvk_mesh_equivalence", "validation/macdonald_bvk_mesh_equivalence_20260720/verify_macdonald_bvk_mesh.py"),
@@ -290,7 +291,7 @@ def main() -> None:
     aggregate = json.loads((HERE / "verification.json").read_text(encoding="utf-8"))
     aggregate_valid = (
         aggregate.get("status") == "PASS"
-        and aggregate.get("completed_gate_count") == 23
+        and aggregate.get("completed_gate_count") == 24
         and all(
             item.get("passed") is True
             for item in aggregate.get("completed_gates", {}).values()
