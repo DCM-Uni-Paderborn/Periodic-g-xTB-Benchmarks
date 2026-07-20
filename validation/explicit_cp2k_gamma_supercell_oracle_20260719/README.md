@@ -40,4 +40,7 @@ versus native-CP2K matrix.  `scripts/run_vii_gamma_oracle.sh` therefore stages
 the corresponding explicit-Gamma calculation with the same qualified binary,
 input-hash gate, singleton CPU affinity, and conservative memory gate.  Its
 raw result and three-route comparison are added only after normal termination;
-the completed ice-XVII oracle above remains the current published result.
+`scripts/evaluate_vii_gamma_oracle.sh` then compares that result with the
+already qualified native and direct-CLI routes using exact input and executable
+hashes.  The completed ice-XVII oracle above remains the current published
+result.
