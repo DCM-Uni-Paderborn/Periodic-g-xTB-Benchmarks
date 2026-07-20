@@ -32,6 +32,10 @@ CLI_DENSITY_CONVERGENCE_PATTERN = re.compile(
 )
 CP2K_REQUIRED_ACCURACY = 0.1
 CP2K_REQUIRED_EPS_SCF = 1.0e-9
+CP2K_REQUIRED_EPS_DEFAULT = 1.0e-12
+CP2K_REQUIRED_MAX_SCF = 300
+CP2K_REQUIRED_MIXER_ITERATIONS = 300
+CP2K_REQUIRED_MIXING_ALPHA = 0.2
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -41,10 +45,12 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 
 def write_csv(path: Path, rows: list[dict[str, object]], fieldnames: tuple[str, ...]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="", encoding="utf-8") as handle:
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    with temporary.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
+    temporary.replace(path)
 
 
 def read_sidecar_hash(path: Path) -> str:
@@ -103,6 +109,10 @@ def cp2k_input_qualified(path: Path, mesh: int) -> bool:
 
     accuracy = scalar("ACCURACY")
     eps_scf = scalar("EPS_SCF")
+    eps_default = scalar("EPS_DEFAULT")
+    max_scf = scalar("MAX_SCF")
+    mixer_iterations = scalar("ITERATIONS")
+    mixing_alpha = scalar("ALPHA")
     expected_shift = 0.0 if mesh % 2 else (mesh - 1) / (2 * mesh)
     scheme = re.search(
         r"^\s*SCHEME\s+MACDONALD\s+(\d+)\s+(\d+)\s+(\d+)\s+"
@@ -115,17 +125,44 @@ def cp2k_input_qualified(path: Path, mesh: int) -> bool:
     mesh_edges = tuple(int(scheme.group(index)) for index in range(1, 4))
     shifts = tuple(float(scheme.group(index)) for index in range(4, 7))
     required_lines = (
+        r"^\s*RUN_TYPE\s+ENERGY\s*$",
+        r"^\s*METHOD\s+Quickstep\s*$",
+        r"^\s*METHOD\s+xTB\s*$",
+        r"^\s*GFN_TYPE\s+TBLITE\s*$",
+        r"^\s*METHOD\s+GXTB\s*$",
         r"^\s*SCC_MIXER\s+TBLITE\s*$",
+        r"^\s*SCF_GUESS\s+MOPAC\s*$",
+        r"^\s*METHOD\s+DIRECT_P_MIXING\s*$",
         r"^\s*SYMMETRY\s+T\s*$",
         r"^\s*FULL_GRID\s+F\s*$",
         r"^\s*SYMMETRY_BACKEND\s+SPGLIB\s*$",
         r"^\s*SYMMETRY_REDUCTION_METHOD\s+SPGLIB\s*$",
+        r"^\s*CANONICALIZE\s+TRUE\s*$",
+        r"^\s*PERIODIC\s+XYZ\s*$",
     )
     return (
         accuracy is not None
         and math.isclose(accuracy, CP2K_REQUIRED_ACCURACY, rel_tol=0.0, abs_tol=1.0e-15)
         and eps_scf is not None
         and math.isclose(eps_scf, CP2K_REQUIRED_EPS_SCF, rel_tol=0.0, abs_tol=1.0e-18)
+        and eps_default is not None
+        and math.isclose(eps_default, CP2K_REQUIRED_EPS_DEFAULT, rel_tol=0.0, abs_tol=1.0e-21)
+        and max_scf is not None
+        and math.isclose(max_scf, CP2K_REQUIRED_MAX_SCF, rel_tol=0.0, abs_tol=0.0)
+        and mixer_iterations is not None
+        and math.isclose(
+            mixer_iterations,
+            CP2K_REQUIRED_MIXER_ITERATIONS,
+            rel_tol=0.0,
+            abs_tol=0.0,
+        )
+        and mixing_alpha is not None
+        and math.isclose(
+            mixing_alpha,
+            CP2K_REQUIRED_MIXING_ALPHA,
+            rel_tol=0.0,
+            abs_tol=1.0e-15,
+        )
         and mesh_edges == (mesh, mesh, mesh)
         and all(math.isclose(value, expected_shift, rel_tol=0.0, abs_tol=1.0e-15) for value in shifts)
         and all(re.search(pattern, text, re.MULTILINE | re.IGNORECASE) for pattern in required_lines)
@@ -142,6 +179,40 @@ def statistics(rows: list[dict[str, object]]) -> dict[str, float]:
     }
 
 
+def native_mesh_from_directory(name: str) -> int | None:
+    """Return N for an exact kNNN-reduced directory name, including N >= 10."""
+    if not name.startswith("k") or not name.endswith("-reduced"):
+        return None
+    digits = name[1:-len("-reduced")]
+    if not digits.isdigit() or len(digits) % 3 != 0:
+        return None
+    width = len(digits) // 3
+    components = (digits[:width], digits[width:2 * width], digits[2 * width:])
+    if any(
+        not component or (len(component) > 1 and component.startswith("0"))
+        for component in components
+    ):
+        return None
+    if len(set(components)) != 1:
+        return None
+    mesh = int(components[0])
+    return mesh if mesh > 0 else None
+
+
+def discover_native_meshes() -> tuple[int, ...]:
+    native_root = RAW / "cp2k_native"
+    if not native_root.is_dir():
+        raise AssertionError(f"missing CP2K-native raw-data directory: {native_root}")
+    meshes = {
+        mesh
+        for child in native_root.iterdir()
+        if child.is_dir() and (mesh := native_mesh_from_directory(child.name)) is not None
+    }
+    if not meshes:
+        raise AssertionError(f"no regular CP2K-native mesh directories found in {native_root}")
+    return tuple(sorted(meshes))
+
+
 def main() -> None:
     references = {
         row["phase"]: float(row["reference_relative_energy_kJmol_per_H2O"])
@@ -154,7 +225,7 @@ def main() -> None:
 
     absolute_rows: list[dict[str, object]] = []
     relative_rows: list[dict[str, object]] = []
-    for mesh in range(1, 9):
+    for mesh in discover_native_meshes():
         mesh_id = f"k{mesh}{mesh}{mesh}-reduced"
         mesh_energies: dict[str, float] = {}
         for phase in PHASES:
