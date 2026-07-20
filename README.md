@@ -61,7 +61,8 @@ Direct current-provider CLI/native parity passes for all 52 points through
 Wigner--Seitz self-image index used by periodic exchange.  A second reciprocal
 patch test attributes the complete post-WSC residual to the later
 minimum-image second-order Coulomb variant, leaving only
-`1.10e-5 kJ mol-1 H2O-1`.  The raw evidence is in
+`1.10e-5 kJ mol-1 H2O-1` for ice VII.  An independent ice-XVII
+cross-check leaves only `7.90e-7 kJ mol-1 H2O-1`.  The raw evidence is in
 [`validation/wigner_seitz_self_image_attribution_20260720/`](validation/wigner_seitz_self_image_attribution_20260720/)
 and
 [`validation/second_order_mic_attribution_20260720/`](validation/second_order_mic_attribution_20260720/).

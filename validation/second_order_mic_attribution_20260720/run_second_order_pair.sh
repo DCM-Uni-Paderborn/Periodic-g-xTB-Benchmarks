@@ -17,7 +17,7 @@ export BLIS_NUM_THREADS=1
 export VECLIB_MAXIMUM_THREADS=1
 
 [[ -x $executable ]] || exit 66
-for phase in Ih VII; do
+for phase in Ih VII XVII; do
   run="$root/results/$label/$phase"
   structure="$root/inputs/$phase/POSCAR"
   [[ -s $structure && ! -e $run ]] || exit 65
@@ -38,4 +38,3 @@ for phase in Ih VII; do
   printf '%s\n' "$status" > "$run/exit_status"
   [[ $status -eq 0 ]]
 done
-

@@ -2,8 +2,9 @@
 
 This reciprocal one-patch test resolves the small source-state residual that
 remains after correcting the historical Wigner--Seitz self-image index.
-It compares ice VII with same-source ice Ih in the identical explicit
-`2 x 2 x 2` BvK supercells containing 96 water molecules.
+It compares ice VII and, independently, ice XVII with same-source ice Ih in
+explicit `2 x 2 x 2` BvK supercells.  The VII and Ih cells contain 96 water
+molecules; the smaller XVII cell contains 48.
 
 The three independently converged source states are:
 
@@ -28,6 +29,18 @@ second-order change leaves `-0.000010960807 kJ mol-1 H2O-1`, explaining
 `99.9998117%` of that residual.  The remaining value is below the SCC-level
 numerical resolution of this diagnostic.
 
+The independent ice-XVII cross-check gives:
+
+| Source state | XVII minus Ih / kJ mol-1 H2O-1 |
+|---|---:|
+| corrected `pbc` | -51.559121449977 |
+| WSC-corrected `mstore-inorganic` | -51.723327684319 |
+| `pbc` without the minimum-image second-order variant | -51.723328473957 |
+
+Here the original residual is `0.164206234342 kJ mol-1 H2O-1`, whereas the
+no-MIC `pbc` result differs from WSC-corrected `mstore-inorganic` by only
+`0.000000789638 kJ mol-1 H2O-1`, independently explaining `99.9995191%`.
+
 Together with the independent Wigner--Seitz reciprocal-patch test, this
 classifies the complete historical sparse-mesh branch separation: the large
 part comes from misassigned periodic exchange self-images, and the small
@@ -36,4 +49,3 @@ Coulomb kernel.  Neither effect is a CP2K-native/CLI interface discrepancy.
 
 Run `python3 evaluate_second_order_mic_attribution.py` to reproduce all
 numerical, input, source, build-option, and raw-file checks.
-

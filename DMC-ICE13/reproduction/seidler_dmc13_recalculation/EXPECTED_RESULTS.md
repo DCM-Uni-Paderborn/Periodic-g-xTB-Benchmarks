@@ -110,6 +110,12 @@ only `1.10e-5 kJ mol-1 H2O-1`.  This reciprocal one-patch experiment explains
 The raw inputs, converged outputs, inverse source patch, matched build options,
 and verifier are under `evidence/second_order_mic_attribution/`.
 
+The same three source states were also evaluated for the smaller ice-XVII
+cell.  There the post-Wigner--Seitz residual is
+`0.16420623 kJ mol-1 H2O-1`; removing only the minimum-image second-order
+variant leaves `7.90e-7 kJ mol-1 H2O-1` and independently explains
+`99.99952%`.  This rules out an ice-VII-specific cancellation.
+
 Together, the two reciprocal source-patch experiments classify the complete
 historical branch separation at this diagnostic point: the dominant term is
 the corrected periodic exchange self-image mapping, and the remaining term is

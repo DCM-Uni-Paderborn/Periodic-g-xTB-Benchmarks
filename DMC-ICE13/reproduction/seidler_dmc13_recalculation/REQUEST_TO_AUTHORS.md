@@ -66,7 +66,10 @@ Our present evidence is:
    WSC-corrected `mstore-inorganic` within
    `1.10e-5 kJ mol-1 H2O-1`, explaining `99.99981%` of the residual.  The
    inverse patch, matching build options, raw outputs, hashes, and verifier
-   are in `evidence/second_order_mic_attribution/`.
+   are in `evidence/second_order_mic_attribution/`.  Repeating the same
+   three-state test for the smaller ice-XVII cell leaves only
+   `7.90e-7 kJ mol-1 H2O-1` and independently explains `99.99952%`, excluding
+   an ice-VII-specific cancellation.
 
 Could you please run the following two independent series with your own clean
 builds?

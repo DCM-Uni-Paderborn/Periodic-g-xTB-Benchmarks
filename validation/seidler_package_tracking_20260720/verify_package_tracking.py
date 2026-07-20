@@ -70,7 +70,7 @@ def main() -> None:
         "all_package_files_are_manifested": not unmanifested,
         "all_manifest_entries_are_tracked": not untracked,
         "all_hashes_match": not hash_mismatches,
-        "raw_text_outputs_present_and_tracked": len(raw_text_outputs) == 204
+        "raw_text_outputs_present_and_tracked": len(raw_text_outputs) == 207
         and all(relative in tracked_package_paths for relative in raw_text_outputs),
     }
     passed = all(checks.values())

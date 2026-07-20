@@ -14,8 +14,13 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 HARTREE_TO_KJ_MOL = Decimal("2625.4996394798254")
-WATERS = Decimal(96)
-PHASES = ("Ih", "VII")
+PHASES = ("Ih", "VII", "XVII")
+RELATIVE_PHASES = ("VII", "XVII")
+WATERS = {
+    "Ih": Decimal(96),
+    "VII": Decimal(96),
+    "XVII": Decimal(48),
+}
 PROVIDERS = ("pbc-correct", "mstore-wsc-corrected", "pbc-without-mic")
 EXPECTED_BINARY = {
     "pbc-correct": "81f1d9690ff040836c2f40cfe0eaf6aa33822681ec029479c5633785537d1aee",
@@ -25,6 +30,7 @@ EXPECTED_BINARY = {
 EXPECTED_INPUT = {
     "Ih": "cc6ec119078ecd4769f50893aa7cd6128390cab0eb6f069d58d9972b0a1904b7",
     "VII": "4de281e3ab3632f443b22f99162e80a3a327c0b8124489c015d4b68fa62d1d91",
+    "XVII": "17446bfc858d189bb9e48745c7e14b470ba2b72bc56e7db50afa2864a101b8c7",
 }
 EXPECTED_SOURCE = {
     "pbc_head": "c932120d2580811901de6a1fe3f89b943c251766",
@@ -100,9 +106,10 @@ def main() -> None:
     for phase in PHASES:
         structure = HERE / "inputs" / phase / "POSCAR"
         checks[f"input/{phase}:hash"] = sha256(structure) == EXPECTED_INPUT[phase]
+        waters = int(WATERS[phase])
         checks[f"input/{phase}:composition"] = poscar_composition(structure) == {
-            "H": 192,
-            "O": 96,
+            "H": 2 * waters,
+            "O": waters,
         }
 
     for provider in PROVIDERS:
@@ -194,57 +201,89 @@ def main() -> None:
         in (HERE / "source/revert-083f220.patch").read_text(encoding="utf-8")
     )
 
-    relative: dict[str, Decimal] = {}
-    for provider in PROVIDERS:
-        relative[provider] = (
-            energies[(provider, "VII")] - energies[(provider, "Ih")]
-        ) / WATERS * HARTREE_TO_KJ_MOL
-
-    original_residual = relative["pbc-correct"] - relative["mstore-wsc-corrected"]
-    no_mic_residual = (
-        relative["pbc-without-mic"] - relative["mstore-wsc-corrected"]
-    )
-    mic_shift = relative["pbc-correct"] - relative["pbc-without-mic"]
-    explained_percent = (
-        Decimal(1) - abs(no_mic_residual) / abs(original_residual)
-    ) * Decimal(100)
-    checks["numerics:no_mic_residual_below_5e-5"] = (
-        abs(no_mic_residual) < Decimal("5e-5")
-    )
-    checks["numerics:explained_above_99_999_percent"] = (
-        explained_percent > Decimal("99.999")
-    )
+    relative_by_phase: dict[str, dict[str, Decimal]] = {}
+    diagnostics: dict[str, dict[str, Decimal]] = {}
+    for phase in RELATIVE_PHASES:
+        relative_by_phase[phase] = {}
+        for provider in PROVIDERS:
+            relative_by_phase[phase][provider] = (
+                energies[(provider, phase)] / WATERS[phase]
+                - energies[(provider, "Ih")] / WATERS["Ih"]
+            ) * HARTREE_TO_KJ_MOL
+        relative = relative_by_phase[phase]
+        original_residual = (
+            relative["pbc-correct"] - relative["mstore-wsc-corrected"]
+        )
+        no_mic_residual = (
+            relative["pbc-without-mic"] - relative["mstore-wsc-corrected"]
+        )
+        mic_shift = relative["pbc-correct"] - relative["pbc-without-mic"]
+        explained_percent = (
+            Decimal(1) - abs(no_mic_residual) / abs(original_residual)
+        ) * Decimal(100)
+        diagnostics[phase] = {
+            "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O": original_residual,
+            "pbc_without_mic_minus_mstore_wsc_corrected_kj_mol_per_H2O": no_mic_residual,
+            "mic_variant_shift_kj_mol_per_H2O": mic_shift,
+            "residual_explained_percent": explained_percent,
+        }
+        checks[f"numerics/{phase}:no_mic_residual_below_5e-5"] = (
+            abs(no_mic_residual) < Decimal("5e-5")
+        )
+        checks[f"numerics/{phase}:explained_above_99_999_percent"] = (
+            explained_percent > Decimal("99.999")
+        )
 
     with (HERE / "relative_energies.csv").open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(
             handle,
-            fieldnames=("provider", "relative_energy_kj_mol_per_H2O"),
+            fieldnames=("phase", "provider", "relative_energy_kj_mol_per_H2O"),
         )
         writer.writeheader()
-        for provider in PROVIDERS:
-            writer.writerow(
-                {
-                    "provider": provider,
-                    "relative_energy_kj_mol_per_H2O": format(relative[provider], ".12f"),
-                }
-            )
+        for phase in RELATIVE_PHASES:
+            for provider in PROVIDERS:
+                writer.writerow(
+                    {
+                        "phase": phase,
+                        "provider": provider,
+                        "relative_energy_kj_mol_per_H2O": format(
+                            relative_by_phase[phase][provider], ".12f"
+                        ),
+                    }
+                )
+
+    primary = diagnostics["VII"]
 
     payload = {
-        "schema": "periodic-gxtb-second-order-mic-attribution-v1",
+        "schema": "periodic-gxtb-second-order-mic-attribution-v2",
         "status": "PASS" if all(checks.values()) else "FAIL",
-        "test": "ice VII minus same-source ice Ih on an explicit 2x2x2 BvK supercell",
-        "waters_per_cell": 96,
+        "test": "ice VII and XVII minus same-source ice Ih on explicit 2x2x2 BvK supercells",
+        "waters_per_cell": {key: int(value) for key, value in WATERS.items()},
         "relative_energies_kj_mol_per_H2O": {
-            key: float(value) for key, value in relative.items()
+            key: float(value) for key, value in relative_by_phase["VII"].items()
         },
         "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O": float(
-            original_residual
+            primary["pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O"]
         ),
         "pbc_without_mic_minus_mstore_wsc_corrected_kj_mol_per_H2O": float(
-            no_mic_residual
+            primary["pbc_without_mic_minus_mstore_wsc_corrected_kj_mol_per_H2O"]
         ),
-        "mic_variant_shift_kj_mol_per_H2O": float(mic_shift),
-        "residual_explained_percent": float(explained_percent),
+        "mic_variant_shift_kj_mol_per_H2O": float(
+            primary["mic_variant_shift_kj_mol_per_H2O"]
+        ),
+        "residual_explained_percent": float(
+            primary["residual_explained_percent"]
+        ),
+        "phase_resolved_attribution": {
+            phase: {
+                "relative_energies_kj_mol_per_H2O": {
+                    key: float(value)
+                    for key, value in relative_by_phase[phase].items()
+                },
+                **{key: float(value) for key, value in diagnostics[phase].items()},
+            }
+            for phase in RELATIVE_PHASES
+        },
         "source": EXPECTED_SOURCE,
         "relevant_cmake_options": pbc_cache,
         "checks": checks,
@@ -253,7 +292,8 @@ def main() -> None:
             "After independently correcting the historical Wigner--Seitz self-image "
             "index, the remaining pbc/mstore relative-energy difference is reproduced "
             "by the later minimum-image second-order Coulomb variant. Reverting only "
-            "that source change on pbc removes the residual to numerical SCC noise."
+            "that source change on pbc removes the residual to numerical SCC noise "
+            "independently for ice VII and the smaller ice XVII cross-check."
         ),
     }
     (HERE / "verification.json").write_text(

@@ -15,7 +15,8 @@ their individual tolerances, the following independent checks:
   preservation, explicit CP2K acceptance markers, and the quoted-file-name
   negative control;
 - reciprocal source-patch attribution of the historical Wigner--Seitz
-  self-image error and the remaining second-order minimum-image model change;
+  self-image error and the remaining second-order minimum-image model change,
+  including an independent ice-XVII cross-check;
 - Git-aware completeness and hash verification of the independent Seidler
   recalculation package, including all raw text outputs;
 - source-level and exact-arithmetic equivalence of every archived MacDonald

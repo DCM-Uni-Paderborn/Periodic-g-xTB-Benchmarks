@@ -5,6 +5,8 @@
     "input/Ih:hash": true,
     "input/VII:composition": true,
     "input/VII:hash": true,
+    "input/XVII:composition": true,
+    "input/XVII:hash": true,
     "mstore-wsc-corrected/Ih:binary_hash": true,
     "mstore-wsc-corrected/Ih:command_settings": true,
     "mstore-wsc-corrected/Ih:density_threshold": true,
@@ -23,8 +25,19 @@
     "mstore-wsc-corrected/VII:finite_energy": true,
     "mstore-wsc-corrected/VII:input_hash": true,
     "mstore-wsc-corrected/VII:scc_converged": true,
-    "numerics:explained_above_99_999_percent": true,
-    "numerics:no_mic_residual_below_5e-5": true,
+    "mstore-wsc-corrected/XVII:binary_hash": true,
+    "mstore-wsc-corrected/XVII:command_settings": true,
+    "mstore-wsc-corrected/XVII:density_threshold": true,
+    "mstore-wsc-corrected/XVII:empty_stderr": true,
+    "mstore-wsc-corrected/XVII:energy_threshold": true,
+    "mstore-wsc-corrected/XVII:exit_zero": true,
+    "mstore-wsc-corrected/XVII:finite_energy": true,
+    "mstore-wsc-corrected/XVII:input_hash": true,
+    "mstore-wsc-corrected/XVII:scc_converged": true,
+    "numerics/VII:explained_above_99_999_percent": true,
+    "numerics/VII:no_mic_residual_below_5e-5": true,
+    "numerics/XVII:explained_above_99_999_percent": true,
+    "numerics/XVII:no_mic_residual_below_5e-5": true,
     "pbc-correct/Ih:binary_hash": true,
     "pbc-correct/Ih:command_settings": true,
     "pbc-correct/Ih:density_threshold": true,
@@ -43,6 +56,15 @@
     "pbc-correct/VII:finite_energy": true,
     "pbc-correct/VII:input_hash": true,
     "pbc-correct/VII:scc_converged": true,
+    "pbc-correct/XVII:binary_hash": true,
+    "pbc-correct/XVII:command_settings": true,
+    "pbc-correct/XVII:density_threshold": true,
+    "pbc-correct/XVII:empty_stderr": true,
+    "pbc-correct/XVII:energy_threshold": true,
+    "pbc-correct/XVII:exit_zero": true,
+    "pbc-correct/XVII:finite_energy": true,
+    "pbc-correct/XVII:input_hash": true,
+    "pbc-correct/XVII:scc_converged": true,
     "pbc-without-mic/Ih:binary_hash": true,
     "pbc-without-mic/Ih:command_settings": true,
     "pbc-without-mic/Ih:density_threshold": true,
@@ -61,6 +83,15 @@
     "pbc-without-mic/VII:finite_energy": true,
     "pbc-without-mic/VII:input_hash": true,
     "pbc-without-mic/VII:scc_converged": true,
+    "pbc-without-mic/XVII:binary_hash": true,
+    "pbc-without-mic/XVII:command_settings": true,
+    "pbc-without-mic/XVII:density_threshold": true,
+    "pbc-without-mic/XVII:empty_stderr": true,
+    "pbc-without-mic/XVII:energy_threshold": true,
+    "pbc-without-mic/XVII:exit_zero": true,
+    "pbc-without-mic/XVII:finite_energy": true,
+    "pbc-without-mic/XVII:input_hash": true,
+    "pbc-without-mic/XVII:scc_converged": true,
     "source:changed_files": true,
     "source:hybrid_tree": true,
     "source:inverse_patch_hash": true,
@@ -68,10 +99,34 @@
     "source:pbc_head": true,
     "source:reverted_commit": true
   },
-  "interpretation": "After independently correcting the historical Wigner--Seitz self-image index, the remaining pbc/mstore relative-energy difference is reproduced by the later minimum-image second-order Coulomb variant. Reverting only that source change on pbc removes the residual to numerical SCC noise.",
+  "interpretation": "After independently correcting the historical Wigner--Seitz self-image index, the remaining pbc/mstore relative-energy difference is reproduced by the later minimum-image second-order Coulomb variant. Reverting only that source change on pbc removes the residual to numerical SCC noise independently for ice VII and the smaller ice XVII cross-check.",
   "mic_variant_shift_kj_mol_per_H2O": 5.821148748079412,
   "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O": 5.821137787272057,
   "pbc_without_mic_minus_mstore_wsc_corrected_kj_mol_per_H2O": -1.096080735481386e-05,
+  "phase_resolved_attribution": {
+    "VII": {
+      "mic_variant_shift_kj_mol_per_H2O": 5.821148748079412,
+      "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O": 5.821137787272057,
+      "pbc_without_mic_minus_mstore_wsc_corrected_kj_mol_per_H2O": -1.096080735481386e-05,
+      "relative_energies_kj_mol_per_H2O": {
+        "mstore-wsc-corrected": -305.8884581182048,
+        "pbc-correct": -300.0673203309328,
+        "pbc-without-mic": -305.8884690790122
+      },
+      "residual_explained_percent": 99.99981170678731
+    },
+    "XVII": {
+      "mic_variant_shift_kj_mol_per_H2O": 0.16420702397967554,
+      "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O": 0.1642062343415147,
+      "pbc_without_mic_minus_mstore_wsc_corrected_kj_mol_per_H2O": -7.89638160841762e-07,
+      "relative_energies_kj_mol_per_H2O": {
+        "mstore-wsc-corrected": -51.723327684318626,
+        "pbc-correct": -51.55912144997711,
+        "pbc-without-mic": -51.723328473956784
+      },
+      "residual_explained_percent": 99.99951911803835
+    }
+  },
   "raw_sha256": {
     "mstore-wsc-corrected/Ih": {
       "binary.sha256": "05a0737609278d5593d2653707ac6358b648a1d47bc479a991c2ffb73c9802a5",
@@ -91,6 +146,15 @@
       "process.out": "82f33e95c7a9594573b4de1d3abf5bb51fa0508572cf805bd3cfe58be6ed4276",
       "result.json": "de93ff244f54c644330d80102a212dda9742fd862a94af41431c4df89fdbb9cc"
     },
+    "mstore-wsc-corrected/XVII": {
+      "binary.sha256": "05a0737609278d5593d2653707ac6358b648a1d47bc479a991c2ffb73c9802a5",
+      "command.txt": "e41fe127fefcab0cc81e29d41da456653c77a65b89d318398cfb32f1d4766de7",
+      "exit_status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "input.sha256": "830e5293383f51dfac8746fe6f0ac680b28ebf6d2c12dcc85f75104a5927a24e",
+      "process.err": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "process.out": "9a86408dbe261467f334794bbd359615866f4eacc6c3fa8f07f0ee3e12b64a33",
+      "result.json": "36192ef37392d5c322e48a5a612d226192eb248a9abf09bc4dc9c535f6457194"
+    },
     "pbc-correct/Ih": {
       "binary.sha256": "8d9a06246974f2cfbf5e5b205709a251d2ced28dc9565379f9c0a21d53154b13",
       "command.txt": "bfe141e27effd1195fba0cac5d0f3698c3f4dc0c74debae961dfbda69dca717f",
@@ -109,6 +173,15 @@
       "process.out": "57a2b0a794dfc8ac756dfcb44d76dab88f84e3c27f12629a56e942274b469b83",
       "result.json": "223562ce2d74dca4064c8802747eaf7e2c32b74bf943848180ce522fe6823b35"
     },
+    "pbc-correct/XVII": {
+      "binary.sha256": "8d9a06246974f2cfbf5e5b205709a251d2ced28dc9565379f9c0a21d53154b13",
+      "command.txt": "17a0dc4b8757ab01483ec0182e9781d537691425b92c7c839b5e52d732d74468",
+      "exit_status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "input.sha256": "830e5293383f51dfac8746fe6f0ac680b28ebf6d2c12dcc85f75104a5927a24e",
+      "process.err": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "process.out": "3486dc2c777567d7bbad4b3d2f213c83958437d8d535fbc158e7b695abed759a",
+      "result.json": "cadd15ac2531b982cb796c8b46293cbe6d47d3b812f45f7650293d4b52d97481"
+    },
     "pbc-without-mic/Ih": {
       "binary.sha256": "26bb3d0fd80d0b4610d0fb3d85eb9ff3e8446ded36c7d513b5ad76335541487e",
       "command.txt": "7d4cda329eae32405cc386ddc21156a6f16aa3600356b6ed81bf8833743c1293",
@@ -126,6 +199,15 @@
       "process.err": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "process.out": "815c2f84e798a45d1bdacd20aa9b9527e9f75c8fad8ba14467cfa80351ffd271",
       "result.json": "da5f52184968f63633000f3c5a0743a17f551d3f0e9307e00f2dfd9e58d81bfb"
+    },
+    "pbc-without-mic/XVII": {
+      "binary.sha256": "26bb3d0fd80d0b4610d0fb3d85eb9ff3e8446ded36c7d513b5ad76335541487e",
+      "command.txt": "8a020fe44e5c2397ce7b10b6b0974915b593d183f21c8192b0912361ec660b32",
+      "exit_status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "input.sha256": "830e5293383f51dfac8746fe6f0ac680b28ebf6d2c12dcc85f75104a5927a24e",
+      "process.err": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "process.out": "35af68603005f084713d7f16de8b0ff8242cfc5aef31434945a2dae23250d7a0",
+      "result.json": "f5d73426af921a0960c9dd81662154ddeb01a1107c33c24cc80e460d4da1fbc1"
     }
   },
   "relative_energies_kj_mol_per_H2O": {
@@ -151,7 +233,7 @@
     "toml-f_DIR": "/Users/tkuehne/dropbox/cp2k-g-xTB/cp2k/tools/toolchain/install/savetblite-4d61469/lib/cmake/toml-f"
   },
   "residual_explained_percent": 99.99981170678731,
-  "schema": "periodic-gxtb-second-order-mic-attribution-v1",
+  "schema": "periodic-gxtb-second-order-mic-attribution-v2",
   "source": {
     "hybrid_tree": "d56a0195324b25c99a8971987d13a10d9f9aa678",
     "patch_sha256": "548858893ab921230852d2c005ec7196ea2ad326d9877b92d4d10785da395ac6",
@@ -159,6 +241,10 @@
     "reverted_commit": "083f22030f0be7abff3e3d27b35c141c04c2aa6d"
   },
   "status": "PASS",
-  "test": "ice VII minus same-source ice Ih on an explicit 2x2x2 BvK supercell",
-  "waters_per_cell": 96
+  "test": "ice VII and XVII minus same-source ice Ih on explicit 2x2x2 BvK supercells",
+  "waters_per_cell": {
+    "Ih": 96,
+    "VII": 96,
+    "XVII": 48
+  }
 }

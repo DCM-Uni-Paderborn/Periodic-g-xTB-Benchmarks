@@ -193,6 +193,12 @@
     "pbc_without_minimum_image_second_order_kj_mol_per_H2O": -305.8884690790122,
     "pbc_without_minimum_image_second_order_minus_mstore_wsc_corrected_kj_mol_per_H2O": -1.096080735481386e-05,
     "post_wsc_residual_explained_percent": 99.99981170678731,
+    "independent_ice_XVII_crosscheck": {
+      "pbc_correct_minus_mstore_wsc_corrected_kj_mol_per_H2O": 0.1642062343415147,
+      "pbc_without_minimum_image_second_order_minus_mstore_wsc_corrected_kj_mol_per_H2O": -7.89638160841762e-07,
+      "post_wsc_residual_explained_percent": 99.99951911803835,
+      "status": "PASS"
+    },
     "second_order_mic_evidence": "evidence/second_order_mic_attribution/verification.json",
     "status": "PASS",
     "wigner_seitz_evidence": "evidence/wigner_seitz_self_image_attribution/verification.json"

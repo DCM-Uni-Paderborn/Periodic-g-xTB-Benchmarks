@@ -1,4 +1,7 @@
-provider,relative_energy_kj_mol_per_H2O
-pbc-correct,-300.067320330933
-mstore-wsc-corrected,-305.888458118205
-pbc-without-mic,-305.888469079012
+phase,provider,relative_energy_kj_mol_per_H2O
+VII,pbc-correct,-300.067320330933
+VII,mstore-wsc-corrected,-305.888458118205
+VII,pbc-without-mic,-305.888469079012
+XVII,pbc-correct,-51.559121449977
+XVII,mstore-wsc-corrected,-51.723327684319
+XVII,pbc-without-mic,-51.723328473957

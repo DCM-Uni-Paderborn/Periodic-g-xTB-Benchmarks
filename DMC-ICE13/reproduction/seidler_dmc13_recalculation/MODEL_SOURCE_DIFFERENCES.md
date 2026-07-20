@@ -141,6 +141,12 @@ difference.  Identical Release compiler and dependency settings, the inverse
 source patch, raw outputs, and the independent verifier are archived in
 `evidence/second_order_mic_attribution/`.
 
+Ice XVII provides an independent structural and cell-size cross-check.  Its
+post-WSC residual is 0.16420623 kJ mol-1 per H2O; after reverting only the
+same minimum-image second-order change, the residual is
+-0.00000079 kJ mol-1 per H2O, corresponding to 99.99952% attribution.  The
+agreement is therefore not an ice-VII-specific cancellation.
+
 Thus the apparently better sparse-mesh DMC error and convergence of the older
 lineage were dominated by missing or misassigned periodic self-image
 exchange; its small remaining difference is a separately identified
