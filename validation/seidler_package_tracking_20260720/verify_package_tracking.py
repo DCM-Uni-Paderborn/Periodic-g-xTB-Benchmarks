@@ -65,22 +65,43 @@ def main() -> None:
         for relative in entries
         if relative.endswith((".out", ".log"))
     )
+    marked_run_directories = {
+        path.parent
+        for marker in ("exit_status", "result.json")
+        for path in PACKAGE.rglob(marker)
+        if not any(
+            token in part.lower()
+            for part in path.relative_to(PACKAGE).parts
+            for token in ("failed", "incomplete")
+        )
+    }
+    run_directories_without_text_output = sorted(
+        directory.relative_to(PACKAGE).as_posix()
+        for directory in marked_run_directories
+        if not any(
+            candidate.is_file() and candidate.suffix in (".out", ".log")
+            for candidate in directory.iterdir()
+        )
+    )
     checks = {
         "all_manifest_entries_exist": not missing_on_disk,
         "all_package_files_are_manifested": not unmanifested,
         "all_manifest_entries_are_tracked": not untracked,
         "all_hashes_match": not hash_mismatches,
-        "raw_text_outputs_present_and_tracked": len(raw_text_outputs) == 220
+        "raw_text_outputs_present_and_tracked": bool(raw_text_outputs)
         and all(relative in tracked_package_paths for relative in raw_text_outputs),
+        "qualified_run_directories_have_text_output": not run_directories_without_text_output,
     }
     passed = all(checks.values())
     payload = {
-        "schema": "periodic-gxtb-seidler-package-tracking-v1",
+        "schema": "periodic-gxtb-seidler-package-tracking-v2",
         "status": "PASS" if passed else "FAIL",
         "checks": checks,
         "manifest_entry_count": len(entries),
         "tracked_package_file_count_excluding_manifest": len(tracked_package_paths),
         "raw_text_output_count": len(raw_text_outputs),
+        "qualified_run_directory_count": len(marked_run_directories),
+        "qualified_run_directories_without_text_output": run_directories_without_text_output,
         "missing_on_disk": missing_on_disk,
         "unmanifested": unmanifested,
         "untracked": untracked,
@@ -88,7 +109,10 @@ def main() -> None:
         "interpretation": (
             "Every file named by the Seidler recalculation-package hash manifest, "
             "including all raw CP2K and direct-CLI text outputs, exists, matches its "
-            "recorded digest, and is present in the Git index."
+            "recorded digest, and is present in the Git index. Every nonfailed run "
+            "directory identified by an exit-status or result marker contains a "
+            "published text output; completeness is derived from the run tree rather "
+            "than a brittle fixed output count."
         ),
     }
     (HERE / "verification.json").write_text(

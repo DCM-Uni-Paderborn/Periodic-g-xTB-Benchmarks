@@ -9,7 +9,13 @@ conditions:
 - every package file other than the manifest itself is listed;
 - every listed file is in the Git index;
 - every digest matches; and
-- all 176 raw CP2K/direct-CLI text outputs are present and tracked.
+- all raw CP2K/direct-CLI text outputs are present and tracked; and
+- every nonfailed run directory identified by an `exit_status` or `result.json`
+  marker contains a published `.out` or `.log` file.
+
+The expected run set is derived from the package tree. This avoids a brittle
+fixed file count while still failing if a newly added qualified endpoint lacks
+its raw text output.
 
 Run from the repository root with
 
