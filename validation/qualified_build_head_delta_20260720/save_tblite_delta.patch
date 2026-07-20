@@ -1,0 +1,7 @@
+diff --git a/test/unit/test_hamiltonian.f90 b/test/unit/test_hamiltonian.f90
+index 60b67b6..c4b216d 100644
+--- a/test/unit/test_hamiltonian.f90
++++ b/test/unit/test_hamiltonian.f90
+@@ -10152 +10152 @@ subroutine test_g_hamiltonian_gxtb_cecl3(error)
+-      & gxtb_h0spec(mol), make_gxtb_ncoord, thr_in=thr1*10)
++      & gxtb_h0spec(mol), make_gxtb_ncoord, thr_in=thr1*20)

@@ -1,0 +1,15 @@
+{
+  "schema": "periodic-gxtb-qualified-build-head-delta-v1",
+  "cp2k": {
+    "qualified_revision": "8520b2e592cd04d35081ab4ad46d92c606071e23",
+    "current_branch_revision": "10f4e246967de34cfcb2d26b9d587ecc00bbb2f4",
+    "branch": "g-xTB-pbc"
+  },
+  "save_tblite": {
+    "qualified_provider_revision": "15915c9435644eb257178ca8f8bf7220c38b1a84",
+    "current_branch_revision": "82e56a7b8d240c5acf653d658cf91a8e06157ff5",
+    "branch": "cp2k-integration"
+  },
+  "qualified_cp2k_binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+  "minimum_archived_production_input_count": 93
+}

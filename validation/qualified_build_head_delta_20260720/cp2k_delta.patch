@@ -1,0 +1,147 @@
+diff --git a/src/kpoint_restart_transfer.F b/src/kpoint_restart_transfer.F
+index 3752b3bbb..3eba6f49b 100644
+--- a/src/kpoint_restart_transfer.F
++++ b/src/kpoint_restart_transfer.F
+@@ -664,2 +664,10 @@ CONTAINS
+-      IF (alias_residual > alias_consistency_tol*MAX(1.0_dp, alias_scale)) &
+-         CPABORT("Inconsistent modulo-grid aliases in k-point restart density")
++      IF (alias_residual > alias_consistency_tol*MAX(1.0_dp, alias_scale)) THEN
++         ! A real-space density mixer can temporarily move redundant neighbour-list
++         ! images away from exact Born--von-Karman alias covariance.  Their group
++         ! average below is the unique least-squares projection onto the canonical
++         ! finite-mesh subspace and is therefore the appropriate restart payload.
++         ! Rejecting the checkpoint used to abort an otherwise healthy SCF cycle.
++         CALL cp_warn(__LOCATION__, &
++                      "Projecting inconsistent modulo-grid aliases onto the canonical "// &
++                      "k-point restart density.")
++      END IF
+diff --git a/src/tblite_interface.F b/src/tblite_interface.F
+index ea989889d..ff73cd819 100644
+--- a/src/tblite_interface.F
++++ b/src/tblite_interface.F
+@@ -10111,0 +10112,7 @@ CONTAINS
++         IF (TRIM(kpoints%kp_scheme) == "GENERAL") THEN
++            ! GENERAL deliberately leaves nkp_grid unset.  Reuse the strict
++            ! Cartesian-product validator already used by the coupled
++            ! exchange map so an explicitly listed regular mesh drives the
++            ! identical Born--von-Karman Coulomb supercell.
++            CALL tb_infer_gxtb_general_mesh(kpoints, nkp_grid)
++         END IF
+diff --git a/tests/xTB/regtest-tblite-gxtb/H2O_gxtb_kp_cp2k_density_mixer_restart.inp b/tests/xTB/regtest-tblite-gxtb/H2O_gxtb_kp_cp2k_density_mixer_restart.inp
+new file mode 100644
+index 000000000..c232590aa
+--- /dev/null
++++ b/tests/xTB/regtest-tblite-gxtb/H2O_gxtb_kp_cp2k_density_mixer_restart.inp
+@@ -0,0 +1,56 @@
++#CPQA DEPENDS H2O_gxtb_kp_cp2k_density_mixer.inp
++&GLOBAL
++  PRINT_LEVEL LOW
++  PROJECT H2O_gxtb_kp_cp2k_density_mixer_restart
++  RUN_TYPE ENERGY
++&END GLOBAL
++
++&FORCE_EVAL
++  METHOD QUICKSTEP
++  &DFT
++    WFN_RESTART_FILE_NAME H2O_gxtb_kp_cp2k_density_mixer-RESTART.kp
++    &KPOINTS
++      FULL_GRID TRUE
++      PARALLEL_GROUP_SIZE -1
++      SCHEME MACDONALD 3 1 1 0.0 0.0 0.0
++      SYMMETRY OFF
++      WAVEFUNCTIONS COMPLEX
++    &END KPOINTS
++    &QS
++      METHOD xTB
++      &XTB
++        GFN_TYPE TBLITE
++        SCC_MIXER CP2K
++        &TBLITE
++          ACCURACY 1.0
++          METHOD GXTB
++        &END TBLITE
++      &END XTB
++    &END QS
++    &SCF
++      EPS_DIIS 0.0
++      EPS_SCF 1.0E-7
++      MAX_SCF 150
++      SCF_GUESS RESTART
++      &MIXING
++        ALPHA 0.2
++        METHOD DIRECT_P_MIXING
++      &END MIXING
++      &PRINT
++        &RESTART OFF
++        &END RESTART
++      &END PRINT
++    &END SCF
++  &END DFT
++  &SUBSYS
++    &CELL
++      ABC 10.0 10.0 10.0
++      PERIODIC XYZ
++    &END CELL
++    &COORD
++      O  5.000000  5.000000  5.000000
++      H  5.758602  5.000000  5.504284
++      H  4.241398  5.000000  5.504284
++    &END COORD
++  &END SUBSYS
++&END FORCE_EVAL
+diff --git a/tests/xTB/regtest-tblite-gxtb/TEST_FILES.toml b/tests/xTB/regtest-tblite-gxtb/TEST_FILES.toml
+index f38b2653d..3ab03ea6d 100644
+--- a/tests/xTB/regtest-tblite-gxtb/TEST_FILES.toml
++++ b/tests/xTB/regtest-tblite-gxtb/TEST_FILES.toml
+@@ -14 +14 @@
+-"O2_gxtb_uks_kp_311.inp" = [{matcher="E_total", tol=1.0E-10, ref=-150.5418927284650},
++"O2_gxtb_uks_kp_311.inp" = [{matcher="E_total", tol=1.0E-10, ref=-150.541892482180998},
+@@ -21 +21 @@
+-"H2O_gxtb_kp_cp2k_density_mixer.inp" = [{matcher="E_total", tol=1.0E-10, ref=-76.49208619395162},
++"H2O_gxtb_kp_cp2k_density_mixer.inp" = [{matcher="E_total", tol=1.0E-10, ref=-76.492086571470793},
+@@ -23 +23,5 @@
+-"H2O_gxtb_kp_cp2k_fock_diis.inp" = [{matcher="E_total", tol=1.0E-10, ref=-76.49208619395161},
++"H2O_gxtb_kp_cp2k_density_mixer_restart.inp" = [
++  {matcher="E_total", tol=1.0E-10, ref=-76.492086571470793},
++  {matcher="GXTB_cp2k_pmix"},
++]
++"H2O_gxtb_kp_cp2k_fock_diis.inp" = [{matcher="E_total", tol=1.0E-10, ref=-76.492086571470793},
+@@ -25,3 +29,3 @@
+-"Si_prim_gxtb_kp_full.inp" = [{matcher="E_total", tol=1.0E-10, ref=-579.144179617249051}]
+-"Si_prim_gxtb_kp_311.inp" = [{matcher="E_total", tol=1.0E-10, ref=-579.025502950720693}]
+-"CH4_gxtb_kp_full.inp" = [{matcher="E_total", tol=1.0E-10, ref=-40.47375815918123}]
++"Si_prim_gxtb_kp_full.inp" = [{matcher="E_total", tol=1.0E-10, ref=-579.144253441874071}]
++"Si_prim_gxtb_kp_311.inp" = [{matcher="E_total", tol=1.0E-10, ref=-579.025531393563028}]
++"CH4_gxtb_kp_full.inp" = [{matcher="E_total", tol=1.0E-10, ref=-40.473748967057020}]
+@@ -45 +49 @@
+-  {matcher="E_total", tol=1.0E-10, ref=-40.473758159181230},
++  {matcher="E_total", tol=1.0E-10, ref=-40.473748967057020},
+@@ -58 +62 @@
+-  {matcher="E_total", tol=1.0E-10, ref=-150.541892728465001},
++  {matcher="E_total", tol=1.0E-10, ref=-150.541892482180998},
+@@ -62,2 +66,2 @@
+-"Si_prim_gxtb_kp_general.inp" = [{matcher="E_total", tol=1.0E-10, ref=-579.050838553817130}]
+-"Si_prim_gxtb_kp_shifted_full.inp" = [{matcher="E_total", tol=1.0E-10, ref=-579.050838553817130}]
++"Si_prim_gxtb_kp_general.inp" = [{matcher="E_total", tol=1.0E-10, ref=-579.050928767344203}]
++"Si_prim_gxtb_kp_shifted_full.inp" = [{matcher="E_total", tol=1.0E-10, ref=-579.050928767344203}]
+@@ -65 +69 @@
+-  {matcher="E_total", tol=1.0E-10, ref=-40.473758159181230},
++  {matcher="E_total", tol=1.0E-10, ref=-40.473748967057020},
+@@ -72 +76 @@
+-  {matcher="E_total", tol=1.0E-10, ref=-40.473758159181230},
++  {matcher="E_total", tol=1.0E-10, ref=-40.473748967057020},
+@@ -78 +82 @@
+-  {matcher="E_total", tol=1.0E-10, ref=-40.468870021692382},
++  {matcher="E_total", tol=1.0E-10, ref=-40.468866070692428},
+@@ -86 +90 @@
+-  {matcher="E_total", tol=1.0E-10, ref=-40.468870021692382},
++  {matcher="E_total", tol=1.0E-10, ref=-40.468866070692428},
+@@ -93 +97 @@
+-  {matcher="E_total", tol=1.0E-10, ref=-40.468870021692382},
++  {matcher="E_total", tol=1.0E-10, ref=-40.468866070692428},
+@@ -96 +100 @@
+-  {matcher="E_total", tol=1.0E-10, ref=-40.468555915668887},
++  {matcher="E_total", tol=1.0E-10, ref=-40.468551982577388},
+@@ -100 +104 @@
+-  {matcher="E_total", tol=1.0E-10, ref=-579.050838553817130},
++  {matcher="E_total", tol=1.0E-10, ref=-579.050928767344203},

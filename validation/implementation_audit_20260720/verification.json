@@ -1,5 +1,5 @@
 {
-  "completed_gate_count": 18,
+  "completed_gate_count": 19,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -115,6 +115,12 @@
       "file": "validation/provider_component_attribution_20260719/verification.json",
       "passed": true,
       "sha256": "a64c37ed84a31c84db288469d08a8206921d5c2bfcbed7d537123df6202d9650",
+      "status": "PASS"
+    },
+    "qualified_build_head_delta": {
+      "file": "validation/qualified_build_head_delta_20260720/verification.json",
+      "passed": true,
+      "sha256": "49aec878bd4d9e48471d198175f90140769dae89421b257425e25b079ee72231",
       "status": "PASS"
     },
     "relative_energy_postprocessing": {

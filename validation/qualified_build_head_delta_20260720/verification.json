@@ -1,0 +1,37 @@
+{
+  "checks": {
+    "all_production_inputs_macdonald_mopac_no_restart": true,
+    "cp2k_changed_files_exact": true,
+    "cp2k_general_mesh_change_is_explicitly_guarded": true,
+    "cp2k_restart_change_is_alias_projection_only": true,
+    "production_input_count_sufficient": true,
+    "qualified_binary_identity_gate_passes": true,
+    "qualified_binary_sha256_matches": true,
+    "qualified_provider_revision_matches": true,
+    "save_tblite_changed_files_test_only": true,
+    "save_tblite_provider_source_unchanged": true
+  },
+  "cp2k_changed_files": [
+    "src/kpoint_restart_transfer.F",
+    "src/tblite_interface.F",
+    "tests/xTB/regtest-tblite-gxtb/H2O_gxtb_kp_cp2k_density_mixer_restart.inp",
+    "tests/xTB/regtest-tblite-gxtb/TEST_FILES.toml"
+  ],
+  "cp2k_patch_sha256": "159f4edd58269d3019869da4d21f2fde662df274b1824bf3d898894cc8298b6c",
+  "interpretation": "The successor commits do not enter the archived DMC-ICE13 energy path; a full energy rerun is not required solely because the integration branches advanced.",
+  "metadata_sha256": "74c2a70b45eaacbc795d669e5935f16f60c6af04c920c6dc680c90d973e64e02",
+  "nonconforming_production_inputs": [],
+  "production_input_count": 93,
+  "production_input_mode_counts": {
+    "macdonald": 93,
+    "mopac_guess": 93,
+    "not_general": 93,
+    "restart_off": 93
+  },
+  "save_tblite_changed_files": [
+    "test/unit/test_hamiltonian.f90"
+  ],
+  "save_tblite_patch_sha256": "028be87b5880fd0e40ae21d7b3e35017782d34991db05606b3d1afc8be4bc96e",
+  "schema": "periodic-gxtb-qualified-build-head-delta-verification-v1",
+  "status": "PASS"
+}

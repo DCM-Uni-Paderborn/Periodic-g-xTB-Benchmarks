@@ -11,6 +11,9 @@ their individual tolerances, the following independent checks:
   grid to the corresponding Gamma-supercell BvK folding grid;
 - build-level identity of the provider source, static provider archive, and
   selected CP2K provider revision;
+- exact successor-commit diffs proving that the current CP2K and
+  `save_tblite` branch heads do not alter the qualified MacDonald/MOPAC
+  production-energy path;
 - independent decimal reconstruction of BvK normalization, per-water
   referencing, unit conversion, DMC errors, and aggregate statistics;
 - same-accuracy and tighter-SCC comparisons;

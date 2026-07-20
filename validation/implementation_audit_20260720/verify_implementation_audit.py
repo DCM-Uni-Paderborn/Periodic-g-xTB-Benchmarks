@@ -34,6 +34,7 @@ def status_passes(payload: dict) -> bool:
 def main() -> None:
     gates = {
         "binary_provider_identity": "validation/binary_provider_identity_20260720/verification.json",
+        "qualified_build_head_delta": "validation/qualified_build_head_delta_20260720/verification.json",
         "macdonald_gamma_bvk_mesh_equivalence": "validation/macdonald_bvk_mesh_equivalence_20260720/verification.json",
         "native_cli_full_k111_to_k444_parity": "validation/native_cli_full_parity_20260720/verification.json",
         "relative_energy_postprocessing": "validation/relative_energy_postprocessing_20260720/verification.json",
