@@ -58,7 +58,7 @@ def main() -> None:
         "derivative_component_ablation": "validation/dmc13_k222_xvii_derivative_component_ablation_20260719/verification.json",
         "provider_component_attribution": "validation/provider_component_attribution_20260719/verification.json",
         "h0_anisotropy_attribution": "validation/pbc_h0_anisotropy_attribution_20260719/verification.json",
-        "cecl3_tolerance_recheck": "validation/cecl3_tolerance_recheck_20260720/verification.json",
+        "cecl3_tolerance_recheck": "validation/cecl3_tolerance_recheck_20260720/verification.reproduced.json",
     }
     gate_results = {}
     for name, relative in gates.items():

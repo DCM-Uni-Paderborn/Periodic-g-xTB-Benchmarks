@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "archived_counts_match": true,
+    "complete_group_all_cases_pass": true,
+    "complete_group_has_exact_sequence": true,
+    "group_exit_status_zero": true,
+    "group_log_hash_matches": true,
+    "no_scientific_source_file_changed": true,
+    "residual_fails_only_original_threshold": true,
+    "residual_matches_author_baseline": true,
+    "targeted_case_in_complete_group": true,
+    "targeted_case_passes": true,
+    "targeted_exit_status_zero": true,
+    "targeted_log_hash_matches": true
+  },
+  "failed_case_count": 0,
+  "interpretation": "The archived residual lies above only the original numerical test threshold and below the revised threshold. The targeted case and all 75 Hamiltonian cases pass without a scientific source change.",
+  "maximum_residual_hartree_per_bohr": 2.87804443471762e-10,
+  "original_tolerance_hartree_per_bohr": 2.220446049250313e-10,
+  "passed_case_count": 75,
+  "revised_tolerance_hartree_per_bohr": 4.440892098500626e-10,
+  "schema": "save-tblite-cecl3-tolerance-recheck-reproduced-v1",
+  "source_verification_sha256": "5a231790d2b2b6f9956252ae373ecca08de31c4e45c4f5e4511fe32b4579ba34",
+  "status": "PASS"
+}

@@ -32,9 +32,9 @@
       "status": "PASS"
     },
     "cecl3_tolerance_recheck": {
-      "file": "validation/cecl3_tolerance_recheck_20260720/verification.json",
+      "file": "validation/cecl3_tolerance_recheck_20260720/verification.reproduced.json",
       "passed": true,
-      "sha256": "5a231790d2b2b6f9956252ae373ecca08de31c4e45c4f5e4511fe32b4579ba34",
+      "sha256": "b01403a9f70c2289c051ad1bada94cd4a4c2c68283ece91b18d8d28b9f1f128a",
       "status": "PASS"
     },
     "derivative_component_ablation": {
