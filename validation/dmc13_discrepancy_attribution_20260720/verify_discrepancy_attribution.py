@@ -180,6 +180,9 @@ def main() -> None:
     provider = load_json("validation/provider_component_attribution_20260719/verification.json")
     h0 = load_json("validation/pbc_h0_anisotropy_attribution_20260719/verification.json")
     mstore_accuracy = load_json("validation/mstore_accuracy_equivalence_20260720/verification.json")
+    mstore_component = load_json(
+        "validation/mstore_pbc_component_ablation_20260720/verification.json"
+    )
 
     checks = {
         "complete_cli_native_matrix": len(parity_rows) == 52
@@ -221,6 +224,12 @@ def main() -> None:
             provider["gap_reduction_when_exchange_disabled_percent"]
         )
         > 98.0,
+        "mstore_pbc_component_ablation_passes": mstore_component["status"] == "PASS",
+        "mstore_pbc_gap_is_exchange_attributed": float(
+            mstore_component["gap_reduction_percent"]["no_exchange"]
+        )
+        > 98.0
+        and float(mstore_component["gap_reduction_percent"]["no_acp"]) < 10.0,
         "adaptive_statistics_reproduce": len(adaptive_rows) == 12
         and adaptive_converged == int(adaptive_declared["converged_phase_count"])
         and math.isclose(
@@ -253,6 +262,12 @@ def main() -> None:
             "maximum_accuracy_sensitivity_Ha_supercell": mstore_accuracy[
                 "maximum_accuracy_sensitivity_hartree_supercell"
             ],
+            "component_ablation": {
+                "pbc_minus_mstore_full_kj_mol_per_H2O": mstore_component[
+                    "pbc_minus_mstore_full_kj_mol_per_H2O"
+                ],
+                "gap_reduction_percent": mstore_component["gap_reduction_percent"],
+            },
         },
         "provider_path_attribution": {
             "fraction_of_provider_gap_accounted_for_by_h0": h0[

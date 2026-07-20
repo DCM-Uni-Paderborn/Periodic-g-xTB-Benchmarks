@@ -85,6 +85,29 @@ shift from `mstore-inorganic` to the current pbc-derived source is 148.0272 at
 `2^3` and 76.4515 kJ mol-1 per H2O at `3^3` (ice VII).  By contrast, the
 author-`pbc` snapshot and the later pbc-derived integration provider differ by
 at most 0.1355 and 0.1005 kJ mol-1 per H2O on those meshes.  The source history
-changes several coupled self-consistent terms, so the large `mstore`/`pbc`
-shift must not be assigned to exchange, ACP, H0, or the basis alone without a
-dedicated fixed-source ablation.
+changes several coupled self-consistent terms.
+
+A dedicated same-cell component ablation now resolves the dominant source of
+the branch separation.  Ice Ih and VII were reconverged independently with
+the exact `mstore-inorganic` and author-`pbc` source states at `2^3`, using the
+complete model, exchange disabled, ACP disabled, and both exchange and ACP
+disabled.  The values below are same-mode VII-minus-Ih energies; the last
+column is `pbc` minus `mstore-inorganic`.
+
+| Self-consistent model | `mstore-inorganic` | author `pbc` | branch gap |
+|---|---:|---:|---:|
+| complete | -151.9480 | -300.0673 | -148.1194 |
+| no exchange | -4.4469 | -2.3276 | +2.1193 |
+| no ACP | -168.0373 | -309.8208 | -141.7835 |
+| no exchange, no ACP | -26.6962 | -25.1370 | +1.5592 |
+
+All entries are in kJ mol-1 per H2O.  Removing exchange collapses the full
+branch gap by 98.57%, whereas removing ACP alone reduces it by only 4.28%.
+With both terms disabled, the reduction is 98.95%.  Thus the different sparse
+k-mesh behavior is controlled almost entirely by the exchange-path changes
+between these source states.  Since each ablation is self-consistently
+reconverged, this is a coupled response test rather than an additive
+fixed-density energy decomposition.  Complete raw outputs, input and binary
+hashes, parameters, and the independent verifier are included under
+`evidence/mstore_pbc_component_ablation/` and in the repository-level
+validation directory of the same name.

@@ -77,6 +77,16 @@ the largest `c932120...` versus `15915c...` shift is
 Those values are far larger than the current-CLI/CP2K numerical residual, but
 far smaller than the historical `mstore-inorganic`/`pbc` model shift.
 
+The large historical branch shift is now component-classified rather than
+merely observed.  For ice VII relative to same-mesh Ih at `2^3`, the full
+author-`pbc` minus `mstore-inorganic` gap is
+`-148.1194 kJ mol-1 H2O-1`.  Disabling exchange reduces its magnitude by
+`98.57%`, while disabling ACP alone reduces it by only `4.28%`.  The
+corresponding exact-source, self-consistent runs are archived in
+`evidence/mstore_pbc_component_ablation/`.  This identifies exchange-path
+changes between the branches as the origin of their different sparse-mesh
+behavior; it does not implicate the CP2K interface.
+
 The `mstore-inorganic` numbers were produced from the source revision in
 `sources.json`.  A direct remote-head check on 2026-07-20 confirmed that this
 revision is still the tip of `lmseidler/save_tblite:mstore-inorganic`; the word

@@ -42,6 +42,12 @@ Our present evidence is:
    to within `6.5e-11 Eh` per explicit supercell, corresponding to only
    `2.26e-10 kJ mol-1 H2O-1` after same-mesh Ih referencing.  The large branch shift is
    therefore not caused by the SCC accuracy setting.
+5. A same-cell component ablation attributes the branch separation to the
+   changed exchange path.  For ice VII relative to same-mode Ih at `2 x 2 x 2`,
+   the full author-`pbc` minus `mstore-inorganic` gap is
+   `-148.1194 kJ mol-1 H2O-1`.  It collapses by `98.57%` when exchange is
+   disabled, but by only `4.28%` when ACP alone is disabled.  The complete raw
+   matrix and verifier are in `evidence/mstore_pbc_component_ablation/`.
 
 Could you please run the following two independent series with your own clean
 builds?

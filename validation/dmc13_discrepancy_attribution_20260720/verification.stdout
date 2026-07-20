@@ -20,6 +20,8 @@
     "complete_cli_native_matrix": true,
     "exchange_ablation_collapses_provider_gap": true,
     "mstore_accuracy_sensitivity_is_numerical": true,
+    "mstore_pbc_component_ablation_passes": true,
+    "mstore_pbc_gap_is_exchange_attributed": true,
     "mstore_shift_exceeds_pbc_revision_shift": true,
     "pbc_revision_shift_exceeds_interface_residual": true,
     "provider_gap_is_h0_attributed": true,
@@ -41,6 +43,14 @@
     "phase_count": 12
   },
   "mstore_inorganic_vs_current_pbc": {
+    "component_ablation": {
+      "gap_reduction_percent": {
+        "no_acp": 4.277503044743318,
+        "no_exchange": 98.5692035299798,
+        "no_exchange_no_acp": 98.94732804859966
+      },
+      "pbc_minus_mstore_full_kj_mol_per_H2O": -148.1193545890897
+    },
     "current_pbc_sparse_mesh_mae_kj_mol_per_H2O": {
       "2": 88.68137557419759,
       "3": 34.0484918798365

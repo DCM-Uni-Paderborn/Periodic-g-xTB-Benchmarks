@@ -1,5 +1,5 @@
 {
-  "completed_gate_count": 24,
+  "completed_gate_count": 25,
   "completed_gates": {
     "accuracy_equivalence": {
       "file": "validation/accuracy_equivalence_20260720/verification.json",
@@ -46,7 +46,7 @@
     "dmc13_discrepancy_attribution": {
       "file": "validation/dmc13_discrepancy_attribution_20260720/verification.json",
       "passed": true,
-      "sha256": "d7809728a66acc5642270659192bd3f3d39acbd61f6c034775cd6d1de087b918",
+      "sha256": "6ba2ace1fea6f544e18937b78221e92f52c11c9917e54ec7ebe76026da54e14c",
       "status": "PASS"
     },
     "energy_component_ablation": {
@@ -83,6 +83,12 @@
       "file": "validation/mstore_accuracy_equivalence_20260720/verification.json",
       "passed": true,
       "sha256": "00cb88453bf7683a053410fd5f5244bafd2d7874e44a258a13f3235916b66692",
+      "status": "PASS"
+    },
+    "mstore_pbc_component_ablation": {
+      "file": "validation/mstore_pbc_component_ablation_20260720/verification.json",
+      "passed": true,
+      "sha256": "2bbfb52495b90831a3652b81c629ca308b40f4d1eb49c4f13c3ee974e2d65819",
       "status": "PASS"
     },
     "native_cli_full_k111_to_k444_parity": {
@@ -162,7 +168,7 @@
     "seidler_package_tracking": {
       "file": "validation/seidler_package_tracking_20260720/verification.json",
       "passed": true,
-      "sha256": "4916793bcc92f7faac1c88d50d10ff25bda0a79ae5420e62870057f65a3f1603",
+      "sha256": "ae71ef2fea449cda7d654ddafba6542c7de9d097704371158633d0429e0fd7f0",
       "status": "PASS"
     },
     "three_route_k333_closure": {
