@@ -76,6 +76,24 @@ def tracked_status() -> str:
     return completed.stdout
 
 
+def normalized_command(command: list[str]) -> list[str]:
+    normalized = []
+    for item in command:
+        text = str(item)
+        if text == PYTHON:
+            normalized.append("python3")
+            continue
+        path = Path(text)
+        if path.is_absolute():
+            try:
+                normalized.append("<repository>/" + path.relative_to(ROOT).as_posix())
+                continue
+            except ValueError:
+                pass
+        normalized.append(text)
+    return normalized
+
+
 def run_check(name: str, command: list[str], display: list[str] | None = None) -> dict:
     completed = subprocess.run(
         command,
@@ -87,7 +105,7 @@ def run_check(name: str, command: list[str], display: list[str] | None = None) -
         "name": name,
         "status": "PASS" if completed.returncode == 0 else "FAIL",
         "returncode": completed.returncode,
-        "command": display or command,
+        "command": normalized_command(display or command),
         "stdout_sha256": sha256_bytes(completed.stdout),
         "stderr_sha256": sha256_bytes(completed.stderr),
     }
