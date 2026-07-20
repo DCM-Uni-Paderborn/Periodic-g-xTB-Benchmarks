@@ -68,6 +68,13 @@ cross-check leaves only `7.90e-7 kJ mol-1 H2O-1`.  The raw evidence is in
 [`validation/wigner_seitz_self_image_attribution_20260720/`](validation/wigner_seitz_self_image_attribution_20260720/)
 and
 [`validation/second_order_mic_attribution_20260720/`](validation/second_order_mic_attribution_20260720/).
+The historical-source `4x4x4` extension is integrity-qualified for Ih plus
+eleven benchmark phases in the author recalculation package under
+[`evidence/mstore_inorganic_k444_partial/`](DMC-ICE13/reproduction/seidler_dmc13_recalculation/evidence/mstore_inorganic_k444_partial/).
+Phase XIII ended with
+recorded exit status -9 before the first SCC result, so its same-eleven-phase
+statistics are explicitly convergence diagnostics rather than a complete
+DMC-ICE13 MAE.
 
 ### LC10
 

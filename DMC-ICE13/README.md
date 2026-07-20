@@ -81,7 +81,8 @@ python3 scripts/make_dmc_adaptive_frontier_plot.py \
 - `reproduction/seidler_dmc13_recalculation/`: compact independent package
   with all primitive structures in absolute Cartesian coordinates, DMC
   references, available absolute energies by mesh, deterministic BvK
-  generation, and integrity records.
+  generation, integrity records, and the qualified partial historical
+  `mstore-inorganic` 4x4x4 matrix under `evidence/`.
 
 The production method is native primitive-cell Bloch sampling with SPGLIB
 reduction. Explicit Gamma supercells are validation oracles, not the production

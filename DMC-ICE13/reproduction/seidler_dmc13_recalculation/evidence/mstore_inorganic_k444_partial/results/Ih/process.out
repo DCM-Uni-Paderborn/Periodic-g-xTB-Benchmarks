@@ -1,0 +1,58 @@
+xTB calculator
+ | self-consistent screened Coulomb + Pauli repulsion
+ | Coulomb electrostatics and tight-binding
+ |  * onsite first-order tight-binding
+ |  * isotropic Klopman-Ohno-Mataga-Nishimoto electrostatics
+ |  * erf-damped anisotropic electrostatics
+ |  * two-body third-order tight-binding
+ |  * onsite fourth-order tight-binding
+ | self-consistent DFT-D4Srev dispersion
+ | Mulliken and onsite Fock exchange + bond-order correlation
+ | Using the shell resolved chemical hardness
+ | Range separted exchange is used:
+ |  * Full-range scale:  0.15
+ |  * Omega:  0.20
+ |  * Long-range scale:  0.85
+
+core increment energy         -5.3320256425498E+04 Eh
+dispersion energy              3.9120204981445E-01 Eh
+molecular charge               0.0000000000000E+00 e
+number of electrons            6.1439999999618E+03 e
+number of unpaired electrons   0.0000000000000E+00 e
+wavefunction                   unrestricted
+integral cutoff                2.6907767250513E+01 bohr
+energy convergence             1.0000000000000E-07 Eh
+density convergence            2.0000000000000E-06 e
+
+------------------------------------------------------------
+  cycle        total energy    energy error   density error
+------------------------------------------------------------
+      1     -58664.42525924  -5.3445600E+03   0.0000000E+00
+      2     -58681.09001449  -1.6664755E+01   4.9432954E-03
+      3     -58692.75055947  -1.1660545E+01   3.9601073E-03
+      4     -58718.69172688  -2.5941167E+01   3.1800325E-03
+      5     -58718.73983420  -4.8107326E-02   9.1500815E-05
+      6     -58718.74214806  -2.3138519E-03   1.4408833E-05
+      7     -58718.74221305  -6.4994138E-05   4.0855922E-06
+      8     -58718.74221358  -5.3355052E-07   1.6259236E-07
+      9     -58718.74221358  -9.9134922E-10   1.2939436E-08
+------------------------------------------------------------
+
+electronic energy             -5.3988769901371E+03 Eh
+total energy                  -5.8718742213585E+04 Eh
+
+Post processing:
+ | Mayer-Wiberg bond orders
+
+ total:                           15 min,22.984 sec
+ - increment                              0.000 sec (  0%)
+ - repulsion                              0.154 sec (  0%)
+ - dispersion                            29.821 sec (  3%)
+ - coulomb                         2 min,34.506 sec ( 16%)
+ - exchange                               0.797 sec (  0%)
+ - hamiltonian                            3.272 sec (  0%)
+ - acp                             1 min,39.772 sec ( 10%)
+ - post processing                        7.138 sec (  0%)
+ - scc                            10 min,34.586 sec ( 68%)
+
+[Info] JSON dump of results written to 'result.json'

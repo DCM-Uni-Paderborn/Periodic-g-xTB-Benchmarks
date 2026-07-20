@@ -77,6 +77,16 @@ the largest `c932120...` versus `15915c...` shift is
 Those values are far larger than the current-CLI/CP2K numerical residual, but
 far smaller than the historical `mstore-inorganic`/`pbc` model shift.
 
+The partial historical `4^3` extension further shows that the mean absolute
+branch gap on the same eleven completed phases shrinks from `49.2110` at
+`2^3` to `18.0207` at `3^3` and `5.2456 kJ mol-1 H2O-1` at `4^3`.  Its
+historical same-subset MAE is `7.0043`, but the mean absolute
+`3^3`-to-`4^3` change is still `12.6064 kJ mol-1 H2O-1`.  Because XIII was
+terminated before the first SCC result, `evidence/mstore_inorganic_k444_partial/`
+sets `full_matrix_complete` and `usable_for_full_benchmark_statistics` to
+false.  These data diagnose finite-size convergence; they must not be quoted
+as a complete `4^3` DMC-ICE13 MAE.
+
 The large historical branch shift is now component-classified rather than
 merely observed.  For ice VII relative to same-mesh Ih at `2^3`, the full
 author-`pbc` minus `mstore-inorganic` gap is

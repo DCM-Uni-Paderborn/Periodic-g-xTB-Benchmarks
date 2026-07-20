@@ -16,6 +16,10 @@ causal source of their different sparse-mesh exchange energies.  The
 reciprocal test under `evidence/second_order_mic_attribution/` attributes the
 entire remaining source-state residual to the later minimum-image form of the
 periodic second-order Coulomb term, within SCC numerical resolution.
+The directory `evidence/mstore_inorganic_k444_partial/` adds an independently
+qualified historical-source convergence check at `4 x 4 x 4`: Ih and eleven
+benchmark phases completed, while phase XIII is retained with its exact
+memory-termination record and is excluded from all reported partial metrics.
 
 The author `pbc` snapshot (`c932120...`) and the later pbc-derived integration
 provider (`15915c...`) are deliberately separate entries.  CP2K-native parity
@@ -90,6 +94,11 @@ python3 scripts/summarize_author_results.py \
 - `tables/mstore_inorganic_absolute_energies.csv` retains the corresponding
   absolute supercell and primitive-cell energies together with every input,
   output, and executable hash.
+- `evidence/mstore_inorganic_k444_partial/` contains the raw historical
+  `4 x 4 x 4` outputs for the eleven completed non-reference phases plus Ih,
+  absolute and relative-energy tables, the failed XIII record, and a
+  self-contained verifier.  Its same-eleven-phase MAE is a convergence
+  diagnostic only and is explicitly not a complete DMC-ICE13 statistic.
 - `tables/mstore_vs_pbc_relative_differences.csv` is the shortest direct view
   of the branch effect for every phase and common mesh; it also states both
   effective CLI accuracies and whether they are identical for that row.
@@ -112,9 +121,9 @@ against the canonical primitive POSCAR for every admitted native endpoint.
 The compact `evidence` directory contains the independently reproducible
 three-route `3^3` closure, the CP2K native-k versus explicit Gamma-BvK oracle,
 the exchange/ACP component ablation, and reciprocal Wigner--Seitz one-patch
-and second-order minimum-image one-patch tests, including raw inputs, outputs,
-verification summaries, and hash
-manifests.  Historical table rows whose original raw output was not retained
+and second-order minimum-image one-patch tests, together with the partial
+historical `4^3` convergence matrix, including raw inputs, outputs,
+verification summaries, and hash manifests.  Historical table rows whose original raw output was not retained
 remain explicitly identified by the hashes stored in the tables.
 
 `sources.json` records the exact source states and executable hashes used in

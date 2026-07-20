@@ -8,12 +8,12 @@
   },
   "hash_mismatches": [],
   "interpretation": "Every file named by the Seidler recalculation-package hash manifest, including all raw CP2K and direct-CLI text outputs, exists, matches its recorded digest, and is present in the Git index.",
-  "manifest_entry_count": 1319,
+  "manifest_entry_count": 1428,
   "missing_on_disk": [],
-  "raw_text_output_count": 207,
+  "raw_text_output_count": 220,
   "schema": "periodic-gxtb-seidler-package-tracking-v1",
   "status": "PASS",
-  "tracked_package_file_count_excluding_manifest": 1319,
+  "tracked_package_file_count_excluding_manifest": 1428,
   "unmanifested": [],
   "untracked": []
 }

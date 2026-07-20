@@ -80,6 +80,18 @@ absolute-energy and difference tables, while the complete sensitivity matrix
 is archived under `validation/mstore_accuracy_equivalence_20260720/` in the
 repository root.
 
+An additional `4^3` source-state diagnostic is available for the same eleven
+non-reference phases that completed with the historical executable.  On that
+fixed subset, the historical and current-pbc MAEs are `7.0043` and
+`12.2172 kJ mol-1 H2O-1`, respectively, while their mean absolute branch gap
+decreases from `49.2110` at `2^3` to `18.0207` at `3^3` and `5.2456` at
+`4^3`.  This trend supports convergence of the two finite-size Hamiltonians
+toward one another.  It does not establish the historical branch as more
+accurate: its mean absolute `3^3`-to-`4^3` change is still
+`12.6064 kJ mol-1 H2O-1`, and phase XIII did not complete.  The partial raw
+matrix and its explicit incompleteness checks are under
+`evidence/mstore_inorganic_k444_partial/`.
+
 The largest individual relative-energy
 shift from `mstore-inorganic` to the current pbc-derived source is 148.0272 at
 `2^3` and 76.4515 kJ mol-1 per H2O at `3^3` (ice VII).  By contrast, the

@@ -37,6 +37,7 @@ STANDARD_VERIFIERS = (
     ("macdonald_bvk_mesh_equivalence", "validation/macdonald_bvk_mesh_equivalence_20260720/verify_macdonald_bvk_mesh.py"),
     ("mstore_accuracy_equivalence", "validation/mstore_accuracy_equivalence_20260720/verify_mstore_accuracy_equivalence.py"),
     ("mstore_pbc_component_ablation", "validation/mstore_pbc_component_ablation_20260720/evaluate_component_matrix.py"),
+    ("seidler_mstore_inorganic_k444_partial", "DMC-ICE13/reproduction/seidler_dmc13_recalculation/evidence/mstore_inorganic_k444_partial/evaluate_partial_k444.py"),
     ("wigner_seitz_self_image_attribution", "validation/wigner_seitz_self_image_attribution_20260720/evaluate_wsc_attribution.py"),
     ("second_order_mic_attribution", "validation/second_order_mic_attribution_20260720/evaluate_second_order_mic_attribution.py"),
     ("native_cli_full_parity", "validation/native_cli_full_parity_20260720/verify_native_cli_full_parity.py"),
@@ -298,7 +299,7 @@ def main() -> None:
     aggregate = json.loads((HERE / "verification.json").read_text(encoding="utf-8"))
     aggregate_valid = (
         aggregate.get("status") == "PASS"
-        and aggregate.get("completed_gate_count") == 28
+        and aggregate.get("completed_gate_count") == 29
         and all(
             item.get("passed") is True
             for item in aggregate.get("completed_gates", {}).values()

@@ -70,6 +70,17 @@ Our present evidence is:
    three-state test for the smaller ice-XVII cell leaves only
    `7.90e-7 kJ mol-1 H2O-1` and independently explains `99.99952%`, excluding
    an ice-VII-specific cancellation.
+8. The historical-source `4 x 4 x 4` extension is complete for Ih and eleven
+   benchmark phases.  On this identical eleven-phase subset, the mean absolute
+   `mstore-inorganic`/current-`pbc` gap decreases from `49.2110` at `2 x 2 x 2`
+   through `18.0207` at `3 x 3 x 3` to `5.2456 kJ mol-1 H2O-1` at
+   `4 x 4 x 4`.  The historical same-subset MAE is `7.0043`, compared with
+   `12.2172 kJ mol-1 H2O-1` for current `pbc`, but the mean absolute historical
+   `3 x 3 x 3`-to-`4 x 4 x 4` change remains `12.6064 kJ mol-1 H2O-1`.
+   Phase XIII exceeded the available local memory and is preserved with exit
+   status -9; consequently these values are explicitly partial diagnostics,
+   not a complete `4 x 4 x 4` benchmark.  Raw records and the verifier are in
+   `evidence/mstore_inorganic_k444_partial/`.
 
 Could you please run the following two independent series with your own clean
 builds?
@@ -109,6 +120,9 @@ Please also report:
   source state.
 - whether your clean builds reproduce the reciprocal Wigner--Seitz attribution
   in `evidence/wigner_seitz_self_image_attribution/`.
+- whether your clean `mstore-inorganic` build completes phase XIII at
+  `4 x 4 x 4` and reproduces the eleven completed absolute energies in
+  `evidence/mstore_inorganic_k444_partial/`.
 
 The `c932120...` build should first be compared with
 `tables/author_pbc_absolute_energies.csv`.  The `15915c...` build should then
