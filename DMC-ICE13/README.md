@@ -57,6 +57,11 @@ preceding mesh delta.
 The manuscript TikZ convergence figure is generated from the uniform and
 adaptive statistics rather than edited numerically:
 
+Build-consistent adaptive stages are joined by the solid blue line.  Only the
+latest incomplete stage is marked as a red dashed endpoint and labelled with
+an upper mesh limit (currently `<=8x8x8`); once all phase-local gates pass, the
+generator removes that provisional styling automatically.
+
 ```bash
 python3 scripts/make_dmc_adaptive_frontier_tex.py \
   data/dmc_ice13_gxtb_same_build_fixed_mesh_mae.csv \

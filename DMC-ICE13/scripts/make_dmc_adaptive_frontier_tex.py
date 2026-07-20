@@ -121,15 +121,65 @@ def main() -> None:
     all_meshes = [int(row["mesh_n"]) for row in fixed_rows] + progress_meshes
     ticks = ",".join(str(mesh) for mesh in all_meshes)
     labels = [r"$\Gamma$"] + [rf"${mesh}^3$" for mesh in all_meshes[1:]]
+    if declared_final == "false":
+        labels[-1] = rf"$\leq{all_meshes[-1]}^3$"
     ticklabels = ",".join(labels)
     fixed_coordinates = "\n".join(
         f"  ({int(row['mesh_n'])},{tex_float(mae)})"
         for row, mae in zip(fixed_rows, fixed_maes, strict=True)
     )
-    progress_coordinates = "\n".join(
-        f"  ({int(row['mesh_limit_n'])},{tex_float(mae)})"
-        for row, mae in zip(progress_rows, progress_maes, strict=True)
+    blue_progress_rows = (
+        progress_rows if declared_final == "true" else progress_rows[:-1]
     )
+    blue_progress_coordinates = "\n".join(
+        [f"  ({fixed_last_mesh},{tex_float(fixed_maes[-1])})"]
+        + [
+            f"  ({int(row['mesh_limit_n'])},{tex_float(float(row['mae_kj_mol_per_water']))})"
+            for row in blue_progress_rows
+        ]
+    )
+    provisional_coordinates = ""
+    if declared_final == "false":
+        previous_row = progress_rows[-2] if len(progress_rows) > 1 else None
+        previous_mesh = (
+            int(previous_row["mesh_limit_n"])
+            if previous_row is not None
+            else fixed_last_mesh
+        )
+        previous_mae = (
+            float(previous_row["mae_kj_mol_per_water"])
+            if previous_row is not None
+            else fixed_maes[-1]
+        )
+        latest_row = progress_rows[-1]
+        provisional_coordinates = "\n".join(
+            (
+                f"  ({previous_mesh},{tex_float(previous_mae)})",
+                f"  ({int(latest_row['mesh_limit_n'])},{tex_float(float(latest_row['mae_kj_mol_per_water']))})",
+            )
+        )
+    provisional_plot = ""
+    if declared_final == "false":
+        latest_coordinate = (
+            f"  ({int(latest_row['mesh_limit_n'])},"
+            f"{tex_float(float(latest_row['mae_kj_mol_per_water']))})"
+        )
+        provisional_plot = rf"""\addplot[
+  red!70!black,
+  thick,
+  dashed,
+  mark=none,
+] coordinates {{
+{provisional_coordinates}
+}};
+\addplot[
+  red!70!black,
+  only marks,
+  mark=diamond*,
+  mark size=3pt,
+] coordinates {{
+{latest_coordinate}
+}};"""
     progress_labels = "\n".join(
         rf"\node[anchor=south,font=\small] at "
         rf"(axis cs:{int(row['mesh_limit_n'])},{tex_float(mae * 1.10)}) "
@@ -170,14 +220,14 @@ def main() -> None:
 }};
 \node[anchor=west,font=\small] at (axis cs:1.18,{tex_float(fixed_maes[0])}) {{{fixed_maes[0]:.1f}}};
 \addplot[
-  red!70!black,
+  blue!70!black,
   thick,
-  dashed,
   mark=diamond*,
   mark size=3pt,
 ] coordinates {{
-{progress_coordinates}
+{blue_progress_coordinates}
 }};
+{provisional_plot}
 {progress_labels}
 \end{{semilogyaxis}}
 \end{{tikzpicture}}

@@ -41,6 +41,12 @@ def save_figure(figure: mpl.figure.Figure, output: Path) -> None:
         else:
             options["dpi"] = 600
         figure.savefig(target, **options)
+        if suffix == "svg":
+            normalized = "\n".join(
+                line.rstrip()
+                for line in target.read_text(encoding="utf-8").splitlines()
+            )
+            target.write_text(normalized + "\n", encoding="utf-8")
 
 
 def main() -> None:
@@ -91,21 +97,47 @@ def main() -> None:
         markersize=4.0,
         linewidth=1.6,
     )
+    latest_progress = progress_rows[-1]
+    provisional = int(latest_progress["converged_phase_count"]) < int(
+        latest_progress["phase_count"]
+    )
+    blue_progress_count = (
+        len(progress_meshes) - 1 if provisional else len(progress_meshes)
+    )
     axis.plot(
-        progress_meshes,
-        progress_values,
-        color="#D55E00",
+        [fixed_meshes[-1], *progress_meshes[:blue_progress_count]],
+        [fixed_values[-1], *progress_values[:blue_progress_count]],
+        color="#0072B2",
         marker="D",
         markersize=4.0,
-        linewidth=1.4,
-        linestyle="--",
+        linewidth=1.6,
     )
+    if provisional:
+        previous_mesh = (
+            progress_meshes[-2] if len(progress_meshes) > 1 else fixed_meshes[-1]
+        )
+        previous_value = (
+            progress_values[-2] if len(progress_values) > 1 else fixed_values[-1]
+        )
+        axis.plot(
+            [previous_mesh, progress_meshes[-1]],
+            [previous_value, progress_values[-1]],
+            color="#D55E00",
+            marker="D",
+            markevery=[1],
+            markersize=4.0,
+            linewidth=1.4,
+            linestyle="--",
+        )
     axis.set_yscale("log")
-    axis.set_xlim(0.65, 8.35)
+    axis.set_xlim(0.65, all_meshes[-1] + 0.35)
     axis.set_ylim(1.3, 220.0)
+    tick_labels = [r"$\Gamma$"] + [rf"${mesh}^3$" for mesh in all_meshes[1:]]
+    if provisional:
+        tick_labels[-1] = rf"$\leq {all_meshes[-1]}^3$"
     axis.set_xticks(
         all_meshes,
-        [r"$\Gamma$"] + [rf"${mesh}^3$" for mesh in all_meshes[1:]],
+        tick_labels,
         rotation=45,
         ha="right",
     )
