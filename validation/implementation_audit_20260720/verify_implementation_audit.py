@@ -18,8 +18,12 @@ EXPECTED_PHASES = (
 )
 ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER = 0.10
 MAXIMUM_ADAPTIVE_MESH = 8
-PENDING_DIAGNOSTIC_ENDPOINT = (
-    "ice VII explicit CP2K Gamma-supercell 2x2x2 oracle"
+PENDING_DIAGNOSTIC_ENDPOINTS = (
+    "ice VII explicit CP2K Gamma-supercell 2x2x2 oracle",
+    (
+        "ice XVII same-binary full/reduced energy-force-stress and "
+        "central-difference requalification"
+    ),
 )
 
 
@@ -309,7 +313,7 @@ def main() -> None:
 
     all_completed_gates_pass = all(item["passed"] for item in gate_results.values())
     output = {
-        "schema": "periodic-gxtb-part-i-implementation-audit-v1",
+        "schema": "periodic-gxtb-part-i-implementation-audit-v2",
         "status": "PASS" if all_completed_gates_pass else "FAIL",
         "completed_gate_count": len(gate_results),
         "completed_gates": gate_results,
@@ -318,14 +322,14 @@ def main() -> None:
         "pending_science_endpoints": pending_science_endpoints,
         "maximum_adaptive_mesh": MAXIMUM_ADAPTIVE_MESH,
         "capped_unresolved_phases": capped_unresolved_phases,
-        "pending_diagnostic_endpoint": PENDING_DIAGNOSTIC_ENDPOINT,
+        "pending_diagnostic_endpoints": list(PENDING_DIAGNOSTIC_ENDPOINTS),
         "interpretation": (
             "All completed exact implementation gates pass and the DMC-ICE13 adaptive "
             "statistic is final."
             if (
                 declared_final
                 and not pending_science_endpoints
-                and PENDING_DIAGNOSTIC_ENDPOINT is None
+                and not PENDING_DIAGNOSTIC_ENDPOINTS
             )
             else "All completed exact implementation gates pass. The DMC-ICE13 adaptive "
             "statistic remains provisional while listed sub-cap endpoints are pending or "

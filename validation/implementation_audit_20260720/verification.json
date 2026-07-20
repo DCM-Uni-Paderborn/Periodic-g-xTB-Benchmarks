@@ -234,11 +234,14 @@
   "current_adaptive_set_is_final": false,
   "interpretation": "All completed exact implementation gates pass. The DMC-ICE13 adaptive statistic remains provisional while listed sub-cap endpoints are pending or a phase remains unresolved at the declared mesh cap; the separately listed diagnostic endpoint is not yet a completed gate.",
   "maximum_adaptive_mesh": 8,
-  "pending_diagnostic_endpoint": "ice VII explicit CP2K Gamma-supercell 2x2x2 oracle",
+  "pending_diagnostic_endpoints": [
+    "ice VII explicit CP2K Gamma-supercell 2x2x2 oracle",
+    "ice XVII same-binary full/reduced energy-force-stress and central-difference requalification"
+  ],
   "pending_science_endpoints": [
     "ice XI 7x7x7",
     "ice XIV 8x8x8"
   ],
-  "schema": "periodic-gxtb-part-i-implementation-audit-v1",
+  "schema": "periodic-gxtb-part-i-implementation-audit-v2",
   "status": "PASS"
 }
