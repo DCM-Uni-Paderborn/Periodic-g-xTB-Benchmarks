@@ -82,3 +82,5 @@ contains exactly the twelve DMC-ICE13 polymorphs, every convergence flag agrees
 with the one-step threshold of `0.10 kJ mol-1` per water, and the declared final
 state agrees with the number of converged phases. A missing same-build ice-Ih
 reference is inserted ahead of the corresponding phase endpoint automatically.
+The present Part-I schedule is capped at `8 x 8 x 8`; an unresolved phase at
+that cap is reported separately instead of generating a `9 x 9 x 9` job.

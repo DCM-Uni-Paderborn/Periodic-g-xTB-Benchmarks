@@ -1,4 +1,7 @@
 {
+  "capped_unresolved_phases": [
+    "VII"
+  ],
   "completed_gate_count": 30,
   "completed_gates": {
     "accuracy_equivalence": {
@@ -167,7 +170,7 @@
         8
       ],
       "passed": true,
-      "sha256": "ab64fd14241c1fee6ab516701d6ceeb0b8334ab69153595b66d91ebc761026fc",
+      "sha256": "d302bc01dc147d9d3055839c9efa58a6fa2cbf217b41cf3bc69bc3b943798b25",
       "status": "PASS"
     },
     "provider_component_attribution": {
@@ -229,10 +232,10 @@
     "rmse_kj_mol_per_water": 2.194370359121619
   },
   "current_adaptive_set_is_final": false,
-  "interpretation": "All completed exact implementation gates pass. The DMC-ICE13 adaptive statistic remains provisional until the listed phase-local endpoints finish.",
+  "interpretation": "All completed exact implementation gates pass. The DMC-ICE13 adaptive statistic remains provisional while listed sub-cap endpoints are pending or a phase remains unresolved at the declared mesh cap.",
+  "maximum_adaptive_mesh": 8,
   "pending_diagnostic_endpoint": null,
   "pending_science_endpoints": [
-    "ice VII 9x9x9 after same-build ice Ih 9x9x9",
     "ice XI 7x7x7",
     "ice XIV 8x8x8"
   ],

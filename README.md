@@ -50,6 +50,9 @@ MAE 1.7466, RMSE 2.1944, and MaxAE 5.4315 kJ mol-1 per H2O.
 It is not the final adaptive result: nine of twelve phases currently satisfy
 the declared one-step condition
 `|R(N)-R(N-1)| <= 0.10 kJ mol-1 per H2O`.
+The Part-I sequence is currently capped at 8x8x8: ice VII remains unresolved
+at that cap, while only the still-missing sub-cap endpoints for ice XI and ice
+XIV remain scheduled.
 
 Machine-readable values are in
 [`DMC-ICE13/data/`](DMC-ICE13/data/). The recalculation package for an

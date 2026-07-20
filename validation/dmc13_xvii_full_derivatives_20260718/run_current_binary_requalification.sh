@@ -29,15 +29,13 @@ live_cp2k_pids() {
 }
 
 wait_for_dense_chain() {
-  while pgrep -u "$USER" -f "$root/tools/continue_dmc_after_ih9.sh" >/dev/null; do
+  while pgrep -u "$USER" -f "$root/tools/continue_dmc_below_9.sh" >/dev/null; do
     sleep 30
   done
 
   # Never replace a failed or interrupted DMC endpoint chain with derivative
-  # work.  All four serial prerequisites must be complete with the frozen
-  # executable before this campaign is allowed to consume the node.
-  validate_result "$root/runs/k999-reduced/Ih"
-  validate_result "$root/runs/k999-reduced/VII"
+  # work.  Both remaining sub-9x9x9 prerequisites must be complete with the
+  # frozen executable before this campaign is allowed to consume the node.
   validate_result "$root/runs/k888-reduced/XIV"
   validate_result "$root/runs/k777-reduced/XI"
 

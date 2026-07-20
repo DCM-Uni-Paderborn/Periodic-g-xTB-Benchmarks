@@ -17,6 +17,7 @@ EXPECTED_PHASES = (
     "IX", "XI", "XIII", "XIV", "XV", "XVII",
 )
 ADAPTIVE_TOLERANCE_KJ_MOL_PER_WATER = 0.10
+MAXIMUM_ADAPTIVE_MESH = 8
 
 
 def load_json(relative: str) -> dict:
@@ -285,12 +286,16 @@ def main() -> None:
         if row["phase"] == "Ih" and row["qualification"] == "PASS"
     }
     pending_science_endpoints = []
+    capped_unresolved_phases = []
     for row in rows:
         if row["phase_converged"].strip().lower() == "true":
             continue
         selected_mesh = int(row["mesh_n"])
         delta_text = row["absolute_adjacent_delta_kj_mol_per_water"].strip()
         required_mesh = selected_mesh + 1 if delta_text or selected_mesh == 1 else selected_mesh - 1
+        if required_mesh > MAXIMUM_ADAPTIVE_MESH:
+            capped_unresolved_phases.append(row["phase"])
+            continue
         endpoint = f"ice {row['phase']} {required_mesh}x{required_mesh}x{required_mesh}"
         if required_mesh not in ih_meshes:
             endpoint += (
@@ -308,13 +313,16 @@ def main() -> None:
         "current_adaptive_set": calculated,
         "current_adaptive_set_is_final": declared_final,
         "pending_science_endpoints": pending_science_endpoints,
+        "maximum_adaptive_mesh": MAXIMUM_ADAPTIVE_MESH,
+        "capped_unresolved_phases": capped_unresolved_phases,
         "pending_diagnostic_endpoint": None,
         "interpretation": (
             "All completed exact implementation gates pass and the DMC-ICE13 adaptive "
             "statistic is final."
             if declared_final and not pending_science_endpoints
             else "All completed exact implementation gates pass. The DMC-ICE13 adaptive "
-            "statistic remains provisional until the listed phase-local endpoints finish."
+            "statistic remains provisional while listed sub-cap endpoints are pending or "
+            "a phase remains unresolved at the declared mesh cap."
         ),
     }
     output_path = HERE / "verification.json"

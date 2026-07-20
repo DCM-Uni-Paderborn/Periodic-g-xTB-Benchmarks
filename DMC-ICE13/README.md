@@ -25,6 +25,11 @@ MAE is reported only after all twelve non-reference phases have passed. Odd
 meshes are unshifted; even MacDonald meshes use the frozen half-grid-compatible
 shift in the versioned inputs.
 
+The current Part-I production cap is `8x8x8`.  An unresolved phase at that cap
+remains explicitly non-converged but does not create a scheduled `9x9x9`
+endpoint.  This keeps the reported `<=8x8x8` statistic provisional rather than
+silently treating the cap as a convergence criterion.
+
 ## Current data
 
 - `data/dmc_ice13_gxtb_same_build_fixed_mesh_mae.csv`: complete uniform

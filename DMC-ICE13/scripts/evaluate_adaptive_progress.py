@@ -23,6 +23,7 @@ PHASES = (
     "IX", "XI", "XIII", "XIV", "XV", "XVII",
 )
 LIMITS = (6, 7, 8)
+MAXIMUM_MESH = max(LIMITS)
 TOLERANCE = 0.10
 
 
@@ -106,7 +107,9 @@ def main() -> None:
                         )
                     )
                 unresolved.append(phase)
-                pending.append(f"{phase}:{selected_mesh + 1}")
+                next_mesh = selected_mesh + 1
+                if next_mesh <= MAXIMUM_MESH:
+                    pending.append(f"{phase}:{next_mesh}")
 
             error = float(endpoints[selected_mesh]["error_kj_mol_per_H2O"])
             if not math.isfinite(error):
