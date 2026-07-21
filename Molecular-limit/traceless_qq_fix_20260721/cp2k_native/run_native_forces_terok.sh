@@ -11,7 +11,7 @@ template=$work/input_templates/H2O_gxtb_molecular_limit_native_forces.inp
 raw=$work/raw
 status=$work/status
 source_commit=fad7fe4b188f99794d7c047d5b710667c3a2ce84
-boxes=(8 10 12 15 20 30 40 50 60 80 100)
+boxes=(8 10 12 15 20 30 40 50 60 80 100 150 200 250)
 
 test "$(cat "$build_root/build.status")" = complete
 test -x "$binary"

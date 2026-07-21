@@ -6,6 +6,7 @@ from __future__ import annotations
 import csv
 import json
 import re
+from decimal import Decimal
 from pathlib import Path
 
 
@@ -13,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 NATIVE = ROOT / "cp2k_native"
 STRESS = ROOT / "stress" / "raw"
 OUTPUT = NATIVE / "analysis"
-BOXES = (8, 10, 12, 15, 20, 30, 40, 50, 60, 80, 100, 200)
+BOXES = (8, 10, 12, 15, 20, 30, 40, 50, 60, 80, 100, 150, 200, 250)
 EH_TO_KJMOL = 2625.4996394799
 BOHR_PER_ANGSTROM = 1.88972613288564
 AU_PRESSURE_TO_GPA = 2.94210107994716e4
@@ -85,13 +86,11 @@ def validate_case(directory: Path, cp2k_hash: str) -> str:
 
 def load_native(case: str, box: int | None, cp2k_hash: str) -> dict[str, object]:
     output = validate_case(NATIVE / "raw" / case, cp2k_hash)
-    energy = float(
-        one(
-            r"ENERGY\| Total FORCE_EVAL .*?([-+]?\d+\.\d+)\s*$",
-            output,
-            re.MULTILINE,
-        ).group(1)
-    )
+    energy = one(
+        r"ENERGY\| Total FORCE_EVAL .*?([-+]?\d+\.\d+)\s*$",
+        output,
+        re.MULTILINE,
+    ).group(1)
     return {
         "case": case,
         "periodicity": "0D" if box is None else "3D",
@@ -124,10 +123,10 @@ def main() -> None:
     rows = [load_native("H2O_0D", None, cp2k_hash)]
     rows.extend(load_native(f"H2O_L{box:02d}", box, cp2k_hash) for box in BOXES)
     reference = rows[0]
-    reference_energy = float(reference["cp2k_energy_Eh"])
+    reference_energy = Decimal(str(reference["cp2k_energy_Eh"]))
     reference_forces = list(reference["forces_Eh_per_bohr"])
     for row in rows:
-        delta_energy = float(row["cp2k_energy_Eh"]) - reference_energy
+        delta_energy = Decimal(str(row["cp2k_energy_Eh"])) - reference_energy
         delta_force = [
             current - ref
             for current, ref in zip(
@@ -135,8 +134,9 @@ def main() -> None:
             )
         ]
         max_force_au = max(abs(value) for value in delta_force)
-        row["signed_delta_E_kJ_per_mol"] = delta_energy * EH_TO_KJMOL
-        row["abs_delta_E_kJ_per_mol"] = abs(delta_energy * EH_TO_KJMOL)
+        delta_energy_kjmol = delta_energy * Decimal(str(EH_TO_KJMOL))
+        row["signed_delta_E_kJ_per_mol"] = float(delta_energy_kjmol)
+        row["abs_delta_E_kJ_per_mol"] = float(abs(delta_energy_kjmol))
         row["max_component_delta_F_Eh_per_bohr"] = max_force_au
         row["max_component_delta_F_Eh_per_angstrom"] = (
             max_force_au * BOHR_PER_ANGSTROM
@@ -156,7 +156,7 @@ def main() -> None:
         del row["forces_Eh_per_bohr"]
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    table = OUTPUT / "h2o_molecular_limit_cp2k_native_0d_8_200.csv"
+    table = OUTPUT / "h2o_molecular_limit_cp2k_native_0d_8_250.csv"
     with table.open("w", newline="") as handle:
         writer = csv.DictWriter(
             handle, fieldnames=list(rows[0]), lineterminator="\n"
@@ -164,8 +164,34 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(rows)
 
+    paper_table = ROOT.parent / "results_energy_force_stress_8_250.csv"
+    paper_fields = [
+        "L_angstrom",
+        "cp2k_energy_Eh",
+        "signed_delta_E_kJ_per_mol",
+        "abs_delta_E_kJ_per_mol",
+        "max_component_delta_F_Eh_per_a0",
+        "max_abs_stress_GPa",
+        "max_abs_analytical_minus_numerical_virial_Eh",
+        "cp2k_sha256",
+        "normal_termination",
+        "qualified",
+    ]
+    with paper_table.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=paper_fields, lineterminator="\n")
+        writer.writeheader()
+        for row in rows[1:]:
+            writer.writerow(
+                {
+                    **{field: row[field] for field in paper_fields if field in row},
+                    "max_component_delta_F_Eh_per_a0": row[
+                        "max_component_delta_F_Eh_per_bohr"
+                    ],
+                }
+            )
+
     periodic = rows[1:]
-    l200 = rows[-1]
+    l250 = rows[-1]
     summary = {
         "all_normally_terminated_qualified_same_build": True,
         "boxes_angstrom": list(BOXES),
@@ -177,18 +203,21 @@ def main() -> None:
         "force_native_unit": "Eh/bohr",
         "force_display_unit": "Eh/a0",
         "stress_display_unit": "GPa",
-        "molecular_0D_cp2k_energy_Eh": reference_energy,
-        "L200_cp2k_energy_Eh": float(l200["cp2k_energy_Eh"]),
-        "L200_minus_0D_energy_Eh": (
-            float(l200["cp2k_energy_Eh"]) - reference_energy
+        "molecular_0D_cp2k_energy_Eh": float(reference_energy),
+        "L250_cp2k_energy_Eh": float(l250["cp2k_energy_Eh"]),
+        "L250_minus_0D_energy_Eh": (
+            float(Decimal(str(l250["cp2k_energy_Eh"])) - reference_energy)
         ),
-        "L200_minus_0D_energy_kJ_per_mol": float(
-            l200["signed_delta_E_kJ_per_mol"]
+        "L250_minus_0D_energy_Eh_exact": str(
+            Decimal(str(l250["cp2k_energy_Eh"])) - reference_energy
         ),
-        "L200_max_component_force_difference_Eh_per_bohr": float(
-            l200["max_component_delta_F_Eh_per_bohr"]
+        "L250_minus_0D_energy_kJ_per_mol": float(
+            l250["signed_delta_E_kJ_per_mol"]
         ),
-        "L200_max_abs_stress_GPa": float(l200["max_abs_stress_GPa"]),
+        "L250_max_component_force_difference_Eh_per_bohr": float(
+            l250["max_component_delta_F_Eh_per_bohr"]
+        ),
+        "L250_max_abs_stress_GPa": float(l250["max_abs_stress_GPa"]),
         "max_abs_analytical_minus_numerical_virial_Eh": max(
             float(row["max_abs_analytical_minus_numerical_virial_Eh"])
             for row in periodic

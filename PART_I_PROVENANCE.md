@@ -75,7 +75,7 @@ CP2K executable.
 - `Molecular-limit/traceless_qq_fix_20260721/`: accepted Fig. 1 pure
   CP2K-native outputs, exact executable and library hashes, singleton-CPU
   affinity proofs, analytical stress, finite-difference virial evidence, build
-  logs, regression tests, and signed source patch for 0D and 8--200 A. This
+  logs, regression tests, and signed source patch for 0D and 8--250 A. This
   figure-specific build uses CP2K source
   `8520b2e592cd04d35081ab4ad46d92c606071e23`, `save_tblite` source
   `fad7fe4b188f99794d7c047d5b710667c3a2ce84`, CP2K executable SHA-256

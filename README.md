@@ -96,12 +96,12 @@ claimed to be k-point converged.  The per-solid values are in
 
 ### Molecular limit
 
-The corrected CP2K-native H2O series now spans cubic cells from 8 to 200 A.
+The corrected CP2K-native H2O series now spans cubic cells from 8 to 250 A.
 Relative to the zero-dimensional energy of `-76.437385109217445 Eh`, the
-200 A energy is `-76.437385134501923 Eh`, a difference of only
-`-6.63843879e-5 kJ mol-1`. At 200 A the largest Cartesian force-component
-difference is `3.4100e-8 Eh/a0` and the largest analytical stress component is
-`8.6146e-6 GPa`. Energy, force, and stress converge monotonically after making
+250 A energy is `-76.437385128332366 Eh`, a difference of only
+`-5.01862182e-5 kJ mol-1`. At 250 A the largest Cartesian force-component
+difference is `3.0300e-8 Eh/a0` and the largest analytical stress component is
+`4.4107e-6 GPa`. Energy, force, and stress converge monotonically after making
 the zero-dimensional quadrupole--quadrupole contraction consistent with the
 traceless atomic-quadrupole convention; the former force plateau is absent.
 The raw data and build/source evidence are archived in

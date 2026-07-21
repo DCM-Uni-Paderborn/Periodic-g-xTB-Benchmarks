@@ -7,18 +7,17 @@
         width=0.98\linewidth,
         height=0.76\linewidth,
         xmode=log,
+        ymode=log,
         log basis x=10,
+        log basis y=10,
         xlabel={Cell length / \AA},
-        ylabel={Total energy $E_{\mathrm{3D}}$ / $E_\mathrm{h}$},
+        ylabel={$|\Delta E|=|E_{\mathrm{3D}}-E_{\mathrm{0D}}|$ / kJ mol$^{-1}$},
         xmin=7.7,
-        xmax=210,
-        ymin=-76.54,
-        ymax=-76.43,
-        xtick={8,10,20,30,50,100,200},
-        xticklabels={8,10,20,30,50,100,200},
-        ytick={-76.54,-76.52,-76.50,-76.48,-76.46,-76.44},
-        scaled y ticks=false,
-        y tick label style={/pgf/number format/fixed,/pgf/number format/precision=2},
+        xmax=260,
+        ymin=3e-5,
+        ymax=4e2,
+        xtick={8,10,20,50,100,250},
+        xticklabels={8,10,20,50,100,250},
         grid=both,
         minor grid style={gray!18},
         major grid style={gray!35},
@@ -27,24 +26,23 @@
       ]
         \addplot+[blue!75!black, thick, mark=*, mark size=1.9pt]
           coordinates {
-            (8,-76.53281894254921)
-            (10,-76.49612779497798)
-            (12,-76.47229243885772)
-            (15,-76.45153916705496)
-            (20,-76.43985589661881)
-            (30,-76.43744818779650)
-            (40,-76.43738940213733)
-            (50,-76.43738670717899)
-            (60,-76.43738601862653)
-            (80,-76.43738549312393)
-            (100,-76.43738530537355)
-            (200,-76.43738513450192)
+            (8,250.561495006742)
+            (10,154.228900286366)
+            (12,91.649181385751)
+            (15,37.161473749573)
+            (20,6.487051431513)
+            (30,0.165612786581)
+            (40,0.011271059603)
+            (50,0.004195447452)
+            (60,0.002387653214)
+            (80,0.001007946327)
+            (100,0.000515007791)
+            (150,0.000152631408)
+            (200,0.000066384388)
+            (250,0.000050186218)
           };
-        \addplot+[blue!55!black, densely dashed, thin, mark=none, domain=8:200]
-          {-76.437385109217445};
-        \node[anchor=south east,font=\scriptsize,blue!55!black]
-          at (rel axis cs:0.98,0.90) {$E_{\mathrm{0D}}$};
-        \node[anchor=north west,font=\small] at (rel axis cs:0.02,0.98) {(a)};
+        \node[anchor=north east,font=\small,fill=white,fill opacity=0.82,
+          text opacity=1,inner sep=1pt] at (rel axis cs:0.98,0.98) {(a)};
       \end{axis}
     \end{tikzpicture}
   \end{minipage}\hfill
@@ -61,9 +59,9 @@
         xlabel={Cell length / \AA},
         ylabel={Max. $|F_{\mathrm{3D}}-F_{\mathrm{0D}}|$ / $E_\mathrm{h}\,a_0^{-1}$},
         xmin=7.7,
-        xmax=210,
-        xtick={8,10,20,30,50,100,200},
-        xticklabels={8,10,20,30,50,100,200},
+        xmax=260,
+        xtick={8,10,20,50,100,250},
+        xticklabels={8,10,20,50,100,250},
         grid=both,
         minor grid style={gray!18},
         major grid style={gray!35},
@@ -83,9 +81,12 @@
             (60,0.0000012048)
             (80,0.0000005096)
             (100,0.0000002602)
+            (150,0.0000000771)
             (200,0.0000000341)
+            (250,0.0000000303)
           };
-        \node[anchor=north west,font=\small] at (rel axis cs:0.02,0.98) {(b)};
+        \node[anchor=north east,font=\small,fill=white,fill opacity=0.82,
+          text opacity=1,inner sep=1pt] at (rel axis cs:0.98,0.98) {(b)};
       \end{axis}
     \end{tikzpicture}
   \end{minipage}\hfill
@@ -102,9 +103,9 @@
         xlabel={Cell length / \AA},
         ylabel={Max. $|\sigma_{\alpha\beta}|$ / GPa},
         xmin=7.7,
-        xmax=210,
-        xtick={8,10,20,30,50,100,200},
-        xticklabels={8,10,20,30,50,100,200},
+        xmax=260,
+        xtick={8,10,20,50,100,250},
+        xticklabels={8,10,20,50,100,250},
         grid=both,
         minor grid style={gray!18},
         major grid style={gray!35},
@@ -124,16 +125,19 @@
             (60,0.000319085)
             (80,0.000134608)
             (100,0.000068918)
+            (150,0.000020420)
             (200,0.000008615)
+            (250,0.000004411)
           };
-        \node[anchor=north west,font=\small] at (rel axis cs:0.02,0.98) {(c)};
+        \node[anchor=north east,font=\small,fill=white,fill opacity=0.82,
+          text opacity=1,inner sep=1pt] at (rel axis cs:0.98,0.98) {(c)};
       \end{axis}
     \end{tikzpicture}
   \end{minipage}
   \caption{Molecular-limit test for one H$_2$O molecule in cubic cells of
-  8--200~\AA.  Panel (a) shows the three-dimensionally periodic total energy
-  in $E_\mathrm{h}$; the dashed line is the zero-dimensional total-energy
-  reference.  Panel (b) shows the largest Cartesian force-component
+  8--250~\AA.  Panel (a) shows the absolute periodic-minus-molecular energy
+  difference $|\Delta E|=|E_{\mathrm{3D}}-E_{\mathrm{0D}}|$ in kJ mol$^{-1}$.
+  Panel (b) shows the largest Cartesian force-component
   difference between the periodic implicit-Gamma and zero-dimensional
   routes.  Because a
   zero-dimensional calculation has no cell derivative, panel (c) instead

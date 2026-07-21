@@ -1,9 +1,10 @@
 {
-  "L200_cp2k_energy_Eh": -76.43738513450192,
-  "L200_max_abs_stress_GPa": 8.614632965014789e-06,
-  "L200_max_component_force_difference_Eh_per_bohr": 3.410000000078628e-08,
-  "L200_minus_0D_energy_Eh": -2.5284478510911867e-08,
-  "L200_minus_0D_energy_kJ_per_mol": -6.638438921483639e-05,
+  "L250_cp2k_energy_Eh": -76.43738512833237,
+  "L250_max_abs_stress_GPa": 4.4106782820440954e-06,
+  "L250_max_component_force_difference_Eh_per_bohr": 3.030000000035782e-08,
+  "L250_minus_0D_energy_Eh": -1.9114921e-08,
+  "L250_minus_0D_energy_Eh_exact": "-1.9114921E-8",
+  "L250_minus_0D_energy_kJ_per_mol": -5.018621819418677e-05,
   "all_normally_terminated_qualified_same_build": true,
   "boxes_angstrom": [
     8,
@@ -17,7 +18,9 @@
     60,
     80,
     100,
-    200
+    150,
+    200,
+    250
   ],
   "cp2k_sha256": "a606cb0ff838dc1a5f967238154d5c0892da5f5b63488d2c10959ec12d6e4d7c",
   "force_display_unit": "Eh/a0",
@@ -25,7 +28,7 @@
   "geometry_unit": "bohr",
   "libcp2k_sha256": "d8b595d26864dfac030f1f19e2c5d2e0afeb99649292101d18972df028c0e991",
   "libtblite_sha256": "43d1f7a7ddb356007fe9ba459fd84dc08c43d0fe7389687cffc13868a074b2ac",
-  "max_abs_analytical_minus_numerical_virial_Eh": 1.361e-08,
+  "max_abs_analytical_minus_numerical_virial_Eh": 3.3568e-08,
   "molecular_0D_cp2k_energy_Eh": -76.43738510921744,
   "reference_cli": "disabled",
   "save_tblite_source_commit": "fad7fe4b188f99794d7c047d5b710667c3a2ce84",
