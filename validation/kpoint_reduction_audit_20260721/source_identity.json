@@ -1,0 +1,12 @@
+{
+  "cp2k_binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+  "cp2k_revision": "8520b2e592cd04d35081ab4ad46d92c606071e23",
+  "cp2k_tree": "b6eb7aaa5bc3bd8a64e3602caaf4792533df9408",
+  "save_tblite_revision": "15915c9435644eb257178ca8f8bf7220c38b1a84",
+  "save_tblite_tree": "64101556629fdf765fd15ec6e682a88005af5f17",
+  "source_files": {
+    "src/cryssym.F": "8303c8d828c86212df05369ba28d3d3c91593ad0e8129125e03f16faed3b0c8f",
+    "src/input_cp2k_tb.F": "cf2b152c7a8a23839ceb786548481ea984d1a6dd6758b1656a2d6ca91b8eca72",
+    "src/tblite_interface.F": "8b13b449fae082900cd2835f84c0e210ce698bb2451b495487325db9013af058"
+  }
+}

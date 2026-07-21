@@ -1,0 +1,316 @@
+{
+  "bvk_supercell_equivalence": {
+    "one_dimensional_supercell_per_primitive_minus_gamma_centered_hartree": {
+      "hartree": 0.0,
+      "kj_mol_per_primitive": 0.0
+    },
+    "two_dimensional_supercell_per_primitive_minus_gamma_centered_hartree": {
+      "hartree": 4.069988790433854e-09,
+      "kj_mol_per_primitive": 1.0685754101971318e-05
+    }
+  },
+  "counts": {
+    "derivative_cases": 11,
+    "normal_terminations": 23,
+    "partial_pbc_cases": 12,
+    "total_cases": 23
+  },
+  "derivative_cases": {
+    "CH4_gxtb_gamma_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -40.52385041912384,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "61baea042cc0511212859481048e78286f9876cfa74280d3fd4e64a3fa6aef42",
+      "output_sha256": "d7ac95011e24037b75b5eb8e94eb0d42d25a92c3f5cd92b41be2b0bf253feb1c",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 6.204121102734556e-08,
+      "virial_sum_abs_hartree": 7.286e-09,
+      "volume_angstrom3": 512.0
+    },
+    "CH4_gxtb_kp_111_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -40.52385041897622,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "ec41a98325d9db43527c2165fa411dbe2e82e9efd2117dcb9039cd3ff896f2c0",
+      "output_sha256": "0f7dd8d2e62d8765f5e418591f84bf264660c7562f137e0f0e42c1a41759f7cb",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 1.9022792401192696e-08,
+      "virial_sum_abs_hartree": 2.234e-09,
+      "volume_angstrom3": 512.0
+    },
+    "CH4_gxtb_kp_full_222_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -40.47374896705702,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "8a26a3dd4bfc9646ac705c8fff8b78660979954bc61fd143b4941621da253a40",
+      "output_sha256": "f2409d18273583fe8c0a1a4786dba3374cac4b43698c79789da4c638c0f5a71d",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 2.919836846181278e-08,
+      "virial_sum_abs_hartree": 3.429e-09,
+      "volume_angstrom3": 512.0
+    },
+    "CH4_gxtb_kp_k290_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -40.47374896705702,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "709388624dda15c066e7b9b5d3e97fe57665a4d53e6f58851685dae298ca4e54",
+      "output_sha256": "e8cd3a80d1c80161b04a92ec8c3bc534d288f2494fe4cfbceb63c95d45145e0f",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 1.020963656626233e-08,
+      "virial_sum_abs_hartree": 1.199e-09,
+      "volume_angstrom3": 512.0
+    },
+    "CH4_gxtb_kp_spglib_111_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -40.523850418976224,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "2dbf806e008abb833fb07e345148d8acb06fd21e4b6ef77fa7e698d85f36db19",
+      "output_sha256": "dbfb1bd286aad4fe2573303e8fdf975d174522accb555e69a0db36ad398fad8c",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 1.4450169518721579e-08,
+      "virial_sum_abs_hartree": 1.697e-09,
+      "volume_angstrom3": 512.0
+    },
+    "CH4_gxtb_kp_spglib_222_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -40.47374896705702,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "8ebc026519a56c2a52d7cc92a94ac86998453f3ed5c3c6b409ffa676318feead",
+      "output_sha256": "3be344caf68c16370f581582898934f376b7e15b761bd6c256b64cb4506f3ed5",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 2.8661915497947457e-08,
+      "virial_sum_abs_hartree": 3.366e-09,
+      "volume_angstrom3": 512.0
+    },
+    "H2O_gxtb_gamma_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -76.53068373361373,
+      "force_sum_abs_hartree_per_bohr": 1e-08,
+      "input_sha256": "6612caae729e4eecdaaca7fe8a964a58fefd8fb3c1051429f32a5d111fedb702",
+      "output_sha256": "ebf3f3e968bdc524f483d08311cfe311d97a08c7f0b9968702da862b0c6fc948",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 3.390009509761702e-08,
+      "virial_sum_abs_hartree": 4.755e-09,
+      "volume_angstrom3": 611.52
+    },
+    "H2O_gxtb_kp_gamma_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -76.5306837336174,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "571bd87b9205e495a4af341b20253045bc6d92504a1432bc23f3e743381bec20",
+      "output_sha256": "bd2145344bbdb2aa2178d880f6c1bd225db0be16f5fa7ce8873f5f7fa0cdc703",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 3.457025470627654e-08,
+      "virial_sum_abs_hartree": 4.849e-09,
+      "volume_angstrom3": 611.52
+    },
+    "H2_gxtb_gamma_supercell_311_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -3.590201893914485,
+      "force_sum_abs_hartree_per_bohr": 1e-08,
+      "input_sha256": "9162a1ec562deeb5f9e7f15e8b5506a64a73c463cbf6e2451b53d13d27601d98",
+      "output_sha256": "5978b429ee322f1b41d84073bc44165b42dc12240537162a90a800347691def4",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 6.189449090607791e-07,
+      "virial_sum_abs_hartree": 3.454e-08,
+      "volume_angstrom3": 243.294
+    },
+    "H2_gxtb_kp_311_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -1.196733964583435,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "184ac5aa81c88563177f4c67274dcfed7a6db12e52fcf3fa39b4ccb7af8951e2",
+      "output_sha256": "840256147123e0f9bec09318edc6cd96f6328067012dc49f94b0ae737bbe0c53",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 7.311219539571452e-09,
+      "virial_sum_abs_hartree": 1.36e-10,
+      "volume_angstrom3": 81.098
+    },
+    "H2_gxtb_kp_311_tr_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -1.196733964583435,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "1b03853f044ccb1e58917dfd0443b846ffd967bfbad817380af553388f91677c",
+      "output_sha256": "397b708d1a5d56ce84325559224714ec2514d390fe527f3e393ff49b40c6ee26",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 7.364978506774182e-09,
+      "virial_sum_abs_hartree": 1.37e-10,
+      "volume_angstrom3": 81.098
+    }
+  },
+  "energy_route_differences": {
+    "ch4_full_minus_k290_k222_hartree": 0.0,
+    "ch4_full_minus_spglib_k222_hartree": 0.0,
+    "h2_full_minus_time_reversal_k311_hartree": 0.0,
+    "h2_supercell_per_primitive_minus_full_k311_hartree": -5.472666764205769e-11,
+    "h2o_implicit_minus_explicit_gamma_hartree": 3.666400516522117e-12,
+    "one_dimensional_full_minus_k290_hartree": 0.0,
+    "one_dimensional_full_minus_spglib_hartree": 0.0,
+    "one_dimensional_supercell_per_primitive_minus_gamma_centered_hartree": 0.0,
+    "two_dimensional_full_minus_k290_hartree": 0.0,
+    "two_dimensional_full_minus_spglib_hartree": 0.0,
+    "two_dimensional_supercell_per_primitive_minus_gamma_centered_hartree": 4.069988790433854e-09
+  },
+  "legacy_bvk_comparison": {
+    "one_dimensional": {
+      "absolute_residual_reduction_hartree": 1.53572793806234e-05,
+      "current_hartree": 0.0,
+      "current_over_legacy_absolute_residual": 0.0,
+      "legacy_hartree": 1.53572793806234e-05,
+      "legacy_over_current_absolute_residual": null
+    },
+    "two_dimensional": {
+      "absolute_residual_reduction_hartree": 4.718956370197707e-05,
+      "current_hartree": 4.069988790433854e-09,
+      "current_over_legacy_absolute_residual": 8.624020809887471e-05,
+      "legacy_hartree": -4.71936336907675e-05,
+      "legacy_over_current_absolute_residual": 11595.519329608951
+    }
+  },
+  "legacy_partial_manifest_sha256": "72461ec6268f1985b736e9ae7dccba4b0331257706eb2ac44ab01b99558786b6",
+  "maxima": {
+    "derivative_force_sum_abs_hartree_per_bohr": 1e-08,
+    "derivative_stress_sum_abs_gpa": 6.189449090607791e-07,
+    "derivative_virial_sum_abs_hartree": 3.454e-08,
+    "partial_pbc_force_sum_abs_hartree_per_bohr": 2e-08,
+    "partial_pbc_stress_sum_abs_gpa": 1.099905477349894e-06,
+    "partial_pbc_virial_sum_abs_hartree": 1.25643e-07
+  },
+  "partial_pbc_cases": {
+    "gxtb_1d_native_gamma_centered_k211": {
+      "cpu": 136,
+      "energy_hartree": -1055.1789484599567,
+      "force_sum_abs_hartree_per_bohr": null,
+      "input_sha256": "3c8905a6c74252344bc34725365f8cae620fe35691c029896e5d73ee7b26508e",
+      "output_sha256": "58928920e923fda4d44d18deeae0144ca3e199fa896f88c5c17856e8ee676110",
+      "program_ended": true,
+      "stress_sum_abs_gpa": null,
+      "virial_sum_abs_hartree": null,
+      "volume_angstrom3": 1704.24
+    },
+    "gxtb_1d_native_k211": {
+      "cpu": 136,
+      "energy_hartree": -1055.1788887038035,
+      "force_sum_abs_hartree_per_bohr": null,
+      "input_sha256": "67f2eb5a7ccb6d4f255565e031abe7373aec21e3ae56c542c2b13d6f2fce1d7a",
+      "output_sha256": "1347ab2225f83e12b0ebf24e42a6d392b76929a3e997b19b27e53d5c697cc013",
+      "program_ended": true,
+      "stress_sum_abs_gpa": null,
+      "virial_sum_abs_hartree": null,
+      "volume_angstrom3": 1704.24
+    },
+    "gxtb_1d_supercell_k111": {
+      "cpu": 136,
+      "energy_hartree": -2110.3578969199134,
+      "force_sum_abs_hartree_per_bohr": null,
+      "input_sha256": "ab69f385fb134b5d18cc5e660182fe7964a46390e640c6b653ddaf410ea09e69",
+      "output_sha256": "6ea821b00d19409568f80e68ca2d24cec0ac84eba0d7bedb2aff8657fb4e829a",
+      "program_ended": true,
+      "stress_sum_abs_gpa": null,
+      "virial_sum_abs_hartree": null,
+      "volume_angstrom3": 3408.48
+    },
+    "gxtb_1d_x_k211_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -1055.1788887038035,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "2a24f9860a420225bbcb2087ba6a2a74ebc274dfc66caf352cf0c01143015fef",
+      "output_sha256": "907993eabc44dc75b65d1bcf15c3a7d73ab0ce8f37d776baa3f0f5b49bca1b06",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 5.315888333067146e-08,
+      "virial_sum_abs_hartree": 2.078e-08,
+      "volume_angstrom3": 1704.24
+    },
+    "gxtb_1d_x_k211_force_stress_full": {
+      "cpu": 136,
+      "energy_hartree": -1055.1788887038035,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "85eea88a9ac0879b9d100d3535cdacdff51103dcdf5e1a1568ccf6ca108a5d1f",
+      "output_sha256": "7ab133cb07fc59dfcc76aabc476cbc91c8f158543209d290c9fa1d40f653bd7f",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 1.6178156596318549e-07,
+      "virial_sum_abs_hartree": 6.3241e-08,
+      "volume_angstrom3": 1704.24
+    },
+    "gxtb_1d_x_k211_force_stress_spglib": {
+      "cpu": 136,
+      "energy_hartree": -1055.1788887038035,
+      "force_sum_abs_hartree_per_bohr": 0.0,
+      "input_sha256": "cb4d55a45bcc0de30b6eabfb2dc7c4ca62574dbb68d81489d4943f7c8f7f5964",
+      "output_sha256": "af5882497636abf63e5bbdd78d50342740ecca4f90d5ba41d57efd4892c40b39",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 5.315888333067146e-08,
+      "virial_sum_abs_hartree": 2.078e-08,
+      "volume_angstrom3": 1704.24
+    },
+    "gxtb_2d_native_gamma_centered_k212": {
+      "cpu": 136,
+      "energy_hartree": -2110.1999304276537,
+      "force_sum_abs_hartree_per_bohr": null,
+      "input_sha256": "9c94f0793aae561079169af4109093a72f175c227c25c5cff51db3a8e118f69e",
+      "output_sha256": "4f0fb9b5747e88764fbd58e5dd19e99183c13ddc3214c34dad5df5321b23099f",
+      "program_ended": true,
+      "stress_sum_abs_gpa": null,
+      "virial_sum_abs_hartree": null,
+      "volume_angstrom3": 498.0168
+    },
+    "gxtb_2d_native_k212": {
+      "cpu": 136,
+      "energy_hartree": -2110.2003994465563,
+      "force_sum_abs_hartree_per_bohr": null,
+      "input_sha256": "715aae3e7e18caa218c199b37b388c6fa2456694ab6d1fe9ab902a061e63b561",
+      "output_sha256": "0089f7a39e7949fedd96719fcd7964b40582597e73ff8024cce20c1aefc9d337",
+      "program_ended": true,
+      "stress_sum_abs_gpa": null,
+      "virial_sum_abs_hartree": null,
+      "volume_angstrom3": 498.0168
+    },
+    "gxtb_2d_supercell_k111": {
+      "cpu": 136,
+      "energy_hartree": -8440.799721694335,
+      "force_sum_abs_hartree_per_bohr": null,
+      "input_sha256": "7c1660946a106eef025811c6a647daa916eb56e1424c5838c111f8f3a72cfdcc",
+      "output_sha256": "f440d6d57b6ed79a0dba96f95f75321be4ec56705fa93035c0d30d28a96e13b8",
+      "program_ended": true,
+      "stress_sum_abs_gpa": null,
+      "virial_sum_abs_hartree": null,
+      "volume_angstrom3": 1992.0672
+    },
+    "gxtb_2d_xz_k212_force_stress": {
+      "cpu": 136,
+      "energy_hartree": -2110.2003994465563,
+      "force_sum_abs_hartree_per_bohr": 2e-08,
+      "input_sha256": "f385cfead9719576425bf926e42d3692b8801f23894081f02e816f19498e927a",
+      "output_sha256": "5fb76f2bb0b9fc049e575cad62089129c397f4ae4c5a584e427918a205377270",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 7.532736929994215e-07,
+      "virial_sum_abs_hartree": 8.6047e-08,
+      "volume_angstrom3": 498.0168
+    },
+    "gxtb_2d_xz_k212_force_stress_full": {
+      "cpu": 136,
+      "energy_hartree": -2110.2003994465563,
+      "force_sum_abs_hartree_per_bohr": 1e-08,
+      "input_sha256": "1a531a7e0adbb2aa9e677da1be57e3c9a2c74360100f65e9d3fbfcd8ccc3bbb4",
+      "output_sha256": "9fa0ac094526dbe48374e5c611ae1a9ad0d2682dfce94a296efefc16bbf3f2a0",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 1.099905477349894e-06,
+      "virial_sum_abs_hartree": 1.25643e-07,
+      "volume_angstrom3": 498.0168
+    },
+    "gxtb_2d_xz_k212_force_stress_spglib": {
+      "cpu": 136,
+      "energy_hartree": -2110.2003994465563,
+      "force_sum_abs_hartree_per_bohr": 2e-08,
+      "input_sha256": "a908dd6940a8ebcfc7be03255a66ac317dbee4ec989648f9c240f05eb66c5dd0",
+      "output_sha256": "5767dee91284225c09142d80772113e5f1cd2d9a01ecdcf00fa297eecaf01ab8",
+      "program_ended": true,
+      "stress_sum_abs_gpa": 7.532736929994215e-07,
+      "virial_sum_abs_hartree": 8.6047e-08,
+      "volume_angstrom3": 498.0168
+    }
+  },
+  "qualified_binary_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+  "schema_version": 1,
+  "status": "passed"
+}

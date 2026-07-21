@@ -1,0 +1,5 @@
+completed_utc=2026-07-21T10:43:31Z
+source_commit=9322cc6d43be5099f2e7dc4866abc45b8387835a
+source_branch=cp2k-integration
+ctest_full_rc=8
+ctest_focused_rc=0

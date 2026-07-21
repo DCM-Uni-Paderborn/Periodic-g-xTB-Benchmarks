@@ -1,0 +1,29 @@
+Test project /home/kuehne88/work/save-tblite-head-9322cc6-20260721/results/build
+      Start 41: pbc
+ 1/12 Test #41: pbc ..............................   Passed    2.96 sec
+      Start 42: wignerseitz
+ 2/12 Test #42: wignerseitz ......................   Passed    0.01 sec
+      Start 47: s-dftd3/periodic
+ 3/12 Test #47: s-dftd3/periodic .................   Passed   13.90 sec
+      Start 51: tblite/acp
+ 4/12 Test #51: tblite/acp .......................   Passed    9.77 sec
+      Start 61: tblite/exchange
+ 5/12 Test #61: tblite/exchange ..................   Passed    2.65 sec
+      Start 65: tblite/gxtb
+ 6/12 Test #65: tblite/gxtb ......................   Passed   12.50 sec
+      Start 66: tblite/hamiltonian
+ 7/12 Test #66: tblite/hamiltonian ...............   Passed    7.66 sec
+      Start 71: tblite/integral-trafo
+ 8/12 Test #71: tblite/integral-trafo ............   Passed    0.01 sec
+      Start 73: tblite/mixer
+ 9/12 Test #73: tblite/mixer .....................   Passed    0.13 sec
+      Start 78: tblite/q-vszp
+10/12 Test #78: tblite/q-vszp ....................   Passed    0.08 sec
+      Start 89: tblite/wavefunction-restart
+11/12 Test #89: tblite/wavefunction-restart ......   Passed    0.01 sec
+      Start 90: tblite/wignerseitz
+12/12 Test #90: tblite/wignerseitz ...............   Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 12
+
+Total Test time (real) =  49.68 sec

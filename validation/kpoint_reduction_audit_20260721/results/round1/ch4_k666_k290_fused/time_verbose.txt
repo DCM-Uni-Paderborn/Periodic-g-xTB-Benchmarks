@@ -1,0 +1,4 @@
+elapsed_seconds=58.201201881
+peak_sampled_rss_kib=1051900
+peak_sampled_hwm_kib=1053508
+calculation_exit_status=0

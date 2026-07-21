@@ -1,0 +1,8 @@
+./README.md: OK
+./STATUS: OK
+./logs/build.log: OK
+./logs/configure.log: OK
+./logs/ctest-focused.log: OK
+./logs/ctest-full.log: OK
+./logs/ctest-full.rc: OK
+./provenance/affinity_preexec.txt: OK

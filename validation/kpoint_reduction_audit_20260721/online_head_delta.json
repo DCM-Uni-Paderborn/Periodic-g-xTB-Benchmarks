@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-07-21T12:24:48+02:00",
+  "cp2k": {
+    "qualified_revision": "8520b2e592cd04d35081ab4ad46d92c606071e23",
+    "online_branch": "DCM-Uni-Paderborn/cp2k:g-xTB-pbc",
+    "online_head": "ca6d0c7a5eca026882af522db18f3626b27d51fb",
+    "successor_commits": [
+      "10f4e246967de34cfcb2d26b9d587ecc00bbb2f4",
+      "ca6d0c7a5eca026882af522db18f3626b27d51fb"
+    ],
+    "changed_scientific_source_files": [
+      "src/kpoint_restart_transfer.F",
+      "src/tblite_interface.F"
+    ],
+    "cold_regular_mesh_path_affected": false,
+    "interpretation": "The source delta projects noncanonical restart aliases and infers a regular BvK grid only for explicit GENERAL k-point lists. The audit inputs are cold-start MONKHORST-PACK calculations and do not enter either successor path."
+  },
+  "save_tblite": {
+    "qualified_revision": "15915c9435644eb257178ca8f8bf7220c38b1a84",
+    "online_branch": "DCM-Uni-Paderborn/save_tblite:cp2k-integration",
+    "online_head": "9322cc6d43be5099f2e7dc4866abc45b8387835a",
+    "production_source_tree_identical": true,
+    "changed_files": [
+      "test/unit/test_hamiltonian.f90"
+    ],
+    "interpretation": "The online branch differs in content only by the already audited CeCl3 finite-difference test tolerance; provider production source is unchanged."
+  }
+}

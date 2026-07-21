@@ -1,0 +1,5 @@
+started_utc=2026-07-21T10:45:19Z
+cp2k_sha256=b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f
+launcher_sha256=ee99ad6085ba5dd78b5fadd2f17bf630d3838eaae18da6a818684ad780fedeb6
+cpu=136
+threads=1
