@@ -1,0 +1,69 @@
+&GLOBAL
+  PRINT_LEVEL MEDIUM
+  PROJECT H2O_stress_L30
+  RUN_TYPE DEBUG
+&END GLOBAL
+&DEBUG
+  DEBUG_FORCES F
+  DEBUG_STRESS_TENSOR T
+  DX 0.0001
+  STOP_ON_MISMATCH F
+&END DEBUG
+
+&FORCE_EVAL
+  METHOD QUICKSTEP
+  STRESS_TENSOR ANALYTICAL
+  &DFT
+    &QS
+      EPS_DEFAULT 1.0E-12
+      METHOD xTB
+      &XTB
+        GFN_TYPE TBLITE
+        SCC_MIXER TBLITE
+        &TBLITE_MIXER
+          ITERATIONS 300
+          SOLVER GVD
+        &END TBLITE_MIXER
+        &TBLITE
+          ACCURACY 0.1
+          METHOD GXTB
+          &REFERENCE_CLI
+            CHECK_ENERGY T
+            CHECK_FORCES T
+            CHECK_VIRIAL T
+            ERROR_LIMIT 1.0E-5
+            KEEP_FILES T
+            PREFIX H2O_stress_L30_cli
+            PROGRAM_NAME tblite
+            STOP_ON_ERROR F
+            WORK_DIRECTORY .
+          &END REFERENCE_CLI
+        &END TBLITE
+      &END XTB
+    &END QS
+    &SCF
+      EPS_SCF 1.0E-10
+      MAX_SCF 300
+      SCF_GUESS MOPAC
+      &MIXING
+        ALPHA 0.2
+        METHOD DIRECT_P_MIXING
+      &END MIXING
+      &PRINT
+        &RESTART OFF
+        &END RESTART
+      &END PRINT
+    &END SCF
+  &END DFT
+  &SUBSYS
+    &CELL
+      ABC 30 30 30
+      PERIODIC XYZ
+    &END CELL
+    &COORD
+      O  0.000000  0.000000  0.000000
+      H  0.758602  0.000000  0.504284
+      H -0.758602  0.000000  0.504284
+    &END COORD
+  &END SUBSYS
+&END FORCE_EVAL

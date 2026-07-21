@@ -1,0 +1,2366 @@
+ DBCSR| CPU Multiplication driver                                           BLAS (U)
+ DBCSR| Multrec recursion limit                                              512 (U)
+ DBCSR| Multiplication stack size                                           1000 (D)
+ DBCSR| Maximum elements for images                                    UNLIMITED (U)
+ DBCSR| Multiplicative factor virtual images                                   1 (U)
+ DBCSR| Use multiplication densification                                       T (D)
+ DBCSR| Multiplication size stacks                                             3 (U)
+ DBCSR| Use memory pool for CPU allocation                                     F (U)
+ DBCSR| Number of 3D layers                                               SINGLE (U)
+ DBCSR| Use MPI memory allocation                                              F (U)
+ DBCSR| Use RMA algorithm                                                      F (U)
+ DBCSR| Use Communication thread                                               T (U)
+ DBCSR| Communication thread load                                             87 (D)
+ DBCSR| MPI: My process id                                                     0
+ DBCSR| MPI: Number of processes                                               1
+ DBCSR| OMP: Current number of threads                                         1
+ DBCSR| OMP: Max number of threads                                             1
+ DBCSR| Split modifier for TAS multiplication algorithm                  1.0E+00 (U)
+
+
+  **** **** ******  **  PROGRAM STARTED AT               2026-07-21 16:09:28.613
+ ***** ** ***  *** **   PROGRAM STARTED ON                                 terok
+ **    ****   ******    PROGRAM STARTED BY                              kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                               1018514
+  **** **  *******  **  PROGRAM STARTED IN /home/kuehne88/work/h2o-molecular-lim
+                                           it-20260721/stress_debug_8_50/raw/H2O
+                                           _stress_L10
+
+ CP2K| version string:                 CP2K version 2026.2 (Development Version)
+ CP2K| source code revision number:                                    8520b2e59
+ CP2K| cp2kflags: omp parallel scalapack spglib s_dftd3 mctc-lib tblite tblite_g
+ CP2K|            xtb
+ CP2K| is freely available from                            https://www.cp2k.org/
+ CP2K| Program compiled at                                   2026-07-18 23:48:15
+ CP2K| Program compiled on                                                 terok
+ CP2K| Program compiled for                                               x86_64
+ CP2K| Data directory path                            /usr/local/share/cp2k/data
+ CP2K| Input file name        /home/kuehne88/work/h2o-molecular-limit-20260721/s
+
+ GLOBAL| Force Environment number                                              1
+ GLOBAL| Basis set file name                                           BASIS_SET
+ GLOBAL| Potential file name                                           POTENTIAL
+ GLOBAL| MM Potential file name                                     MM_POTENTIAL
+ GLOBAL| Coordinate file name                                      __STD_INPUT__
+ GLOBAL| Method name                                                        CP2K
+ GLOBAL| Project name                                             H2O_stress_L10
+ GLOBAL| Run type                                                          DEBUG
+ GLOBAL| FFT library                                                       FFTW3
+ GLOBAL| Diagonalization library                                       ScaLAPACK
+ GLOBAL| Cholesky decomposition library                                ScaLAPACK
+ GLOBAL| DGEMM library                                                      BLAS
+ GLOBAL| Direct generalized diagonalization requested                          F
+ GLOBAL| Orthonormality check for eigenvectors                          DISABLED
+ GLOBAL| Matrix multiplication library                                 ScaLAPACK
+ GLOBAL| All-to-all communication in single precision                          F
+ GLOBAL| FFTs using library dependent lengths                                  F
+ GLOBAL| Grid backend                                                       AUTO
+ GLOBAL| Global print level                                               MEDIUM
+ GLOBAL| MPI I/O enabled                                                       T
+ GLOBAL| Total number of message passing processes                             1
+ GLOBAL| Number of distributed systems (nodes)                                 1
+ GLOBAL| Number of threads for this process                                    1
+ GLOBAL| This output is from process                                           0
+ GLOBAL| OpenMP stack size per thread (OMP_STACKSIZE)                    default
+ GLOBAL| CPU model name                                       AMD EPYC Processor
+ GLOBAL| CPUID                                                              1002
+
+ MEMORY| system memory details [Kb]
+ MEMORY|                        rank 0           min           max       average
+ MEMORY| MemTotal            528104804     528104804     528104804     528104804
+ MEMORY| MemFree             511856896     511856896     511856896     511856896
+ MEMORY| Buffers                    20            20            20            20
+ MEMORY| Cached               12271596      12271596      12271596      12271596
+ MEMORY| Slab                  2373648       2373648       2373648       2373648
+ MEMORY| SReclaimable          1020396       1020396       1020396       1020396
+ MEMORY| MemLikelyFree       525148908     525148908     525148908     525148908
+
+
+ *** WARNING in environment.F:1098 :: FFT library FFTW3 is not available. ***
+ *** Trying FFT library FFTSG.                                            ***
+
+
+ *** Fundamental physical constants (SI units) ***
+
+ *** Literature: B. J. Mohr and B. N. Taylor,
+ ***             CODATA recommended values of the fundamental physical
+ ***             constants: 2006, Web Version 5.1
+ ***             http://physics.nist.gov/constants
+
+ Speed of light in vacuum [m/s]                             2.99792458000000E+08
+ Magnetic constant or permeability of vacuum [N/A**2]       1.25663706143592E-06
+ Electric constant or permittivity of vacuum [F/m]          8.85418781762039E-12
+ Planck constant (h) [J*s]                                  6.62606896000000E-34
+ Planck constant (h-bar) [J*s]                              1.05457162825177E-34
+ Elementary charge [C]                                      1.60217648700000E-19
+ Electron mass [kg]                                         9.10938215000000E-31
+ Electron g factor [ ]                                     -2.00231930436220E+00
+ Proton mass [kg]                                           1.67262163700000E-27
+ Fine-structure constant                                    7.29735253760000E-03
+ Rydberg constant [1/m]                                     1.09737315685270E+07
+ Avogadro constant [1/mol]                                  6.02214179000000E+23
+ Boltzmann constant [J/K]                                   1.38065040000000E-23
+ Atomic mass unit [kg]                                      1.66053878200000E-27
+ Bohr radius [m]                                            5.29177208590000E-11
+
+ *** Conversion factors ***
+
+ [u] -> [a.u.]                                              1.82288848426455E+03
+ [Angstrom] -> [Bohr] = [a.u.]                              1.88972613288564E+00
+ [a.u.] = [Bohr] -> [Angstrom]                              5.29177208590000E-01
+ [a.u.] -> [s]                                              2.41888432650478E-17
+ [a.u.] -> [fs]                                             2.41888432650478E-02
+ [a.u.] -> [J]                                              4.35974393937059E-18
+ [a.u.] -> [N]                                              8.23872205491840E-08
+ [a.u.] -> [K]                                              3.15774647902944E+05
+ [a.u.] -> [kJ/mol]                                         2.62549961709828E+03
+ [a.u.] -> [kcal/mol]                                       6.27509468713739E+02
+ [a.u.] -> [Pa]                                             2.94210107994716E+13
+ [a.u.] -> [bar]                                            2.94210107994716E+08
+ [a.u.] -> [atm]                                            2.90362800883016E+08
+ [a.u.] -> [eV]                                             2.72113838565563E+01
+ [a.u.] -> [Hz]                                             6.57968392072181E+15
+ [a.u.] -> [1/cm] (wave numbers)                            2.19474631370540E+05
+ [a.u./Bohr**2] -> [1/cm]                                   5.14048714338585E+03
+ 
+
+ CELL| Volume [angstrom^3]:                                          1000.000000
+ CELL| Vector a [angstrom]:      10.000     0.000     0.000   |a| =    10.000000
+ CELL| Vector b [angstrom]:       0.000    10.000     0.000   |b| =    10.000000
+ CELL| Vector c [angstrom]:       0.000     0.000    10.000   |c| =    10.000000
+ CELL| Angle (b,c), alpha [degree]:                                    90.000000
+ CELL| Angle (a,c), beta  [degree]:                                    90.000000
+ CELL| Angle (a,b), gamma [degree]:                                    90.000000
+ CELL| Numerically orthorhombic:                                             YES
+ CELL| Periodicity                                                           XYZ
+
+ CELL_REF| Volume [angstrom^3]:                                      1000.000000
+ CELL_REF| Vector a [angstrom    10.000     0.000     0.000   |a| =    10.000000
+ CELL_REF| Vector b [angstrom     0.000    10.000     0.000   |b| =    10.000000
+ CELL_REF| Vector c [angstrom     0.000     0.000    10.000   |c| =    10.000000
+ CELL_REF| Angle (b,c), alpha [degree]:                                90.000000
+ CELL_REF| Angle (a,c), beta  [degree]:                                90.000000
+ CELL_REF| Angle (a,b), gamma [degree]:                                90.000000
+ CELL_REF| Numerically orthorhombic:                                         YES
+ CELL_REF| Periodicity                                                       XYZ
+
+ GENERATE|  Preliminary Number of Bonds generated:                             0
+ GENERATE|  Achieved consistency in connectivity generation.
+
+
+                  #####   #####        #     #   #     #       #          
+                 #     # #     #      #    ##### #     #   # #####  ####  
+                 #     # #           #       #   ###   #       #   #    # 
+                 #     #  #####     #        #   #  #  #   #   #   ###### 
+                 #   # #       #   #         #   #   # #   #   #   #      
+                 #    #  #     #  #          #   #  #  # # #   #    #   # 
+                  #### #  #####  #           #   ###   ##  #   #     ###  
+
+                                     g-xTB   
+                                 Version 0.0                       
+                            Johann V. Pototschnig                  
+
+                tblite provider: SAVE
+                tblite source revision: 15915c9435644eb257178ca8f8bf7220c38b1a84
+                g-xTB support: enabled
+
+ xTB| Parameter file                                             xTB1_parameters
+ xTB| Basis expansion STO-NG                                                   6
+ xTB| Basis expansion STO-NG for Hydrogen                                      4
+ xTB| Repulsive pair potential accuracy                               0.1000E-09
+ xTB| Repulsive enhancement factor                                      0.000000
+ xTB| Halogen interaction potential                                            T
+ xTB| Halogen interaction potential cutoff radius                         20.000
+ xTB| Nonbonded interactions                                                   F
+ xTB| vdW potential type:                                              DFTD3(BJ)
+ xTB| D3 Dispersion: Parameter                                         dftd3.dat
+ xTB| Huckel constants ks kp kd                        1.850     2.250     2.000
+ xTB| Huckel constants ksp k2sh                                  2.080     2.850
+ xTB| Mataga-Nishimoto exponent                                            2.000
+ xTB| Repulsion potential exponent                                         1.500
+ xTB| Coordination number scaling kcn(s) kcn(p) kc     0.006    -0.003    -0.005
+ xTB| Electronegativity scaling                                           -0.007
+ xTB| Halogen potential scaling kxr kx2                          1.300     0.440
+ xTB| SCC mixer:                                                       TBLITE
+ xTB| tblite accuracy:                                                 1.000E-01
+ xTB| tblite SCC mixer damping:                                            0.400
+ xTB| tblite SCC mixer iterations:                                           300
+ xTB| tblite SCC mixer memory:                                               300
+ xTB| tblite SCC mixer solver:                                         GVD
+ xTB| tblite SCC mixer omega0:                                         1.000E-02
+ xTB| tblite SCC mixer min weight:                                     1.000E+00
+ xTB| tblite SCC mixer max weight:                                     1.000E+05
+ xTB| tblite SCC mixer weight factor:                                  1.000E-02
+
+
+
+
+ ATOMIC KIND INFORMATION
+
+  1. Atomic kind: O                                     Number of atoms:       1
+
+     Orbital Basis Set                                                 O _STO-6G
+
+       Number of orbital shell sets:                                           2
+       Number of orbital shells:                                               2
+       Number of primitive Cartesian functions:                               12
+       Number of Cartesian basis functions:                                    4
+       Number of spherical basis functions:                                    4
+       Norm type:                                                              3
+
+       Normalised Cartesian orbitals:
+
+                        Set   Shell   Orbital            Exponent    Coefficient
+
+                          1       1    1s                3.483595      -1.313024
+                                                         2.859866       1.114872
+                                                         0.740681       0.294549
+                                                         0.344927       0.081390
+                                                         0.261979       0.039458
+                                                         0.094616       0.012363
+
+                          2       1    2px              37.641471       1.474721
+                                                         9.713089       1.794175
+                                                         3.137177       1.303626
+                                                         1.121381       0.633327
+                                                         0.398078       0.183090
+                                                         0.123048       0.019124
+                          2       1    2py              37.641471       1.474721
+                                                         9.713089       1.794175
+                                                         3.137177       1.303626
+                                                         1.121381       0.633327
+                                                         0.398078       0.183090
+                                                         0.123048       0.019124
+                          2       1    2pz              37.641471       1.474721
+                                                         9.713089       1.794175
+                                                         3.137177       1.303626
+                                                         1.121381       0.633327
+                                                         0.398078       0.183090
+                                                         0.123048       0.019124
+
+     AE Potential information for                                         Oxygen
+
+       Description:                                       Bare Coulomb Potential
+                                                             Valence charge only
+
+       Gaussian exponent of the core charge distribution:               3.753049
+       Electronic configuration (s p d ...):                       2   4   0   0
+
+  2. Atomic kind: H                                     Number of atoms:       2
+
+     Orbital Basis Set                                                 H _STO-8G
+
+       Number of orbital shell sets:                                           1
+       Number of orbital shells:                                               1
+       Number of primitive Cartesian functions:                                8
+       Number of Cartesian basis functions:                                    1
+       Number of spherical basis functions:                                    1
+       Norm type:                                                              3
+
+       Normalised Cartesian orbitals:
+
+                        Set   Shell   Orbital            Exponent    Coefficient
+
+                          1       1    1s              337.005012       0.038636
+                                                        53.310531       0.064369
+                                                        12.208253       0.119184
+                                                         3.418827       0.179125
+                                                         1.108790       0.225727
+                                                         0.478718       0.127521
+                                                         0.212137       0.089380
+                                                         0.069058      -0.000553
+
+     AE Potential information for                                       Hydrogen
+
+       Description:                                       Bare Coulomb Potential
+                                                              Full atomic charge
+
+       Gaussian exponent of the core charge distribution:              12.500000
+       Electronic configuration (s p d ...):                       1   0   0   0
+
+
+ MOLECULE KIND INFORMATION
+
+
+ All atoms are their own molecule, skipping detailed information
+
+
+ TOTAL NUMBERS AND MAXIMUM NUMBERS
+
+  Total number of            - Atomic kinds:                                   2
+                             - Atoms:                                          3
+                             - Shell sets:                                     4
+                             - Shells:                                         4
+                             - Primitive Cartesian functions:                 28
+                             - Cartesian basis functions:                      6
+                             - Spherical basis functions:                      6
+
+  Maximum angular momentum of the orbital basis functions:                     1
+
+
+ MODULE QUICKSTEP: ATOMIC COORDINATES IN ANGSTROM
+
+   Atom Kind Element         X             Y             Z       Z(eff)     Mass
+      1    1 O     8      0.000000      0.000000      0.000000   6.0000  15.9994
+      2    2 H     1      0.758602      0.000000      0.504284   1.0000   1.0079
+      3    2 H     1     -0.758602      0.000000      0.504284   1.0000   1.0079
+
+
+
+ SCF PARAMETERS         Density guess:                                     MOPAC
+                        --------------------------------------------------------
+                        max_scf:                                             300
+                        max_scf_history:                                       0
+                        max_diis:                                              4
+                        --------------------------------------------------------
+                        eps_scf:                                        1.00E-10
+                        eps_scf_history:                                0.00E+00
+                        eps_diis:                                       1.00E-01
+                        eps_eigval:                                     1.00E-05
+                        --------------------------------------------------------
+                        level_shift [a.u.]:                             0.000000
+                        added MOs                                         2    0
+                        --------------------------------------------------------
+                        Mixing method:                           DIRECT_P_MIXING
+                        --------------------------------------------------------
+                        No outer SCF
+
+ PW_GRID| Information for grid number                                          1
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          1
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.76857260       -76.4595280425 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.06696300       -76.4755023490 -1.60E-02
+     3 GXTB-Simple 0.20E+00    0.0     0.04651720       -76.4835897371 -8.09E-03
+     4 GXTB-FDIIS  0.10E+01    0.0     0.10565977       -76.4919900160 -8.40E-03
+     5 GXTB-FDIIS  0.10E+01    0.0     0.01091115       -76.4920846669 -9.47E-05
+     6 GXTB-FDIIS  0.10E+01    0.0     0.00160945       -76.4920860463 -1.38E-06
+     7 GXTB-FDIIS  0.10E+01    0.0     0.00012875       -76.4920860505 -4.23E-09
+     8 GXTB-FDIIS  0.10E+01    0.0     0.00000848       -76.4920860505 -8.24E-12
+     9 GXTB-FDIIS  0.10E+01    0.0     0.00000117       -76.4920860505 -3.84E-13
+    10 GXTB-FDIIS  0.10E+01    0.0     0.00000014       -76.4920860505  0.00E+00
+    11 GXTB-FDIIS  0.10E+01    0.0     1.1402E-10       -76.4920860505 -1.42E-14
+    12 GXTB-FDIIS  0.10E+01    0.0     3.2863E-14       -76.4920860505  1.42E-14
+
+  *** SCF run converged in    12 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386685
+  Repulsive potential energy:                                   0.41008861028900
+  Electrostatic energy:                                         0.15448286777590
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605052100
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                      0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605052E+01   -7.649208605056E+01    3.504396772769E-11
+ Gradient diff sum/max:    7.024552107446E-08    1.810464782953E-08
+ Virial diff sum/max:    6.660036951626E-08    5.073323018634E-08
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050520996
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          2
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3703
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          2
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 0
+
+  B(1) =   1.000000
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000414       -76.4920863711 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000046       -76.4920863711 -5.12E-13
+     3 GXTB-Simple 0.20E+00    0.0     0.00000038       -76.4920863711 -3.27E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000168       -76.4920863711 -6.39E-13
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000008       -76.4920863711  1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     0.00000004       -76.4920863711 -1.42E-14
+     7 GXTB-FDIIS  0.10E+01    0.0     7.3547E-10       -76.4920863711  0.00E+00
+     8 GXTB-FDIIS  0.10E+01    0.0     5.3291E-15       -76.4920863711  0.00E+00
+
+  *** SCF run converged in     8 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551504313917
+  Repulsive potential energy:                                   0.41008283179365
+  Electrostatic energy:                                         0.15448309200324
+  Self-consistent dispersion energy:                           -0.00004120701481
+  Non-self consistent dispersion energy:                        0.00000009389991
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208637110250
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208637110E+01   -7.649208637114E+01    3.504396772769E-11
+ Gradient diff sum/max:    1.501718392645E-05    3.828922946966E-06
+ Virial diff sum/max:    1.178453289248E-01    6.057643740984E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086371102502
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          3
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.2989
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          3
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 0
+
+  B(1) =   2.000000
+  B(2) =  -1.000000
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000828       -76.4920857299 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000092       -76.4920857299 -2.06E-12
+     3 GXTB-Simple 0.20E+00    0.0     0.00000075       -76.4920857299 -1.32E-12
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000337       -76.4920857299 -2.52E-12
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000016       -76.4920857299 -1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     0.00000007       -76.4920857299 -1.42E-14
+     7 GXTB-FDIIS  0.10E+01    0.0     1.4710E-09       -76.4920857299  1.42E-14
+     8 GXTB-FDIIS  0.10E+01    0.0     2.5202E-14       -76.4920857299  0.00E+00
+
+  *** SCF run converged in     8 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33552428460118
+  Repulsive potential energy:                                   0.41009438885380
+  Electrostatic energy:                                         0.15448264355356
+  Self-consistent dispersion energy:                           -0.00004120622398
+  Non-self consistent dispersion energy:                        0.00000009390596
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208572988604
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208572989E+01   -7.649208572992E+01    3.501554601826E-11
+ Gradient diff sum/max:    1.515802510668E-05    3.863064170849E-06
+ Virial diff sum/max:    1.178722183883E-01    6.059599945118E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492085729886043
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          4
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          4
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 1
+
+  B(1) =   2.500000
+  B(2) =  -2.000000
+  B(3) =   0.500000
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000414       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000046       -76.4920860505 -5.26E-13
+     3 GXTB-Simple 0.20E+00    0.0     0.00000038       -76.4920860505 -3.27E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000168       -76.4920860505 -6.25E-13
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000008       -76.4920860505 -1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     0.00000004       -76.4920860505  0.00E+00
+     7 GXTB-FDIIS  0.10E+01    0.0     7.3547E-10       -76.4920860505  0.00E+00
+     8 GXTB-FDIIS  0.10E+01    0.0     6.2172E-15       -76.4920860505  0.00E+00
+
+  *** SCF run converged in     8 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386673
+  Repulsive potential energy:                                   0.41008861028900
+  Electrostatic energy:                                         0.15448286777580
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605052033
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605052E+01   -7.649208605056E+01    3.502975687297E-11
+ Gradient diff sum/max:    7.040618251025E-08    1.810464402702E-08
+ Virial diff sum/max:    1.178592868784E-01    6.058621838605E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050520328
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          5
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          5
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 2
+
+  B(1) =   2.800000
+  B(2) =  -2.800000
+  B(3) =   1.200000
+  B(4) =  -0.200000
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     3.6687E-10       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     1.6475E-11       -76.4920860505  0.00E+00
+
+  *** SCF run converged in     2 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386673
+  Repulsive potential energy:                                   0.41008861028900
+  Electrostatic energy:                                         0.15448286777580
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605052033
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605052E+01   -7.649208605056E+01    3.502975687297E-11
+ Gradient diff sum/max:    7.040618249247E-08    1.810464402702E-08
+ Virial diff sum/max:    1.178592868784E-01    6.058621838605E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050520328
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          6
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          6
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000127       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000013       -76.4920860505 -2.42E-13
+     3 GXTB-Simple 0.20E+00    0.0     0.00000011       -76.4920860505 -1.85E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000052       -76.4920860505 -3.41E-13
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000002       -76.4920860505  0.00E+00
+     6 GXTB-FDIIS  0.10E+01    0.0     2.1979E-09       -76.4920860505  0.00E+00
+     7 GXTB-FDIIS  0.10E+01    0.0     2.9575E-10       -76.4920860505  0.00E+00
+     8 GXTB-FDIIS  0.10E+01    0.0     2.7534E-14       -76.4920860505  1.42E-14
+
+  *** SCF run converged in     8 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386822
+  Repulsive potential energy:                                   0.41008861030301
+  Electrostatic energy:                                         0.15448286777662
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605050924
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                      0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605051E+01   -7.649208605054E+01    3.504396772769E-11
+ Gradient diff sum/max:    1.192160221855E-05    4.386956438945E-06
+ Virial diff sum/max:    1.178676519747E-01    6.058621839765E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050509243
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          7
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          7
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000254       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000027       -76.4920860505 -9.95E-13
+     3 GXTB-Simple 0.20E+00    0.0     0.00000022       -76.4920860505 -6.68E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000103       -76.4920860505 -1.39E-12
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000004       -76.4920860505 -1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     4.3957E-09       -76.4920860505  0.00E+00
+     7 GXTB-FDIIS  0.10E+01    0.0     5.9149E-10       -76.4920860505  0.00E+00
+     8 GXTB-FDIIS  0.10E+01    0.0     1.9207E-14       -76.4920860505  0.00E+00
+
+  *** SCF run converged in     8 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386822
+  Repulsive potential energy:                                   0.41008861030301
+  Electrostatic energy:                                         0.15448286777663
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605050926
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605051E+01   -7.649208605054E+01    3.502975687297E-11
+ Gradient diff sum/max:    1.192160220394E-05    4.386956438923E-06
+ Virial diff sum/max:    1.178676519746E-01    6.058621839764E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050509258
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          8
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          8
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000127       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000048       -76.4920860505 -1.02E-12
+     3 GXTB-Simple 0.20E+00    0.0     0.00000041       -76.4920860505 -7.53E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000208       -76.4920860505 -1.72E-12
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000014       -76.4920860505 -1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     3.4465E-09       -76.4920860505  0.00E+00
+     7 GXTB-FDIIS  0.10E+01    0.0     8.9948E-10       -76.4920860505  0.00E+00
+     8 GXTB-FDIIS  0.10E+01    0.0     1.5073E-11       -76.4920860505  0.00E+00
+
+  *** SCF run converged in     8 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966385455
+  Repulsive potential energy:                                   0.41008861027371
+  Electrostatic energy:                                         0.15448286777638
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605052185
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                      0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605052E+01   -7.649208605056E+01    3.502975687297E-11
+ Gradient diff sum/max:    4.729035423881E-07    2.013495073776E-07
+ Virial diff sum/max:    1.178594153729E-01    6.058621835984E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050521849
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                          9
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                          9
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000164       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000097       -76.4920860505 -3.14E-12
+     3 GXTB-Simple 0.20E+00    0.0     0.00000082       -76.4920860505 -2.25E-12
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000424       -76.4920860505 -5.57E-12
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000021       -76.4920860505 -1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     2.2101E-12       -76.4920860505  0.00E+00
+
+  *** SCF run converged in     6 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966385466
+  Repulsive potential energy:                                   0.41008861027371
+  Electrostatic energy:                                         0.15448286777653
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605052185
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605052E+01   -7.649208605056E+01    3.502975687297E-11
+ Gradient diff sum/max:    4.729035423703E-07    2.013495073687E-07
+ Virial diff sum/max:    1.178594153729E-01    6.058621835984E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050521849
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         10
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3703
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         10
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000082       -76.4920857939 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000048       -76.4920857939 -7.82E-13
+     3 GXTB-Simple 0.20E+00    0.0     0.00000041       -76.4920857939 -5.68E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000211       -76.4920857939 -1.39E-12
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000011       -76.4920857939 -1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     0.00000001       -76.4920857939  0.00E+00
+     7 GXTB-FDIIS  0.10E+01    0.0     7.3509E-11       -76.4920857939  0.00E+00
+
+  *** SCF run converged in     7 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551961491055
+  Repulsive potential energy:                                   0.41008861097884
+  Electrostatic energy:                                         0.15448282785605
+  Self-consistent dispersion energy:                           -0.00004120658594
+  Non-self consistent dispersion energy:                        0.00000009390201
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208579388258
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208579388E+01   -7.649208579392E+01    3.501554601826E-11
+ Gradient diff sum/max:    1.172439076977E-07    4.091590272148E-08
+ Virial diff sum/max:    1.178585539859E-01    6.058621883849E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492085793882580
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         11
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.2989
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         11
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     4.1346E-09       -76.4920863072 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000005       -76.4920863072 -2.84E-14
+     3 GXTB-Simple 0.20E+00    0.0     0.00000004       -76.4920863072  0.00E+00
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000010       -76.4920863072  0.00E+00
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000001       -76.4920863072  0.00E+00
+     6 GXTB-FDIIS  0.10E+01    0.0     2.3894E-09       -76.4920863072  0.00E+00
+     7 GXTB-FDIIS  0.10E+01    0.0     4.5669E-11       -76.4920863072  0.00E+00
+
+  *** SCF run converged in     7 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551971282301
+  Repulsive potential energy:                                   0.41008860959915
+  Electrostatic energy:                                         0.15448290769591
+  Self-consistent dispersion energy:                           -0.00004120665285
+  Non-self consistent dispersion energy:                        0.00000009390386
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208630716208
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208630716E+01   -7.649208630720E+01    3.502975687297E-11
+ Gradient diff sum/max:    5.076626051693E-08    1.850323452096E-08
+ Virial diff sum/max:    1.178589938132E-01    6.058621827145E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086307162083
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         12
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         12
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000069       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000032       -76.4920860505 -3.69E-13
+     3 GXTB-Simple 0.20E+00    0.0     0.00000027       -76.4920860505 -2.42E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000134       -76.4920860505 -5.83E-13
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000004       -76.4920860505  0.00E+00
+     6 GXTB-FDIIS  0.10E+01    0.0     7.6692E-09       -76.4920860505  0.00E+00
+     7 GXTB-FDIIS  0.10E+01    0.0     2.7567E-11       -76.4920860505  0.00E+00
+
+  *** SCF run converged in     7 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386024
+  Repulsive potential energy:                                   0.41008861028238
+  Electrostatic energy:                                         0.15448286777560
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605052112
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                      0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605052E+01   -7.649208605056E+01    3.502975687297E-11
+ Gradient diff sum/max:    7.158473949863E-07    3.228109282595E-07
+ Virial diff sum/max:    1.178588710457E-01    6.058621837771E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050521124
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         13
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         13
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000139       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000064       -76.4920860505 -1.42E-12
+     3 GXTB-Simple 0.20E+00    0.0     0.00000054       -76.4920860505 -9.95E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000269       -76.4920860505 -2.33E-12
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000008       -76.4920860505  1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     1.0096E-12       -76.4920860505 -1.42E-14
+
+  *** SCF run converged in     6 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386029
+  Repulsive potential energy:                                   0.41008861028238
+  Electrostatic energy:                                         0.15448286777558
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605052114
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605052E+01   -7.649208605056E+01    3.501554601826E-11
+ Gradient diff sum/max:    7.158473948996E-07    3.228109282179E-07
+ Virial diff sum/max:    1.178588710457E-01    6.058621837771E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050521138
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         14
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         14
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000101       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000036       -76.4920860505 -9.81E-13
+     3 GXTB-Simple 0.20E+00    0.0     0.00000030       -76.4920860505 -6.82E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000132       -76.4920860505 -1.56E-12
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000006       -76.4920860505  0.00E+00
+     6 GXTB-FDIIS  0.10E+01    0.0     3.8753E-09       -76.4920860505  0.00E+00
+     7 GXTB-FDIIS  0.10E+01    0.0     1.7912E-10       -76.4920860505  0.00E+00
+     8 GXTB-FDIIS  0.10E+01    0.0     4.1546E-13       -76.4920860505  0.00E+00
+
+  *** SCF run converged in     8 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386254
+  Repulsive potential energy:                                   0.41008861029435
+  Electrostatic energy:                                         0.15448286777749
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605050998
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605051E+01   -7.649208605055E+01    3.504396772769E-11
+ Gradient diff sum/max:    1.216292241113E-05    4.708900009734E-06
+ Virial diff sum/max:    1.178671036030E-01    6.058621842699E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050509982
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         15
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         15
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000201       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000073       -76.4920860505 -2.52E-12
+     3 GXTB-Simple 0.20E+00    0.0     0.00000059       -76.4920860505 -1.72E-12
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000263       -76.4920860505 -3.91E-12
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000013       -76.4920860505 -1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     9.1075E-09       -76.4920860505  0.00E+00
+     7 GXTB-FDIIS  0.10E+01    0.0     3.3859E-10       -76.4920860505  1.42E-14
+     8 GXTB-FDIIS  0.10E+01    0.0     2.6024E-13       -76.4920860505 -1.42E-14
+
+  *** SCF run converged in     8 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386257
+  Repulsive potential energy:                                   0.41008861029434
+  Electrostatic energy:                                         0.15448286777753
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605050998
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605051E+01   -7.649208605055E+01    3.502975687297E-11
+ Gradient diff sum/max:    1.216292240901E-05    4.708900009754E-06
+ Virial diff sum/max:    1.178671036030E-01    6.058621842699E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050509982
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         16
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         16
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000101       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000036       -76.4920860505 -6.11E-13
+     3 GXTB-Simple 0.20E+00    0.0     0.00000030       -76.4920860505 -4.55E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000132       -76.4920860505 -9.66E-13
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000006       -76.4920860505  0.00E+00
+     6 GXTB-FDIIS  0.10E+01    0.0     4.5536E-09       -76.4920860505  0.00E+00
+     7 GXTB-FDIIS  0.10E+01    0.0     1.6929E-10       -76.4920860505  0.00E+00
+     8 GXTB-FDIIS  0.10E+01    0.0     5.2514E-14       -76.4920860505  0.00E+00
+
+  *** SCF run converged in     8 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386674
+  Repulsive potential energy:                                   0.41008861028900
+  Electrostatic energy:                                         0.15448286777580
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605052033
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                      0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605052E+01   -7.649208605056E+01    3.502975687297E-11
+ Gradient diff sum/max:    7.198036230505E-08    1.810464383967E-08
+ Virial diff sum/max:    1.178592828806E-01    6.058621838740E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050520328
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         17
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         17
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     1.8987E-09       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     7.1680E-11       -76.4920860505  0.00E+00
+
+  *** SCF run converged in     2 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386674
+  Repulsive potential energy:                                   0.41008861028900
+  Electrostatic energy:                                         0.15448286777580
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605052033
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                      0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605052E+01   -7.649208605056E+01    3.502975687297E-11
+ Gradient diff sum/max:    7.198036222187E-08    1.810464383967E-08
+ Virial diff sum/max:    1.178592828806E-01    6.058621838740E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050520328
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         18
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3703
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         18
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000142       -76.4920860969 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000039       -76.4920860969 -3.27E-13
+     3 GXTB-Simple 0.20E+00    0.0     0.00000032       -76.4920860969 -2.27E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000151       -76.4920860970 -4.97E-13
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000010       -76.4920860970 -1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     0.00000003       -76.4920860970  0.00E+00
+     7 GXTB-FDIIS  0.10E+01    0.0     9.4065E-11       -76.4920860970  0.00E+00
+
+  *** SCF run converged in     7 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551718098646
+  Repulsive potential energy:                                   0.41008610864217
+  Electrostatic energy:                                         0.15448275051154
+  Self-consistent dispersion energy:                           -0.00004120669676
+  Non-self consistent dispersion energy:                        0.00000009390870
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208609695044
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683147                     -0.683147
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                     -0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208609695E+01   -7.649208609699E+01    3.501554601826E-11
+ Gradient diff sum/max:    6.840337630308E-06    2.151506979665E-06
+ Virial diff sum/max:    1.178535964907E-01    6.058255547918E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086096950445
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         19
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.2989
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         19
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000285       -76.4920860041 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000078       -76.4920860041 -1.31E-12
+     3 GXTB-Simple 0.20E+00    0.0     0.00000065       -76.4920860041 -8.81E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000302       -76.4920860041 -2.02E-12
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000020       -76.4920860041 -1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     0.00000007       -76.4920860041 -1.42E-14
+     7 GXTB-FDIIS  0.10E+01    0.0     1.8800E-10       -76.4920860041  1.42E-14
+     8 GXTB-FDIIS  0.10E+01    0.0     1.7319E-14       -76.4920860041 -1.42E-14
+
+  *** SCF run converged in     8 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33552214674331
+  Repulsive potential energy:                                   0.41009111194098
+  Electrostatic energy:                                         0.15448298504214
+  Self-consistent dispersion energy:                           -0.00004120654203
+  Non-self consistent dispersion energy:                        0.00000009389717
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208600408345
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683149                     -0.683149
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                      0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208600408E+01   -7.649208600412E+01    3.502975687297E-11
+ Gradient diff sum/max:    6.980849851253E-06    2.185541290216E-06
+ Virial diff sum/max:    1.178639519863E-01    6.058988166653E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086004083447
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ PW_GRID| Information for grid number                                         20
+ PW_GRID| Cutoff [a.u.]                                                      1.0
+ PW_GRID| spherical cutoff:                                                   NO
+ PW_GRID|   Bounds   1             -4       4                Points:           9
+ PW_GRID|   Bounds   2             -4       4                Points:           9
+ PW_GRID|   Bounds   3             -4       4                Points:           9
+ PW_GRID| Volume element (a.u.^3)   9.257         Volume (a.u.^3)      6748.3346
+ PW_GRID| Grid span                                                    FULLSPACE
+
+ POISSON| Solver                                                        PERIODIC
+ POISSON| Periodicity                                                        XYZ
+
+ RS_GRID| Information for grid number                                         20
+ RS_GRID|   Bounds   1             -4       4                Points:           9
+ RS_GRID|   Bounds   2             -4       4                Points:           9
+ RS_GRID|   Bounds   3             -4       4                Points:           9
+
+ Parameters for the always stable predictor-corrector (ASPC) method:
+
+  ASPC order: 3
+
+  B(1) =   3.000000
+  B(2) =  -3.428571
+  B(3) =   1.928571
+  B(4) =  -0.571429
+  B(5) =   0.071429
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                          8
+ Number of occupied orbitals:                                                  4
+ Number of molecular orbitals:                                                 6
+
+ Number of orbital functions:                                                  6
+ Number of independent orbital functions:                                      6
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+     1 GXTB-Raw    0.10E+01    0.0     0.00000142       -76.4920860505 -7.65E+01
+     2 GXTB-Simple 0.20E+00    0.0     0.00000039       -76.4920860505 -3.27E-13
+     3 GXTB-Simple 0.20E+00    0.0     0.00000032       -76.4920860505 -2.13E-13
+     4 GXTB-FDIIS  0.10E+01    0.0     0.00000151       -76.4920860505 -5.26E-13
+     5 GXTB-FDIIS  0.10E+01    0.0     0.00000010       -76.4920860505  1.42E-14
+     6 GXTB-FDIIS  0.10E+01    0.0     0.00000003       -76.4920860505 -1.42E-14
+     7 GXTB-FDIIS  0.10E+01    0.0     9.4064E-11       -76.4920860505  0.00E+00
+
+  *** SCF run converged in     7 steps ***
+
+
+  Core Hamiltonian energy:                                     -6.33551966386685
+  Repulsive potential energy:                                   0.41008861028900
+  Electrostatic energy:                                         0.15448286777590
+  Self-consistent dispersion energy:                           -0.00004120661939
+  Non-self consistent dispersion energy:                        0.00000009390293
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                               -76.49208605052101
+
+
+ MULLIKEN POPULATION ANALYSIS
+
+  # Atom   Element   Kind        Atomic population                    Net charge
+       1     O          1                 6.683148                     -0.683148
+       2     H          2                 0.658426                      0.341574
+       3     H          2                 0.658426                      0.341574
+ # Total charge                           8.000000                      0.000000
+
+
+ tblite reference CLI check
+ Executable: tblite
+ Method:     gxtb
+ Guess:      auto
+ Solver:     gvd
+ Spin-pol.:  F
+ Grad file:  H2O_stress_L10_cli.grad
+ JSON file:  H2O_stress_L10_cli.json
+ Log file:   H2O_stress_L10_cli.log
+ Energy CP2K/CLI/absdiff:   -7.649208605052E+01   -7.649208605056E+01    3.502975687297E-11
+ Gradient diff sum/max:    7.024552107446E-08    1.810464782953E-08
+ Virial diff sum/max:    1.178587738986E-01    6.058621838741E-02
+ tblite reference CLI deviation exceeded ERROR_LIMIT =   1.0000E-05
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]            -76.492086050521010
+ DEBUG| Numerical pv_virial [a.u.]
+ DEBUG|                   0.060586175016      0.000000000000     -0.000000000671
+ DEBUG|                   0.000000000000     -0.048497884463     -0.000000000671
+ DEBUG|                  -0.000000000671     -0.000000000671      0.008774659617
+
+ DEBUG| Analytical pv_virial [a.u.]
+ DEBUG|                   0.060586167654     -0.000000000000     -0.000000000000
+ DEBUG|                  -0.000000000000     -0.048497885334     -0.000000000000
+ DEBUG|                  -0.000000000000     -0.000000000000      0.008774654310
+
+ DEBUG| Difference pv_virial [a.u.]
+ DEBUG|                   0.000000007362      0.000000000000     -0.000000000671
+ DEBUG|                   0.000000000000      0.000000000870     -0.000000000671
+ DEBUG|                  -0.000000000671     -0.000000000671      0.000000005306
+ DEBUG| Sum of differences                                        0.000000016224
+
+ DEBUG| Relative error pv_virial
+ DEBUG| Threshold value for error check [a.u.]                    1.00000000E-05
+ DEBUG|                           0.00 %                 - %                 - %
+ DEBUG|                              - %             -0.00 %                 - %
+ DEBUG|                              - %                 - %              0.00 %
+ DEBUG| Maximum accepted error                                            0.20 %
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                DBCSR STATISTICS                             -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ COUNTER                                    TOTAL       BLAS       SMM       ACC
+ flops     1 x     6 x     1                 3168     100.0%      0.0%      0.0%     
+ flops     1 x     1 x     6                 5868     100.0%      0.0%      0.0%     
+ flops     4 x     6 x     1                 6336     100.0%      0.0%      0.0%     
+ flops     1 x     6 x     4                 6336     100.0%      0.0%      0.0%     
+ flops     4 x     1 x     6                 7824     100.0%      0.0%      0.0%     
+ flops     1 x     4 x     6                 7824     100.0%      0.0%      0.0%     
+ flops     4 x     6 x     4                12672     100.0%      0.0%      0.0%     
+ flops     4 x     4 x     6                31296     100.0%      0.0%      0.0%     
+ flops inhomo. stacks                           0       0.0%      0.0%      0.0%
+ flops total                        81.324000E+03     100.0%      0.0%      0.0%
+ flops max/rank                     81.324000E+03     100.0%      0.0%      0.0%
+ matmuls inhomo. stacks                         0       0.0%      0.0%      0.0%
+ matmuls total                               1572     100.0%      0.0%      0.0%
+ number of processed stacks                   916     100.0%      0.0%      0.0%
+ average stack size                                     1.7       0.0       0.0
+ marketing flops                    75.456000E+03
+ -------------------------------------------------------------------------------
+ # multiplications                            229
+ max memory usage/rank               9.875964E+09
+ # max total images/rank                        1
+ # max 3D layers                                1
+ # MPI messages exchanged                       0
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                      DBCSR MESSAGE PASSING PERFORMANCE                      -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Bcast                9                     12.
+ MP_Allreduce         1048                      9.
+ MP_Alltoall          5950                    254.
+ MP_ISend              916                     77.
+ MP_IRecv              916                     77.
+ -------------------------------------------------------------------------------
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                          OFFLOAD MEMPOOL STATISTICS                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ Memory consumption                Number of allocations  Used [MiB]  Size [MiB]
+ Host                                                  1           0           0
+ -------------------------------------------------------------------------------
+
+ MEMORY| Estimated peak process memory [MiB]                                 116
+
+ -------------------------------------------------------------------------------
+ ----                             MULTIGRID INFO                            ----
+ -------------------------------------------------------------------------------
+ total grid count     :           420              cutoff [a.u.]            1.00
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                         MESSAGE PASSING PERFORMANCE                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Group               20
+ MP_Bcast              286                     26.
+ MP_Allreduce         4672                     50.
+ MP_Sync               163
+ MP_comm_split         143
+ -------------------------------------------------------------------------------
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                           R E F E R E N C E S                               -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ 
+ CP2K version 2026.2 (Development Version), the CP2K developers group (2026).
+ CP2K is freely available from https://www.cp2k.org/ .
+ 
+ M. Iannuzzi, J. Wilhelm, F. Stein, A. Bussy, H. Elgabarty, D. Golze, A. Hehn, 
+ M. Graml, S. Marek, B. Sertcan Gökmen, C. Schran, H. Forbert, R. Z. 
+ Khaliullin, A. Kozhevnikov, M. Taillefumier, R. Meli, V. V. Rybkin, M. Brehm, 
+ R. Schade, O. Schütt, J. V. Pototschnig, H. Mirhosseini, A. Knüpfer, D. Marx, 
+ M. Krack, J. Hutter, T. D. Kühne.
+ J. Phys. Chem. B 130, 1237-1310 (2026).
+ The CP2K Program Package Made Simple.
+ https://doi.org/10.1021/acs.jpcb.5c05851
+
+ A. Katbashev, M. Stahn, T. Rose, V. Alizadeh, M. Friede, C. Plett, P. 
+ Steinbach, S. Ehlert.
+ J. Phys. Chem. A 129, 2667-2682 (2025).
+ Overview on Building Blocks and Applications of Efficient and Robust Extended 
+ Tight Binding.
+ https://doi.org/10.1021/acs.jpca.4c08263
+
+ T. D. Kühne, M. Iannuzzi, M. Del Ben, V. V. Rybkin, P. Seewald, F. Stein, T. 
+ Laino, R. Z. Khaliullin, O. Schütt, F. Schiffmann, D. Golze, J. Wilhelm, S. 
+ Chulkov, M. H. Bani-Hashemian, V. Weber, U. Borstnik, M. Taillefumier, A. S. 
+ Jakobovits, A. Lazzaro, H. Pabst, T. Müller, R. Schade, M. Guidon, S. 
+ Andermatt, N. Holmberg, G. K. Schenter, A. Hehn, A. Bussy, F. Belleflamme, G. 
+ Tabacchi, A. Glöß, M. Lass, I. Bethune, C. J. Mundy, C. Plessl, M. Watkins, 
+ J. VandeVondele, M. Krack, J. Hutter.
+ J. Chem. Phys. 152, 194103 (2020).
+ CP2K: An electronic structure and molecular dynamics software package - 
+ Quickstep: Efficient and accurate electronic structure calculations.
+ https://doi.org/10.1063/5.0007045
+
+ P. Pracht, E. Caldeweyher, S. Ehlert, S. Grimme.
+ ChemRxiv, (2019).
+ A Robust Non-Self-Consistent Tight-Binding Quantum Chemistry Method for large 
+ Molecules.
+ https://doi.org/10.26434/chemrxiv.8326202.v1
+
+ S. Grimme, C. Bannwarth, P. Shushkov.
+ J. Chem. Theory Comput. 13, 1989 (2017).
+ A Robust and Accurate Tight-Binding Quantum Chemical Method for Structures, 
+ Vibrational Frequencies, and Noncovalent Interactions of Large Molecular 
+ Systems Parametrized for All spd-Block Elements (Z = 1-86).
+ https://doi.org/10.1021/acs.jctc.7b00118
+
+ O. Schuett, P. Messmer, J. Hutter, J. VandeVondele.
+ Electronic Structure Calculations on Graphics Processing Units, 173-190 (2016).
+ GPU-Accelerated Sparse Matrix-Matrix Multiplication for Linear Scaling Density 
+ Functional Theory.
+ https://doi.org/10.1002/9781118670712.ch8
+
+ U. Borstnik, J. VandeVondele, V. Weber, J. Hutter.
+ Parallel Comput. 40, 47-58 (2014).
+ Sparse matrix multiplication: The distributed block-compressed sparse row 
+ library.
+ https://doi.org/10.1016/j.parco.2014.03.012
+
+ T. D. Kühne, M. Krack, F. R. Mohamed, M. Parrinello.
+ Phys. Rev. Lett. 98, 066401 (2007).
+ Efficient and accurate Car-Parrinello-like approach to Born-Oppenheimer 
+ molecular dynamics.
+ https://doi.org/10.1103/PhysRevLett.98.066401
+
+ M. Frigo, S. G. Johnson.
+ Proc. IEEE 93, 216-231 (2005).
+ The design and implementation of FFTW3.
+ https://doi.org/10.1109/JPROC.2004.840301
+
+ J. Kolafa.
+ J. Comput. Chem. 25, 335-342 (2004).
+ Time-reversible always stable predictor-corrector method for molecular dynamics 
+ of polarizable molecules.
+ https://doi.org/10.1002/jcc.10385
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                T I M I N G                                  -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ SUBROUTINE                       CALLS  ASD         SELF TIME        TOTAL TIME
+                                MAXIMUM       AVERAGE  MAXIMUM  AVERAGE  MAXIMUM
+ CP2K                                 1  1.0    0.004    0.004    0.661    0.661
+ qs_energies                         20  2.0    0.001    0.001    0.621    0.621
+ tb_reference_cli_compare            20  3.0    0.349    0.349    0.349    0.349
+ scf_env_do_scf                      20  3.0    0.000    0.000    0.160    0.160
+ scf_env_do_scf_inner_loop          143  4.1    0.019    0.019    0.160    0.160
+ qs_scf_new_mos                     143  5.1    0.002    0.002    0.113    0.113
+ calculate_dm_sparse                162  6.1    0.000    0.000    0.078    0.078
+ cp_dbcsr_plus_fm_fm_t              163  7.1    0.001    0.001    0.078    0.078
+ dbcsr_multiply_generic             229  8.0    0.005    0.005    0.072    0.072
+ build_tblite_matrices               21  4.0    0.064    0.064    0.072    0.072
+ qs_energies_init_hamiltonians       20  3.0    0.000    0.000    0.069    0.069
+ qs_forces                            1  2.0    0.000    0.000    0.050    0.050
+ init_scf_run                        20  3.0    0.000    0.000    0.046    0.046
+ scf_env_initial_rho_setup           20  4.0    0.000    0.000    0.043    0.043
+ wfi_extrapolate                     20  5.0    0.001    0.001    0.042    0.042
+ make_m2s                           458  9.0    0.003    0.003    0.038    0.038
+ dbcsr_complete_redistribute        621  8.3    0.013    0.013    0.031    0.031
+ copy_dbcsr_to_fm                   229  6.2    0.002    0.002    0.030    0.030
+ rebuild_ks_matrix                  163  5.8    0.000    0.000    0.028    0.028
+ build_tblite_ks_matrix             163  6.8    0.024    0.024    0.028    0.028
+ cp_dbcsr_sm_fm_multiply             66  6.0    0.001    0.001    0.027    0.027
+ qs_ks_update_qs_env                162  4.8    0.000    0.000    0.023    0.023
+ eigensolver                        143  6.1    0.006    0.006    0.022    0.022
+ copy_fm_to_dbcsr                   392  7.9    0.001    0.001    0.020    0.020
+ multiply_cannon                    229  9.0    0.011    0.011    0.017    0.017
+ make_images                        458 10.0    0.004    0.004    0.017    0.017
+ cp_dbcsr_sm_fm_multiply_core        66  7.0    0.000    0.000    0.014    0.014
+ cp_fm_syevd                        143  7.1    0.000    0.000    0.014    0.014
+ dbcsr_finalize                    3437  8.8    0.004    0.004    0.013    0.013
+ -------------------------------------------------------------------------------
+
+ The number of warnings for this run is : 1
+ 
+ -------------------------------------------------------------------------------
+  **** **** ******  **  PROGRAM ENDED AT                 2026-07-21 16:09:31.057
+ ***** ** ***  *** **   PROGRAM RAN ON                                     terok
+ **    ****   ******    PROGRAM RAN BY                                  kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                               1018514
+  **** **  *******  **  PROGRAM STOPPED IN /home/kuehne88/work/h2o-molecular-lim
+                                           it-20260721/stress_debug_8_50/raw/H2O
+                                           _stress_L10

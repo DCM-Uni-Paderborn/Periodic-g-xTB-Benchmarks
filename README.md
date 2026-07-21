@@ -15,10 +15,11 @@ remain available through the Git history.
   DMC references, the frozen-build uniform and phase-wise g-xTB results, plots,
   and the compact independent recalculation package.
 - [`LC10/`](LC10/): the ten-solid equation-of-state benchmark used in the
-  manuscript, including final per-solid values, first-passing k-point
-  intervals, aggregate comparisons, and plot data.
+  manuscript, including the current common-mesh values, aggregate method
+  comparisons, and plot data.
 - [`Molecular-limit/`](Molecular-limit/): the molecular/periodic large-cell
-  inputs and the complete CP2K energy/force sequence used in Part I.
+  inputs, accepted CP2K outputs, and the energy/force/stress sequence used in
+  Part I.
 - [`validation/`](validation/): energy, force, stress, symmetry, K290/SPGLIB,
   lower-dimensional PBC, primitive-cell/supercell, and source-level regression
   evidence for the Part-I reference implementation.
@@ -84,12 +85,14 @@ DMC-ICE13 MAE.
 
 ### LC10
 
-All ten solids pass both per-solid criteria,
-`|Delta a0| <= 0.025 A` and
-`|Delta Ecoh| <= 0.25 kJ mol-1 atom-1`, by at most 9x9x9. The final g-xTB
-MAEs are 0.1434 A for lattice constants and 0.2947 eV atom-1 for cohesive
-energies. The exact per-solid endpoints and signed changes are in
-[`LC10/data/lc10_gxtb_final.csv`](LC10/data/lc10_gxtb_final.csv).
+The current paper snapshot evaluates all ten solids on one qualified uniform
+native-Bloch 7x7x7 mesh.  The g-xTB signed mean error/MAE pairs are
+-0.132181178/0.134252148 A for lattice constants and
++0.144612412/0.190758163 eV atom-1 for cohesive energies.  All 6x6x6 to
+7x7x7 lattice increments are at most 0.005 A, but none of the cohesive-energy
+increments is at most 0.05 kJ mol-1 atom-1; the snapshot is therefore not
+claimed to be k-point converged.  The per-solid values are in
+[`LC10/data/lc10_gxtb_uniform_k777_snapshot.csv`](LC10/data/lc10_gxtb_uniform_k777_snapshot.csv).
 
 ## Data policy
 

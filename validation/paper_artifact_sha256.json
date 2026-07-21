@@ -11,12 +11,12 @@
     {
       "id": "dmc13_current_adaptive_set",
       "path": "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_set.csv",
-      "sha256": "9ed7e774e9e33589e611d336ac874807b5c49de9520f901efd926dda6ddf6629"
+      "sha256": "cb5edb851a7b11908d018628a8a70525c5b95d4ac5a4a62a56a4eabb8c58f7a5"
     },
     {
       "id": "dmc13_current_adaptive_statistics",
       "path": "DMC-ICE13/data/dmc_ice13_gxtb_current_adaptive_statistics.csv",
-      "sha256": "7f095ca3c35be8febc7067d0229ca55251169a6fb22c49aa44ee87d6a4c65882"
+      "sha256": "de4213b6e49eea5b0c7a140be06a4cf91a27f6ac158195984bc28229eca211a2"
     },
     {
       "id": "dmc13_ice_vii_sequence",
@@ -31,32 +31,37 @@
     {
       "id": "dmc13_adaptive_frontier_figure_source",
       "path": "DMC-ICE13/figures/dmc_ice13_gxtb_adaptive_frontier_mae.tex",
-      "sha256": "e1c6c56222ea8f4d9b85ee968e492f64551be9001ece0e07b512391a1c084dfe"
+      "sha256": "41454fc2ec8db0069e346207a6517428e3617931e41ddd67cda9005942942ebd"
     },
     {
-      "id": "lc10_final_per_solid_data",
-      "path": "LC10/data/lc10_gxtb_final.csv",
-      "sha256": "20c9b701dd1e78e5fb14149928e28d73ffd715d6f500caecda222f83ae7e8ee7"
+      "id": "lc10_current_uniform_k777_per_solid_data",
+      "path": "LC10/data/lc10_gxtb_uniform_k777_snapshot.csv",
+      "sha256": "152142326cb2e4634836e48a0c440562bcfc93cddef6500e2eca96a4f08ce7e8"
     },
     {
       "id": "lc10_method_comparison",
       "path": "LC10/data/lc10_method_comparison.csv",
-      "sha256": "8d64a5a3f6d56e01d4f132d74d551d1dc88066fefc208620aba136dcd124b2b6"
+      "sha256": "dd046d2c687f362441579de461a6e371b967d852a7835395b1157c62afe7661c"
     },
     {
-      "id": "lc10_adaptive_progress",
-      "path": "LC10/data/lc10_adaptive_progress_mae.csv",
-      "sha256": "2aaeff9746a4859003d72802339f57680f1ee98e5afaaf2d3ecb84bb359122a8"
+      "id": "lc10_method_comparison_figure",
+      "path": "LC10/figures/lc10_method_comparison.pdf",
+      "sha256": "952acc4d6e9109f334362531df207aeb22365b90d2e87b734696749566685726"
     },
     {
-      "id": "lc10_adaptive_figure",
-      "path": "LC10/figures/lc10_gxtb_adaptive_mae.pdf",
-      "sha256": "4543bf6a1f6e88099a9f96c395b46d404d40317bb455a26229d86220cd791220"
+      "id": "molecular_limit_three_panel_results",
+      "path": "Molecular-limit/results_energy_force_stress_8_50.csv",
+      "sha256": "9e3d6abe961ec27f52a721acb6d57a4710950340cfb95b2ca29388f01375a14a"
     },
     {
-      "id": "molecular_limit_results",
-      "path": "Molecular-limit/results.csv",
-      "sha256": "96683480fbbdb433b02675880c66dad158edd489c07342aebc8eccd1765dc3cf"
+      "id": "molecular_limit_three_panel_figure_source",
+      "path": "Molecular-limit/figures/h2o_molecular_periodic_limit.tex",
+      "sha256": "1b7d372560123ac8dd93d9f94ef0517508c02cc16c8b43e5253bfa257a0b47cc"
+    },
+    {
+      "id": "molecular_limit_current_build_manifest",
+      "path": "Molecular-limit/current_build_20260721/SHA256SUMS",
+      "sha256": "d36a6007485b84eb00fbc3e00fd8610dc4bf8e3db63eec9ddfe5a2aab9f936dc"
     }
   ]
 }

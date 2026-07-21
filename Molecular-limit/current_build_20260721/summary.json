@@ -1,0 +1,18 @@
+{
+  "all_normally_terminated_qualified_same_build": true,
+  "boxes_angstrom": [
+    8,
+    10,
+    12,
+    15,
+    20,
+    30,
+    40,
+    50
+  ],
+  "case_count": 8,
+  "cp2k_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+  "max_abs_analytical_minus_numerical_virial_Eh": 1.1837999996933135e-08,
+  "stress_metric": "maximum absolute analytical stress-tensor component",
+  "stress_unit": "MPa"
+}

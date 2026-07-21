@@ -10,8 +10,13 @@ Part I imports only the compact values needed for like-for-like comparisons:
 |---|---|---:|---:|
 | DMC-ICE13 | fixed 3x3x3 | 8.005 kJ mol-1 H2O-1 | 3.463 kJ mol-1 H2O-1 |
 | DMC-ICE13 | phase-wise adaptive, at most 4x4x4 | 8.006 kJ mol-1 H2O-1 | 3.461 kJ mol-1 H2O-1 |
-| LC10 lattice constants | common ten-solid set | 0.1451 A | 0.0624 A |
-| LC10 cohesive energies | common ten-solid set | 1.5439 eV atom-1 | 1.2993 eV atom-1 |
+| LC10 lattice constants | native-Bloch 4x4x4, common ten-solid set | 0.1451 A | 0.0624 A |
+| LC10 cohesive energies | native-Bloch 4x4x4, common ten-solid set | 1.5439 eV atom-1 | 1.2993 eV atom-1 |
+
+The LC10 method-context table additionally quotes HF, MP2, SCS-MP2, and
+SOS-MP2 statistics from Goldzak et al., J. Chem. Phys. 2022. These values use
+the numerical protocols of that work and are not same-mesh implementation
+comparisons with the current g-xTB 7x7x7 snapshot.
 
 The g-xTB-specific structures, inputs, results, and validation evidence remain
 in this repository. Shared non-GFN reference data are retained where required

@@ -9,36 +9,39 @@ C, Si, SiC, BN, BP, AlN, AlP, MgS, LiF, LiCl
 MgO and LiH are not members of the reported benchmark and no longer appear in
 the current data tree.
 
-## Selection rule
+## Current paper snapshot
 
-Starting at 3x3x3, each solid is advanced independently. The denser endpoint
-of the first adjacent pair satisfying both
-
-```text
-|Delta a0|   <= 0.025 A
-|Delta Ecoh| <= 0.25 kJ mol-1 atom-1
-```
-
-is retained. One passing interval is sufficient; no aggregate or two-step gate
-is applied. All ten solids pass by at most 9x9x9.
+The current Part-I paper reports one qualified, common native-Bloch `7x7x7`
+mesh for all ten solids.  It is deliberately described as a common-mesh
+snapshot rather than as a k-point-converged adaptive result: every `6x6x6` to
+`7x7x7` lattice-constant increment is at most `0.005 A`, whereas none of the
+cohesive-energy increments is at most `0.05 kJ mol-1 atom-1`.
 
 ## Paper data
 
-- `data/lc10_gxtb_final.csv`: final per-solid lattice constants, cohesive
-  energies, reference values, signed errors, retained meshes, and the actual
-  first-passing changes;
-- `data/lc10_method_comparison.csv`: compact g-xTB/GFN1-xTB/GFN2-xTB
-  aggregate comparison over exactly the common ten-solid set;
+- `data/lc10_gxtb_uniform_k777_snapshot.csv`: current per-solid `7x7x7`
+  lattice constants, cohesive energies, signed errors, and adjacent-mesh
+  changes at manuscript precision;
+- `data/lc10_method_comparison.csv`: signed mean errors and mean absolute
+  errors for current g-xTB and the literature GFN/post-HF context over the
+  exact common ten-solid set;
+- `figures/lc10_method_comparison.*`: current method-context figure generated
+  by `scripts/generate_lc10_method_comparison.py`;
+- `data/lc10_gxtb_final.csv`: archived earlier adaptive selection retained for
+  provenance, but no longer used as the current paper result;
 - `data/lc10_adaptive_progress_mae.csv`: uniform 3x3x3--6x6x6 and subsequent
   adaptive-endpoint plot values;
 - `data/reference_goldzak2022.csv`: zero-point-corrected experimental and
   high-level reference values;
-- `figures/lc10_gxtb_adaptive_mae.*`: paper convergence figure.
+- `figures/lc10_gxtb_adaptive_mae.*`: archived adaptive convergence figure.
 
-The final g-xTB MAEs are 0.1434 A for lattice constants and
-0.2947 eV atom-1 for cohesive energies.
+For the current uniform `7x7x7` g-xTB snapshot, ME/MAE are
+`-0.132181178/0.134252148 A` for lattice constants and
+`+0.144612412/0.190758163 eV atom-1` for cohesive energies.  The literature
+rows use different numerical protocols (`4x4x4` for the CP2K/tblite GFN rows
+and the protocols of Goldzak et al. for HF/MP2 variants); they provide method
+context and are not same-mesh implementation comparisons.
 
-The plotting script regenerates the repository figure directly from the
-versioned seven-stage table. Generated working directories and raw standard
-output are intentionally not versioned. Complete GFN1-xTB/GFN2-xTB raw data
-remain in the separate `Periodic-GFN2-Benchmarks` repository.
+The plotting scripts regenerate the repository figures from the versioned
+tables. Complete GFN1-xTB/GFN2-xTB raw data remain in the separate
+`Periodic-GFN2-Benchmarks` repository.

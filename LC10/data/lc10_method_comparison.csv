@@ -1,4 +1,8 @@
-method,a0_me_A,a0_mae_A,ecoh_me_eV_per_atom,ecoh_mae_eV_per_atom,source
-GFN1-xTB,0.0220,0.1451,1.4670,1.5439,Periodic-GFN2-Benchmarks
-GFN2-xTB,-0.0058,0.0624,1.1070,1.2993,Periodic-GFN2-Benchmarks
-g-xTB,-0.1394,0.1434,0.2299,0.2947,this_repository
+method,protocol,a0_me_A,a0_mae_A,ecoh_me_eV_per_atom,ecoh_mae_eV_per_atom,source
+g-xTB,current uniform native-Bloch 7x7x7,-0.132181178,0.134252148,0.144612412,0.190758163,this_repository
+GFN1-xTB,CP2K/tblite native-Bloch 4x4x4,0.022,0.145,1.467,1.544,Alizadeh2026PeriodicGFN2
+GFN2-xTB,CP2K/tblite native-Bloch 4x4x4,-0.006,0.062,1.107,1.299,Alizadeh2026PeriodicGFN2
+HF,Goldzak et al. 2022,0.052,0.056,-1.623,1.623,Goldzak2022Solids
+MP2,Goldzak et al. 2022,-0.009,0.018,0.248,0.248,Goldzak2022Solids
+SCS-MP2,Goldzak et al. 2022,0.006,0.011,0.031,0.063,Goldzak2022Solids
+SOS-MP2,Goldzak et al. 2022,0.014,0.014,-0.073,0.089,Goldzak2022Solids

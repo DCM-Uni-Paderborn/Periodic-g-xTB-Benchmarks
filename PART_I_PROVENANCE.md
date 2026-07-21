@@ -72,6 +72,9 @@ CP2K executable.
 - `validation/implementation_audit_20260720/`: one machine-readable gate over
   all completed exact implementation checks and the internally recomputed
   adaptive statistics.
+- `Molecular-limit/current_build_20260721/`: accepted Fig. 2 CP2K outputs,
+  exact executable hashes, CPU-affinity proofs, analytical stress, and
+  finite-difference virial evidence for 8--50 A.
 
 The DMC reproduction package additionally stores the exact executed CP2K
 input beside every admitted native result.  Its assembler verifies the input
