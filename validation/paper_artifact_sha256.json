@@ -50,18 +50,23 @@
     },
     {
       "id": "molecular_limit_three_panel_results",
-      "path": "Molecular-limit/results_energy_force_stress_8_50.csv",
-      "sha256": "9e3d6abe961ec27f52a721acb6d57a4710950340cfb95b2ca29388f01375a14a"
+      "path": "Molecular-limit/results_energy_force_stress_8_100.csv",
+      "sha256": "5169f046ec6d9a9c85304ee91f56f0a4bf1e11a2d6ee43bb6c5429332440c3c5"
+    },
+    {
+      "id": "molecular_limit_endpoint_energies",
+      "path": "Molecular-limit/molecular_vs_100A_energies.csv",
+      "sha256": "c6a7bfa3a856bde12ba761d96edc14fc9b0167bc09104565f09d82c23fc3ec3c"
     },
     {
       "id": "molecular_limit_three_panel_figure_source",
       "path": "Molecular-limit/figures/h2o_molecular_periodic_limit.tex",
-      "sha256": "1b7d372560123ac8dd93d9f94ef0517508c02cc16c8b43e5253bfa257a0b47cc"
+      "sha256": "908e51d5e019b30fc047b6be62e6e7cd18920fb56af92d39d5272697c8db0507"
     },
     {
       "id": "molecular_limit_current_build_manifest",
-      "path": "Molecular-limit/current_build_20260721/SHA256SUMS",
-      "sha256": "d36a6007485b84eb00fbc3e00fd8610dc4bf8e3db63eec9ddfe5a2aab9f936dc"
+      "path": "Molecular-limit/traceless_qq_fix_20260721/SHA256SUMS",
+      "sha256": "d27a98ff1862f9e327cdd443c5bfad08eba82439907040c138cd5ad9fdff499b"
     }
   ]
 }

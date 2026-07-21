@@ -72,9 +72,20 @@ CP2K executable.
 - `validation/implementation_audit_20260720/`: one machine-readable gate over
   all completed exact implementation checks and the internally recomputed
   adaptive statistics.
-- `Molecular-limit/current_build_20260721/`: accepted Fig. 2 CP2K outputs,
-  exact executable hashes, CPU-affinity proofs, analytical stress, and
-  finite-difference virial evidence for 8--50 A.
+- `Molecular-limit/traceless_qq_fix_20260721/`: accepted Fig. 2 pure
+  CP2K-native outputs, exact executable and library hashes, singleton-CPU
+  affinity proofs, analytical stress, finite-difference virial evidence, build
+  logs, regression tests, and signed source patch for 0D and 8--100 A. This
+  figure-specific build uses CP2K source
+  `8520b2e592cd04d35081ab4ad46d92c606071e23`, `save_tblite` source
+  `fad7fe4b188f99794d7c047d5b710667c3a2ce84`, CP2K executable SHA-256
+  `a606cb0ff838dc1a5f967238154d5c0892da5f5b63488d2c10959ec12d6e4d7c`,
+  `libcp2k` SHA-256
+  `d8b595d26864dfac030f1f19e2c5d2e0afeb99649292101d18972df028c0e991`,
+  and `libtblite` SHA-256
+  `43d1f7a7ddb356007fe9ba459fd84dc08c43d0fe7389687cffc13868a074b2ac`.
+  The earlier `Molecular-limit/current_build_20260721/` 8--50 A sequence is
+  retained unchanged as superseded historical evidence.
 
 The DMC reproduction package additionally stores the exact executed CP2K
 input beside every admitted native result.  Its assembler verifies the input

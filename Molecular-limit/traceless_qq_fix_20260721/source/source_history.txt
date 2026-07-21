@@ -1,0 +1,6 @@
+CP2K source commit: 8520b2e592cd04d35081ab4ad46d92c606071e23
+save_tblite base commit: 9322cc6d43be5099f2e7dc4866abc45b8387835a
+save_tblite fix commit: fad7fe4b188f99794d7c047d5b710667c3a2ce84
+save_tblite branch: fix/multipole-large-cell-limit
+commit subject: Fix molecular quadrupole large-cell limit
+signed off by: Thomas D. Kuehne <tkuehne@cp2k.org>

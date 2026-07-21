@@ -13,9 +13,13 @@
         xlabel={Cell length / \AA},
         ylabel={$|E_{\mathrm{3D}}-E_{\mathrm{0D}}|$ / kJ mol$^{-1}$},
         xmin=7.7,
-        xmax=52,
-        xtick={8,10,20,30,50},
-        xticklabels={8,10,20,30,50},
+        xmax=105,
+        ymin=1e-4,
+        ymax=5e2,
+        xtick={8,10,20,30,50,100},
+        xticklabels={8,10,20,30,50,100},
+        ytick={1e-4,1e-2,1,1e2},
+        yticklabels={$10^{-4}$,$10^{-2}$,$10^{0}$,$10^{2}$},
         grid=both,
         minor grid style={gray!18},
         major grid style={gray!35},
@@ -24,15 +28,20 @@
       ]
         \addplot+[blue!75!black, thick, mark=*, mark size=1.9pt]
           coordinates {
-            (8,253.5555757)
-            (10,156.4375187)
-            (12,93.0499441)
-            (15,37.7435320)
-            (20,6.5723849)
-            (30,0.1537366)
-            (40,0.0000767905)
-            (50,0.0059268)
+            (8,250.561495007)
+            (10,154.228900286)
+            (12,91.649181386)
+            (15,37.161473750)
+            (20,6.487051432)
+            (30,0.165612787)
+            (40,0.011271060)
+            (50,0.004195447)
+            (60,0.002387653)
+            (80,0.001007946)
+            (100,0.000515008)
           };
+        \node[anchor=south east,font=\scriptsize,blue!75!black]
+          at (rel axis cs:0.98,0.08) {$100~\AA:\ 5.15\times10^{-4}$};
         \node[anchor=north west,font=\small] at (rel axis cs:0.02,0.98) {(a)};
       \end{axis}
     \end{tikzpicture}
@@ -48,11 +57,11 @@
         log basis x=10,
         log basis y=10,
         xlabel={Cell length / \AA},
-        ylabel={Max. $|F_{\mathrm{3D}}-F_{\mathrm{0D}}|$ / eV \AA$^{-1}$},
+        ylabel={Max. $|F_{\mathrm{3D}}-F_{\mathrm{0D}}|$ / $E_\mathrm{h}\,a_0^{-1}$},
         xmin=7.7,
-        xmax=52,
-        xtick={8,10,20,30,50},
-        xticklabels={8,10,20,30,50},
+        xmax=105,
+        xtick={8,10,20,30,50,100},
+        xticklabels={8,10,20,30,50,100},
         grid=both,
         minor grid style={gray!18},
         major grid style={gray!35},
@@ -61,14 +70,17 @@
       ]
         \addplot+[blue!75!black, thick, mark=square*, mark size=1.8pt]
           coordinates {
-            (8,0.414238465)
-            (10,0.292949248)
-            (12,0.183175340)
-            (15,0.076150288)
-            (20,0.012105241)
-            (30,0.000555211)
-            (40,0.000532338)
-            (50,0.000487094)
+            (8,0.0051117107)
+            (10,0.0036713449)
+            (12,0.0023167801)
+            (15,0.0009674247)
+            (20,0.0001532398)
+            (30,0.0000053846)
+            (40,0.0000039755)
+            (50,0.0000020804)
+            (60,0.0000012048)
+            (80,0.0000005096)
+            (100,0.0000002602)
           };
         \node[anchor=north west,font=\small] at (rel axis cs:0.02,0.98) {(b)};
       \end{axis}
@@ -85,11 +97,11 @@
         log basis x=10,
         log basis y=10,
         xlabel={Cell length / \AA},
-        ylabel={Max. $|\sigma_{\alpha\beta}|$ / MPa},
+        ylabel={Max. $|\sigma_{\alpha\beta}|$ / GPa},
         xmin=7.7,
-        xmax=52,
-        xtick={8,10,20,30,50},
-        xticklabels={8,10,20,30,50},
+        xmax=105,
+        xtick={8,10,20,30,50,100},
+        xticklabels={8,10,20,30,50,100},
         grid=both,
         minor grid style={gray!18},
         major grid style={gray!35},
@@ -98,27 +110,31 @@
       ]
         \addplot+[blue!75!black, thick, mark=triangle*, mark size=2.1pt]
           coordinates {
-            (8,530.842925)
-            (10,264.140177)
-            (12,176.601385)
-            (15,110.691508)
-            (20,56.023171)
-            (30,17.549366)
-            (40,7.417862)
-            (50,3.798139)
+            (8,0.709263905)
+            (10,0.294713793)
+            (12,0.142946798)
+            (15,0.051296658)
+            (20,0.011996772)
+            (30,0.002589107)
+            (40,0.001077543)
+            (50,0.000551416)
+            (60,0.000319085)
+            (80,0.000134608)
+            (100,0.000068918)
           };
         \node[anchor=north west,font=\small] at (rel axis cs:0.02,0.98) {(c)};
       \end{axis}
     \end{tikzpicture}
   \end{minipage}
-  \caption{Molecular-limit test for one H$_2$O molecule, restricted to
-  cubic cell lengths of 8--50~\AA.  Panels (a) and (b) show the absolute
-  energy and largest Cartesian force-component differences between the
-  three-dimensionally periodic implicit-Gamma and zero-dimensional routes.
-  Because a zero-dimensional calculation has no cell derivative, panel (c)
-  instead shows the largest absolute component of the analytical periodic
-  stress tensor.  The signed energy difference changes sign near 40~\AA, so
-  the minimum in panel (a) is a crossing rather than monotonic convergence.
+  \caption{Molecular-limit test for one H$_2$O molecule in cubic cells of
+  8--100~\AA.  Panels (a) and (b) show the absolute energy and largest
+  Cartesian force-component differences between the three-dimensionally
+  periodic implicit-Gamma and zero-dimensional routes.  Because a
+  zero-dimensional calculation has no cell derivative, panel (c) instead
+  shows the largest absolute component of the analytical periodic stress
+  tensor.  With the zero-dimensional quadrupole--quadrupole contraction made
+  consistent with the traceless atomic-quadrupole convention, all three
+  quantities converge monotonically and the former force plateau is absent.
   Solid lines guide the eye.}
   \label{fig:h2o_molecular_periodic_limit}
 \end{figure*}

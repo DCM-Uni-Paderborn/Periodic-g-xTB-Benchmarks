@@ -1,0 +1,66 @@
+-- The Fortran compiler identification is GNU 15.2.0
+-- The C compiler identification is GNU 15.2.0
+-- Detecting Fortran compiler ABI info
+-- Detecting Fortran compiler ABI info - done
+-- Check for working Fortran compiler: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-gfortran - skipped
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found OpenMP_C: -fopenmp (found version "4.5")
+-- Found OpenMP_Fortran: -fopenmp (found version "4.5")
+-- Found OpenMP: TRUE (found version "4.5")
+-- Looking for Fortran sgemm
+-- Looking for Fortran sgemm - not found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Looking for Fortran sgemm
+-- Looking for Fortran sgemm - found
+-- Found BLAS: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/lib/libopenblas.so
+-- Looking for Fortran cheev
+-- Looking for Fortran cheev - found
+-- Found LAPACK: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/lib/libopenblas.so;-lm;-ldl
+-- toml-f: Find installed package
+-- Retrieving toml-f from https://github.com/toml-f/toml-f
+CMake Deprecation Warning at /home/kuehne88/work/gxtb-provenance-d933e083-15915c94-20260717-v2/dependency-sources/toml-f/CMakeLists.txt:14 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- test-drive: Find installed package
+-- Could NOT find test-drive (missing: test-drive_DIR)
+-- Retrieving test-drive from https://github.com/fortran-lang/test-drive
+CMake Deprecation Warning at /home/kuehne88/work/gxtb-provenance-d933e083-15915c94-20260717-v2/dependency-sources/test-drive/CMakeLists.txt:14 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- Performing Test WITH_QP
+-- Performing Test WITH_QP - Success
+-- Performing Test WITH_XDP
+-- Performing Test WITH_XDP - Success
+-- mctc-lib: Find installed package
+-- Retrieving mctc-lib from https://github.com/thfroitzheim/mctc-lib
+-- Found OpenMP_C: -fopenmp (found version "4.5")
+-- Found OpenMP_Fortran: -fopenmp (found version "4.5")
+-- mstore: Find installed package
+-- Retrieving mstore from https://github.com/lmseidler/mstore
+-- multicharge: Find installed package
+-- Retrieving multicharge from https://github.com/thfroitzheim/multicharge
+-- dftd4: Find installed package
+-- Retrieving dftd4 from https://github.com/grimme-lab/dftd.git
+-- s-dftd3: Find installed package
+-- Retrieving s-dftd3 from https://github.com/dftd3/simple-dftd3
+-- Configuring done (2.8s)
+-- Generating done (0.2s)
+-- Build files have been written to: /home/kuehne88/work/gxtb-multipole-limit-fix-20260721/save_tblite-build

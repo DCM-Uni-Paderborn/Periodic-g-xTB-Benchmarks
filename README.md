@@ -94,6 +94,19 @@ increments is at most 0.05 kJ mol-1 atom-1; the snapshot is therefore not
 claimed to be k-point converged.  The per-solid values are in
 [`LC10/data/lc10_gxtb_uniform_k777_snapshot.csv`](LC10/data/lc10_gxtb_uniform_k777_snapshot.csv).
 
+### Molecular limit
+
+The corrected CP2K-native H2O series now spans cubic cells from 8 to 100 A.
+Relative to the zero-dimensional energy of `-76.437385109217445 Eh`, the
+100 A energy is `-76.437385305373553 Eh`, a difference of only
+`-5.15007791e-4 kJ mol-1`. At 100 A the largest Cartesian force-component
+difference is `2.6020e-7 Eh/a0` and the largest analytical stress component is
+`6.8918e-5 GPa`. Energy, force, and stress converge monotonically after making
+the zero-dimensional quadrupole--quadrupole contraction consistent with the
+traceless atomic-quadrupole convention; the former force plateau is absent.
+The raw data and build/source evidence are archived in
+[`Molecular-limit/traceless_qq_fix_20260721/`](Molecular-limit/traceless_qq_fix_20260721/).
+
 ## Data policy
 
 Only compact GFN1-xTB/GFN2-xTB values required for explicit manuscript
