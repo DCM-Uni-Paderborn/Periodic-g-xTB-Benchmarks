@@ -8,12 +8,14 @@ three-dimensional cubic cells.
 ## Contents
 
 - `results.csv`: the complete archived 8--200 A CP2K energy/force sequence;
-- `results_energy_force_stress_8_100.csv`: the current qualified 8--100 A
-  three-panel data used by Fig. 2, including analytical/numerical virial
+- `results_energy_force_stress_8_200.csv`: the current qualified 8--200 A
+  three-panel data used by Fig. 1, including analytical/numerical virial
   agreement and the exact executable hash;
 - `figures/h2o_molecular_periodic_limit.tex`: current energy/force/stress
-  three-panel figure source, with all panels extended to 100 A;
-- `traceless_qq_fix_20260721/`: the accepted pure CP2K-native 0D and 8--100 A
+  three-panel figure source, with all panels extended to 200 A;
+- `molecular_vs_200A_energies.csv`: exact printed 0D and 200 A endpoint
+  energies and their difference;
+- `traceless_qq_fix_20260721/`: the accepted pure CP2K-native 0D and 8--200 A
   energy/force outputs, the corresponding stress and numerical-virial
   evidence, executable and library hashes, CPU-affinity records, build/test
   logs, and signed source patch;
@@ -39,13 +41,13 @@ The force quantity is the largest Cartesian component difference relative to
 the zero-dimensional CP2K result and is reported in the native CP2K unit
 `Eh/a0`; stress is reported in GPa. After correcting the zero-dimensional
 quadrupole--quadrupole contraction, energy, force, and stress converge
-monotonically through 100 A and the former force plateau is absent. The
-zero-dimensional and 100 A CP2K energies are `-76.437385109217445 Eh` and
-`-76.437385305373553 Eh`, respectively. Their difference is
-`-1.96156108e-7 Eh` (`-5.15007791e-4 kJ/mol`); at 100 A the largest force
-component difference is `2.6020e-7 Eh/a0` and the largest stress component is
-`6.8918e-5 GPa`. The maximum analytical-minus-numerical virial difference is
-`1.0858e-8 Eh`.
+monotonically through 200 A and the former force plateau is absent. The
+zero-dimensional and 200 A CP2K energies are `-76.437385109217445 Eh` and
+`-76.437385134501923 Eh`, respectively. Their exact printed-string difference
+is `-2.5284478e-8 Eh` (`-6.63843879e-5 kJ/mol`); at 200 A the largest force
+component difference is `3.4100e-8 Eh/a0` and the largest stress component is
+`8.6146e-6 GPa`. The maximum analytical-minus-numerical virial difference over
+the complete sequence is `1.3610e-8 Eh`.
 
 All accepted displayed cases terminate normally and carry CP2K executable
 SHA-256 `a606cb0ff838dc1a5f967238154d5c0892da5f5b63488d2c10959ec12d6e4d7c`.

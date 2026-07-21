@@ -9,11 +9,11 @@ import re
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent
-NATIVE = ROOT / "native_forces_20260721"
-STRESS = ROOT / "limit_fix_requested_geometry_20260721" / "stress" / "raw"
+ROOT = Path(__file__).resolve().parents[1]
+NATIVE = ROOT / "cp2k_native"
+STRESS = ROOT / "stress" / "raw"
 OUTPUT = NATIVE / "analysis"
-BOXES = (8, 10, 12, 15, 20, 30, 40, 50, 60, 80, 100)
+BOXES = (8, 10, 12, 15, 20, 30, 40, 50, 60, 80, 100, 200)
 EH_TO_KJMOL = 2625.4996394799
 BOHR_PER_ANGSTROM = 1.88972613288564
 AU_PRESSURE_TO_GPA = 2.94210107994716e4
@@ -156,14 +156,16 @@ def main() -> None:
         del row["forces_Eh_per_bohr"]
 
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    table = OUTPUT / "h2o_molecular_limit_cp2k_native_0d_8_100.csv"
+    table = OUTPUT / "h2o_molecular_limit_cp2k_native_0d_8_200.csv"
     with table.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(
+            handle, fieldnames=list(rows[0]), lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
 
     periodic = rows[1:]
-    l100 = rows[-1]
+    l200 = rows[-1]
     summary = {
         "all_normally_terminated_qualified_same_build": True,
         "boxes_angstrom": list(BOXES),
@@ -173,20 +175,20 @@ def main() -> None:
         "save_tblite_source_commit": provenance["save_tblite_source_commit"],
         "geometry_unit": "bohr",
         "force_native_unit": "Eh/bohr",
-        "force_display_unit": "Eh/bohr",
+        "force_display_unit": "Eh/a0",
         "stress_display_unit": "GPa",
         "molecular_0D_cp2k_energy_Eh": reference_energy,
-        "L100_cp2k_energy_Eh": float(l100["cp2k_energy_Eh"]),
-        "L100_minus_0D_energy_Eh": (
-            float(l100["cp2k_energy_Eh"]) - reference_energy
+        "L200_cp2k_energy_Eh": float(l200["cp2k_energy_Eh"]),
+        "L200_minus_0D_energy_Eh": (
+            float(l200["cp2k_energy_Eh"]) - reference_energy
         ),
-        "L100_minus_0D_energy_kJ_per_mol": float(
-            l100["signed_delta_E_kJ_per_mol"]
+        "L200_minus_0D_energy_kJ_per_mol": float(
+            l200["signed_delta_E_kJ_per_mol"]
         ),
-        "L100_max_component_force_difference_Eh_per_bohr": float(
-            l100["max_component_delta_F_Eh_per_bohr"]
+        "L200_max_component_force_difference_Eh_per_bohr": float(
+            l200["max_component_delta_F_Eh_per_bohr"]
         ),
-        "L100_max_abs_stress_GPa": float(l100["max_abs_stress_GPa"]),
+        "L200_max_abs_stress_GPa": float(l200["max_abs_stress_GPa"]),
         "max_abs_analytical_minus_numerical_virial_Eh": max(
             float(row["max_abs_analytical_minus_numerical_virial_Eh"])
             for row in periodic

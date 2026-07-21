@@ -7,7 +7,7 @@ route.
 
 The requested H2O geometry is given in bohr in every archived input. The
 series contains the molecular zero-dimensional reference and cubic periodic
-cells of 8, 10, 12, 15, 20, 30, 40, 50, 60, 80, and 100 A.
+cells of 8, 10, 12, 15, 20, 30, 40, 50, 60, 80, 100, and 200 A.
 
 - `cp2k_native/raw/` contains the CP2K-native energy and force inputs, outputs,
   hashes, exit status, qualification status, and pre-exec affinity evidence.
