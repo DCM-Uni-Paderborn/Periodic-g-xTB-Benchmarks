@@ -11,11 +11,11 @@
         log basis x=10,
         log basis y=10,
         xlabel={Cell length / \AA},
-        ylabel={$|\Delta E|=|E_{\mathrm{3D}}-E_{\mathrm{0D}}|$ / kJ mol$^{-1}$},
+        ylabel={$|\Delta E|=|E_{\mathrm{3D}}-E_{\mathrm{0D}}|$ / $E_\mathrm{h}$},
         xmin=7.7,
         xmax=260,
-        ymin=3e-5,
-        ymax=4e2,
+        ymin=1e-8,
+        ymax=2e-1,
         xtick={8,10,20,50,100,250},
         xticklabels={8,10,20,50,100,250},
         grid=both,
@@ -26,20 +26,20 @@
       ]
         \addplot+[blue!75!black, thick, mark=*, mark size=1.9pt]
           coordinates {
-            (8,250.561495006742)
-            (10,154.228900286366)
-            (12,91.649181385751)
-            (15,37.161473749573)
-            (20,6.487051431513)
-            (30,0.165612786581)
-            (40,0.011271059603)
-            (50,0.004195447452)
-            (60,0.002387653214)
-            (80,0.001007946327)
-            (100,0.000515007791)
-            (150,0.000152631408)
-            (200,0.000066384388)
-            (250,0.000050186218)
+            (8,0.095433833331768)
+            (10,0.058742685760535)
+            (12,0.034907329640276)
+            (15,0.014154057837515)
+            (20,0.002470787401364)
+            (30,0.00006307857906)
+            (40,0.000004292919882)
+            (50,0.000001597961542)
+            (60,0.000000909409081)
+            (80,0.000000383906481)
+            (100,0.000000196156108)
+            (150,0.000000058134233)
+            (200,0.000000025284478)
+            (250,0.000000019114921)
           };
         \node[anchor=north east,font=\small,fill=white,fill opacity=0.82,
           text opacity=1,inner sep=1pt] at (rel axis cs:0.98,0.98) {(a)};
@@ -136,7 +136,7 @@
   \end{minipage}
   \caption{Molecular-limit test for one H$_2$O molecule in cubic cells of
   8--250~\AA.  Panel (a) shows the absolute periodic-minus-molecular energy
-  difference $|\Delta E|=|E_{\mathrm{3D}}-E_{\mathrm{0D}}|$ in kJ mol$^{-1}$.
+  difference $|\Delta E|=|E_{\mathrm{3D}}-E_{\mathrm{0D}}|$ in $E_\mathrm{h}$.
   Panel (b) shows the largest Cartesian force-component
   difference between the periodic implicit-Gamma and zero-dimensional
   routes.  Because a
