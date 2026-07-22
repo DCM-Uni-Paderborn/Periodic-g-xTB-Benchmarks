@@ -1,0 +1,615 @@
+ DBCSR| CPU Multiplication driver                                           BLAS (U)
+ DBCSR| Multrec recursion limit                                              512 (U)
+ DBCSR| Multiplication stack size                                           1000 (D)
+ DBCSR| Maximum elements for images                                    UNLIMITED (U)
+ DBCSR| Multiplicative factor virtual images                                   1 (U)
+ DBCSR| Use multiplication densification                                       T (D)
+ DBCSR| Multiplication size stacks                                             3 (U)
+ DBCSR| Use memory pool for CPU allocation                                     F (U)
+ DBCSR| Number of 3D layers                                               SINGLE (U)
+ DBCSR| Use MPI memory allocation                                              F (U)
+ DBCSR| Use RMA algorithm                                                      F (U)
+ DBCSR| Use Communication thread                                               T (U)
+ DBCSR| Communication thread load                                             87 (D)
+ DBCSR| MPI: My process id                                                     0
+ DBCSR| MPI: Number of processes                                               1
+ DBCSR| OMP: Current number of threads                                         1
+ DBCSR| OMP: Max number of threads                                             1
+ DBCSR| Split modifier for TAS multiplication algorithm                  1.0E+00 (U)
+
+
+  **** **** ******  **  PROGRAM STARTED AT               2026-07-22 16:49:55.888
+ ***** ** ***  *** **   PROGRAM STARTED ON                                 terok
+ **    ****   ******    PROGRAM STARTED BY                              kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                               4047157
+  **** **  *******  **  PROGRAM STARTED IN /home/kuehne88/work/nh3-bvk-20260722/
+                                           k290_result
+
+ CP2K| version string:                 CP2K version 2026.2 (Development Version)
+ CP2K| source code revision number:                                    8520b2e59
+ CP2K| cp2kflags: omp parallel scalapack spglib s_dftd3 mctc-lib tblite tblite_g
+ CP2K|            xtb
+ CP2K| is freely available from                            https://www.cp2k.org/
+ CP2K| Program compiled at                                   2026-07-18 23:48:15
+ CP2K| Program compiled on                                                 terok
+ CP2K| Program compiled for                                               x86_64
+ CP2K| Data directory path                            /usr/local/share/cp2k/data
+ CP2K| Input file name        /home/kuehne88/work/nh3-bvk-20260722/nh3_k290_k222
+
+ GLOBAL| Force Environment number                                              1
+ GLOBAL| Basis set file name                                           BASIS_SET
+ GLOBAL| Potential file name                                           POTENTIAL
+ GLOBAL| MM Potential file name                                     MM_POTENTIAL
+ GLOBAL| Coordinate file name                                      __STD_INPUT__
+ GLOBAL| Method name                                                        CP2K
+ GLOBAL| Project name                                     ammonia_GXTB_k222_k290
+ GLOBAL| Run type                                                         ENERGY
+ GLOBAL| FFT library                                                       FFTW3
+ GLOBAL| Diagonalization library                                       ScaLAPACK
+ GLOBAL| Cholesky decomposition library                                ScaLAPACK
+ GLOBAL| DGEMM library                                                      BLAS
+ GLOBAL| Direct generalized diagonalization requested                          F
+ GLOBAL| Orthonormality check for eigenvectors                          DISABLED
+ GLOBAL| Matrix multiplication library                                 ScaLAPACK
+ GLOBAL| All-to-all communication in single precision                          F
+ GLOBAL| FFTs using library dependent lengths                                  F
+ GLOBAL| Grid backend                                                       AUTO
+ GLOBAL| Global print level                                                  LOW
+ GLOBAL| MPI I/O enabled                                                       T
+ GLOBAL| Total number of message passing processes                             1
+ GLOBAL| Number of distributed systems (nodes)                                 1
+ GLOBAL| Number of threads for this process                                    1
+ GLOBAL| This output is from process                                           0
+ GLOBAL| OpenMP stack size per thread (OMP_STACKSIZE)                    default
+ GLOBAL| CPU model name                                       AMD EPYC Processor
+ GLOBAL| CPUID                                                              1002
+
+ MEMORY| system memory details [Kb]
+ MEMORY|                        rank 0           min           max       average
+ MEMORY| MemTotal            528104804     528104804     528104804     528104804
+ MEMORY| MemFree             469803756     469803756     469803756     469803756
+ MEMORY| Buffers                    20            20            20            20
+ MEMORY| Cached               51668044      51668044      51668044      51668044
+ MEMORY| Slab                  3398076       3398076       3398076       3398076
+ MEMORY| SReclaimable          1795960       1795960       1795960       1795960
+ MEMORY| MemLikelyFree       523267780     523267780     523267780     523267780
+
+
+ *** WARNING in environment.F:1098 :: FFT library FFTW3 is not available. ***
+ *** Trying FFT library FFTSG.                                            ***
+
+
+ GENERATE|  Preliminary Number of Bonds generated:                             0
+ GENERATE|  Achieved consistency in connectivity generation.
+
+
+                  #####   #####        #     #   #     #       #          
+                 #     # #     #      #    ##### #     #   # #####  ####  
+                 #     # #           #       #   ###   #       #   #    # 
+                 #     #  #####     #        #   #  #  #   #   #   ###### 
+                 #   # #       #   #         #   #   # #   #   #   #      
+                 #    #  #     #  #          #   #  #  # # #   #    #   # 
+                  #### #  #####  #           #   ###   ##  #   #     ###  
+
+                                     g-xTB   
+                                 Version 0.0                       
+                            Johann V. Pototschnig                  
+
+                tblite provider: SAVE
+                tblite source revision: 15915c9435644eb257178ca8f8bf7220c38b1a84
+                g-xTB support: enabled
+
+
+ TOTAL NUMBERS AND MAXIMUM NUMBERS
+
+  Total number of            - Atomic kinds:                                   2
+                             - Atoms:                                         16
+                             - Shell sets:                                    20
+                             - Shells:                                        20
+                             - Primitive Cartesian functions:                144
+                             - Cartesian basis functions:                     28
+                             - Spherical basis functions:                     28
+
+  Maximum angular momentum of the orbital basis functions:                     1
+
+
+ SCF PARAMETERS         Density guess:                                     MOPAC
+                        --------------------------------------------------------
+                        max_scf:                                             250
+                        max_scf_history:                                       0
+                        max_diis:                                              4
+                        --------------------------------------------------------
+                        eps_scf:                                        1.00E-09
+                        eps_scf_history:                                0.00E+00
+                        eps_diis:                                       1.00E-01
+                        eps_eigval:                                     1.00E-05
+                        --------------------------------------------------------
+                        level_shift [a.u.]:                             0.000000
+                        added MOs                                        12    0
+                        --------------------------------------------------------
+                        Mixing method:                           DIRECT_P_MIXING
+                        --------------------------------------------------------
+                        No outer SCF
+
+ *******************************************************************************
+ **                      Special K-Point Generation by K290                   **
+ *******************************************************************************
+ KPSYM| NUMBER OF ATOMS (STRUCT):    16
+ KPSYM|          K   TYPE              X(K)
+ KPSYM|          1     1   2.04279   2.04279   2.04279
+ KPSYM|          2     1   6.89041   2.80483   7.65245
+ KPSYM|          3     1   7.65245   6.89041   2.80483
+ KPSYM|          4     1   2.80483   7.65245   6.89041
+ KPSYM|          5     2   3.57657   2.58960   1.12368
+ KPSYM|          6     2   8.42419   2.25802   8.57156
+ KPSYM|          7     2   1.12368   3.57657   2.58960
+ KPSYM|          8     2   8.57156   8.42419   2.25802
+ KPSYM|          9     2   2.58960   1.12368   3.57657
+ KPSYM|         10     2   2.25802   8.57156   8.42419
+ KPSYM|         11     2   7.43722   3.72394   6.11867
+ KPSYM|         12     2   7.10564   5.97130   1.27105
+ KPSYM|         13     2   5.97130   1.27105   7.10564
+ KPSYM|         14     2   3.72394   6.11867   7.43722
+ KPSYM|         15     2   6.11867   7.43722   3.72394
+ KPSYM|         16     2   1.27105   7.10564   5.97130
+
+ KPSYM| THE CRYSTAL SYSTEM IS CUBIC WITH 12 OPERATIONS:
+    1            2[ 10 0]     2[ 01 0]     2[ 00 1]     3[-1-1-1]
+    3[ 11-1]     3[-11 1]     3[ 1-11]     3[ 11 1]     3[-11-1] 
+    3[-1-11]     3[ 1-1-1]
+ KPSYM| THE SPACE GROUP IS NON-SYMMORPHIC,
+    (SUM OF TRANSLATION VECTORS=       9.000000)
+ KPSYM| THE POINT GROUP OF THE CRYSTAL IS  23(t)       [INDEX=28]
+ KPSYM| NUMBER OF PRIMITIVE CELL:                               1
+
+ KPSYM| ALTHOUGH THE POINT GROUP OF THE CRYSTAL DOES NOT
+ KPSYM| CONTAIN INVERSION, THE SPECIAL POINT GENERATION ALGORITHM
+ KPSYM| WILL CONSIDER IT AS A SYMMETRY OPERATION
+
+ KPSYM| CRYSTALLOGRAPHIC DATA:
+    A1   9.69524   0.00000   0.00000          B1   0.10314  -0.00000   0.00000
+    A2   0.00000   9.69524   0.00000          B2  -0.00000   0.10314  -0.00000
+    A3   0.00000   0.00000   9.69524          B3   0.00000  -0.00000   0.10314
+
+ KPSYM| GROUP-THEORETICAL INFORMATION:
+ KPSYM|    POINT GROUP OF THE PRIMITIVE LATTICE: CUBIC        SYSTEM
+ KPSYM|    NONSYMMORPHIC GROUP
+ KPSYM|    NO INVERSION SYMMETRY
+ KPSYM|    TOTAL NUMBER OF ELEMENTS IN THE POINT GROUP: 12
+ KPSYM|    TO SUM UP: (5  1  0  0 12 28)
+
+ KPSYM|    LIST OF THE ROTATIONS:
+          1   2   3   4   5   6   7   8   9  10  11  12
+
+ KPSYM|    NONPRIMITIVE TRANSLATIONS:
+ ROT    V  IN THE BASIS A1, A2, A3      V  IN CARTESIAN COORDINATES
+   1   0.00000   0.00000   0.00000      0.00000   0.00000   0.00000
+   2   0.50000   0.50000  -0.00000      4.84762   4.84762  -0.00000
+   3  -0.00000   0.50000   0.50000     -0.00000   4.84762   4.84762
+   4   0.50000  -0.00000   0.50000      4.84762  -0.00000   4.84762
+   5   0.00000   0.00000   0.00000      0.00000   0.00000   0.00000
+   6   0.50000   0.50000  -0.00000      4.84762   4.84762  -0.00000
+   7  -0.00000   0.50000   0.50000     -0.00000   4.84762   4.84762
+   8   0.50000  -0.00000   0.50000      4.84762  -0.00000   4.84762
+   9   0.00000   0.00000   0.00000      0.00000   0.00000   0.00000
+  10   0.50000   0.50000  -0.00000      4.84762   4.84762  -0.00000
+  11  -0.00000   0.50000   0.50000     -0.00000   4.84762   4.84762
+  12   0.50000  -0.00000   0.50000      4.84762  -0.00000   4.84762
+
+ KPSYM|    ATOM TRANSFORMATION TABLE (MARADUDIN,VOSKO):
+    R  AT->AT    R  AT->AT    R  AT->AT    R  AT->AT    R  AT->AT
+    1 [Identity]
+    2   1   2    2   2   1    2   3   4    2   4   3    2   5   6
+    2   6   5    2   7  13    2   8  14    2   9  11    2  10  12
+    2  11   9    2  12  10    2  13   7    2  14   8    2  15  16
+    2  16  15
+    3   1   3    3   2   4    3   3   1    3   4   2    3   5  15
+    3   6  16    3   7   8    3   8   7    3   9  12    3  10  11
+    3  11  10    3  12   9    3  13  14    3  14  13    3  15   5
+    3  16   6
+    4   1   4    4   2   3    4   3   2    4   4   1    4   5  16
+    4   6  15    4   7  14    4   8  13    4   9  10    4  10   9
+    4  11  12    4  12  11    4  13   8    4  14   7    4  15   6
+    4  16   5
+    5   1   1    5   2   4    5   3   2    5   4   3    5   5   9
+    5   6  10    5   7   5    5   8   6    5   9   7    5  10   8
+    5  11  14    5  12  13    5  13  16    5  14  15    5  15  11
+    5  16  12
+    6   1   2    6   2   3    6   3   1    6   4   4    6   5  11
+    6   6  12    6   7   6    6   8   5    6   9  13    6  10  14
+    6  11   8    6  12   7    6  13  15    6  14  16    6  15   9
+    6  16  10
+    7   1   3    7   2   2    7   3   4    7   4   1    7   5  12
+    7   6  11    7   7  15    7   8  16    7   9   8    7  10   7
+    7  11  13    7  12  14    7  13   6    7  14   5    7  15  10
+    7  16   9
+    8   1   4    8   2   1    8   3   3    8   4   2    8   5  10
+    8   6   9    8   7  16    8   8  15    8   9  14    8  10  13
+    8  11   7    8  12   8    8  13   5    8  14   6    8  15  12
+    8  16  11
+    9   1   1    9   2   3    9   3   4    9   4   2    9   5   7
+    9   6   8    9   7   9    9   8  10    9   9   5    9  10   6
+    9  11  15    9  12  16    9  13  12    9  14  11    9  15  14
+    9  16  13
+   10   1   2   10   2   4   10   3   3   10   4   1   10   5  13
+   10   6  14   10   7  11   10   8  12   10   9   6   10  10   5
+   10  11  16   10  12  15   10  13  10   10  14   9   10  15   8
+   10  16   7
+   11   1   3   11   2   1   11   3   2   11   4   4   11   5   8
+   11   6   7   11   7  12   11   8  11   11   9  15   11  10  16
+   11  11   5   11  12   6   11  13   9   11  14  10   11  15  13
+   11  16  14
+   12   1   4   12   2   2   12   3   1   12   4   3   12   5  14
+   12   6  13   12   7  10   12   8   9   12   9  16   12  10  15
+   12  11   6   12  12   5   12  13  11   12  14  12   12  15   7
+   12  16   8
+
+ KPSYM|    LIST OF THE 3 X 3 ROTATION MATRICES:
+      1 ( 1:  1        )       1.000000      0.000000      0.000000
+                               0.000000      1.000000      0.000000
+                               0.000000      0.000000      1.000000
+      2 ( 2:  2[ 10 0] )       1.000000      0.000000      0.000000
+                               0.000000     -1.000000      0.000000
+                               0.000000      0.000000     -1.000000
+      3 ( 3:  2[ 01 0] )      -1.000000      0.000000      0.000000
+                               0.000000      1.000000      0.000000
+                               0.000000      0.000000     -1.000000
+      4 ( 4:  2[ 00 1] )      -1.000000      0.000000      0.000000
+                               0.000000     -1.000000      0.000000
+                               0.000000      0.000000      1.000000
+      5 ( 5:  3[-1-1-1])       0.000000      1.000000      0.000000
+                               0.000000      0.000000      1.000000
+                               1.000000      0.000000      0.000000
+      6 ( 6:  3[ 11-1] )       0.000000      1.000000      0.000000
+                               0.000000      0.000000     -1.000000
+                              -1.000000      0.000000      0.000000
+      7 ( 7:  3[-11 1] )       0.000000     -1.000000      0.000000
+                               0.000000      0.000000      1.000000
+                              -1.000000      0.000000      0.000000
+      8 ( 8:  3[ 1-11] )       0.000000     -1.000000      0.000000
+                               0.000000      0.000000     -1.000000
+                               1.000000      0.000000      0.000000
+      9 ( 9:  3[ 11 1] )       0.000000      0.000000      1.000000
+                               1.000000      0.000000      0.000000
+                               0.000000      1.000000      0.000000
+     10 (10:  3[-11-1] )       0.000000      0.000000      1.000000
+                              -1.000000      0.000000      0.000000
+                               0.000000     -1.000000      0.000000
+     11 (11:  3[-1-11] )       0.000000      0.000000     -1.000000
+                               1.000000      0.000000      0.000000
+                               0.000000     -1.000000      0.000000
+     12 (12:  3[ 1-1-1])       0.000000      0.000000     -1.000000
+                              -1.000000      0.000000      0.000000
+                               0.000000      1.000000      0.000000
+
+ KPSYM| THE POINT GROUP OF THE CRYSTAL IS THE FULL CUBIC GROUP
+ KPSYM| THE SPACE GROUP OF THE CRYSTAL IS SYMMORPHIC
+ KPSYM| THE POINT GROUP OF THE CRYSTAL IS  m3m(oh)     [INDEX=32]
+ KPSYM| NUMBER OF PRIMITIVE CELL:                               1
+ KPSYM| THE POINT GROUP OF THE CRYSTAL CONTAINS THE INVERSION
+
+
+ ******************* GENERATION OF SPECIAL POINTS *************************
+ KPSYM| MONKHORST-PACK PARAMETERS (GENERALIZED) IQ1,IQ2,IQ3:
+     2    2    2
+ KPSYM| CONSTANT VECTOR SHIFT (MACDONALD) OF THIS MESH:
+    0.00000   0.00000   0.00000
+ KPSYM| SYMMETRIZATION SWITCH:   1 (SYMMETRIZATION OF MONKHORST-PACK MESH)
+ KPSYM| The 1st Brillouin zone is confined by (at most)  3 planes
+ KPSYM| as defined by the +/- halves of the vectors:
+ KPSYM|     1.0000   -0.0000    0.0000
+ KPSYM|    -0.0000    1.0000   -0.0000
+ KPSYM|     0.0000   -0.0000    1.0000
+ KPSYM|
+ KPSYM| THE WAVEVECTOR MESH CONTAINS     8 POINTS
+ KPSYM| THE POINTS ARE:
+     1    0.2500    0.2500    0.2500     2    0.2500   -0.2500   -0.2500
+     3   -0.2500    0.2500   -0.2500     4   -0.2500   -0.2500    0.2500
+     5   -0.2500   -0.2500   -0.2500     6   -0.2500    0.2500    0.2500
+     7    0.2500   -0.2500    0.2500     8    0.2500    0.2500   -0.2500
+
+
+ KPSYM|    CROSS TABLE RELATING MESH POINTS WITH SPECIAL POINTS:
+    IK -> SK    IK -> SK    IK -> SK    IK -> SK    IK -> SK
+     1     1     2     1     3     1     4     1     5     1
+     6     1     7     1     8     1
+
+ KPSYM|     1 SPECIAL POINTS GENERATED
+        WAVEVECTOR K            WEIGHT    UNFOLDING ROTATIONS
+     1  0.2500  0.2500  0.2500       8     1 -1  2 -2  3 -3  4 -4
+                        TOTAL:       8
+ *******************************************************************************
+ **                              Finished K290                                **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P2_13
+       Point Group Symbol:                                                    23
+       Schoenflies Symbol:                                                   T^4
+       Number of Symmetry Operations:                                         12
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             4
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      3
+          3   0.00000   0.50000   0.50000                                      3
+          4   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              2           2           5
+          4   0.00000   0.50000   0.50000              4           3           1
+          5   0.50000   0.00000   0.00000              2           2           9
+          6   0.50000   0.00000   0.50000              4           3           9
+          7   0.50000   0.50000   0.00000              4           3           5
+          8   0.50000   0.50000   0.50000              8           4           1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5    6    7    8    9   10   11   12
+                       13   14   15   16
+          Rot=    2     2    1    4    3    6    5   13   14   11   12    9   10
+                        7    8   16   15
+          Rot=    3     3    4    1    2   15   16    8    7   12   11   10    9
+                       14   13    5    6
+          Rot=    4     4    3    2    1   16   15   14   13   10    9   12   11
+                        8    7    6    5
+          Rot=    5     1    4    2    3    9   10    5    6    7    8   14   13
+                       16   15   11   12
+          Rot=    6     2    3    1    4   11   12    6    5   13   14    8    7
+                       15   16    9   10
+          Rot=    7     3    2    4    1   12   11   15   16    8    7   13   14
+                        6    5   10    9
+          Rot=    8     4    1    3    2   10    9   16   15   14   13    7    8
+                        5    6   12   11
+          Rot=    9     1    3    4    2    7    8    9   10    5    6   15   16
+                       12   11   14   13
+          Rot=   10     2    4    3    1   13   14   11   12    6    5   16   15
+                       10    9    8    7
+          Rot=   11     3    1    2    4    8    7   12   11   15   16    5    6
+                        9   10   13   14
+          Rot=   12     4    2    1    3   14   13   10    9   16   15    6    5
+                       11   12    7    8
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.4     1.33366471      -226.2783123374 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.3     0.04372037      -226.3344981671 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.3     0.04181277      -226.3682074500 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666220      -226.4305194013 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.3     0.03081715      -226.4351900455 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964912      -226.4352866657 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425844      -226.4352968663 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009390      -226.4352968802 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.3     0.00003090      -226.4352968809 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.3     0.00000232      -226.4352968809 -4.75E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352968809 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     1.8208E-09      -226.4352968809  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     1.3852E-10      -226.4352968809  0.00E+00
+
+  *** SCF run converged in    13 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992966102
+  Repulsive potential energy:                                   2.08458890081788
+  Electrostatic energy:                                         0.53018144702016
+  Self-consistent dispersion energy:                           -0.02731076325071
+  Non-self consistent dispersion energy:                        0.00565789197773
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688087804
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880878042
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                DBCSR STATISTICS                             -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ COUNTER                                    TOTAL       BLAS       SMM       ACC
+ flops inhomo. stacks                           0       0.0%      0.0%      0.0%
+ flops total                         0.000000E+00       0.0%      0.0%      0.0%
+ flops max/rank                      0.000000E+00       0.0%      0.0%      0.0%
+ matmuls inhomo. stacks                         0       0.0%      0.0%      0.0%
+ matmuls total                                  0       0.0%      0.0%      0.0%
+ number of processed stacks                     0       0.0%      0.0%      0.0%
+ average stack size                                     0.0       0.0       0.0
+ marketing flops                     0.000000E+00
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                      DBCSR MESSAGE PASSING PERFORMANCE                      -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Bcast                1                     12.
+ MP_Allreduce           19                     21.
+ MP_Alltoall          4400                   6394.
+ -------------------------------------------------------------------------------
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                          OFFLOAD MEMPOOL STATISTICS                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ Memory consumption                Number of allocations  Used [MiB]  Size [MiB]
+ Host                                                  1           0           0
+ -------------------------------------------------------------------------------
+
+ MEMORY| Estimated peak process memory [MiB]                                 349
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                         MESSAGE PASSING PERFORMANCE                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Group                1
+ MP_Bcast             4429                      7.
+ MP_Allreduce       329124                    184.
+ MP_Sync                 1
+ MP_Wait              3680
+ MP_ISend             5152                    902.
+ MP_IRecv             5152                    902.
+ -------------------------------------------------------------------------------
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                           R E F E R E N C E S                               -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ 
+ CP2K version 2026.2 (Development Version), the CP2K developers group (2026).
+ CP2K is freely available from https://www.cp2k.org/ .
+ 
+ M. Iannuzzi, J. Wilhelm, F. Stein, A. Bussy, H. Elgabarty, D. Golze, A. Hehn, 
+ M. Graml, S. Marek, B. Sertcan Gökmen, C. Schran, H. Forbert, R. Z. 
+ Khaliullin, A. Kozhevnikov, M. Taillefumier, R. Meli, V. V. Rybkin, M. Brehm, 
+ R. Schade, O. Schütt, J. V. Pototschnig, H. Mirhosseini, A. Knüpfer, D. Marx, 
+ M. Krack, J. Hutter, T. D. Kühne.
+ J. Phys. Chem. B 130, 1237-1310 (2026).
+ The CP2K Program Package Made Simple.
+ https://doi.org/10.1021/acs.jpcb.5c05851
+
+ A. Katbashev, M. Stahn, T. Rose, V. Alizadeh, M. Friede, C. Plett, P. 
+ Steinbach, S. Ehlert.
+ J. Phys. Chem. A 129, 2667-2682 (2025).
+ Overview on Building Blocks and Applications of Efficient and Robust Extended 
+ Tight Binding.
+ https://doi.org/10.1021/acs.jpca.4c08263
+
+ T. D. Kühne, M. Iannuzzi, M. Del Ben, V. V. Rybkin, P. Seewald, F. Stein, T. 
+ Laino, R. Z. Khaliullin, O. Schütt, F. Schiffmann, D. Golze, J. Wilhelm, S. 
+ Chulkov, M. H. Bani-Hashemian, V. Weber, U. Borstnik, M. Taillefumier, A. S. 
+ Jakobovits, A. Lazzaro, H. Pabst, T. Müller, R. Schade, M. Guidon, S. 
+ Andermatt, N. Holmberg, G. K. Schenter, A. Hehn, A. Bussy, F. Belleflamme, G. 
+ Tabacchi, A. Glöß, M. Lass, I. Bethune, C. J. Mundy, C. Plessl, M. Watkins, 
+ J. VandeVondele, M. Krack, J. Hutter.
+ J. Chem. Phys. 152, 194103 (2020).
+ CP2K: An electronic structure and molecular dynamics software package - 
+ Quickstep: Efficient and accurate electronic structure calculations.
+ https://doi.org/10.1063/5.0007045
+
+ P. Pracht, E. Caldeweyher, S. Ehlert, S. Grimme.
+ ChemRxiv, (2019).
+ A Robust Non-Self-Consistent Tight-Binding Quantum Chemistry Method for large 
+ Molecules.
+ https://doi.org/10.26434/chemrxiv.8326202.v1
+
+ A. Togo, I. Tanaka.
+ arXiv, 1808.01590 (2018).
+ Spglib : a software library for crystal symmetry search.
+
+ S. Grimme, C. Bannwarth, P. Shushkov.
+ J. Chem. Theory Comput. 13, 1989 (2017).
+ A Robust and Accurate Tight-Binding Quantum Chemical Method for Structures, 
+ Vibrational Frequencies, and Noncovalent Interactions of Large Molecular 
+ Systems Parametrized for All spd-Block Elements (Z = 1-86).
+ https://doi.org/10.1021/acs.jctc.7b00118
+
+ O. Schuett, P. Messmer, J. Hutter, J. VandeVondele.
+ Electronic Structure Calculations on Graphics Processing Units, 173-190 (2016).
+ GPU-Accelerated Sparse Matrix-Matrix Multiplication for Linear Scaling Density 
+ Functional Theory.
+ https://doi.org/10.1002/9781118670712.ch8
+
+ U. Borstnik, J. VandeVondele, V. Weber, J. Hutter.
+ Parallel Comput. 40, 47-58 (2014).
+ Sparse matrix multiplication: The distributed block-compressed sparse row 
+ library.
+ https://doi.org/10.1016/j.parco.2014.03.012
+
+ M. Frigo, S. G. Johnson.
+ Proc. IEEE 93, 216-231 (2005).
+ The design and implementation of FFTW3.
+ https://doi.org/10.1109/JPROC.2004.840301
+
+ C.-L. Fu, K.-M. Ho.
+ Phys. Rev. B 28, 5480-5486 (1983).
+ First-principles calculation of the equilibrium ground-state properties of 
+ transition metals: Applications to Nb and Mo.
+ https://doi.org/10.1103/PhysRevB.28.5480
+
+ T. G. Worlton, J. L. Warren.
+ Comput. Phys. Commun. 3, 88-117 (1972).
+ Group-theoretical analysis of lattice vibrations.
+ https://doi.org/10.1016/0010-4655(72)90058-6
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                T I M I N G                                  -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ SUBROUTINE                       CALLS  ASD         SELF TIME        TOTAL TIME
+                                MAXIMUM       AVERAGE  MAXIMUM  AVERAGE  MAXIMUM
+ CP2K                                 1  1.0    0.018    0.018   75.694   75.694
+ qs_energies                          1  2.0    0.003    0.003   75.624   75.624
+ qs_energies_init_hamiltonians        1  3.0    0.004    0.004   43.083   43.083
+ cp_dbcsr_alloc_block_from_nbl    25188  5.0   41.019   41.019   41.304   41.304
+ build_tblite_matrices                1  4.0    1.047    1.047   41.213   41.213
+ scf_env_do_scf                       1  3.0    0.000    0.000   30.427   30.427
+ scf_env_do_scf_inner_loop           13  4.0    3.183    3.183   30.427   30.427
+ qs_ks_update_qs_env                 13  5.0    0.000    0.000   14.632   14.632
+ rebuild_ks_matrix                   13  6.0    0.000    0.000   14.382   14.382
+ build_tblite_ks_matrix              13  7.0   10.747   10.747   14.382   14.382
+ rskp_transform                     468  6.3   14.366   14.366   14.366   14.366
+ qs_scf_new_mos_kp                   13  5.0    0.000    0.000    8.455    8.455
+ do_general_diag_kp                  13  6.0    0.122    0.122    8.455    8.455
+ kpoint_density_transform            13  7.0    0.005    0.005    3.040    3.040
+ transform_dmat                     104  8.0    2.893    2.893    2.893    2.893
+ qs_env_update_s_mstruct              1  4.0    0.000    0.000    1.825    1.825
+ qs_env_rebuild_rho                   1  5.0    0.000    0.000    1.825    1.825
+ qs_rho_rebuild                       1  6.0    0.002    0.002    1.825    1.825
+ -------------------------------------------------------------------------------
+
+ The number of warnings for this run is : 1
+ 
+ -------------------------------------------------------------------------------
+  **** **** ******  **  PROGRAM ENDED AT                 2026-07-22 16:51:13.109
+ ***** ** ***  *** **   PROGRAM RAN ON                                     terok
+ **    ****   ******    PROGRAM RAN BY                                  kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                               4047157
+  **** **  *******  **  PROGRAM STOPPED IN /home/kuehne88/work/nh3-bvk-20260722/
+                                           k290_result

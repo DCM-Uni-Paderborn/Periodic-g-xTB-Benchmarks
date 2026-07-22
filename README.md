@@ -107,6 +107,16 @@ traceless atomic-quadrupole convention; the former force plateau is absent.
 The raw data and build/source evidence are archived in
 [`Molecular-limit/traceless_qq_fix_20260721/`](Molecular-limit/traceless_qq_fix_20260721/).
 
+### Symmetry and derivative extensions
+
+The nonsymmorphic ammonia-crystal comparison, including the MacDonald
+`2x2x2` full, K290, SPGLIB, and commensurate Gamma-supercell calculations, is
+archived in
+[`validation/nh3_k222_gamma_supercell_20260722/`](validation/nh3_k222_gamma_supercell_20260722/).
+Independent central-finite-difference checks for the ammonia `8 -> 4` and
+methane `216 -> 10` SPGLIB reductions are archived in
+[`validation/gxtb_expanded_derivatives_20260722/`](validation/gxtb_expanded_derivatives_20260722/).
+
 ## Data policy
 
 Only compact GFN1-xTB/GFN2-xTB values required for explicit manuscript

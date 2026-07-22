@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "system": "P2_13 ammonia crystal",
+  "mesh": "MacDonald 2x2x2",
+  "full_kpoints": 8,
+  "retained_kpoints_k290": 4,
+  "retained_kpoints_spglib": 4,
+  "symmetry_operations": 12,
+  "energies_hartree": {
+    "native_full": -226.435296880878070,
+    "native_k290": -226.435296880878042,
+    "native_spglib": -226.435296880878042,
+    "gamma_supercell_total": -1811.482375046768539,
+    "gamma_supercell_per_primitive_cell": -226.435296880846067
+  },
+  "residuals_hartree": {
+    "k290_minus_full": 2.8e-14,
+    "spglib_minus_full": 2.8e-14,
+    "gamma_supercell_per_primitive_minus_full": 3.2003e-11
+  }
+}
