@@ -1,0 +1,5 @@
+pid=3819286 rank=0 expected_cpu=142
+Name:	bash
+State:	R (running)
+Cpus_allowed:	0000,00000000,00000000,00004000,00000000,00000000,00000000,00000000
+Cpus_allowed_list:	142

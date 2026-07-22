@@ -6,6 +6,7 @@ The explicit expanded-full-mesh implementation remains the numerical oracle.
 
 | Archive | Validated scope | Performance claim |
 |---|---|---|
+| `compact_partial_mixed_radix_20260722/` | Direct two-rank composition of range-local nonlinear image exchange, compact mixed-radix forward/reverse transforms, streamed post-mixer foldback, ACP, and analytical reverse; macOS/Linux main pair plus 1D/2D/UKS/shifted-full-grid/SPGLIB breadth matrix | Correctness and targeted complex-element counters only; no wall-time or whole-process RSS claim |
 | `cache_signature_order_20260722/` | Exact persistent BvK cache identity: field-by-field model-signature rejection plus changed representative-order rejection in macOS Debug/Release and Linux Release suites | Correctness qualification only; no speedup or whole-process RSS claim |
 | `acp_mesh_contraction_20260722/` | Bounded ACP Bloch batches and sparse projector-image reverse contraction; dense/streamed/qualify energy, force, stress, response-oracle, open-shell-neutrality, and fail-closed selector tests on macOS and Linux | Removes the complete ACP Bloch tensor and quadratic projector-difference set from production; scoped allocation claim only, with no total-RSS or speedup claim |
 | `provider_streamed_reverse/` | Bounded save_tblite reverse transaction; overlap adjoint, force, stress, state-machine and exact workspace tests | Provider AO-matrix storage is bounded by the declared image-batch size; the unit suite is not a speedup benchmark |

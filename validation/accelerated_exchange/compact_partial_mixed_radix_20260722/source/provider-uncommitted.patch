@@ -1,0 +1,368 @@
+diff --git a/src/tblite/cp2k_compat.f90 b/src/tblite/cp2k_compat.f90
+index e7b9e84..b1078e4 100644
+--- a/src/tblite/cp2k_compat.f90
++++ b/src/tblite/cp2k_compat.f90
+@@ -1696,6 +1696,12 @@ subroutine initialize_partial_state_signature(stream, mol)
+    stream%partial_state_signature(12) = exchange_hash_mix( &
+       & stream%partial_state_signature(12), &
+       & exchange_hash_real1(stream%twist))
++   stream%partial_state_signature(12) = exchange_hash_mix( &
++      & stream%partial_state_signature(12), &
++      & int(stream%transform_backend, int64))
++   stream%partial_state_signature(12) = exchange_hash_mix( &
++      & stream%partial_state_signature(12), &
++      & int(stream%transform_pair_batch_size, int64))
+ end subroutine initialize_partial_state_signature
+ 
+ 
+@@ -2651,7 +2657,8 @@ end subroutine cp2k_exchange_stream_begin
+ !> payload protection and is therefore forbidden by the public host contract.
+ subroutine cp2k_exchange_partial_begin(stream, calc, mol, ecache, wfn, nmesh, &
+    & kfrac, weights, batch_size, transaction_id, error, image_first, &
+-   & image_count, reverse_only, local_image_first, local_image_count)
++   & image_count, reverse_only, local_image_first, local_image_count, &
++   & transform_backend, transform_pair_batch_size)
+    type(cp2k_exchange_stream_type), intent(inout) :: stream
+    type(xtb_calculator), intent(inout) :: calc
+    type(structure_type), intent(in) :: mol
+@@ -2664,6 +2671,8 @@ subroutine cp2k_exchange_partial_begin(stream, calc, mol, ecache, wfn, nmesh, &
+    integer, intent(in), optional :: image_first, image_count
+    logical, intent(in), optional :: reverse_only
+    integer, intent(in), optional :: local_image_first, local_image_count
++   integer, intent(in), optional :: transform_backend, &
++      & transform_pair_batch_size
+ 
+    if (all(transaction_id == 0_int64)) then
+       call fatal_error(error, &
+@@ -2676,7 +2685,9 @@ subroutine cp2k_exchange_partial_begin(stream, calc, mol, ecache, wfn, nmesh, &
+       & batch_size=batch_size, image_first=image_first, &
+       & image_count=image_count, reverse_only=reverse_only, &
+       & local_image_first=local_image_first, &
+-      & local_image_count=local_image_count)
++      & local_image_count=local_image_count, &
++      & transform_backend=transform_backend, &
++      & transform_pair_batch_size=transform_pair_batch_size)
+    if (allocated(error)) return
+    stream%partial_active = .true.
+    stream%partial_generation = 1
+@@ -2715,6 +2726,13 @@ subroutine cp2k_exchange_partial_push(stream, ik, density, overlap, error)
+       call fatal_error(error, "g-xTB exchange partial push followed export")
+       return
+    end if
++   if (stream%transform_backend /= bvk_transform_dense &
++      & .and. stream%transform_pair_first > 1 &
++      & .and. .not.stream%partial_forward_owned(ik)) then
++      call fatal_error(error, &
++         & "compact partial forward k-point ownership changed between tiles")
++      return
++   end if
+    call cp2k_exchange_stream_push(stream, ik, density, overlap, error)
+    if (.not.allocated(error)) stream%partial_forward_owned(ik) = .true.
+ end subroutine cp2k_exchange_partial_push
+@@ -3102,6 +3120,11 @@ subroutine cp2k_exchange_partial_import_forward(stream, descriptor, &
+       & reshape(buffer%values(first:last), &
+       & shape(stream%vmat_r(:, :, 1:stream%batch_count, :)))
+    stream%seen = .true.
++   if (stream%transform_backend /= bvk_transform_dense) then
++      stream%transform_pair_first = 0
++      stream%transform_pair_count = 0
++      stream%transform_k = (0.0_wp, 0.0_wp)
++   end if
+    stream%partial_forward_imported = .true.
+ end subroutine cp2k_exchange_partial_import_forward
+ 
+@@ -3206,6 +3229,11 @@ subroutine cp2k_exchange_partial_import_forward_range(stream, descriptor, &
+          & shape(stream%vmat_r(:, :, 1:local_count, :)))
+    end if
+    stream%seen = .true.
++   if (stream%transform_backend /= bvk_transform_dense) then
++      stream%transform_pair_first = 0
++      stream%transform_pair_count = 0
++      stream%transform_k = (0.0_wp, 0.0_wp)
++   end if
+    stream%partial_forward_imported = .true.
+ end subroutine cp2k_exchange_partial_import_forward_range
+ 
+@@ -3239,7 +3267,15 @@ subroutine cp2k_exchange_partial_reverse_push(stream, ik, density, overlap, &
+          & "g-xTB exchange reverse partial push followed export")
+       return
+    end if
++   if (stream%transform_backend /= bvk_transform_dense &
++      & .and. stream%transform_pair_first > 1 &
++      & .and. .not.stream%partial_forward_owned(ik)) then
++      call fatal_error(error, &
++         & "compact partial reverse k-point ownership changed between tiles")
++      return
++   end if
+    call cp2k_exchange_stream_reverse_push(stream, ik, density, overlap, error)
++   if (.not.allocated(error)) stream%partial_forward_owned(ik) = .true.
+ end subroutine cp2k_exchange_partial_reverse_push
+ 
+ 
+@@ -3680,6 +3716,11 @@ subroutine cp2k_exchange_partial_import_reverse(stream, descriptor, &
+    stream%reverse_bdiagSPS = reshape(buffer%values(first:last), &
+       & shape(stream%reverse_bdiagSPS))
+    stream%seen = .true.
++   if (stream%transform_backend /= bvk_transform_dense) then
++      stream%transform_pair_first = 0
++      stream%transform_pair_count = 0
++      stream%transform_k = (0.0_wp, 0.0_wp)
++   end if
+    stream%partial_reverse_imported = .true.
+ end subroutine cp2k_exchange_partial_import_reverse
+ 
+@@ -3807,6 +3848,11 @@ subroutine cp2k_exchange_partial_import_reverse_range(stream, descriptor, &
+    stream%reverse_bdiagSPS = reshape(buffer%values(first:last), &
+       & shape(stream%reverse_bdiagSPS))
+    stream%seen = .true.
++   if (stream%transform_backend /= bvk_transform_dense) then
++      stream%transform_pair_first = 0
++      stream%transform_pair_count = 0
++      stream%transform_k = (0.0_wp, 0.0_wp)
++   end if
+    stream%partial_reverse_imported = .true.
+ end subroutine cp2k_exchange_partial_import_reverse_range
+ 
+@@ -4094,6 +4140,12 @@ subroutine cp2k_exchange_partial_contributor_advance(stream, done, error)
+    stream%batch_count = min(stream%batch_size, &
+       & stream%batch_last-stream%batch_first+1)
+    stream%seen = .false.
++   if (stream%transform_backend /= bvk_transform_dense) then
++      stream%transform_pair_first = 1
++      stream%transform_pair_count = min( &
++         & stream%transform_pair_batch_size, stream%nao*stream%nao)
++      stream%transform_k = (0.0_wp, 0.0_wp)
++   end if
+    stream%partial_generation = stream%partial_generation+1
+    stream%amat_r = (0.0_wp, 0.0_wp)
+    stream%cmat_r = (0.0_wp, 0.0_wp)
+@@ -4664,7 +4716,14 @@ subroutine cp2k_exchange_stream_transform_advance(stream, done, error)
+          & "g-xTB transform advance followed exchange application")
+       return
+    end if
+-   if (.not.all(stream%seen)) then
++   if (stream%partial_active .and. .not.stream%partial_forward_imported &
++      & .and. .not.stream%partial_compact_image_storage) then
++      if (any(stream%seen .neqv. stream%partial_forward_owned)) then
++         call fatal_error(error, &
++            & "compact partial forward transform tile changed k ownership")
++         return
++      end if
++   else if (.not.all(stream%seen)) then
+       call fatal_error(error, "g-xTB transform tile has missing k blocks")
+       return
+    end if
+@@ -5216,7 +5275,14 @@ subroutine cp2k_exchange_stream_reverse_transform_advance(stream, done, error)
+          & "g-xTB reverse transform advance followed kernel application")
+       return
+    end if
+-   if (.not.all(stream%seen)) then
++   if (stream%partial_active .and. .not.stream%partial_reverse_imported &
++      & .and. .not.stream%partial_compact_image_storage) then
++      if (any(stream%seen .neqv. stream%partial_forward_owned)) then
++         call fatal_error(error, &
++            & "compact partial reverse transform tile changed k ownership")
++         return
++      end if
++   else if (.not.all(stream%seen)) then
+       call fatal_error(error, "g-xTB reverse transform tile has missing k blocks")
+       return
+    end if
+diff --git a/test/unit/test_exchange.f90 b/test/unit/test_exchange.f90
+index ce6c386..247b221 100644
+--- a/test/unit/test_exchange.f90
++++ b/test/unit/test_exchange.f90
+@@ -11372,7 +11372,7 @@ end subroutine check_partial_exchange_distributed_images
+ !> complete additive source, while each importer receives only the
+ !> intersection of the current batch with its fixed disjoint image range.
+ subroutine check_partial_exchange_range_local(calc, mol, cache, wfn, nmesh, &
+-   & kfrac, weights, density, overlap, error, maxerr)
++   & kfrac, weights, density, overlap, error, maxerr, transform_backend)
+    type(xtb_calculator), intent(inout) :: calc
+    type(structure_type), intent(in) :: mol
+    type(container_cache), intent(inout) :: cache
+@@ -11382,6 +11382,7 @@ subroutine check_partial_exchange_range_local(calc, mol, cache, wfn, nmesh, &
+    complex(wp), intent(in) :: density(:, :, :, :), overlap(:, :, :)
+    type(error_type), allocatable, intent(out) :: error
+    real(wp), intent(out) :: maxerr
++   integer, intent(in), optional :: transform_backend
+ 
+    integer, parameter :: npart = 4
+    type(cp2k_exchange_partial_descriptor_type) :: descriptor(npart)
+@@ -11393,13 +11394,15 @@ subroutine check_partial_exchange_range_local(calc, mol, cache, wfn, nmesh, &
+       & wrong_stream
+    integer :: base_count, batch_count, batch_first, batch_index, batch_size, &
+       & extra_count, first_image, ik, image_count, ipart, jpart, last_image, &
+-      & local_count, nk, range_first, range_last
++      & local_count, nk, range_first, range_last, selected_transform_backend, &
++      & transform_pair_batch_size
+    integer(int64) :: compact_peak, forward_range_scalars, &
+       & forward_replicated_scalars, replicated_peak, reverse_range_scalars, &
+       & reverse_replicated_scalars, transaction_id(2), wrong_transaction(2)
+    integer, allocatable :: owner_bad(:), owner_count(:), owner_matrix(:, :), &
+       & owner_sum(:), range_count(:), range_start(:)
+-   logical :: contributor_done, done, done_part, first_batch
++   logical :: contributor_done, done, done_part, first_batch, transform_done, &
++      & transform_done_part
+    real(wp) :: energy_local, energy_partial, energy_ref
+    real(wp), allocatable :: gradient_local(:, :), gradient_partial(:, :), &
+       & gradient_ref(:, :), sigma_local(:, :), sigma_partial(:, :), &
+@@ -11413,6 +11416,10 @@ subroutine check_partial_exchange_range_local(calc, mol, cache, wfn, nmesh, &
+ 
+    nk = size(weights)
+    batch_size = min(nk, max(2, (nk+1)/2))
++   selected_transform_backend = cp2k_exchange_transform_dense
++   if (present(transform_backend)) &
++      & selected_transform_backend = transform_backend
++   transform_pair_batch_size = min(batch_size, max(1, size(density, 1)**2-1))
+    allocate(fock_ref(size(density, 1), size(density, 2), &
+       & size(density, 3), nk), vsh_ref(size(wfn%qsh, 1)), &
+       & overlap_adjoint_ref(size(overlap, 1), size(overlap, 2), nk), &
+@@ -11453,12 +11460,16 @@ subroutine check_partial_exchange_range_local(calc, mol, cache, wfn, nmesh, &
+    call next_partial_test_transaction(transaction_id)
+    do ipart = 1, npart
+       call cp2k_exchange_partial_begin(contributor(ipart), calc, mol, cache, &
+-         & wfn, nmesh, kfrac, weights, batch_size, transaction_id, error)
++         & wfn, nmesh, kfrac, weights, batch_size, transaction_id, error, &
++         & transform_backend=selected_transform_backend, &
++         & transform_pair_batch_size=transform_pair_batch_size)
+       if (allocated(error)) return
+       call cp2k_exchange_partial_begin(importer(ipart), calc, mol, cache, &
+          & wfn, nmesh, kfrac, weights, batch_size, transaction_id, error, &
+          & local_image_first=range_start(ipart), &
+-         & local_image_count=range_count(ipart))
++         & local_image_count=range_count(ipart), &
++         & transform_backend=selected_transform_backend, &
++         & transform_pair_batch_size=transform_pair_batch_size)
+       if (allocated(error)) return
+    end do
+    replicated_peak = cp2k_exchange_stream_peak_complex_elements( &
+@@ -11484,11 +11495,30 @@ subroutine check_partial_exchange_range_local(calc, mol, cache, wfn, nmesh, &
+       batch_first = 1+(batch_index-1)*batch_size
+       batch_count = min(batch_size, nk-batch_first+1)
+       owner_matrix = 0
+-      do ik = 1, nk
+-         ipart = 1+modulo(ik-1, npart)
+-         call cp2k_exchange_partial_push(contributor(ipart), ik, &
+-            & density(:, :, :, ik), overlap(:, :, ik), error)
+-         if (allocated(error)) return
++      transform_done = .false.
++      do while (.not.transform_done)
++         do ik = 1, nk
++            ipart = 1+modulo(ik-1, npart)
++            call cp2k_exchange_partial_push(contributor(ipart), ik, &
++               & density(:, :, :, ik), overlap(:, :, ik), error)
++            if (allocated(error)) return
++         end do
++         if (selected_transform_backend == cp2k_exchange_transform_dense) then
++            transform_done = .true.
++         else
++            do ipart = 1, npart
++               call cp2k_exchange_stream_transform_advance( &
++                  & contributor(ipart), transform_done_part, error)
++               if (allocated(error)) return
++               if (ipart == 1) then
++                  transform_done = transform_done_part
++               else if (transform_done_part .neqv. transform_done) then
++                  call test_failed(error, &
++                     & "Compact forward contributor transforms diverged")
++                  return
++               end if
++            end do
++         end if
+       end do
+       if (allocated(forward_full_raw)) deallocate(forward_full_raw)
+       do ipart = 1, npart
+@@ -11598,7 +11628,9 @@ subroutine check_partial_exchange_range_local(calc, mol, cache, wfn, nmesh, &
+          call cp2k_exchange_partial_begin(wrong_stream, calc, mol, cache, &
+             & wfn, nmesh, kfrac, weights, batch_size, wrong_transaction, &
+             & error, local_image_first=range_start(1), &
+-            & local_image_count=range_count(1))
++            & local_image_count=range_count(1), &
++            & transform_backend=selected_transform_backend, &
++            & transform_pair_batch_size=transform_pair_batch_size)
+          if (allocated(error)) return
+          call cp2k_exchange_partial_import_forward_range(wrong_stream, &
+             & descriptor(1), owner_sum, forward_range_buffer(1), calc, mol, &
+@@ -11704,12 +11736,16 @@ subroutine check_partial_exchange_range_local(calc, mol, cache, wfn, nmesh, &
+    do ipart = 1, npart
+       call cp2k_exchange_partial_begin(contributor(ipart), calc, mol, cache, &
+          & wfn, nmesh, kfrac, weights, batch_size, transaction_id, error, &
+-         & reverse_only=.true.)
++         & reverse_only=.true., &
++         & transform_backend=selected_transform_backend, &
++         & transform_pair_batch_size=transform_pair_batch_size)
+       if (allocated(error)) return
+       call cp2k_exchange_partial_begin(importer(ipart), calc, mol, cache, &
+          & wfn, nmesh, kfrac, weights, batch_size, transaction_id, error, &
+          & reverse_only=.true., local_image_first=range_start(ipart), &
+-         & local_image_count=range_count(ipart))
++         & local_image_count=range_count(ipart), &
++         & transform_backend=selected_transform_backend, &
++         & transform_pair_batch_size=transform_pair_batch_size)
+       if (allocated(error)) return
+    end do
+    done = .false.
+@@ -11734,11 +11770,30 @@ subroutine check_partial_exchange_range_local(calc, mol, cache, wfn, nmesh, &
+          end if
+       end do
+       owner_matrix = 0
+-      do ik = 1, nk
+-         ipart = 1+modulo(ik-1, npart)
+-         call cp2k_exchange_partial_reverse_push(contributor(ipart), ik, &
+-            & density(:, :, :, ik), overlap(:, :, ik), error)
+-         if (allocated(error)) return
++      transform_done = .false.
++      do while (.not.transform_done)
++         do ik = 1, nk
++            ipart = 1+modulo(ik-1, npart)
++            call cp2k_exchange_partial_reverse_push(contributor(ipart), ik, &
++               & density(:, :, :, ik), overlap(:, :, ik), error)
++            if (allocated(error)) return
++         end do
++         if (selected_transform_backend == cp2k_exchange_transform_dense) then
++            transform_done = .true.
++         else
++            do ipart = 1, npart
++               call cp2k_exchange_stream_reverse_transform_advance( &
++                  & contributor(ipart), transform_done_part, error)
++               if (allocated(error)) return
++               if (ipart == 1) then
++                  transform_done = transform_done_part
++               else if (transform_done_part .neqv. transform_done) then
++                  call test_failed(error, &
++                     & "Compact reverse contributor transforms diverged")
++                  return
++               end if
++            end do
++         end if
+       end do
+       if (allocated(reverse_full_raw)) deallocate(reverse_full_raw)
+       do ipart = 1, npart
+@@ -14899,6 +14954,13 @@ subroutine test_bvk_exchange_kernel(error)
+    if (allocated(error)) return
+    stream_reverse_err = max(stream_reverse_err, partial_err)
+    print *, "RANGE_LOCAL_IMAGE_IMPORT_9X9X1_UKS_MAX_RESID", partial_err
++   call check_partial_exchange_range_local(calc_cp2k, mol, cache_cp2k, &
++      & wfn_large, nmesh_large, kfrac_large, weights_large, density_large, &
++      & overlap_large, error, partial_err, &
++      & cp2k_exchange_transform_mixed_radix_fft)
++   if (allocated(error)) return
++   stream_reverse_err = max(stream_reverse_err, partial_err)
++   print *, "RANGE_LOCAL_MIXED_RADIX_9X9X1_UKS_MAX_RESID", partial_err
+    call check_partial_exchange_distributed_images(calc_cp2k, mol, cache_cp2k, &
+       & wfn, nmesh_cube, kfrac_cube, weights_cube, density_cube, overlap_cube, &
+       & error, partial_err)
+@@ -14911,6 +14973,12 @@ subroutine test_bvk_exchange_kernel(error)
+    if (allocated(error)) return
+    stream_reverse_err = max(stream_reverse_err, partial_err)
+    print *, "RANGE_LOCAL_IMAGE_IMPORT_2X2X2_MAX_RESID", partial_err
++   call check_partial_exchange_range_local(calc_cp2k, mol, cache_cp2k, wfn, &
++      & nmesh_cube, kfrac_cube, weights_cube, density_cube, overlap_cube, &
++      & error, partial_err, cp2k_exchange_transform_mixed_radix_fft)
++   if (allocated(error)) return
++   stream_reverse_err = max(stream_reverse_err, partial_err)
++   print *, "RANGE_LOCAL_MIXED_RADIX_2X2X2_MAX_RESID", partial_err
+    call check_partial_exchange_distributed_images(calc_cp2k, mol, cache_cp2k, &
+       & wfn, nmesh, kfrac, weights, density_mesh, overlap_mesh, error, &
+       & partial_err)

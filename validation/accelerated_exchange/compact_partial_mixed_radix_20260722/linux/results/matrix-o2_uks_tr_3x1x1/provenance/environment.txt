@@ -1,0 +1,27 @@
+BLIS_NUM_THREADS=1
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/12309/bus
+HOME=/home/kuehne88
+LANG=en_US.UTF-8
+LANGUAGE=en_US:en
+LC_ALL=C.UTF-8
+LC_CTYPE=C.UTF-8
+LD_LIBRARY_PATH=/home/kuehne88/work/gxtb-compact-partial-combination-20260722/provider-install/lib:/home/kuehne88/work/gxtb-symmetry-fused-combination-20260721/save_tblite-install/lib:/home/kuehne88/work/gxtb-runtime-part-II-20260717/env/lib:
+LOGNAME=kuehne88
+MKL_NUM_THREADS=1
+MOTD_SHOWN=pam
+NUMEXPR_NUM_THREADS=1
+OMP_NUM_THREADS=1
+OPENBLAS_NUM_THREADS=1
+PATH=/home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin:/usr/bin:/bin
+PWD=/home/kuehne88
+SHELL=/bin/bash
+SHLVL=1
+SSH_CLIENT=192.168.13.40 61792 22
+SSH_CONNECTION=192.168.13.40 61792 149.220.144.138 22
+USER=kuehne88
+VECLIB_MAXIMUM_THREADS=1
+XDG_RUNTIME_DIR=/run/user/12309
+XDG_SESSION_CLASS=user
+XDG_SESSION_ID=24940
+XDG_SESSION_TYPE=tty
+_=/usr/bin/env

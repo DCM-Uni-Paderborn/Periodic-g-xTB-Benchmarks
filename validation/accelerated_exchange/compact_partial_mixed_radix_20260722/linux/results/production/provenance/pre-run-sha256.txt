@@ -1,0 +1,6 @@
+df6466552a495e94e710174dbf468ec1765f1a4690ef955f9129ef983f35790b  /home/kuehne88/work/gxtb-compact-partial-combination-20260722/cp2k-build-r1/bin/cp2k.psmp
+d55a9cdfd52c80e955b6dcb8854e993b8f26b0c629a3ed4e0028547d9ed44976  /home/kuehne88/work/gxtb-compact-partial-combination-20260722/provider-install/lib/libtblite.a
+7e1d23a4d9e0d66df81caa3744ca005342eb802599750f6888e8de38d2dd7f4f  /home/kuehne88/work/gxtb-compact-partial-combination-20260722/results/production/input.inp
+91f6b4a001a383bbef3bf47699bf13856493ab355546251da43d76df1897192b  /home/kuehne88/work/gxtb-compact-partial-combination-20260722/cp2k-src/src/cp_control_utils.F
+3ffd412516daa384b8d557d27873e49c6a46d2d5c696c4869ebcd444884d5053  /home/kuehne88/work/gxtb-compact-partial-combination-20260722/cp2k-src/src/tblite_interface.F
+167f2a61651b1c435b19f15a98cdc751d40827d4e97b97d23bdbf9acf460d5d7  /home/kuehne88/work/gxtb-compact-partial-combination-20260722/provider-src/src/tblite/cp2k_compat.f90
