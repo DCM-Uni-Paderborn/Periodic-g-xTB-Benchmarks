@@ -27,13 +27,8 @@ cohesive-energy increments is at most `0.05 kJ mol-1 atom-1`.
   exact common ten-solid set;
 - `figures/lc10_method_comparison.*`: current method-context figure generated
   by `scripts/generate_lc10_method_comparison.py`;
-- `data/lc10_gxtb_final.csv`: archived earlier adaptive selection retained for
-  provenance, but no longer used as the current paper result;
-- `data/lc10_adaptive_progress_mae.csv`: uniform 3x3x3--6x6x6 and subsequent
-  adaptive-endpoint plot values;
 - `data/reference_goldzak2022.csv`: zero-point-corrected experimental and
-  high-level reference values;
-- `figures/lc10_gxtb_adaptive_mae.*`: archived adaptive convergence figure.
+  high-level reference values.
 
 For the current uniform `7x7x7` g-xTB snapshot, ME/MAE are
 `-0.132181178/0.134252148 A` for lattice constants and
@@ -42,6 +37,6 @@ rows use different numerical protocols (`4x4x4` for the CP2K/tblite GFN rows
 and the protocols of Goldzak et al. for HF/MP2 variants); they provide method
 context and are not same-mesh implementation comparisons.
 
-The plotting scripts regenerate the repository figures from the versioned
-tables. Complete GFN1-xTB/GFN2-xTB raw data remain in the separate
+The plotting script regenerates the repository figure from the versioned
+table. Complete GFN1-xTB/GFN2-xTB raw data remain in the separate
 `Periodic-GFN2-Benchmarks` repository.
