@@ -9,10 +9,30 @@ import json
 import math
 import re
 import sys
+import tarfile
+import tempfile
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent.parent
+ARCHIVE_ROOT = Path(__file__).resolve().parent.parent
+RAW_ARCHIVE = (
+    ARCHIVE_ROOT
+    / "raw_archive"
+    / "gxtb_streamed_star_memory_evidence_20260717.tar.gz"
+)
+_EXTRACTED = tempfile.TemporaryDirectory(prefix="gxtb-streamed-star-")
+_EXTRACTED_ROOT = Path(_EXTRACTED.name).resolve()
+with tarfile.open(RAW_ARCHIVE, "r:gz") as archive:
+    members = archive.getmembers()
+    for member in members:
+        if member.issym() or member.islnk():
+            raise RuntimeError(f"archive link is not permitted: {member.name}")
+        destination = (_EXTRACTED_ROOT / member.name).resolve()
+        if destination != _EXTRACTED_ROOT and _EXTRACTED_ROOT not in destination.parents:
+            raise RuntimeError(f"archive path escapes extraction root: {member.name}")
+    archive.extractall(_EXTRACTED_ROOT, members=members)
+
+ROOT = _EXTRACTED_ROOT / "gxtb_streamed_star_memory_qualification_v4_20260717"
 MATRIX = json.loads((ROOT / "test_matrix.json").read_text())
 FLOAT = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?"
 QUALIFY_RE = re.compile(
@@ -28,6 +48,22 @@ STREAM_RE = re.compile(
 MODE_RE = re.compile(
     r"GXTB-KGROUP-PARTIAL-ROOT groups=(\d+), nred=(\d+), nfull=(\d+), batch=(\d+);"
 )
+
+
+def dependency_hash(path_suffix: str) -> str:
+    matches = [
+        line.split()[0]
+        for manifest in ("dependencies.sha256", "terok_provenance.sha256")
+        for line in (ARCHIVE_ROOT / manifest).read_text().splitlines()
+        if line.split(maxsplit=1)[1].endswith(path_suffix)
+    ]
+    if len(matches) != 1:
+        raise RuntimeError(f"expected one dependency hash for {path_suffix}")
+    return matches[0]
+
+
+EXPECTED_CP2K_SHA256 = dependency_hash("/bin/cp2k.psmp")
+EXPECTED_CP2K_LIB_SHA256 = dependency_hash("/src/libcp2k.so.2026.2")
 
 
 def sha256(path: Path) -> str:
@@ -61,8 +97,9 @@ def checked_run(case: dict, variant: str) -> tuple[dict, str]:
         raise RuntimeError(f"metadata case/rank mismatch: {run_dir}")
     if metadata.get("input_sha256") != sha256(ROOT / "inputs" / case["input"]):
         raise RuntimeError(f"input hash mismatch: {run_dir}")
-    cp2k_lib = Path(metadata.get("cp2k_lib", ""))
-    if not cp2k_lib.is_file() or metadata.get("cp2k_lib_sha256") != sha256(cp2k_lib):
+    if metadata.get("cp2k_sha256") != EXPECTED_CP2K_SHA256:
+        raise RuntimeError(f"CP2K executable hash mismatch: {run_dir}")
+    if metadata.get("cp2k_lib_sha256") != EXPECTED_CP2K_LIB_SHA256:
         raise RuntimeError(f"CP2K shared-library hash mismatch: {run_dir}")
     affinity = metadata.get("affinity_proof")
     if not isinstance(affinity, list) or len(affinity) != case["ranks"]:

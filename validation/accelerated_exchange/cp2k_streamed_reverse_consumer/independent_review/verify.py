@@ -7,13 +7,32 @@ import hashlib
 import json
 import math
 import re
+import tarfile
+import tempfile
 from pathlib import Path
 
 
-ROOT = Path("/private/tmp/cp2k-streamed-reverse-linux-archive-20260716/linux_matrix")
-MODE_ROOT = Path(
-    "/private/tmp/cp2k_gxtb_streamed_reverse_consumer_evidence/linux_mode_rss_terok"
+ARCHIVE_ROOT = Path(__file__).resolve().parents[1]
+RAW_ARCHIVE = (
+    ARCHIVE_ROOT
+    / "raw_archive"
+    / "cp2k_gxtb_streamed_reverse_consumer_evidence_20260716.tar.gz"
 )
+_EXTRACTED = tempfile.TemporaryDirectory(prefix="gxtb-streamed-reverse-")
+_EXTRACTED_ROOT = Path(_EXTRACTED.name).resolve()
+with tarfile.open(RAW_ARCHIVE, "r:gz") as archive:
+    members = archive.getmembers()
+    for member in members:
+        if member.issym() or member.islnk():
+            raise AssertionError(f"archive link is not permitted: {member.name}")
+        destination = (_EXTRACTED_ROOT / member.name).resolve()
+        if destination != _EXTRACTED_ROOT and _EXTRACTED_ROOT not in destination.parents:
+            raise AssertionError(f"archive path escapes extraction root: {member.name}")
+    archive.extractall(_EXTRACTED_ROOT, members=members)
+
+EVIDENCE_ROOT = _EXTRACTED_ROOT / "cp2k_gxtb_streamed_reverse_consumer_evidence"
+ROOT = EVIDENCE_ROOT / "linux_matrix_terok"
+MODE_ROOT = EVIDENCE_ROOT / "linux_mode_rss_terok"
 
 CASES = {
     "k290_rks_3d_fd": (2, "709388624dda15c066e7b9b5d3e97fe57665a4d53e6f58851685dae298ca4e54"),

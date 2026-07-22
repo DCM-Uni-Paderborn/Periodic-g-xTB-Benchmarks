@@ -116,7 +116,11 @@ The source starts from CP2K g-xTB-pbc base
 `68f677114f5829a32292171251150dd8e00ce458`; repository commit identifiers are
 kept here for reproducibility and are not intended for the manuscript or SI.
 
-Run `scripts/verify_test_matrix.py` from an extracted release qualification
-directory to recheck hashes, termination, live affinity, observables, internal
-residuals, and exact allocation formulas.  `SHA256SUMS` covers every curated
-artifact in this directory except itself.
+Run `scripts/verify_test_matrix.py` from this archive directory to recheck
+hashes, termination, live affinity, observables, internal residuals, and exact
+allocation formulas.  The verifier rejects archive links and paths escaping its
+temporary extraction root, reads the frozen release qualification directly
+from `raw_archive/`, and verifies the recorded CP2K executable and shared-library
+hashes against the curated provenance manifests; no original Terok path is
+required.  `SHA256SUMS` covers every curated artifact in this directory except
+itself.

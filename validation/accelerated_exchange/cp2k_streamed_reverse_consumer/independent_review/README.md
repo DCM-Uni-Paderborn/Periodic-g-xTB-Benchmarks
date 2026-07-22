@@ -88,16 +88,14 @@ a speedup claim; it only confirms numerical equivalence and the exact provider-w
 | Provider `cp2k_compat.f90` | `d3791e769816e28c70b8091b501a187fb3a59083c80588aa2603ff7b86e25a8f` |
 | Provider Debug tester | `201f04f51e739d635ca6463ce25cd906135c66e4034261a86752b7be452aa130` |
 | Provider Release tester | `ee665d8de68f5efa21e4b6a7b192f8d0c5b4cc3934d5e65d8c618301c122dd0b` |
-| Independent verifier | `fc6057933e69fb5d5ddcedb12e2032285d56cf827829c49473c1ccd455c53529` |
+| Independent verifier | `9959696258459be38e7328078a3c63b99b49d78a8399bc1e223b756db31c37db` |
 
-Evidence roots:
-
-- canonical Linux matrix: `/private/tmp/cp2k-streamed-reverse-linux-archive-20260716/linux_matrix`;
-- dense/streamed RSS pair:
-  `/private/tmp/cp2k_gxtb_streamed_reverse_consumer_evidence/linux_mode_rss_terok`;
-- verifier: `/private/tmp/cp2k-streamed-reverse-independent-review-20260716/verify.py`;
-- CP2K evidence README:
-  `/private/tmp/cp2k_gxtb_streamed_reverse_consumer/GXTB_STREAMED_REVERSE_EVIDENCE/README.md`.
+The portable verifier reads
+`../raw_archive/cp2k_gxtb_streamed_reverse_consumer_evidence_20260716.tar.gz`,
+rejects archive links or paths that escape its temporary extraction root, and
+then verifies the canonical `linux_matrix_terok/` matrix and
+`linux_mode_rss_terok/` dense/streamed pair directly.  No original
+`/private/tmp` directory is required.
 
 The final local Fortran formatter reported 0 files changed, both source property checks passed, and
 `git diff --check` is clean. The remote precommit service was unreachable during the last re-run;
