@@ -1797,6 +1797,14 @@ def _linux_process_snapshot(
         if ":" in line:
             key, value = line.split(":", 1)
             fields[key] = value.strip()
+
+    def status_kib(key: str) -> int | None:
+        value = fields.get(key)
+        if value is None:
+            return None
+        match = re.fullmatch(r"([0-9]+)\s+kB", value)
+        return int(match.group(1)) if match else None
+
     cp2k_resolved = str(cp2k.resolve())
     argument_targets: list[str] = []
     for argument in arguments[:2]:
@@ -1844,6 +1852,8 @@ def _linux_process_snapshot(
         "executable": executable,
         "arguments": arguments,
         "cpus_allowed_list": fields.get("Cpus_allowed_list", ""),
+        "vm_rss_kib": status_kib("VmRSS"),
+        "vm_hwm_kib": status_kib("VmHWM"),
         "ompi_comm_world_rank": mpi_rank,
         "rank_observation_status": rank_observation_status,
         "is_cp2k_rank": is_cp2k_rank,
@@ -2192,6 +2202,22 @@ def _accumulate_process_snapshot(
         int(previous.get("sample_count", 0)) + 1 if previous is not None else 1
     )
     accumulated["sample_count"] = sample_count
+    current_rss = snapshot.get("vm_rss_kib")
+    current_hwm = snapshot.get("vm_hwm_kib")
+    previous_peak = previous.get("peak_sampled_rss_kib") if previous else None
+    previous_hwm = previous.get("peak_reported_vm_hwm_kib") if previous else None
+    rss_values = [
+        int(value)
+        for value in (previous_peak, current_rss)
+        if isinstance(value, int) and not isinstance(value, bool)
+    ]
+    hwm_values = [
+        int(value)
+        for value in (previous_hwm, current_hwm)
+        if isinstance(value, int) and not isinstance(value, bool)
+    ]
+    accumulated["peak_sampled_rss_kib"] = max(rss_values) if rss_values else None
+    accumulated["peak_reported_vm_hwm_kib"] = max(hwm_values) if hwm_values else None
     if not snapshot.get("is_cp2k_rank"):
         if previous and previous.get("is_cp2k_rank") is True:
             retained = dict(previous)
@@ -2825,6 +2851,9 @@ class ExecutionPool:
         pe_list: str | None = None
         proc: subprocess.Popen[bytes] | None = None
         observed: dict[int, dict[str, object]] = {}
+        rss_sample_count = 0
+        peak_sampled_aggregate_cp2k_rss_kib = 0
+        peak_sampled_rank_rss_kib: dict[int, int] = {}
         with self._lifecycle_lock:
             if self._closed:
                 raise RuntimeError(
@@ -2939,6 +2968,30 @@ class ExecutionPool:
                                 observed.get(pid), snapshot, assigned_cpus
                             )
                             snapshots_this_sample.append(observed[pid])
+                    current_rank_rss: dict[int, int] = {}
+                    for record in snapshots_this_sample:
+                        rank = record.get("ompi_comm_world_rank")
+                        rss_kib = record.get("vm_rss_kib")
+                        if (
+                            record.get("is_cp2k_rank") is True
+                            and isinstance(rank, int)
+                            and not isinstance(rank, bool)
+                            and isinstance(rss_kib, int)
+                            and not isinstance(rss_kib, bool)
+                        ):
+                            current_rank_rss[rank] = max(
+                                current_rank_rss.get(rank, 0), rss_kib
+                            )
+                    if current_rank_rss:
+                        rss_sample_count += 1
+                        peak_sampled_aggregate_cp2k_rss_kib = max(
+                            peak_sampled_aggregate_cp2k_rss_kib,
+                            sum(current_rank_rss.values()),
+                        )
+                        for rank, rss_kib in current_rank_rss.items():
+                            peak_sampled_rank_rss_kib[rank] = max(
+                                peak_sampled_rank_rss_kib.get(rank, 0), rss_kib
+                            )
                     verified_own_identities: dict[int, int] = {}
                     if launcher_starttime is not None:
                         verified_own_identities[proc.pid] = launcher_starttime
@@ -3168,6 +3221,19 @@ class ExecutionPool:
                 "observed_child_processes": sorted(
                     observed.values(), key=lambda record: int(record["pid"])
                 ),
+                "rss_sampling_source": "linux_proc_status_vmrss",
+                "rss_sampling_interval_seconds": 0.05,
+                "rss_sample_count": rss_sample_count,
+                "peak_sampled_aggregate_cp2k_rss_kib": (
+                    peak_sampled_aggregate_cp2k_rss_kib
+                ),
+                "peak_sampled_rank_rss_kib": [
+                    {
+                        "ompi_comm_world_rank": rank,
+                        "peak_sampled_rss_kib": peak_sampled_rank_rss_kib[rank],
+                    }
+                    for rank in sorted(peak_sampled_rank_rss_kib)
+                ],
                 "observed_cp2k_rank_pids": [
                     int(record["canonical_pid"]) for record in rank_generations
                 ],

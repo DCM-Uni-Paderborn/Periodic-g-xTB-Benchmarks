@@ -1,7 +1,8 @@
 # Periodic g-xTB in CP2K: Part II validation data
 
 This branch contains the reproducibility record for *Periodic g-xTB in CP2K.
-II. Accelerated and Scalable Brillouin-Zone-Coupled Nonlocal Exchange*.
+II. Exact, Memory-Bounded, and Distributed Brillouin-Zone-Coupled Nonlocal
+Exchange*.
 Application-accuracy benchmarks and other Part-I material live on `main`; they
 are intentionally not duplicated here.
 
@@ -27,6 +28,8 @@ forces, and stress must agree before timing or memory results are accepted.
 - `validation/accelerated_exchange/`: immutable reference-equivalence,
   force/stress, 0D--3D PBC, K290/SPGLIB/time-reversal, MPI, cache, transform,
   restart, timing, and memory archives with SHA-256 manifests.
+- `validation/accelerated_exchange/figures/`: publication-ready Part-II
+  figures whose generating scripts and checksums are retained in this branch.
 - `scripts/benchmark_execution.py`: fail-closed CPU reservation and affinity
   helper used for reproducible timing runs.
 - `tests/`: repository-level archive, derivation, and CPU-affinity checks.

@@ -1115,6 +1115,8 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
                 "Name:\tcp2k.psmp\n"
                 "State:\tR (running)\n"
                 "PPid:\t1\n"
+                "VmRSS:\t123456 kB\n"
+                "VmHWM:\t125000 kB\n"
                 "Cpus_allowed_list:\t197\n"
             )
             (process / "cmdline").write_bytes(str(cp2k).encode() + b"\0")
@@ -1133,8 +1135,25 @@ class BenchmarkExecutionValidationTests(unittest.TestCase):
             self.assertEqual(snapshot["process_starttime"], 424242)
             self.assertEqual(snapshot["process_identity_status"], "stable")
             self.assertEqual(snapshot["snapshot_consistency_status"], "consistent")
+            self.assertEqual(snapshot["vm_rss_kib"], 123456)
+            self.assertEqual(snapshot["vm_hwm_kib"], 125000)
             self.assertEqual(snapshot["thread_affinity_scan_status"], "consistent")
             self.assertTrue(execution._thread_affinity_sample_matches(snapshot, 197))
+
+            first_snapshot = dict(snapshot)
+            first_snapshot["vm_rss_kib"] = 123456
+            first_snapshot["vm_hwm_kib"] = 125000
+            first = execution._accumulate_process_snapshot(
+                None, first_snapshot, (196, 197)
+            )
+            second_snapshot = dict(snapshot)
+            second_snapshot["vm_rss_kib"] = 120000
+            second_snapshot["vm_hwm_kib"] = 126000
+            second = execution._accumulate_process_snapshot(
+                first, second_snapshot, (196, 197)
+            )
+            self.assertEqual(second["peak_sampled_rss_kib"], 123456)
+            self.assertEqual(second["peak_reported_vm_hwm_kib"], 126000)
 
             initial_status = (process / "status").read_text()
             changed_status = initial_status.replace(
