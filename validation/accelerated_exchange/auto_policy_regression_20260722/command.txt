@@ -1,0 +1,23 @@
+Working directory:
+  /Users/tkuehne/work/cp2k-pbc-unification-20260722
+
+Environment:
+  OMP_NUM_THREADS=1
+  OPENBLAS_NUM_THREADS=1
+  MKL_NUM_THREADS=1
+  VECLIB_MAXIMUM_THREADS=1
+
+Command:
+  python3 tests/do_regtest.py \
+    /Users/tkuehne/work/gxtb-integrated-cp2k-build-20260722/bin psmp \
+    --restrictdir xTB/regtest-tblite-gxtb \
+    --workbasedir /Users/tkuehne/work/gxtb-integrated-regtest-final-20260722 \
+    --mpiranks 2 --ompthreads 1 --maxtasks 2 --timeout 1200 \
+    --maxerrors 20 --skip_unittests
+
+Result:
+  Number of FAILED  tests 0
+  Number of WRONG   tests 0
+  Number of CORRECT tests 196
+  Total number of   tests 196
+  Status: OK

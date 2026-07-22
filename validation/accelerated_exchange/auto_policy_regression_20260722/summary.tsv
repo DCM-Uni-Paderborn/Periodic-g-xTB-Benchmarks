@@ -1,0 +1,2 @@
+suite	calculations	matcher_results	correct	wrong	failed	normally_terminated	cp2k_revision	save_tblite_revision	status
+xTB/regtest-tblite-gxtb	48	196	196	0	0	48	f44008823d3319547f34ef335561256816a1a031	718629fbc86e0b362491cf70dd4198d0d82082b5	PASS

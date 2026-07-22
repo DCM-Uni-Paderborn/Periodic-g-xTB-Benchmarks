@@ -28,6 +28,10 @@ forces, and stress must agree before timing or memory results are accepted.
 - `validation/accelerated_exchange/`: immutable reference-equivalence,
   force/stress, 0D--3D PBC, K290/SPGLIB/time-reversal, MPI, cache, transform,
   restart, timing, and memory archives with SHA-256 manifests.
+- `validation/accelerated_exchange/auto_policy_regression_20260722/`: final
+  public-source/exact-binary regression for the default production policy;
+  48 calculations and all 196 matcher results pass on the final CP2K and
+  save_tblite revisions.
 - `validation/accelerated_exchange/figures/`: publication-ready Part-II
   figures whose generating scripts and checksums are retained in this branch.
 - `scripts/benchmark_execution.py`: fail-closed CPU reservation and affinity
@@ -39,6 +43,9 @@ contractions, bounded provider image batches, bounded-forward/sparse-reverse
 ACP mesh contractions, invariant phase/symmetry caches,
 regular-mesh dense-oracle and separable/mixed-radix transforms, distributed
 image kernels and MPI ownership, and metadata-validated cross-mesh restarts.
+The automatic policy selects the exact qualified combination only after the
+complete mesh and MPI layout are known; one-point ACP remains dense, while
+periodic multi-point ACP uses bounded forward batches and sparse reverse.
 Each component has an independent qualification boundary; a component-level
 result is never promoted to an end-to-end scaling claim.
 

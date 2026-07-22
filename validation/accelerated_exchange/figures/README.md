@@ -11,7 +11,10 @@ selection performed by the CP2K `MODE AUTO` policy.  The physical complete
 regular k-point mesh remains the starting point in every branch; the selected
 backend changes only exact storage, contraction ordering, transforms, and MPI
 ownership.  Implicit qualification is deliberately disabled, and the dense
-oracle remains selectable in manual mode.
+oracle remains selectable in manual mode.  The one-point branch retains the
+compact dense ACP contraction.  For periodic multi-point meshes with ACP
+parameters, automatic mode selects bounded forward Bloch batches and the
+sparse projector--image reverse; the bounded ACP cache remains active.
 
 Regenerate both formats from the repository root with:
 

@@ -1,0 +1,3 @@
+case	energy_eh	cp2k_cli_absdiff_eh	gradient_max_absdiff_eh_per_bohr	auto_exchange	auto_gradient	auto_transform	auto_acp_forward	auto_acp_reverse	normal_termination
+CH4_gxtb_kp_auto_default	-40.468866070692435	NA	NA	SYMMETRY_FUSED	STREAMED	MIXED_RADIX_FFT	STREAMED	SPARSE_REVERSE	yes
+O2_gxtb_uks_reference_cli	-150.340821038026832	5.911715561524e-12	3.300347844518e-06	NA	NA	NA	NA	NA	yes

@@ -1,0 +1,25 @@
+CP2K g-xTB-pbc (newest first)
+f44008823 Enable streamed ACP in automatic g-XTB mode
+0f78a08b2 Qualify ACP reverse on complex partial meshes
+be9092cc6 Enable compact transforms for partial image exchange
+9b1d05b92 Stream periodic ACP mesh contractions
+4a20f1a09 Cover implicit g-XTB AUTO default
+2880addab Enable automatic production g-XTB acceleration
+d07468737 Combine range-local exchange with cross-mesh restarts
+6268dc823 Route compact exchange ranges to MPI importers
+
+save_tblite cp2k-integration (newest first)
+718629f Refresh molecular-limit CLI references
+6d3fb40 Cover CP2K density phase in ACP regression
+1587510 Fix ACP response orientation for complex meshes
+bd4c529 Compose range-local exchange with compact transforms
+1bad54d Qualify exact BvK cache identity
+1e28824 Add bounded ACP mesh contractions
+2b6e535 Distribute exchange imports by image range
+32c1045 Add exact streamed Fourier composition
+cbec298 Fix molecular quadrupole large-cell limit
+9322cc6 Relax CeCl3 finite-difference tolerance
+4b00d76 Stabilize ACP qeff finite-difference test
+b1448c1 Cache periodic ACP projector overlaps
+d89bd0a Accelerate regular exchange transforms with mixed-radix FFT
+9661adc Distribute nonlinear exchange over BvK images

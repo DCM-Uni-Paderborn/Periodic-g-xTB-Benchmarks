@@ -86,9 +86,9 @@ def arrow(ax, start, end, label=None, label_offset=(0.0, 0.0)):
 def main() -> None:
     OUTPUT.mkdir(parents=True, exist_ok=True)
     plt.rcParams["svg.hashsalt"] = "periodic-gxtb-part-II-auto-policy"
-    fig, ax = plt.subplots(figsize=(10.0, 4.6))
+    fig, ax = plt.subplots(figsize=(10.0, 5.0))
     ax.set_xlim(0, 10)
-    ax.set_ylim(0, 4.6)
+    ax.set_ylim(0, 5.0)
     ax.axis("off")
 
     box(
@@ -105,7 +105,7 @@ def main() -> None:
         (4.0, 3.35),
         2.05,
         0.9,
-        "Complete array / dense reverse\nDense transform / dense star",
+        "Complete array / dense reverse\nDense transform / dense star\nACP dense",
     )
     decision(ax, (4.7, 2.18), 1.55, 1.25, "$N_{red}<N_k$?")
     box(
@@ -118,17 +118,17 @@ def main() -> None:
     decision(ax, (6.45, 1.5), 1.65, 1.25, "MPI ranks\n$>1$?")
     box(
         ax,
-        (8.25, 1.65),
-        1.5,
+        (8.05, 1.90),
+        1.7,
         1.05,
         "Bounded batch\nStreamed reverse\nDense transform",
     )
     box(
         ax,
-        (8.25, 0.25),
-        1.5,
+        (8.05, 0.55),
+        1.7,
         1.05,
-        "Distributed partial images\nStreamed reverse\nDense transform",
+        "Distributed partial\nimages / streamed reverse\nDense transform",
     )
 
     arrow(ax, (1.8, 2.18), (2.02, 2.18))
@@ -136,16 +136,16 @@ def main() -> None:
     arrow(ax, (3.48, 2.18), (3.92, 2.18), "no", (0.0, 0.14))
     arrow(ax, (5.17, 2.69), (6.1, 3.2), "yes", (0.0, 0.12))
     arrow(ax, (5.48, 1.85), (5.75, 1.68), "no", (-0.02, 0.14))
-    arrow(ax, (7.28, 1.5), (8.25, 2.05), "no", (0.0, 0.13))
-    arrow(ax, (6.82, 0.98), (8.25, 0.78), "yes", (0.0, 0.14))
+    arrow(ax, (7.28, 1.5), (8.05, 2.18), "no", (0.0, 0.13))
+    arrow(ax, (6.82, 0.98), (8.05, 1.08), "yes", (0.0, 0.14))
 
     ax.text(
         0.25,
-        0.28,
-        "Every branch: bounded ACP cache enabled; implicit qualification disabled; dense oracle retained in MANUAL mode.",
+        0.05,
+        "$N_k>1$ with ACP: streamed forward / sparse reverse.\nEvery branch: ACP cache enabled; implicit qualification disabled; dense oracle retained in MANUAL mode.",
         ha="left",
         va="bottom",
-        fontsize=8.1,
+        fontsize=7.8,
         color=INK,
     )
 

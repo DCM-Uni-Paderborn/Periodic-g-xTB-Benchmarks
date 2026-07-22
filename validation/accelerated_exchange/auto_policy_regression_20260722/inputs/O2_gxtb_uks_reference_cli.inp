@@ -1,0 +1,54 @@
+&GLOBAL
+  PRINT_LEVEL MEDIUM
+  PROJECT O2_gxtb_uks_reference_cli
+  RUN_TYPE ENERGY_FORCE
+&END GLOBAL
+
+&FORCE_EVAL
+  &DFT
+    UKS T
+    MULTIPLICITY 3
+    &QS
+      EPS_DEFAULT 1.0E-12
+      METHOD xTB
+      &XTB
+        GFN_TYPE TBLITE
+        &TBLITE
+          ACCURACY 1.0
+          METHOD GXTB
+          &REFERENCE_CLI
+            CHECK_ENERGY T
+            CHECK_FORCES T
+            CHECK_VIRIAL F
+            ERROR_LIMIT 1.0E-5
+            PROGRAM_NAME tblite
+            STOP_ON_ERROR T
+          &END REFERENCE_CLI
+        &END TBLITE
+      &END XTB
+    &END QS
+    &SCF
+      EPS_SCF 1.0E-10
+      MAX_SCF 300
+      SCF_GUESS MOPAC
+      &MIXING
+        ALPHA 0.2
+        METHOD DIRECT_P_MIXING
+      &END MIXING
+      &PRINT
+        &RESTART OFF
+        &END RESTART
+      &END PRINT
+    &END SCF
+  &END DFT
+  &SUBSYS
+    &CELL
+      ABC 20.0 20.0 20.0
+      PERIODIC NONE
+    &END CELL
+    &COORD
+      O 0.000000 0.000000 0.000000
+      O 1.210000 0.000000 0.000000
+    &END COORD
+  &END SUBSYS
+&END FORCE_EVAL
