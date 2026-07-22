@@ -32,7 +32,8 @@ forces, and stress must agree before timing or memory results are accepted.
 - `tests/`: repository-level archive, derivation, and CPU-affinity checks.
 
 The retained acceleration components cover streamed symmetry-star
-contractions, bounded provider image batches, invariant phase/symmetry caches,
+contractions, bounded provider image batches, bounded-forward/sparse-reverse
+ACP mesh contractions, invariant phase/symmetry caches,
 regular-mesh dense-oracle and separable/mixed-radix transforms, distributed
 image kernels and MPI ownership, and metadata-validated cross-mesh restarts.
 Each component has an independent qualification boundary; a component-level

@@ -1,0 +1,60 @@
+commit 448a5e4d0316775a272f941a7f54434a5c9d6ce5
+Author:     Thomas D. Kühne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 11:46:22 2026 +0200
+Commit:     Thomas D. Kühne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 11:46:22 2026 +0200
+
+    Stream periodic ACP mesh contractions
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit 7b80b6d523fed9818cdcfa34d62b1ffd5e46c158
+Merge: 030dcaea6c f42d832bde
+Author:     Thomas D. Kühne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 04:58:15 2026 +0200
+Commit:     Thomas D. Kühne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 04:58:15 2026 +0200
+
+    Combine range-local exchange with cross-mesh restarts
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit 030dcaea6cbd4bf38eb0e7ea66ab1cbc7c689cfd
+Author:     Thomas D. Kühne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 04:58:03 2026 +0200
+Commit:     Thomas D. Kühne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 04:58:03 2026 +0200
+
+    Route compact exchange ranges to MPI importers
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit f42d832bde7bc5e6192a6277051fae9914d3c83d
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 03:29:08 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 03:29:08 2026 +0200
+
+    Fix exact cross-mesh restart projection
+    
+    Signed-off-by: Thomas D. Kuehne <tkuehne@cp2k.org>
+
+commit e94e569fddf9fdf2fd764216b4c24bf4b9767c3b
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 00:51:00 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 00:51:00 2026 +0200
+
+    Add cold oracle for cross-mesh restart
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit 9bf4aa9857b3402376441da94de9b29892908804
+Author:     Thomas D. Kühne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 00:19:45 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 00:20:33 2026 +0200
+
+    Qualify fused exchange for nonsymmorphic symmetry
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>

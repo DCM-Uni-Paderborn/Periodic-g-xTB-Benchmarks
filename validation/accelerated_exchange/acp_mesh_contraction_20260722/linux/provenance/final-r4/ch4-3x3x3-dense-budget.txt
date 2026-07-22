@@ -1,0 +1,6 @@
+mem_available_kib=515748984
+live_cp2k=1
+remaining_growth_allowance_kib=103957604
+candidate_peak_kib=104857600
+computed_margin_kib=306933780
+minimum_margin_kib=134217728

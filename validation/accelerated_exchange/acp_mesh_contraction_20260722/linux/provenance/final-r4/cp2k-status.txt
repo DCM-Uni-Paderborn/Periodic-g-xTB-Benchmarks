@@ -1,0 +1,13 @@
+ M CMakeLists.txt
+ M src/cp_control_types.F
+ M src/cp_control_utils.F
+ M src/input_constants.F
+ M src/input_cp2k_tb.F
+ M src/tblite_interface.F
+ M src/tblite_types.F
+ M tests/matchers.py
+ M tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_acceleration_production.inp
+ M tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_acceleration_qualify.inp
+ M tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_symmetry_fused_production.inp
+ M tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_symmetry_fused_qualify.inp
+ M tests/xTB/regtest-tblite-gxtb/TEST_FILES.toml

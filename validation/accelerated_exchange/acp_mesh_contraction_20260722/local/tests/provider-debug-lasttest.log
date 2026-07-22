@@ -1,0 +1,1793 @@
+Start testing: Jul 22 11:16 CEST
+----------------------------------------------------------
+51/93 Testing: tblite/acp
+51/93 Test: tblite/acp
+Command: "/Users/tkuehne/work/gxtb-acp-debug-20260722/test/unit/tblite-tester" "acp"
+Directory: /Users/tkuehne/work/gxtb-acp-debug-20260722/test/unit
+"tblite/acp" start time: Jul 22 11:16 CEST
+Output:
+----------------------------------------------------------
+# Testing: acp
+  Starting acp-gxtb-h2 ... (1/22)
+       ... acp-gxtb-h2 [PASSED]
+  Starting acp-gxtb-lih ... (2/22)
+       ... acp-gxtb-lih [PASSED]
+  Starting acp-gxtb-s2 ... (3/22)
+       ... acp-gxtb-s2 [PASSED]
+  Starting acp-gxtb-sih4 ... (4/22)
+       ... acp-gxtb-sih4 [PASSED]
+  Starting acp-gxtb-cecl3 ... (5/22)
+       ... acp-gxtb-cecl3 [PASSED]
+  Starting acp-gxtb-ce2 ... (6/22)
+       ... acp-gxtb-ce2 [PASSED]
+  Starting qeff-gradient-gxtb-h2 ... (7/22)
+       ... qeff-gradient-gxtb-h2 [PASSED]
+  Starting qeff-gradient-gxtb-lih ... (8/22)
+       ... qeff-gradient-gxtb-lih [PASSED]
+  Starting qeff-gradient-gxtb-no ... (9/22)
+       ... qeff-gradient-gxtb-no [PASSED]
+  Starting qeff-gradient-gxtb-s2 ... (10/22)
+       ... qeff-gradient-gxtb-s2 [PASSED]
+  Starting qeff-gradient-gxtb-sih4 ... (11/22)
+       ... qeff-gradient-gxtb-sih4 [PASSED]
+  Starting qeff-gradient-gxtb-cecl3 ... (12/22)
+       ... qeff-gradient-gxtb-cecl3 [PASSED]
+  Starting qeff-gradient-gxtb-co2 ... (13/22)
+       ... qeff-gradient-gxtb-co2 [PASSED]
+  Starting gradient-gxtb-h2 ... (14/22)
+       ... gradient-gxtb-h2 [PASSED]
+  Starting gradient-gxtb-lih ... (15/22)
+       ... gradient-gxtb-lih [PASSED]
+  Starting gradient-gxtb-no ... (16/22)
+       ... gradient-gxtb-no [PASSED]
+  Starting gradient-gxtb-s2 ... (17/22)
+       ... gradient-gxtb-s2 [PASSED]
+  Starting gradient-gxtb-sih4 ... (18/22)
+       ... gradient-gxtb-sih4 [PASSED]
+  Starting gradient-gxtb-cecl3 ... (19/22)
+       ... gradient-gxtb-cecl3 [PASSED]
+  Starting gradient-gxtb-co2 ... (20/22)
+       ... gradient-gxtb-co2 [PASSED]
+  Starting sigma-gxtb-co2 ... (21/22)
+       ... sigma-gxtb-co2 [PASSED]
+  Starting acp-gxtb-co2-sc ... (22/22)
+       ... acp-gxtb-co2-sc [PASSED]
+<end of output>
+Test time =  19.84 sec
+----------------------------------------------------------
+Test Passed.
+"tblite/acp" end time: Jul 22 11:16 CEST
+"tblite/acp" time elapsed: 00:00:19
+----------------------------------------------------------
+
+65/93 Testing: tblite/gxtb
+65/93 Test: tblite/gxtb
+Command: "/Users/tkuehne/work/gxtb-acp-debug-20260722/test/unit/tblite-tester" "gxtb"
+Directory: /Users/tkuehne/work/gxtb-acp-debug-20260722/test/unit
+"tblite/gxtb" start time: Jul 22 11:16 CEST
+Output:
+----------------------------------------------------------
+# Testing: gxtb
+  Starting energy-h2 ... (1/44)
+       ... energy-h2 [PASSED]
+  Starting energy-lih ... (2/44)
+At line 288 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/blas/level3.f90
+Fortran runtime warning: An array temporary was created for argument 'b' of procedure 'dgemm'
+       ... energy-lih [PASSED]
+  Starting energy-water ... (3/44)
+At line 288 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/blas/level3.f90
+Fortran runtime warning: An array temporary was created for argument 'a' of procedure 'dgemm'
+At line 288 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/blas/level3.f90
+Fortran runtime warning: An array temporary was created for argument 'c' of procedure 'dgemm'
+       ... energy-water [PASSED]
+  Starting energy-no ... (4/44)
+       ... energy-no [PASSED]
+  Starting energy-chex-rad ... (5/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... energy-chex-rad [PASSED]
+  Starting energy-s2 ... (6/44)
+       ... energy-s2 [PASSED]
+  Starting energy-cecl3 ... (7/44)
+       ... energy-cecl3 [PASSED]
+  Starting energy-ce2 ... (8/44)
+       ... energy-ce2 [PASSED]
+  Starting energy-mb01 ... (9/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... energy-mb01 [PASSED]
+  Starting energy-mb02 ... (10/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... energy-mb02 [PASSED]
+  Starting gradient-h2 ... (11/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... gradient-h2 [PASSED]
+  Starting gradient-lih ... (12/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... gradient-lih [PASSED]
+  Starting gradient-water ... (13/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... gradient-water [PASSED]
+  Starting gradient-no ... (14/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... gradient-no [PASSED]
+  Starting gradient-s2 ... (15/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... gradient-s2 [PASSED]
+  Starting gradient-pcl ... (16/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... gradient-pcl [PASSED]
+  Starting gradient-sih4 ... (17/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... gradient-sih4 [PASSED]
+  Starting gradient-cecl3 ... (18/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... gradient-cecl3 [PASSED]
+  Starting gradient-ce2 ... (19/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... gradient-ce2 [PASSED]
+  Starting gradient-panp ... (20/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... gradient-panp [PASSED]
+  Starting gradient-mb02 ... (21/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... gradient-mb02 [PASSED]
+  Starting sigma-h2 ... (22/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-h2 [PASSED]
+  Starting sigma-lih ... (23/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-lih [PASSED]
+  Starting sigma-water ... (24/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-water [PASSED]
+  Starting sigma-no ... (25/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-no [PASSED]
+  Starting sigma-s2 ... (26/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-s2 [PASSED]
+  Starting sigma-pcl ... (27/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-pcl [PASSED]
+  Starting sigma-sih4 ... (28/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-sih4 [PASSED]
+  Starting sigma-cecl3 ... (29/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-cecl3 [PASSED]
+  Starting sigma-ce2 ... (30/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-ce2 [PASSED]
+  Starting sigma-panp ... (31/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-panp [PASSED]
+  Starting sigma-mb03 ... (32/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-mb03 [PASSED]
+  Starting energy-h2o-mol-pbc ... (33/44)
+       ... energy-h2o-mol-pbc [PASSED]
+  Starting sigma-h2o-pbc ... (34/44)
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+At line 102 of file /Users/tkuehne/work/gxtb-part2-acp-provider-20260722/src/tblite/wavefunction/guess.f90
+Fortran runtime warning: An array temporary was created
+       ... sigma-h2o-pbc [PASSED]
+  Starting image-h0-h2o-pbc ... (35/44)
+       ... image-h0-h2o-pbc [PASSED]
+  Starting image-acp-gradient-h2o-pbc ... (36/44)
+       ... image-acp-gradient-h2o-pbc [PASSED]
+  Starting kmesh-acp-h2o-pbc ... (37/44)
+ ACP_SPARSE_RESPONSE_QUALIFY residual=  0.0000E+00
+ACP_STREAM_STATE_GATES 3 ACP_SPARSE_DENSITY_IMAGES 1
+       ... kmesh-acp-h2o-pbc [PASSED]
+  Starting cp2k-acp-cutoff ... (38/44)
+       ... cp2k-acp-cutoff [PASSED]
+  Starting cp2k-scc-mixer-dimension ... (39/44)
+       ... cp2k-scc-mixer-dimension [PASSED]
+  Starting cp2k-potential-mixer ... (40/44)
+       ... cp2k-potential-mixer [PASSED]
+  Starting cp2k-potential-mixer-uninitialized ... (41/44)
+       ... cp2k-potential-mixer-uninitialized [EXPECTED FAIL]
+  Message: CP2K potential mixer must be reset before use
+  Starting cp2k-potential-mixer-invalid-dimension ... (42/44)
+       ... cp2k-potential-mixer-invalid-dimension [EXPECTED FAIL]
+  Message: CP2K potential mixer dimension must be positive
+  Starting cp2k-potential-mixer-size-mismatch ... (43/44)
+       ... cp2k-potential-mixer-size-mismatch [EXPECTED FAIL]
+  Message: CP2K potential mixer Fock vector dimension mismatch
+  Starting cp2k-potential-mixer-nonfinite ... (44/44)
+       ... cp2k-potential-mixer-nonfinite [EXPECTED FAIL]
+  Message: CP2K potential mixer received a non-finite Fock vector
+<end of output>
+Test time =  14.26 sec
+----------------------------------------------------------
+Test Passed.
+"tblite/gxtb" end time: Jul 22 11:16 CEST
+"tblite/gxtb" time elapsed: 00:00:14
+----------------------------------------------------------
+
+End testing: Jul 22 11:16 CEST

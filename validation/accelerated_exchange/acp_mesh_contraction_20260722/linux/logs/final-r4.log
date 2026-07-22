@@ -1,0 +1,10 @@
+[1/11] Updating CP2K build timestamp and git revision
+[2/11] Generating tblite_interface.F
+[3/11] Building Fortran preprocessed src/CMakeFiles/cp2k.dir/cp2k_info.F-pp.f
+[4/11] Building Fortran preprocessed src/CMakeFiles/cp2k.dir/tblite_interface.F-pp.f
+[5/11] Generating Fortran dyndep file src/CMakeFiles/cp2k.dir/Fortran.dd
+[6/593] Building Fortran object src/CMakeFiles/cp2k.dir/cp2k_info.F.o
+[7/207] Building Fortran object src/CMakeFiles/cp2k.dir/tblite_interface.F.o
+[8/10] Linking CXX shared library src/libcp2k.so.2026.2
+[9/10] Creating library symlink src/libcp2k.so
+[10/10] Linking Fortran executable bin/cp2k.psmp

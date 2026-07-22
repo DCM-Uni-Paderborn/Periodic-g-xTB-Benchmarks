@@ -1,0 +1,91 @@
+-- The Fortran compiler identification is GNU 15.2.0
+-- The C compiler identification is GNU 15.2.0
+-- Detecting Fortran compiler ABI info
+-- Detecting Fortran compiler ABI info - done
+-- Check for working Fortran compiler: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-gfortran - skipped
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found OpenMP_C: -fopenmp (found version "4.5")
+-- Found OpenMP_Fortran: -fopenmp (found version "4.5")
+-- Found OpenMP: TRUE (found version "4.5")
+-- Looking for Fortran sgemm
+-- Looking for Fortran sgemm - not found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Looking for Fortran sgemm
+-- Looking for Fortran sgemm - found
+-- Found BLAS: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/lib/libopenblas.so
+-- Looking for Fortran cheev
+-- Looking for Fortran cheev - found
+-- Found LAPACK: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/lib/libopenblas.so;-lm;-ldl
+-- toml-f: Find installed package
+-- Retrieving toml-f from https://github.com/toml-f/toml-f
+CMake Deprecation Warning at /home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build/_deps/toml-f-src/CMakeLists.txt:14 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- test-drive: Find installed package
+-- Could NOT find test-drive (missing: test-drive_DIR)
+-- Retrieving test-drive from https://github.com/fortran-lang/test-drive
+CMake Deprecation Warning at /home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build/_deps/test-drive-src/CMakeLists.txt:14 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- Performing Test WITH_QP
+-- Performing Test WITH_QP - Success
+-- Performing Test WITH_XDP
+-- Performing Test WITH_XDP - Success
+-- mctc-lib: Find installed package
+-- Retrieving mctc-lib from https://github.com/thfroitzheim/mctc-lib
+-- Found OpenMP_C: -fopenmp (found version "4.5")
+-- Found OpenMP_Fortran: -fopenmp (found version "4.5")
+-- mstore: Find installed package
+-- Retrieving mstore from https://github.com/lmseidler/mstore
+-- multicharge: Find installed package
+-- Retrieving multicharge from https://github.com/thfroitzheim/multicharge
+-- dftd4: Find installed package
+-- Retrieving dftd4 from https://github.com/grimme-lab/dftd.git
+[1/9] Creating directories for 'dftd4-populate'
+[1/9] Performing download step (git clone) for 'dftd4-populate'
+Cloning into 'dftd4-src'...
+fatal: could not read Username for 'https://github.com': No such device or address
+Cloning into 'dftd4-src'...
+fatal: could not read Username for 'https://github.com': No such device or address
+Cloning into 'dftd4-src'...
+fatal: could not read Username for 'https://github.com': No such device or address
+Had to git clone more than once: 3 times.
+CMake Error at dftd4-subbuild/dftd4-populate-prefix/tmp/dftd4-populate-gitclone.cmake:50 (message):
+  Failed to clone repository: 'https://github.com/grimme-lab/dftd.git'
+
+
+FAILED: [code=1] dftd4-populate-prefix/src/dftd4-populate-stamp/dftd4-populate-download /home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build/_deps/dftd4-subbuild/dftd4-populate-prefix/src/dftd4-populate-stamp/dftd4-populate-download 
+cd /home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build/_deps && /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/cmake -DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE -P /home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build/_deps/dftd4-subbuild/dftd4-populate-prefix/tmp/dftd4-populate-gitclone.cmake && /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/cmake -E touch /home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build/_deps/dftd4-subbuild/dftd4-populate-prefix/src/dftd4-populate-stamp/dftd4-populate-download
+ninja: build stopped: subcommand failed.
+
+CMake Error at /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/share/cmake-4.3/Modules/FetchContent.cmake:1931 (message):
+  Build step for dftd4 failed: 1
+Call Stack (most recent call first):
+  /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/share/cmake-4.3/Modules/FetchContent.cmake:1622 (__FetchContent_populateSubbuild)
+  /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/share/cmake-4.3/Modules/FetchContent.cmake:2158:EVAL:2 (__FetchContent_doPopulation)
+  /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/share/cmake-4.3/Modules/FetchContent.cmake:2158 (cmake_language)
+  /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/share/cmake-4.3/Modules/FetchContent.cmake:2399 (__FetchContent_Populate)
+  config/cmake/tblite-utils.cmake:103 (FetchContent_MakeAvailable)
+  config/cmake/Finddftd.cmake:36 (tblite_find_package)
+  CMakeLists.txt:92 (find_package)
+
+
+-- Configuring incomplete, errors occurred!

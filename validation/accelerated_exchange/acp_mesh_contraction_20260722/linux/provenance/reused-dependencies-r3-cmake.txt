@@ -1,0 +1,14 @@
+CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_C_COMPILER:STRING=/home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-cc
+CMAKE_C_COMPILER_AR:FILEPATH=/home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-gcc-ar
+CMAKE_C_COMPILER_RANLIB:FILEPATH=/home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-gcc-ranlib
+CMAKE_Fortran_COMPILER:STRING=/home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-gfortran
+CMAKE_Fortran_COMPILER_AR:FILEPATH=/home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-gcc-ar
+CMAKE_Fortran_COMPILER_RANLIB:FILEPATH=/home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-gcc-ranlib
+CMAKE_INSTALL_PREFIX:PATH=/home/kuehne88/work/gxtb-range-fft-fix-20260722/save_tblite-install-r2
+CMAKE_C_COMPILER-ADVANCED:INTERNAL=1
+CMAKE_C_COMPILER_AR-ADVANCED:INTERNAL=1
+CMAKE_C_COMPILER_RANLIB-ADVANCED:INTERNAL=1
+CMAKE_Fortran_COMPILER-ADVANCED:INTERNAL=1
+CMAKE_Fortran_COMPILER_AR-ADVANCED:INTERNAL=1
+CMAKE_Fortran_COMPILER_RANLIB-ADVANCED:INTERNAL=1

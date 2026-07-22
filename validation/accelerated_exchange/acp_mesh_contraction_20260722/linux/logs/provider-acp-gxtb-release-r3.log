@@ -1,0 +1,170 @@
+UpdateCTestConfiguration  from :/home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build-r3/DartConfiguration.tcl
+Test project /home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build-r3
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 2
+    Start  2: tblite/acp
+
+2: Test command: /home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build-r3/test/unit/tblite-tester "acp"
+2: Working Directory: /home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build-r3/test/unit
+2: Test timeout computed to be: 10000000
+2: # Testing: acp
+2:   Starting acp-gxtb-h2 ... (1/22)
+2:        ... acp-gxtb-h2 [PASSED]
+2:   Starting acp-gxtb-lih ... (2/22)
+2:        ... acp-gxtb-lih [PASSED]
+2:   Starting acp-gxtb-s2 ... (3/22)
+2:        ... acp-gxtb-s2 [PASSED]
+2:   Starting acp-gxtb-sih4 ... (4/22)
+2:        ... acp-gxtb-sih4 [PASSED]
+2:   Starting acp-gxtb-cecl3 ... (5/22)
+2:        ... acp-gxtb-cecl3 [PASSED]
+2:   Starting acp-gxtb-ce2 ... (6/22)
+2:        ... acp-gxtb-ce2 [PASSED]
+2:   Starting qeff-gradient-gxtb-h2 ... (7/22)
+2:        ... qeff-gradient-gxtb-h2 [PASSED]
+2:   Starting qeff-gradient-gxtb-lih ... (8/22)
+2:        ... qeff-gradient-gxtb-lih [PASSED]
+2:   Starting qeff-gradient-gxtb-no ... (9/22)
+2:        ... qeff-gradient-gxtb-no [PASSED]
+2:   Starting qeff-gradient-gxtb-s2 ... (10/22)
+2:        ... qeff-gradient-gxtb-s2 [PASSED]
+2:   Starting qeff-gradient-gxtb-sih4 ... (11/22)
+2:        ... qeff-gradient-gxtb-sih4 [PASSED]
+2:   Starting qeff-gradient-gxtb-cecl3 ... (12/22)
+2:        ... qeff-gradient-gxtb-cecl3 [PASSED]
+2:   Starting qeff-gradient-gxtb-co2 ... (13/22)
+2:        ... qeff-gradient-gxtb-co2 [PASSED]
+2:   Starting gradient-gxtb-h2 ... (14/22)
+2:        ... gradient-gxtb-h2 [PASSED]
+2:   Starting gradient-gxtb-lih ... (15/22)
+2:        ... gradient-gxtb-lih [PASSED]
+2:   Starting gradient-gxtb-no ... (16/22)
+2:        ... gradient-gxtb-no [PASSED]
+2:   Starting gradient-gxtb-s2 ... (17/22)
+2:        ... gradient-gxtb-s2 [PASSED]
+2:   Starting gradient-gxtb-sih4 ... (18/22)
+2:        ... gradient-gxtb-sih4 [PASSED]
+2:   Starting gradient-gxtb-cecl3 ... (19/22)
+2:        ... gradient-gxtb-cecl3 [PASSED]
+2:   Starting gradient-gxtb-co2 ... (20/22)
+2:        ... gradient-gxtb-co2 [PASSED]
+2:   Starting sigma-gxtb-co2 ... (21/22)
+2:        ... sigma-gxtb-co2 [PASSED]
+2:   Starting acp-gxtb-co2-sc ... (22/22)
+2:        ... acp-gxtb-co2-sc [PASSED]
+1/2 Test  #2: tblite/acp .......................   Passed    9.56 sec
+test 16
+    Start 16: tblite/gxtb
+
+16: Test command: /home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build-r3/test/unit/tblite-tester "gxtb"
+16: Working Directory: /home/kuehne88/work/gxtb-acp-stream-20260722/save_tblite-build-r3/test/unit
+16: Test timeout computed to be: 10000000
+16: # Testing: gxtb
+16:   Starting energy-h2 ... (1/44)
+16:        ... energy-h2 [PASSED]
+16:   Starting energy-lih ... (2/44)
+16:        ... energy-lih [PASSED]
+16:   Starting energy-water ... (3/44)
+16:        ... energy-water [PASSED]
+16:   Starting energy-no ... (4/44)
+16:        ... energy-no [PASSED]
+16:   Starting energy-chex-rad ... (5/44)
+16:        ... energy-chex-rad [PASSED]
+16:   Starting energy-s2 ... (6/44)
+16:        ... energy-s2 [PASSED]
+16:   Starting energy-cecl3 ... (7/44)
+16:        ... energy-cecl3 [PASSED]
+16:   Starting energy-ce2 ... (8/44)
+16:        ... energy-ce2 [PASSED]
+16:   Starting energy-mb01 ... (9/44)
+16:        ... energy-mb01 [PASSED]
+16:   Starting energy-mb02 ... (10/44)
+16:        ... energy-mb02 [PASSED]
+16:   Starting gradient-h2 ... (11/44)
+16:        ... gradient-h2 [PASSED]
+16:   Starting gradient-lih ... (12/44)
+16:        ... gradient-lih [PASSED]
+16:   Starting gradient-water ... (13/44)
+16:        ... gradient-water [PASSED]
+16:   Starting gradient-no ... (14/44)
+16:        ... gradient-no [PASSED]
+16:   Starting gradient-s2 ... (15/44)
+16:        ... gradient-s2 [PASSED]
+16:   Starting gradient-pcl ... (16/44)
+16:        ... gradient-pcl [PASSED]
+16:   Starting gradient-sih4 ... (17/44)
+16:        ... gradient-sih4 [PASSED]
+16:   Starting gradient-cecl3 ... (18/44)
+16:        ... gradient-cecl3 [PASSED]
+16:   Starting gradient-ce2 ... (19/44)
+16:        ... gradient-ce2 [PASSED]
+16:   Starting gradient-panp ... (20/44)
+16:        ... gradient-panp [PASSED]
+16:   Starting gradient-mb02 ... (21/44)
+16:        ... gradient-mb02 [PASSED]
+16:   Starting sigma-h2 ... (22/44)
+16:        ... sigma-h2 [PASSED]
+16:   Starting sigma-lih ... (23/44)
+16:        ... sigma-lih [PASSED]
+16:   Starting sigma-water ... (24/44)
+16:        ... sigma-water [PASSED]
+16:   Starting sigma-no ... (25/44)
+16:        ... sigma-no [PASSED]
+16:   Starting sigma-s2 ... (26/44)
+16:        ... sigma-s2 [PASSED]
+16:   Starting sigma-pcl ... (27/44)
+16:        ... sigma-pcl [PASSED]
+16:   Starting sigma-sih4 ... (28/44)
+16:        ... sigma-sih4 [PASSED]
+16:   Starting sigma-cecl3 ... (29/44)
+16:        ... sigma-cecl3 [PASSED]
+16:   Starting sigma-ce2 ... (30/44)
+16:        ... sigma-ce2 [PASSED]
+16:   Starting sigma-panp ... (31/44)
+16:        ... sigma-panp [PASSED]
+16:   Starting sigma-mb03 ... (32/44)
+16:        ... sigma-mb03 [PASSED]
+16:   Starting energy-h2o-mol-pbc ... (33/44)
+16:        ... energy-h2o-mol-pbc [PASSED]
+16:   Starting sigma-h2o-pbc ... (34/44)
+16:        ... sigma-h2o-pbc [PASSED]
+16:   Starting image-h0-h2o-pbc ... (35/44)
+16:        ... image-h0-h2o-pbc [PASSED]
+16:   Starting image-acp-gradient-h2o-pbc ... (36/44)
+16:        ... image-acp-gradient-h2o-pbc [PASSED]
+16:   Starting kmesh-acp-h2o-pbc ... (37/44)
+16:  ACP_SPARSE_RESPONSE_QUALIFY residual=  0.0000E+00
+16: ACP_STREAM_STATE_GATES 3 ACP_SPARSE_DENSITY_IMAGES 1
+16:        ... kmesh-acp-h2o-pbc [PASSED]
+16:   Starting cp2k-acp-cutoff ... (38/44)
+16:        ... cp2k-acp-cutoff [PASSED]
+16:   Starting cp2k-scc-mixer-dimension ... (39/44)
+16:        ... cp2k-scc-mixer-dimension [PASSED]
+16:   Starting cp2k-potential-mixer ... (40/44)
+16:        ... cp2k-potential-mixer [PASSED]
+16:   Starting cp2k-potential-mixer-uninitialized ... (41/44)
+16:        ... cp2k-potential-mixer-uninitialized [EXPECTED FAIL]
+16:   Message: CP2K potential mixer must be reset before use
+16:   Starting cp2k-potential-mixer-invalid-dimension ... (42/44)
+16:        ... cp2k-potential-mixer-invalid-dimension [EXPECTED FAIL]
+16:   Message: CP2K potential mixer dimension must be positive
+16:   Starting cp2k-potential-mixer-size-mismatch ... (43/44)
+16:        ... cp2k-potential-mixer-size-mismatch [EXPECTED FAIL]
+16:   Message: CP2K potential mixer Fock vector dimension mismatch
+16:   Starting cp2k-potential-mixer-nonfinite ... (44/44)
+16:        ... cp2k-potential-mixer-nonfinite [EXPECTED FAIL]
+16:   Message: CP2K potential mixer received a non-finite Fock vector
+2/2 Test #16: tblite/gxtb ......................   Passed   12.36 sec
+
+The following tests passed:
+	tblite/acp
+	tblite/gxtb
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =  21.92 sec

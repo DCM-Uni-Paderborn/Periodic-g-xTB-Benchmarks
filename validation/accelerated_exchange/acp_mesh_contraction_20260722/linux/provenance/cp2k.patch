@@ -1,0 +1,945 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4ef183595e..d8787fcd85 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -951,7 +951,8 @@ if(CP2K_USE_TBLITE)
+   CHECK_Fortran_SOURCE_COMPILES(
+     "program check_tblite_gxtb
+        use tblite_xtb_gxtb, only : new_gxtb_calculator
+-       use tblite_cp2k_compat, only : cp2k_build_acp_projectors, &
++       use tblite_cp2k_compat, only : cp2k_acp_projector_image_gradient, &
++          cp2k_build_acp_projectors, &
+           cp2k_exchange_kpoint, cp2k_exchange_partial_abi_version, &
+           cp2k_exchange_partial_begin, &
+           cp2k_exchange_partial_descriptor_type, &
+@@ -974,7 +975,7 @@ if(CP2K_USE_TBLITE)
+   if(CP2K_TBLITE_PROVIDER STREQUAL "SAVE" AND NOT CP2K_TBLITE_HAS_GXTB)
+     message(
+       FATAL_ERROR
+-        "The SAVE tblite provider was selected, but the detected library does not export the required g-xTB/CP2K compatibility, partial-exchange, transform, ACP-cache, and potential-mixer API"
++        "The SAVE tblite provider was selected, but the detected library does not export the required g-xTB/CP2K compatibility, partial-exchange, transform, sparse-ACP, ACP-cache, and potential-mixer API"
+     )
+   endif()
+   if(CP2K_TBLITE_PROVIDER STREQUAL "UPSTREAM" AND CP2K_TBLITE_HAS_GXTB)
+diff --git a/src/cp_control_types.F b/src/cp_control_types.F
+index 3f457526df..eb9e242222 100644
+--- a/src/cp_control_types.F
++++ b/src/cp_control_types.F
+@@ -16,13 +16,14 @@ MODULE cp_control_types
+    USE input_constants,                 ONLY: &
+         do_full_density, rtp_bse_ham_G0W0, rtp_method_tddft, tblite_cli_born_kernel_auto, &
+         tblite_cli_solution_state_gsolv, tblite_cli_solvation_none, tblite_guess_auto, &
+-        tblite_guess_ceh, tblite_gxtb_acp_cache_enabled, tblite_gxtb_exchange_complete_array, &
+-        tblite_gxtb_forward_qualification_off, tblite_gxtb_gradient_dense, &
+-        tblite_gxtb_image_batch_default, tblite_gxtb_star_dense, tblite_gxtb_transform_dense, &
+-        tblite_mixer_damping_default, tblite_mixer_iterations_default, &
+-        tblite_mixer_max_weight_default, tblite_mixer_min_weight_default, &
+-        tblite_mixer_omega0_default, tblite_mixer_weight_factor_default, tblite_scc_mixer_auto, &
+-        tblite_solver_gvd, use_mom_ref_coac
++        tblite_guess_ceh, tblite_gxtb_acp_cache_enabled, tblite_gxtb_acp_mesh_dense, &
++        tblite_gxtb_exchange_complete_array, tblite_gxtb_forward_qualification_off, &
++        tblite_gxtb_gradient_dense, tblite_gxtb_image_batch_default, tblite_gxtb_star_dense, &
++        tblite_gxtb_transform_dense, tblite_mixer_damping_default, &
++        tblite_mixer_iterations_default, tblite_mixer_max_weight_default, &
++        tblite_mixer_min_weight_default, tblite_mixer_omega0_default, &
++        tblite_mixer_weight_factor_default, tblite_scc_mixer_auto, tblite_solver_gvd, &
++        use_mom_ref_coac
+    USE kinds,                           ONLY: default_path_length,&
+                                               default_string_length,&
+                                               dp
+@@ -279,6 +280,7 @@ MODULE cp_control_types
+       INTEGER                              :: gxtb_symmetry_star_contraction = tblite_gxtb_star_dense
+       INTEGER                              :: gxtb_image_batch_size = tblite_gxtb_image_batch_default
+       INTEGER                              :: gxtb_acp_projector_cache = tblite_gxtb_acp_cache_enabled
++      INTEGER                              :: gxtb_acp_mesh_contraction = tblite_gxtb_acp_mesh_dense
+       REAL(KIND=dp)                        :: tblite_accuracy = 1.0_dp
+       REAL(KIND=dp)                        :: tblite_mixer_damping = tblite_mixer_damping_default
+       REAL(KIND=dp)                        :: tblite_mixer_max_weight = tblite_mixer_max_weight_default
+diff --git a/src/cp_control_utils.F b/src/cp_control_utils.F
+index 68e41b5219..c096f81a07 100644
+--- a/src/cp_control_utils.F
++++ b/src/cp_control_utils.F
+@@ -1913,6 +1913,8 @@ CONTAINS
+          qs_control%xtb_control%gxtb_image_batch_explicit = gxtb_image_batch_explicit
+          CALL section_vals_val_get(xtb_tblite_gxtb_acceleration, "ACP_PROJECTOR_CACHE", &
+                                    i_val=qs_control%xtb_control%gxtb_acp_projector_cache)
++         CALL section_vals_val_get(xtb_tblite_gxtb_acceleration, "ACP_MESH_CONTRACTION", &
++                                   i_val=qs_control%xtb_control%gxtb_acp_mesh_contraction)
+          IF (qs_control%xtb_control%gxtb_image_batch_size < 1) THEN
+             CPABORT("XTB/TBLITE/GXTB_ACCELERATION/IMAGE_BATCH_SIZE must be positive")
+          END IF
+diff --git a/src/input_constants.F b/src/input_constants.F
+index 20d45d99e9..8efaf600d0 100644
+--- a/src/input_constants.F
++++ b/src/input_constants.F
+@@ -1429,6 +1429,9 @@ MODULE input_constants
+    INTEGER, PARAMETER, PUBLIC               :: tblite_gxtb_acp_cache_enabled = 0, &
+                                                tblite_gxtb_acp_cache_direct = 1, &
+                                                tblite_gxtb_acp_cache_qualify = 2
++   INTEGER, PARAMETER, PUBLIC               :: tblite_gxtb_acp_mesh_dense = 0, &
++                                               tblite_gxtb_acp_mesh_streamed = 1, &
++                                               tblite_gxtb_acp_mesh_qualify = 2
+    INTEGER, PARAMETER, PUBLIC               :: tblite_gxtb_forward_qualification_off = 0, &
+                                                tblite_gxtb_forward_qualification_qualify = 1
+    INTEGER, PARAMETER, PUBLIC               :: tblite_gxtb_image_batch_default = 8
+diff --git a/src/input_cp2k_tb.F b/src/input_cp2k_tb.F
+index 00df2faca4..8e4e095ff2 100644
+--- a/src/input_cp2k_tb.F
++++ b/src/input_cp2k_tb.F
+@@ -30,7 +30,8 @@ MODULE input_cp2k_tb
+         tblite_cli_solvation_gb, tblite_cli_solvation_gbe, tblite_cli_solvation_gbsa, &
+         tblite_guess_auto, tblite_guess_ceh, tblite_guess_eeq, tblite_guess_sad, &
+         tblite_gxtb_acp_cache_direct, tblite_gxtb_acp_cache_enabled, &
+-        tblite_gxtb_acp_cache_qualify, tblite_gxtb_exchange_batched, &
++        tblite_gxtb_acp_cache_qualify, tblite_gxtb_acp_mesh_dense, tblite_gxtb_acp_mesh_qualify, &
++        tblite_gxtb_acp_mesh_streamed, tblite_gxtb_exchange_batched, &
+         tblite_gxtb_exchange_complete_array, tblite_gxtb_exchange_distributed, &
+         tblite_gxtb_exchange_kgroup_owner, tblite_gxtb_exchange_kgroup_partial_images, &
+         tblite_gxtb_exchange_kgroup_partial_replicated, tblite_gxtb_exchange_kgroup_partial_root, &
+@@ -904,6 +905,27 @@ CONTAINS
+       CALL section_add_keyword(section, keyword)
+       CALL keyword_release(keyword)
+ 
++      CALL keyword_create(keyword, __LOCATION__, name="ACP_MESH_CONTRACTION", &
++                          description="Selects the periodic ACP mesh contraction. DENSE retains the complete "// &
++                          "mesh Bloch operator and the established dense derivative oracle. STREAMED evaluates "// &
++                          "bounded forward k batches, folds each block immediately, and contracts compact "// &
++                          "projector images directly with CP2K's existing sparse density images for forces and "// &
++                          "stress. It therefore forms neither an ACP(AO,AO,Nk_full) payload nor the quadratic "// &
++                          "projector-translation difference set. QUALIFY executes both paths, aborts unless "// &
++                          "their strict numerical gates pass, and applies the streamed result once. The "// &
++                          "developer-only CP2K_GXTB_ACP_MESH_CONTRACTION environment variable overrides this "// &
++                          "keyword.", &
++                          usage="ACP_MESH_CONTRACTION (DENSE|STREAMED|QUALIFY)", &
++                          enum_c_vals=s2a("DENSE", "STREAMED", "QUALIFY"), &
++                          enum_i_vals=[tblite_gxtb_acp_mesh_dense, tblite_gxtb_acp_mesh_streamed, &
++                                       tblite_gxtb_acp_mesh_qualify], &
++                          enum_desc=s2a("Use complete-mesh and full-difference-set ACP oracles.", &
++                                        "Use bounded forward and sparse-image reverse contractions.", &
++                                        "Compare streamed and dense ACP contractions before applying streamed."), &
++                          default_i_val=tblite_gxtb_acp_mesh_dense)
++      CALL section_add_keyword(section, keyword)
++      CALL keyword_release(keyword)
++
+    END SUBROUTINE create_gxtb_acceleration_section
+ 
+ ! **************************************************************************************************
+diff --git a/src/tblite_interface.F b/src/tblite_interface.F
+index 5df48075e5..9fad6e3777 100644
+--- a/src/tblite_interface.F
++++ b/src/tblite_interface.F
+@@ -30,6 +30,7 @@ MODULE tblite_interface
+                                  acp_image_type, hamiltonian_image_type, &
+                                  cp2k_acp_image_gradient, cp2k_acp_kmesh, &
+                                  cp2k_acp_kmesh_gradient, cp2k_apply_basis_gradient, &
++                                 cp2k_acp_projector_image_gradient, &
+                                  cp2k_build_acp_projectors, cp2k_build_image_acp, &
+                                  cp2k_build_gamma_h0, &
+                                  cp2k_build_image_h0, cp2k_exchange_kmesh, &
+@@ -162,7 +163,9 @@ MODULE tblite_interface
+                               tblite_cli_solvation_gbsa, &
+                               tblite_guess_auto, tblite_guess_ceh, tblite_guess_eeq, tblite_guess_sad, &
+                               tblite_gxtb_acp_cache_direct, tblite_gxtb_acp_cache_enabled, &
+-                              tblite_gxtb_acp_cache_qualify, tblite_gxtb_exchange_batched, &
++                              tblite_gxtb_acp_cache_qualify, tblite_gxtb_acp_mesh_dense, &
++                              tblite_gxtb_acp_mesh_qualify, tblite_gxtb_acp_mesh_streamed, &
++                              tblite_gxtb_exchange_batched, &
+                               tblite_gxtb_exchange_complete_array, tblite_gxtb_exchange_distributed, &
+                               tblite_gxtb_exchange_kgroup_owner, &
+                               tblite_gxtb_exchange_kgroup_partial_images, &
+@@ -293,6 +296,9 @@ MODULE tblite_interface
+    INTEGER, PARAMETER                                 :: tb_gxtb_symmetry_star_dense = tblite_gxtb_star_dense
+    INTEGER, PARAMETER                                 :: tb_gxtb_symmetry_star_streamed = tblite_gxtb_star_streamed
+    INTEGER, PARAMETER                                 :: tb_gxtb_symmetry_star_qualify = tblite_gxtb_star_qualify
++   INTEGER, PARAMETER                                 :: tb_gxtb_acp_mesh_dense = tblite_gxtb_acp_mesh_dense
++   INTEGER, PARAMETER                                 :: tb_gxtb_acp_mesh_streamed = tblite_gxtb_acp_mesh_streamed
++   INTEGER, PARAMETER                                 :: tb_gxtb_acp_mesh_qualify = tblite_gxtb_acp_mesh_qualify
+ #endif
+    REAL(KIND=dp), PARAMETER                           :: same_atom = 0.00001_dp
+    REAL(KIND=dp), PARAMETER                           :: tblite_scc_pconv = 2.0E-5_dp
+@@ -4077,11 +4083,14 @@ CONTAINS
+       INTEGER, DIMENSION(:, :, :), POINTER               :: cell_to_index
+       TYPE(acp_image_type), INTENT(IN)                   :: projectors
+ 
+-      COMPLEX(KIND=dp), ALLOCATABLE, DIMENSION(:, :, :)  :: acp_full
+-      INTEGER                                            :: ik, nao, nred
++      COMPLEX(KIND=dp), ALLOCATABLE, DIMENSION(:, :)     :: work
++      COMPLEX(KIND=dp), ALLOCATABLE, DIMENSION(:, :, :)  :: acp_batch, acp_full, acp_oracle_reduced
++      INTEGER                                            :: batch_size, first, ifull, ik, last, &
++                                                            mesh_mode, nao, nblock, nred
+       INTEGER, ALLOCATABLE, DIMENSION(:)                 :: ao_first, ao_size
+-      LOGICAL                                            :: use_real_wfn
+-      REAL(KIND=dp)                                      :: hermitian_error
++      LOGICAL                                            :: keep_full_qualification, use_real_wfn
++      REAL(KIND=dp)                                      :: folded_residual, hermitian_error, &
++                                                            max_block_residual, residual, scale
+       TYPE(error_type), ALLOCATABLE                      :: error
+       TYPE(kpoint_type), POINTER                         :: kpoints
+       TYPE(tb_gxtb_kmesh_map_type), POINTER              :: kmap
+@@ -4097,43 +4106,145 @@ CONTAINS
+       kmap => tb%gxtb_kmesh_map
+       nao = tb%calc%bas%nao
+       CALL tb_gxtb_ao_layout(tb, ao_first, ao_size)
+-      ALLOCATE (acp_full(nao, nao, kmap%nfull), &
+-                tb%acp_fock_kp(nao, nao, nred), &
++      ALLOCATE (tb%acp_fock_kp(nao, nao, nred), &
+                 source=CMPLX(0.0_dp, 0.0_dp, KIND=dp))
+-
+-      CALL cp2k_acp_kmesh(tb%calc, tb%mol, projectors, kmap%xkp, acp_full, error)
+-      IF (ALLOCATED(error)) THEN
+-         CPABORT("save_tblite direct k-space ACP evaluation failed: "//TRIM(error%message))
+-      END IF
+-      IF (.NOT. ALL(ieee_is_finite(REAL(acp_full, KIND=dp))) .OR. &
+-          .NOT. ALL(ieee_is_finite(AIMAG(acp_full)))) THEN
+-         CPABORT("save_tblite returned a non-finite k-space ACP matrix")
+-      END IF
+-      DO ik = 1, kmap%nfull
+-         hermitian_error = MAXVAL(ABS(acp_full(:, :, ik) - &
+-                                      CONJG(TRANSPOSE(acp_full(:, :, ik)))))
+-         IF (hermitian_error > 1.0E-10_dp) THEN
+-            CPABORT("save_tblite returned a non-Hermitian k-space ACP matrix")
+-         END IF
+-      END DO
+-
+-      IF (.NOT. kmap%identity) THEN
+-         CALL tb_validate_gxtb_full_response(kpoints, kmap, ao_first, ao_size, &
+-                                             acp_full, "ACP")
+-      END IF
+-      CALL tb_fold_gxtb_kpoint_matrix(kpoints, kmap, ao_first, ao_size, &
+-                                      acp_full, tb%acp_fock_kp)
+-      IF (.NOT. kmap%identity) THEN
+-         CALL tb_validate_gxtb_folded_response(kpoints, kmap, ao_first, ao_size, &
+-                                               acp_full, tb%acp_fock_kp, "ACP")
+-      END IF
+       IF (ALLOCATED(tb%qualification_acp_fock_full)) THEN
+          DEALLOCATE (tb%qualification_acp_fock_full)
+       END IF
+-      IF (tb_gxtb_forward_qualification_enabled(tb)) THEN
+-         ALLOCATE (tb%qualification_acp_fock_full(nao, nao, kmap%nfull))
+-         tb%qualification_acp_fock_full(:, :, :) = acp_full(:, :, :)
+-      END IF
++      keep_full_qualification = tb_gxtb_forward_qualification_enabled(tb)
++      mesh_mode = tb_gxtb_acp_mesh_mode(tb)
++
++      SELECT CASE (mesh_mode)
++      CASE (tb_gxtb_acp_mesh_dense)
++         ALLOCATE (acp_full(nao, nao, kmap%nfull))
++         CALL cp2k_acp_kmesh(tb%calc, tb%mol, projectors, kmap%xkp, acp_full, error)
++         IF (ALLOCATED(error)) THEN
++            CPABORT("save_tblite direct k-space ACP evaluation failed: "//TRIM(error%message))
++         END IF
++         IF (.NOT. ALL(ieee_is_finite(REAL(acp_full, KIND=dp))) .OR. &
++             .NOT. ALL(ieee_is_finite(AIMAG(acp_full)))) THEN
++            CPABORT("save_tblite returned a non-finite k-space ACP matrix")
++         END IF
++         DO ifull = 1, kmap%nfull
++            hermitian_error = MAXVAL(ABS(acp_full(:, :, ifull) - &
++                                         CONJG(TRANSPOSE(acp_full(:, :, ifull)))))
++            IF (hermitian_error > 1.0E-10_dp) THEN
++               CPABORT("save_tblite returned a non-Hermitian k-space ACP matrix")
++            END IF
++         END DO
++         IF (.NOT. kmap%identity) THEN
++            CALL tb_validate_gxtb_full_response(kpoints, kmap, ao_first, ao_size, &
++                                                acp_full, "ACP")
++         END IF
++         CALL tb_fold_gxtb_kpoint_matrix(kpoints, kmap, ao_first, ao_size, &
++                                         acp_full, tb%acp_fock_kp)
++         IF (.NOT. kmap%identity) THEN
++            CALL tb_validate_gxtb_folded_response(kpoints, kmap, ao_first, ao_size, &
++                                                  acp_full, tb%acp_fock_kp, "ACP")
++         END IF
++         IF (keep_full_qualification) THEN
++            ALLOCATE (tb%qualification_acp_fock_full(nao, nao, kmap%nfull))
++            tb%qualification_acp_fock_full(:, :, :) = acp_full(:, :, :)
++         END IF
++
++      CASE (tb_gxtb_acp_mesh_streamed, tb_gxtb_acp_mesh_qualify)
++         max_block_residual = 0.0_dp
++         folded_residual = 0.0_dp
++         IF (mesh_mode == tb_gxtb_acp_mesh_qualify) THEN
++            ALLOCATE (acp_full(nao, nao, kmap%nfull), &
++                      acp_oracle_reduced(nao, nao, nred))
++            CALL cp2k_acp_kmesh(tb%calc, tb%mol, projectors, kmap%xkp, acp_full, error)
++            IF (ALLOCATED(error)) THEN
++               CPABORT("QUALIFICATION_ONLY dense ACP mesh oracle failed: "//TRIM(error%message))
++            END IF
++            IF (.NOT. ALL(ieee_is_finite(REAL(acp_full, KIND=dp))) .OR. &
++                .NOT. ALL(ieee_is_finite(AIMAG(acp_full)))) THEN
++               CPABORT("QUALIFICATION_ONLY dense ACP mesh oracle returned non-finite data")
++            END IF
++            DO ifull = 1, kmap%nfull
++               hermitian_error = MAXVAL(ABS(acp_full(:, :, ifull) - &
++                                            CONJG(TRANSPOSE(acp_full(:, :, ifull)))))
++               IF (hermitian_error > 1.0E-10_dp) THEN
++                  CPABORT("QUALIFICATION_ONLY dense ACP mesh oracle is not Hermitian")
++               END IF
++            END DO
++            IF (.NOT. kmap%identity) THEN
++               CALL tb_validate_gxtb_full_response(kpoints, kmap, ao_first, ao_size, &
++                                                   acp_full, "ACP dense oracle")
++            END IF
++            CALL tb_fold_gxtb_kpoint_matrix(kpoints, kmap, ao_first, ao_size, &
++                                            acp_full, acp_oracle_reduced)
++         END IF
++
++         batch_size = MIN(kmap%nfull, tb_gxtb_exchange_stream_batch_size(tb))
++         CPASSERT(batch_size >= 1)
++         ALLOCATE (acp_batch(nao, nao, batch_size), work(nao, nao))
++         IF (keep_full_qualification) THEN
++            ALLOCATE (tb%qualification_acp_fock_full(nao, nao, kmap%nfull))
++         END IF
++         DO first = 1, kmap%nfull, batch_size
++            last = MIN(kmap%nfull, first + batch_size - 1)
++            nblock = last - first + 1
++            acp_batch(:, :, 1:nblock) = CMPLX(0.0_dp, 0.0_dp, KIND=dp)
++            CALL cp2k_acp_kmesh(tb%calc, tb%mol, projectors, kmap%xkp(:, first:last), &
++                                acp_batch(:, :, 1:nblock), error)
++            IF (ALLOCATED(error)) THEN
++               CPABORT("save_tblite streamed k-space ACP batch failed: "//TRIM(error%message))
++            END IF
++            IF (.NOT. ALL(ieee_is_finite(REAL(acp_batch(:, :, 1:nblock), KIND=dp))) .OR. &
++                .NOT. ALL(ieee_is_finite(AIMAG(acp_batch(:, :, 1:nblock))))) THEN
++               CPABORT("save_tblite returned a non-finite streamed ACP batch")
++            END IF
++            DO ik = 1, nblock
++               hermitian_error = MAXVAL(ABS(acp_batch(:, :, ik) - &
++                                            CONJG(TRANSPOSE(acp_batch(:, :, ik)))))
++               IF (hermitian_error > 1.0E-10_dp) THEN
++                  CPABORT("save_tblite returned a non-Hermitian streamed ACP block")
++               END IF
++               ifull = first + ik - 1
++               IF (mesh_mode == tb_gxtb_acp_mesh_qualify) THEN
++                  scale = MAX(1.0_dp, MAXVAL(ABS(acp_full(:, :, ifull))))
++                  residual = MAXVAL(ABS(acp_batch(:, :, ik) - acp_full(:, :, ifull)))/scale
++                  max_block_residual = MAX(max_block_residual, residual)
++               END IF
++               IF (keep_full_qualification) THEN
++                  tb%qualification_acp_fock_full(:, :, ifull) = acp_batch(:, :, ik)
++               END IF
++               CALL tb_accumulate_gxtb_kpoint_response( &
++                  kpoints, kmap, ao_first, ao_size, ifull, acp_batch(:, :, ik), &
++                  tb%acp_fock_kp(:, :, kmap%source(ifull)), work)
++            END DO
++         END DO
++         DO ik = 1, nred
++            tb%acp_fock_kp(:, :, ik) = 0.5_dp*(tb%acp_fock_kp(:, :, ik) + &
++                                               CONJG(TRANSPOSE(tb%acp_fock_kp(:, :, ik))))
++         END DO
++
++         IF (mesh_mode == tb_gxtb_acp_mesh_qualify) THEN
++            scale = MAX(1.0_dp, MAXVAL(ABS(acp_oracle_reduced)))
++            folded_residual = MAXVAL(ABS(tb%acp_fock_kp - acp_oracle_reduced))/scale
++            WRITE (*, '(A,I0,A,I0,A,ES12.4,A,ES12.4)') &
++               " GXTB-QUALIFICATION_ONLY ACP-MESH nFull=", kmap%nfull, &
++               " batch=", batch_size, " blockResidual=", max_block_residual, &
++               " foldedResidual=", folded_residual
++            IF (MAX(max_block_residual, folded_residual) > 1.0E-12_dp) THEN
++               CPABORT("QUALIFICATION_ONLY streamed ACP mesh exceeded its 1.0E-12 dense-oracle gate")
++            END IF
++            IF (.NOT. kmap%identity) THEN
++               CALL tb_validate_gxtb_folded_response(kpoints, kmap, ao_first, ao_size, &
++                                                     acp_full, tb%acp_fock_kp, &
++                                                     "ACP streamed qualification")
++            END IF
++         ELSE
++            WRITE (*, '(A,I0,A,I0,A,I0)') &
++               " GXTB-ACP-MESH STREAMED nFull=", kmap%nfull, " batch=", batch_size, &
++               " fullStorage=", 0
++         END IF
++
++      CASE DEFAULT
++         CPABORT("Invalid periodic g-xTB ACP mesh contraction")
++      END SELECT
++
+       DO ik = 1, nred
+          hermitian_error = MAXVAL(ABS(tb%acp_fock_kp(:, :, ik) - &
+                                       CONJG(TRANSPOSE(tb%acp_fock_kp(:, :, ik)))))
+@@ -4145,7 +4256,11 @@ CONTAINS
+          END IF
+       END DO
+       tb%acp_fock_kp_valid = .TRUE.
+-      DEALLOCATE (acp_full, ao_first, ao_size)
++      IF (ALLOCATED(acp_batch)) DEALLOCATE (acp_batch)
++      IF (ALLOCATED(acp_full)) DEALLOCATE (acp_full)
++      IF (ALLOCATED(acp_oracle_reduced)) DEALLOCATE (acp_oracle_reduced)
++      IF (ALLOCATED(work)) DEALLOCATE (work)
++      DEALLOCATE (ao_first, ao_size)
+ 
+    END SUBROUTINE tb_build_gxtb_kpoint_acp
+ 
+@@ -4464,6 +4579,57 @@ CONTAINS
+ 
+    END FUNCTION tb_gxtb_acp_projector_cache_mode
+ 
++! **************************************************************************************************
++!> \brief Select the periodic ACP forward/reverse mesh contraction.
++!>
++!> DENSE is the permanent Part-I complete-mesh and full-difference-set oracle. STREAMED folds
++!> bounded forward k batches immediately and contracts compact projector images directly with
++!> CP2K's existing sparse real-space density images in the reverse pass. QUALIFY executes both
++!> routes, compares every raw response at a strict relative tolerance, and applies STREAMED once.
++!> \param tb tblite state carrying the public CP2K input value
++!> \return selected ACP mesh contraction
++! **************************************************************************************************
++   INTEGER FUNCTION tb_gxtb_acp_mesh_mode(tb) RESULT(mesh_mode)
++
++      TYPE(tblite_type), INTENT(IN)                      :: tb
++
++      CHARACTER(LEN=32)                                  :: value
++      INTEGER                                            :: status, value_length
++
++      mesh_mode = tb%gxtb_acp_mesh_contraction
++      SELECT CASE (mesh_mode)
++      CASE (tb_gxtb_acp_mesh_dense, tb_gxtb_acp_mesh_streamed, tb_gxtb_acp_mesh_qualify)
++         CONTINUE
++      CASE DEFAULT
++         CPABORT("Invalid XTB/TBLITE/GXTB_ACCELERATION/ACP_MESH_CONTRACTION")
++      END SELECT
++
++      status = 1
++      value_length = 0
++      value = ""
++      CALL GET_ENVIRONMENT_VARIABLE("CP2K_GXTB_ACP_MESH_CONTRACTION", value, &
++                                    LENGTH=value_length, STATUS=status)
++      IF (status == 1 .AND. value_length == 0) RETURN
++      IF (status /= 0 .OR. value_length > LEN(value)) THEN
++         CPABORT("Invalid or overlong CP2K_GXTB_ACP_MESH_CONTRACTION value")
++      END IF
++      IF (LEN_TRIM(value) == 0) THEN
++         CPABORT("CP2K_GXTB_ACP_MESH_CONTRACTION must not be empty")
++      END IF
++
++      SELECT CASE (TRIM(ADJUSTL(value)))
++      CASE ("DENSE", "dense", "0")
++         mesh_mode = tb_gxtb_acp_mesh_dense
++      CASE ("STREAMED", "streamed", "BATCHED", "batched", "1")
++         mesh_mode = tb_gxtb_acp_mesh_streamed
++      CASE ("QUALIFY", "qualify", "ORACLE", "oracle", "2")
++         mesh_mode = tb_gxtb_acp_mesh_qualify
++      CASE DEFAULT
++         CPABORT("Unknown CP2K_GXTB_ACP_MESH_CONTRACTION value")
++      END SELECT
++
++   END FUNCTION tb_gxtb_acp_mesh_mode
++
+ ! **************************************************************************************************
+ !> \brief Build compact ACP projector images according to the public cache policy.
+ !> \param tb tblite state
+@@ -9838,8 +10004,9 @@ CONTAINS
+       INTEGER, DIMENSION(:, :), POINTER                   :: index_to_cell
+       REAL(KIND=dp), ALLOCATABLE, DIMENSION(:, :)        :: owork
+ #if defined(__TBLITE_GXTB)
+-      INTEGER :: acp_projector_cache_mode, acceleration_batch_size, acceleration_gradient_mode, &
+-                 acceleration_star_mode, acceleration_stream_mode, acceleration_transform_backend, nimg_gxtb
++      INTEGER :: acp_mesh_mode, acp_projector_cache_mode, acceleration_batch_size, &
++                 acceleration_gradient_mode, acceleration_star_mode, acceleration_stream_mode, &
++                 acceleration_transform_backend, nimg_gxtb
+       LOGICAL :: acceleration_batch_env_override, acceleration_forward_qualification
+       INTEGER, ALLOCATABLE, DIMENSION(:, :)              :: gxtb_index_to_cell
+       INTEGER, DIMENSION(:, :, :), POINTER               :: gxtb_cell_to_index
+@@ -9925,6 +10092,8 @@ CONTAINS
+          dft_control%qs_control%xtb_control%gxtb_image_batch_explicit
+       tb%gxtb_image_batch_size = dft_control%qs_control%xtb_control%gxtb_image_batch_size
+       tb%gxtb_acp_projector_cache = dft_control%qs_control%xtb_control%gxtb_acp_projector_cache
++      tb%gxtb_acp_mesh_contraction = &
++         dft_control%qs_control%xtb_control%gxtb_acp_mesh_contraction
+ #endif
+ 
+       !update geometry (required for debug / geometry optimization)
+@@ -9966,6 +10135,7 @@ CONTAINS
+             tb_gxtb_exchange_stream_batch_size(tb, acceleration_batch_env_override)
+          acceleration_forward_qualification = tb_gxtb_forward_qualification_enabled(tb)
+          acp_projector_cache_mode = tb_gxtb_acp_projector_cache_mode(tb)
++         acp_mesh_mode = tb_gxtb_acp_mesh_mode(tb)
+          IF (acceleration_transform_backend /= cp2k_exchange_transform_dense .AND. &
+              .NOT. (acceleration_stream_mode == tb_gxtb_exchange_stream_symmetry_fused .OR. &
+                     (acceleration_stream_mode == 0 .AND. &
+@@ -9979,7 +10149,9 @@ CONTAINS
+                          tb_gxtb_exchange_stream_kgroup_partial_images, &
+                          tb_gxtb_exchange_stream_symmetry_fused]) .OR. &
+                     ANY(acceleration_gradient_mode == &
+-                        [tb_gxtb_exchange_gradient_streamed, tb_gxtb_exchange_gradient_qualify]))) THEN
++                        [tb_gxtb_exchange_gradient_streamed, tb_gxtb_exchange_gradient_qualify]) .OR. &
++                    ANY(acp_mesh_mode == &
++                        [tb_gxtb_acp_mesh_streamed, tb_gxtb_acp_mesh_qualify]))) THEN
+             CPABORT("IMAGE_BATCH_SIZE is unused by the effective g-XTB paths")
+          END IF
+          IF (acceleration_forward_qualification .AND. &
+@@ -9994,14 +10166,20 @@ CONTAINS
+               acceleration_star_mode /= tb_gxtb_symmetry_star_dense .OR. &
+               acceleration_forward_qualification .OR. &
+               acp_projector_cache_mode /= tblite_gxtb_acp_cache_enabled .OR. &
++              acp_mesh_mode /= tb_gxtb_acp_mesh_dense .OR. &
+               acceleration_batch_size /= tblite_gxtb_image_batch_default)) THEN
+-            CPABORT("Non-default GXTB_ACCELERATION settings require an explicit periodic k-point path")
++            CPABORT("GXTB_ACCELERATION requires explicit periodic k points")
+          END IF
+          IF (acp_projector_cache_mode /= tblite_gxtb_acp_cache_enabled) THEN
+             IF (.NOT. ALLOCATED(tb%calc%acp)) THEN
+                CPABORT("ACP_PROJECTOR_CACHE requires ACP-enabled g-xTB parameters")
+             END IF
+          END IF
++         IF (acp_mesh_mode /= tb_gxtb_acp_mesh_dense) THEN
++            IF (.NOT. ALLOCATED(tb%calc%acp)) THEN
++               CPABORT("ACP_MESH_CONTRACTION requires ACP-enabled g-xTB parameters")
++            END IF
++         END IF
+       END IF
+ #endif
+       IF (do_kpoints) THEN
+@@ -12378,6 +12556,195 @@ CONTAINS
+ 
+    END SUBROUTINE tb_gxtb_gamma_gradient
+ 
++#if defined(__TBLITE_GXTB)
++! **************************************************************************************************
++!> \brief Evaluate the permanent dense ACP derivative oracle.
++!>
++!> Self-inverse meshes retain the established full projector-difference-set image contraction.
++!> Genuinely complex meshes retain the established complete Bloch-density contraction. This
++!> routine is intentionally storage-heavy and is used either by DENSE or only as the oracle in
++!> QUALIFY.
++! **************************************************************************************************
++   SUBROUTINE tb_gxtb_acp_dense_gradient(qs_env, tb, kpoints, kmap, &
++                                         projector_translations, density_translations, &
++                                         density_images, dEdcnbas, dEdqbas, gradient, sigma, &
++                                         prepared_images)
++
++      TYPE(qs_environment_type), POINTER                 :: qs_env
++      TYPE(tblite_type), POINTER                         :: tb
++      TYPE(kpoint_type), POINTER                         :: kpoints
++      TYPE(tb_gxtb_kmesh_map_type), INTENT(IN), POINTER  :: kmap
++      REAL(KIND=dp), DIMENSION(:, :), INTENT(IN)         :: projector_translations, &
++                                                            density_translations
++      REAL(KIND=dp), DIMENSION(:, :, :, :), INTENT(IN)   :: density_images
++      REAL(KIND=dp), DIMENSION(:), INTENT(OUT)           :: dEdcnbas, dEdqbas
++      REAL(KIND=dp), DIMENSION(:, :), INTENT(OUT)        :: gradient, sigma
++      TYPE(acp_image_type), INTENT(IN), OPTIONAL         :: prepared_images
++
++      COMPLEX(KIND=dp), ALLOCATABLE                      :: density_k(:, :, :, :)
++      INTEGER                                            :: acp_img, img, nao, nspin
++      INTEGER, ALLOCATABLE, DIMENSION(:)                 :: ao_first, ao_size
++      LOGICAL                                            :: self_inverse_kmesh, validate_density
++      REAL(KIND=dp)                                      :: translation_scale, translation_tol2
++      REAL(KIND=dp), ALLOCATABLE                         :: padded_density(:, :, :, :)
++      TYPE(acp_image_type)                               :: acp_images
++      TYPE(error_type), ALLOCATABLE                      :: error
++
++      nao = tb%calc%bas%nao
++      nspin = SIZE(density_images, 4)
++      dEdcnbas = 0.0_dp
++      dEdqbas = 0.0_dp
++      gradient = 0.0_dp
++      sigma = 0.0_dp
++      self_inverse_kmesh = MAXVAL(ABS(2.0_dp*kmap%xkp - &
++                                      REAL(NINT(2.0_dp*kmap%xkp), KIND=dp))) <= 1.0E-12_dp
++
++      IF (self_inverse_kmesh) THEN
++         IF (PRESENT(prepared_images)) THEN
++            CALL cp2k_acp_image_gradient(tb%calc, tb%mol, tb%bcache, tb%acache, &
++                                         prepared_images, density_translations, density_images, &
++                                         dEdcnbas, dEdqbas, gradient, sigma, error)
++         ELSE
++            CALL cp2k_build_image_acp(tb%calc, tb%mol, tb%bcache, tb%acache, &
++                                      projector_translations, acp_images)
++            ALLOCATE (padded_density(nao, nao, SIZE(acp_images%translation, 2), nspin))
++            padded_density = 0.0_dp
++            translation_scale = MAX(1.0_dp, MAXVAL(ABS(acp_images%translation)), &
++                                    MAXVAL(ABS(density_translations)))
++            translation_tol2 = (2048.0_dp*EPSILON(1.0_dp)*translation_scale)**2
++            DO acp_img = 1, SIZE(acp_images%translation, 2)
++               DO img = 1, SIZE(density_translations, 2)
++                  IF (SUM((acp_images%translation(:, acp_img) - &
++                           density_translations(:, img))**2) <= translation_tol2) THEN
++                     padded_density(:, :, acp_img, :) = density_images(:, :, img, :)
++                     EXIT
++                  END IF
++               END DO
++            END DO
++            CALL cp2k_acp_image_gradient(tb%calc, tb%mol, tb%bcache, tb%acache, &
++                                         acp_images, acp_images%translation, padded_density, &
++                                         dEdcnbas, dEdqbas, gradient, sigma, error)
++         END IF
++         IF (ALLOCATED(error)) THEN
++            CPABORT("save_tblite dense ACP image gradient failed: "//TRIM(error%message))
++         END IF
++         IF (ALLOCATED(padded_density)) DEALLOCATE (padded_density)
++      ELSE
++         IF (.NOT. PRESENT(prepared_images)) THEN
++            CALL tb_build_gxtb_acp_projectors(tb, projector_translations, acp_images)
++         END IF
++         CALL tb_gxtb_ao_layout(tb, ao_first, ao_size)
++         ALLOCATE (density_k(nao, nao, nspin, kmap%nfull))
++         IF (kmap%identity) THEN
++            CALL tb_collect_kpoint_density(qs_env, tb, kpoints, density_k)
++         ELSE
++            CALL tb_collect_kpoint_density(qs_env, tb, kpoints, density_k, kmap%representative)
++            validate_density = .NOT. tb%gxtb_density_map_validated .AND. &
++                               MAXVAL(ABS(density_k)) > 1.0E-14_dp
++            CALL tb_expand_gxtb_kpoint_density(kpoints, kmap, ao_first, ao_size, &
++                                               density_k, validate_density)
++            IF (validate_density) tb%gxtb_density_map_validated = .TRUE.
++         END IF
++         IF (.NOT. ALL(ieee_is_finite(REAL(density_k, KIND=dp))) .OR. &
++             .NOT. ALL(ieee_is_finite(AIMAG(density_k)))) THEN
++            CPABORT("CP2K supplied a non-finite k-point density to the dense ACP gradient")
++         END IF
++         IF (PRESENT(prepared_images)) THEN
++            CALL cp2k_acp_kmesh_gradient(tb%calc, tb%mol, tb%bcache, tb%acache, &
++                                         prepared_images, kmap%xkp, kmap%weight, density_k, &
++                                         dEdcnbas, dEdqbas, gradient, sigma, error)
++         ELSE
++            CALL cp2k_acp_kmesh_gradient(tb%calc, tb%mol, tb%bcache, tb%acache, &
++                                         acp_images, kmap%xkp, kmap%weight, density_k, &
++                                         dEdcnbas, dEdqbas, gradient, sigma, error)
++         END IF
++         IF (ALLOCATED(error)) THEN
++            CPABORT("save_tblite dense ACP k-mesh gradient failed: "//TRIM(error%message))
++         END IF
++         DEALLOCATE (density_k, ao_first, ao_size)
++      END IF
++
++   END SUBROUTINE tb_gxtb_acp_dense_gradient
++
++! **************************************************************************************************
++!> \brief Contract compact ACP projector images with CP2K's sparse real-space density.
++!>
++!> Missing projector-translation differences are exact zero density blocks. The provider performs
++!> the sparse lookup without constructing a quadratic difference set or a complete k-density.
++! **************************************************************************************************
++   SUBROUTINE tb_gxtb_acp_streamed_gradient(tb, projector_translations, density_translations, &
++                                            density_images, dEdcnbas, dEdqbas, gradient, sigma, &
++                                            prepared_images)
++
++      TYPE(tblite_type), POINTER                         :: tb
++      REAL(KIND=dp), DIMENSION(:, :), INTENT(IN)         :: projector_translations, &
++                                                            density_translations
++      REAL(KIND=dp), DIMENSION(:, :, :, :), INTENT(IN)   :: density_images
++      REAL(KIND=dp), DIMENSION(:), INTENT(OUT)           :: dEdcnbas, dEdqbas
++      REAL(KIND=dp), DIMENSION(:, :), INTENT(OUT)        :: gradient, sigma
++      TYPE(acp_image_type), INTENT(IN), OPTIONAL         :: prepared_images
++
++      TYPE(acp_image_type)                               :: acp_images
++      TYPE(error_type), ALLOCATABLE                      :: error
++
++      dEdcnbas = 0.0_dp
++      dEdqbas = 0.0_dp
++      gradient = 0.0_dp
++      sigma = 0.0_dp
++      IF (PRESENT(prepared_images)) THEN
++         CALL cp2k_acp_projector_image_gradient( &
++            tb%calc, tb%mol, tb%bcache, tb%acache, prepared_images, density_translations, &
++            density_images, dEdcnbas, dEdqbas, gradient, sigma, error)
++      ELSE
++         CALL tb_build_gxtb_acp_projectors(tb, projector_translations, acp_images)
++         CALL cp2k_acp_projector_image_gradient( &
++            tb%calc, tb%mol, tb%bcache, tb%acache, acp_images, density_translations, &
++            density_images, dEdcnbas, dEdqbas, gradient, sigma, error)
++      END IF
++      IF (ALLOCATED(error)) THEN
++         CPABORT("save_tblite sparse-projector ACP gradient failed: "//TRIM(error%message))
++      END IF
++      IF (PRESENT(prepared_images)) THEN
++         WRITE (*, '(A,I0,A,I0,A,I0)') &
++            " GXTB-ACP-MESH SPARSE-REVERSE projectorImages=", &
++            SIZE(prepared_images%projector_translation, 2), &
++            " densityImages=", SIZE(density_translations, 2), " fullDifferenceSet=", 0
++      ELSE
++         WRITE (*, '(A,I0,A,I0,A,I0)') &
++            " GXTB-ACP-MESH SPARSE-REVERSE projectorImages=", &
++            SIZE(acp_images%projector_translation, 2), &
++            " densityImages=", SIZE(density_translations, 2), " fullDifferenceSet=", 0
++      END IF
++
++   END SUBROUTINE tb_gxtb_acp_streamed_gradient
++
++! **************************************************************************************************
++!> \brief Return the largest componentwise relative ACP derivative residual.
++! **************************************************************************************************
++   REAL(KIND=dp) FUNCTION tb_gxtb_acp_gradient_residual( &
++      dEdcnbas, dEdqbas, gradient, sigma, &
++      reference_dEdcnbas, reference_dEdqbas, reference_gradient, reference_sigma) RESULT(residual)
++
++      REAL(KIND=dp), DIMENSION(:), INTENT(IN)            :: dEdcnbas, dEdqbas
++      REAL(KIND=dp), DIMENSION(:, :), INTENT(IN)         :: gradient, sigma
++      REAL(KIND=dp), DIMENSION(:), INTENT(IN)            :: reference_dEdcnbas, reference_dEdqbas
++      REAL(KIND=dp), DIMENSION(:, :), INTENT(IN)         :: reference_gradient, reference_sigma
++
++      REAL(KIND=dp)                                      :: scale
++
++      residual = 0.0_dp
++      scale = MAX(1.0_dp, MAXVAL(ABS(reference_dEdcnbas)))
++      residual = MAX(residual, MAXVAL(ABS(dEdcnbas - reference_dEdcnbas))/scale)
++      scale = MAX(1.0_dp, MAXVAL(ABS(reference_dEdqbas)))
++      residual = MAX(residual, MAXVAL(ABS(dEdqbas - reference_dEdqbas))/scale)
++      scale = MAX(1.0_dp, MAXVAL(ABS(reference_gradient)))
++      residual = MAX(residual, MAXVAL(ABS(gradient - reference_gradient))/scale)
++      scale = MAX(1.0_dp, MAXVAL(ABS(reference_sigma)))
++      residual = MAX(residual, MAXVAL(ABS(sigma - reference_sigma))/scale)
++
++   END FUNCTION tb_gxtb_acp_gradient_residual
++#endif
++
+ ! **************************************************************************************************
+ !> \brief ...
+ !> \param qs_env ...
+@@ -12396,29 +12763,35 @@ CONTAINS
+       TYPE(tblite_type), POINTER                         :: tb
+ 
+ #if defined(__TBLITE_GXTB)
+-      COMPLEX(KIND=dp), ALLOCATABLE                      :: acp_density_k(:, :, :, :)
+-      INTEGER                                            :: acp_img, img, nao, nimg, nimg_response, nspin
++      INTEGER                                            :: acp_mode, img, nao, nimg, nimg_response, nspin
+       INTEGER, DIMENSION(:, :, :), POINTER               :: cell_to_index, response_cell_to_index
+       INTEGER, DIMENSION(:, :), POINTER                  :: index_to_cell
+-      INTEGER, ALLOCATABLE, DIMENSION(:)                 :: ao_first, ao_size
+       INTEGER, ALLOCATABLE, DIMENSION(:, :)              :: response_index_to_cell
+-      LOGICAL                                            :: self_inverse_kmesh, validate_density
+       REAL(KIND=dp), ALLOCATABLE                         :: acp_gradient(:, :), acp_sigma(:, :), &
+-                                                            acp_density_images(:, :, :, :), &
++                                                            acp_oracle_gradient(:, :), &
++                                                            acp_oracle_sigma(:, :), &
+                                                             dEdcnbas(:), dEdqbas(:), &
+                                                             density_images(:, :, :, :), &
+                                                             exchange_gradient(:, :), &
+                                                             exchange_sigma(:, :), &
+                                                             gradient(:, :), overlap_gamma(:, :), &
+                                                             overlap_images(:, :, :, :), &
++                                                            oracle_dEdcnbas(:), &
++                                                            oracle_dEdqbas(:), &
+                                                             projector_translations(:, :), &
+                                                             sigma(:, :), translations(:, :), &
+                                                             wdensity_images(:, :, :, :)
+-      REAL(KIND=dp)                                      :: translation_scale, translation_tol2
+-      TYPE(acp_image_type)                               :: acp_images
++      REAL(KIND=dp)                                      :: acp_cn_residual, acp_gradient_residual, &
++                                                            acp_q_residual, acp_residual, &
++                                                            acp_sigma_residual, scale
++      ! The provider separately gates the compact response against the dense formula at 1E-12.
++      ! Re-evaluating the shared integral derivative with independently allocated work arrays can
++      ! select different small-matrix kernels, so the final derivative oracle uses a roundoff-level
++      ! architecture-portable gate.
++      REAL(KIND=dp), PARAMETER                           :: acp_derivative_gate = 1.0E-7_dp
++      TYPE(acp_image_type)                               :: acp_qualification_images
+       TYPE(cell_type), POINTER                           :: cell
+       TYPE(dbcsr_p_type), DIMENSION(:, :), POINTER       :: matrix_p, matrix_s, matrix_w
+-      TYPE(error_type), ALLOCATABLE                      :: error
+       TYPE(kpoint_type), POINTER                         :: kpoints
+       TYPE(mp_para_env_type), POINTER                    :: para_env
+       TYPE(neighbor_list_set_p_type), DIMENSION(:), &
+@@ -12487,70 +12860,58 @@ CONTAINS
+                                  projector_translations)
+          CALL tb_prepare_gxtb_kmesh_map(tb, kpoints, matrix_s, sab_kp, cell_to_index)
+          kmap => tb%gxtb_kmesh_map
+-         self_inverse_kmesh = MAXVAL(ABS(2.0_dp*kmap%xkp - &
+-                                         REAL(NINT(2.0_dp*kmap%xkp), KIND=dp))) <= 1.0E-12_dp
+          ALLOCATE (dEdcnbas(tb%mol%nat), dEdqbas(tb%mol%nat), &
+                    acp_gradient(3, tb%mol%nat), acp_sigma(3, 3))
+-         dEdcnbas = 0.0_dp
+-         dEdqbas = 0.0_dp
+-         acp_gradient = 0.0_dp
+-         acp_sigma = 0.0_dp
+-         IF (self_inverse_kmesh) THEN
+-            ! At time-reversal-invariant k points CP2K's real-wavefunction storage has an
+-            ! ambiguous direct Bloch-space dual.  Contract the already exact CP2K image
+-            ! density instead, padding translations outside its overlap support with zero.
++         acp_mode = tb_gxtb_acp_mesh_mode(tb)
++         SELECT CASE (acp_mode)
++         CASE (tb_gxtb_acp_mesh_dense)
++            CALL tb_gxtb_acp_dense_gradient( &
++               qs_env, tb, kpoints, kmap, projector_translations, translations, &
++               density_images, dEdcnbas, dEdqbas, acp_gradient, acp_sigma)
++         CASE (tb_gxtb_acp_mesh_streamed)
++            CALL tb_gxtb_acp_streamed_gradient( &
++               tb, projector_translations, translations, density_images, &
++               dEdcnbas, dEdqbas, acp_gradient, acp_sigma)
++         CASE (tb_gxtb_acp_mesh_qualify)
++            ! QUALIFY deliberately materializes the complete image oracle even for complex
++            ! meshes. Production STREAMED never enters this branch and retains compact storage.
+             CALL cp2k_build_image_acp(tb%calc, tb%mol, tb%bcache, tb%acache, &
+-                                      projector_translations, acp_images)
+-            ALLOCATE (acp_density_images(nao, nao, SIZE(acp_images%translation, 2), nspin))
+-            acp_density_images = 0.0_dp
+-            translation_scale = MAX(1.0_dp, MAXVAL(ABS(acp_images%translation)), &
+-                                    MAXVAL(ABS(translations)))
+-            translation_tol2 = (2048.0_dp*EPSILON(1.0_dp)*translation_scale)**2
+-            DO acp_img = 1, SIZE(acp_images%translation, 2)
+-               DO img = 1, nimg_response
+-                  IF (SUM((acp_images%translation(:, acp_img) - translations(:, img))**2) <= &
+-                      translation_tol2) THEN
+-                     acp_density_images(:, :, acp_img, :) = density_images(:, :, img, :)
+-                     EXIT
+-                  END IF
+-               END DO
+-            END DO
+-            CALL cp2k_acp_image_gradient(tb%calc, tb%mol, tb%bcache, tb%acache, &
+-                                         acp_images, acp_images%translation, acp_density_images, &
+-                                         dEdcnbas, dEdqbas, acp_gradient, acp_sigma, error)
+-            IF (ALLOCATED(error)) THEN
+-               CPABORT("save_tblite g-xTB ACP image gradient failed: "//TRIM(error%message))
+-            END IF
+-            DEALLOCATE (acp_density_images)
+-         ELSE
+-            ! A genuinely complex mesh has an unambiguous Bloch-space dual and avoids the
+-            ! quadratic ACP translation-difference set used by the real-mesh reference path.
+-            CALL tb_build_gxtb_acp_projectors(tb, projector_translations, acp_images)
+-            CALL tb_gxtb_ao_layout(tb, ao_first, ao_size)
+-            ALLOCATE (acp_density_k(nao, nao, nspin, kmap%nfull))
+-            IF (kmap%identity) THEN
+-               CALL tb_collect_kpoint_density(qs_env, tb, kpoints, acp_density_k)
+-            ELSE
+-               CALL tb_collect_kpoint_density(qs_env, tb, kpoints, acp_density_k, &
+-                                              kmap%representative)
+-               validate_density = .NOT. tb%gxtb_density_map_validated .AND. &
+-                                  MAXVAL(ABS(acp_density_k)) > 1.0E-14_dp
+-               CALL tb_expand_gxtb_kpoint_density(kpoints, kmap, ao_first, ao_size, &
+-                                                  acp_density_k, validate_density)
+-               IF (validate_density) tb%gxtb_density_map_validated = .TRUE.
+-            END IF
+-            IF (.NOT. ALL(ieee_is_finite(REAL(acp_density_k, KIND=dp))) .OR. &
+-                .NOT. ALL(ieee_is_finite(AIMAG(acp_density_k)))) THEN
+-               CPABORT("CP2K supplied a non-finite k-point density to the ACP gradient")
+-            END IF
+-            CALL cp2k_acp_kmesh_gradient(tb%calc, tb%mol, tb%bcache, tb%acache, &
+-                                         acp_images, kmap%xkp, kmap%weight, acp_density_k, &
+-                                         dEdcnbas, dEdqbas, acp_gradient, acp_sigma, error)
+-            IF (ALLOCATED(error)) THEN
+-               CPABORT("save_tblite g-xTB ACP k-mesh gradient failed: "//TRIM(error%message))
+-            END IF
+-            DEALLOCATE (acp_density_k, ao_first, ao_size)
+-         END IF
++                                      projector_translations, acp_qualification_images)
++            ALLOCATE (oracle_dEdcnbas(tb%mol%nat), oracle_dEdqbas(tb%mol%nat), &
++                      acp_oracle_gradient(3, tb%mol%nat), acp_oracle_sigma(3, 3))
++            CALL tb_gxtb_acp_dense_gradient( &
++               qs_env, tb, kpoints, kmap, projector_translations, translations, &
++               density_images, oracle_dEdcnbas, oracle_dEdqbas, &
++               acp_oracle_gradient, acp_oracle_sigma, &
++               prepared_images=acp_qualification_images)
++            CALL tb_gxtb_acp_streamed_gradient( &
++               tb, projector_translations, translations, density_images, &
++               dEdcnbas, dEdqbas, acp_gradient, acp_sigma, &
++               prepared_images=acp_qualification_images)
++            scale = MAX(1.0_dp, MAXVAL(ABS(oracle_dEdcnbas)))
++            acp_cn_residual = MAXVAL(ABS(dEdcnbas - oracle_dEdcnbas))/scale
++            scale = MAX(1.0_dp, MAXVAL(ABS(oracle_dEdqbas)))
++            acp_q_residual = MAXVAL(ABS(dEdqbas - oracle_dEdqbas))/scale
++            scale = MAX(1.0_dp, MAXVAL(ABS(acp_oracle_gradient)))
++            acp_gradient_residual = MAXVAL(ABS(acp_gradient - acp_oracle_gradient))/scale
++            scale = MAX(1.0_dp, MAXVAL(ABS(acp_oracle_sigma)))
++            acp_sigma_residual = MAXVAL(ABS(acp_sigma - acp_oracle_sigma))/scale
++            acp_residual = tb_gxtb_acp_gradient_residual( &
++                           dEdcnbas, dEdqbas, acp_gradient, acp_sigma, &
++                           oracle_dEdcnbas, oracle_dEdqbas, acp_oracle_gradient, acp_oracle_sigma)
++            WRITE (*, '(A,6(A,ES12.4))') &
++               " GXTB-QUALIFICATION_ONLY ACP-SPARSE-REVERSE", &
++               " residual=", acp_residual, " dEdCN=", acp_cn_residual, &
++               " dEdq=", acp_q_residual, " gradient=", acp_gradient_residual, &
++               " sigma=", acp_sigma_residual, " gate=", acp_derivative_gate
++            IF (acp_residual > acp_derivative_gate) THEN
++               CPABORT("QUALIFICATION_ONLY sparse ACP reverse exceeded its 1.0E-7 dense-oracle gate")
++            END IF
++            DEALLOCATE (oracle_dEdcnbas, oracle_dEdqbas, &
++                        acp_oracle_gradient, acp_oracle_sigma)
++         CASE DEFAULT
++            CPABORT("Invalid periodic g-xTB ACP mesh contraction")
++         END SELECT
+          CALL cp2k_apply_basis_gradient(tb%calc, tb%mol, tb%wfn_aux, dEdcnbas, dEdqbas, &
+                                         acp_gradient, acp_sigma)
+          gradient(:, :) = gradient(:, :) + acp_gradient(:, :)
+diff --git a/src/tblite_types.F b/src/tblite_types.F
+index 0fbdfa1ce9..6747c05e88 100644
+--- a/src/tblite_types.F
++++ b/src/tblite_types.F
+@@ -31,6 +31,7 @@ MODULE tblite_types
+    USE cp_dbcsr_api, ONLY: dbcsr_p_type
+    USE cp_dbcsr_operations, ONLY: dbcsr_deallocate_matrix_set
+    USE input_constants, ONLY: tblite_gxtb_acp_cache_enabled, &
++                              tblite_gxtb_acp_mesh_dense, &
+                               tblite_gxtb_exchange_complete_array, &
+                               tblite_gxtb_forward_qualification_off, &
+                               tblite_gxtb_gradient_dense, &
+@@ -143,6 +144,7 @@ MODULE tblite_types
+       INTEGER                                            :: gxtb_symmetry_star_contraction = tblite_gxtb_star_dense
+       INTEGER                                            :: gxtb_image_batch_size = tblite_gxtb_image_batch_default
+       INTEGER                                            :: gxtb_acp_projector_cache = tblite_gxtb_acp_cache_enabled
++      INTEGER                                            :: gxtb_acp_mesh_contraction = tblite_gxtb_acp_mesh_dense
+       INTEGER                                            :: potential_mixer_dimension = 0
+       TYPE(cp2k_potential_mixer_type), ALLOCATABLE       :: potential_mixer
+       TYPE(wavefunction_type)                            :: wfn_aux = wavefunction_type()
+diff --git a/tests/matchers.py b/tests/matchers.py
+index 823623c7e5..9490346d6c 100644
+--- a/tests/matchers.py
++++ b/tests/matchers.py
+@@ -71,6 +71,12 @@ registry["GXTB_mixer_star_qualification"] = TextPresenceMatcher(
+ registry["GXTB_acp_cache_qualification"] = TextPresenceMatcher(
+     "GXTB-QUALIFICATION_ONLY ACP-PROJECTOR-CACHE repeatedHit=1 directBypass=1"
+ )
++registry["GXTB_acp_mesh_qualification"] = TextPresenceMatcher(
++    "GXTB-QUALIFICATION_ONLY ACP-SPARSE-REVERSE"
++)
++registry["GXTB_acp_response_qualification"] = TextPresenceMatcher(
++    "ACP_SPARSE_RESPONSE_QUALIFY residual="
++)
+ registry["GXTB_mixed_radix_transform"] = TextPresenceMatcher(
+     "GXTB-EXCHANGE-TRANSFORM stage=REVERSE backend=MIXED_RADIX_FFT fallback=0"
+ )
+@@ -92,6 +98,12 @@ registry["GXTB_streamed_star_production"] = TextPresenceMatcher(
+ registry["GXTB_distributed_images_reverse_production"] = TextPresenceMatcher(
+     "GXTB KGROUP-PARTIAL-DISTRIBUTED-IMAGES-REVERSE nfull="
+ )
++registry["GXTB_acp_mesh_production"] = TextPresenceMatcher(
++    "GXTB-ACP-MESH STREAMED nFull="
++)
++registry["GXTB_acp_sparse_reverse_production"] = TextPresenceMatcher(
++    "GXTB-ACP-MESH SPARSE-REVERSE projectorImages="
++)
+ registry["GXTB_symmetry_fused_forward"] = TextPresenceMatcher(
+     "GXTB-SYMMETRY-FUSED nred="
+ )
+diff --git a/tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_acceleration_production.inp b/tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_acceleration_production.inp
+index 241187df84..53a2434508 100644
+--- a/tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_acceleration_production.inp
++++ b/tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_acceleration_production.inp
+@@ -31,6 +31,7 @@
+           ACCURACY 1.0
+           METHOD GXTB
+           &GXTB_ACCELERATION
++            ACP_MESH_CONTRACTION STREAMED
+             ACP_PROJECTOR_CACHE ENABLED
+             EXCHANGE_STREAM_BACKEND K_GROUP_PARTIAL_DISTRIBUTED_IMAGES
+             FORWARD_FOCK_QUALIFICATION OFF
+diff --git a/tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_acceleration_qualify.inp b/tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_acceleration_qualify.inp
+index 5fed975006..ad19ef65eb 100644
+--- a/tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_acceleration_qualify.inp
++++ b/tests/xTB/regtest-tblite-gxtb/CH4_gxtb_kp_acceleration_qualify.inp
+@@ -31,6 +31,7 @@
+           ACCURACY 1.0
+           METHOD GXTB
+           &GXTB_ACCELERATION
++            ACP_MESH_CONTRACTION QUALIFY
+             ACP_PROJECTOR_CACHE QUALIFY
+             EXCHANGE_STREAM_BACKEND K_GROUP_PARTIAL_DISTRIBUTED_IMAGES
+             FORWARD_FOCK_QUALIFICATION QUALIFY
+diff --git a/tests/xTB/regtest-tblite-gxtb/TEST_FILES.toml b/tests/xTB/regtest-tblite-gxtb/TEST_FILES.toml
+index 467f955bb9..dcede0ed94 100644
+--- a/tests/xTB/regtest-tblite-gxtb/TEST_FILES.toml
++++ b/tests/xTB/regtest-tblite-gxtb/TEST_FILES.toml
+@@ -109,12 +109,16 @@
+   {matcher="GXTB_forward_fock_qualification"},
+   {matcher="GXTB_mixer_star_qualification"},
+   {matcher="GXTB_acp_cache_qualification"},
++  {matcher="GXTB_acp_mesh_qualification"},
++  {matcher="GXTB_acp_response_qualification"},
+ ]
+ "CH4_gxtb_kp_acceleration_production.inp" = [
+   {matcher="E_total", tol=1.0E-10, ref=-40.473748967057020},
+   {matcher="GXTB_distributed_images_production"},
+   {matcher="GXTB_streamed_star_production"},
+   {matcher="GXTB_distributed_images_reverse_production"},
++  {matcher="GXTB_acp_mesh_production"},
++  {matcher="GXTB_acp_sparse_reverse_production"},
+ ]
+ "CH4_gxtb_kp_symmetry_fused_qualify.inp" = [
+   {matcher="E_total", tol=1.0E-10, ref=-40.468866070692428},

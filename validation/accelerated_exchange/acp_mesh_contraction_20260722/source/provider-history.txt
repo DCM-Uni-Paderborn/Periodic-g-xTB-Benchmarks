@@ -1,0 +1,51 @@
+commit 294099dab74fc0a49e58f42e789ed10b961907ca
+Author:     Thomas D. Kühne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 11:46:21 2026 +0200
+Commit:     Thomas D. Kühne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 11:46:21 2026 +0200
+
+    Add bounded ACP mesh contractions
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit a5afdb5c5606e41c0e55004d02a93adea89e0319
+Author:     Thomas D. Kühne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 04:58:03 2026 +0200
+Commit:     Thomas D. Kühne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 04:58:03 2026 +0200
+
+    Distribute exchange imports by image range
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit 866d87494c11318e6f3e2823948ed5f67fb85cbb
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Fri Jul 17 18:15:28 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Fri Jul 17 18:15:28 2026 +0200
+
+    Add exact streamed Fourier composition
+
+commit 15915c9435644eb257178ca8f8bf7220c38b1a84
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Fri Jul 17 14:32:51 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Fri Jul 17 14:32:51 2026 +0200
+
+    Stabilize ACP qeff finite-difference test
+
+commit db21e0c814648ab851866970aa8eba7545dbf0b5
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Fri Jul 17 04:43:11 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Fri Jul 17 04:43:11 2026 +0200
+
+    perf: cache periodic ACP projector overlaps
+
+commit bef49671d1a238bc9f4098565f4d22b77050b657
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Fri Jul 17 03:56:22 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Fri Jul 17 03:56:22 2026 +0200
+
+    Accelerate regular exchange transforms with mixed-radix FFT

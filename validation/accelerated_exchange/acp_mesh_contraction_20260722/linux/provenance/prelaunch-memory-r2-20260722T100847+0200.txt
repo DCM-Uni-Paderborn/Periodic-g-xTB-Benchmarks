@@ -1,0 +1,10 @@
+MemTotal:       528104804 kB
+MemAvailable:   518096412 kB
+timestamp=20260722T100847+0200
+MemAvailable_KiB=518096412
+live_cp2k_count=1
+live_cp2k_RSS_KiB=899996
+remaining_growth_KiB=103957604
+candidate_KiB=16777216
+margin_KiB=397361592
+minimum_KiB=134217728
