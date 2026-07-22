@@ -1,0 +1,193 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Thomas D. Kuehne" <tkuehne@cp2k.org>
+Date: Wed, 22 Jul 2026 13:54:11 +0200
+Subject: [PATCH] Qualify exact BvK cache identity
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+diff --git a/test/unit/test_exchange.f90 b/test/unit/test_exchange.f90
+index c2241c5..ce6c386 100644
+--- a/test/unit/test_exchange.f90
++++ b/test/unit/test_exchange.f90
+@@ -12144,6 +12144,133 @@ subroutine check_compact_stream_composition(calc, mol, cache, wfn, nmesh, &
+ end subroutine check_compact_stream_composition
+ 
+ 
++!> Require one deliberately modified model field to invalidate the BvK plan.
++subroutine require_bvk_model_mismatch(exchange, cache, field, error)
++   type(exchange_fock), intent(in) :: exchange
++   type(exchange_cache), intent(in) :: cache
++   character(len=*), intent(in) :: field
++   type(error_type), allocatable, intent(out) :: error
++
++   if (exchange%bvk_model_matches(cache)) then
++      call test_failed(error, "BvK model signature ignored "//trim(field))
++   end if
++end subroutine require_bvk_model_mismatch
++
++
++!> Exercise every scalar and array component of the exact model signature.
++subroutine check_bvk_model_signature(exchange, cache, error)
++   type(exchange_fock), intent(inout) :: exchange
++   type(exchange_cache), intent(in) :: cache
++   type(error_type), allocatable, intent(out) :: error
++
++   integer, parameter :: integer_delta = 1
++   real(wp), parameter :: real_delta = 1.0e-6_wp
++
++   if (.not.exchange%bvk_model_matches(cache)) then
++      call test_failed(error, "Fresh BvK model signature does not match")
++      return
++   end if
++
++   exchange%nao = exchange%nao+integer_delta
++   call require_bvk_model_mismatch(exchange, cache, "nao", error)
++   exchange%nao = exchange%nao-integer_delta
++   if (allocated(error)) return
++   exchange%nsh = exchange%nsh+integer_delta
++   call require_bvk_model_mismatch(exchange, cache, "nsh", error)
++   exchange%nsh = exchange%nsh-integer_delta
++   if (allocated(error)) return
++   exchange%maxsh = exchange%maxsh+integer_delta
++   call require_bvk_model_mismatch(exchange, cache, "maxsh", error)
++   exchange%maxsh = exchange%maxsh-integer_delta
++   if (allocated(error)) return
++
++   exchange%nsh_id(1) = exchange%nsh_id(1)+integer_delta
++   call require_bvk_model_mismatch(exchange, cache, "nsh_id", error)
++   exchange%nsh_id(1) = exchange%nsh_id(1)-integer_delta
++   if (allocated(error)) return
++   exchange%nao_sh(1) = exchange%nao_sh(1)+integer_delta
++   call require_bvk_model_mismatch(exchange, cache, "nao_sh", error)
++   exchange%nao_sh(1) = exchange%nao_sh(1)-integer_delta
++   if (allocated(error)) return
++   exchange%ish_at(1) = exchange%ish_at(1)+integer_delta
++   call require_bvk_model_mismatch(exchange, cache, "ish_at", error)
++   exchange%ish_at(1) = exchange%ish_at(1)-integer_delta
++   if (allocated(error)) return
++   exchange%iao_sh(1) = exchange%iao_sh(1)+integer_delta
++   call require_bvk_model_mismatch(exchange, cache, "iao_sh", error)
++   exchange%iao_sh(1) = exchange%iao_sh(1)-integer_delta
++   if (allocated(error)) return
++
++   exchange%frscale = exchange%frscale+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "frscale", error)
++   exchange%frscale = cache%bvk_model_frscale
++   if (allocated(error)) return
++   exchange%omega = exchange%omega+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "omega", error)
++   exchange%omega = cache%bvk_model_omega
++   if (allocated(error)) return
++   exchange%lrscale = exchange%lrscale+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "lrscale", error)
++   exchange%lrscale = cache%bvk_model_lrscale
++   if (allocated(error)) return
++   exchange%ondiag_scale = exchange%ondiag_scale+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "ondiag_scale", error)
++   exchange%ondiag_scale = cache%bvk_model_ondiag_scale
++   if (allocated(error)) return
++   exchange%hubbard_exp = exchange%hubbard_exp+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "hubbard_exp", error)
++   exchange%hubbard_exp = cache%bvk_model_hubbard_exp
++   if (allocated(error)) return
++   exchange%hubbard_exp_r0 = exchange%hubbard_exp_r0+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "hubbard_exp_r0", error)
++   exchange%hubbard_exp_r0 = cache%bvk_model_hubbard_exp_r0
++   if (allocated(error)) return
++   exchange%gexp = exchange%gexp+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "gexp", error)
++   exchange%gexp = cache%bvk_model_gexp
++   if (allocated(error)) return
++   exchange%corr_exp = exchange%corr_exp+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "corr_exp", error)
++   exchange%corr_exp = cache%bvk_model_corr_exp
++   if (allocated(error)) return
++
++   exchange%hubbard(1, 1, 1, 1) = exchange%hubbard(1, 1, 1, 1)+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "hubbard", error)
++   exchange%hubbard(1, 1, 1, 1) = cache%bvk_model_hubbard(1, 1, 1, 1)
++   if (allocated(error)) return
++   exchange%onecxints(1, 1, 1) = exchange%onecxints(1, 1, 1)+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "onecxints", error)
++   exchange%onecxints(1, 1, 1) = cache%bvk_model_onecxints(1, 1, 1)
++   if (allocated(error)) return
++   exchange%offdiag_scale(1, 1, 1, 1) = &
++      & exchange%offdiag_scale(1, 1, 1, 1)+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "offdiag_scale", error)
++   exchange%offdiag_scale(1, 1, 1, 1) = &
++      & cache%bvk_model_offdiag_scale(1, 1, 1, 1)
++   if (allocated(error)) return
++   exchange%rad(1, 1) = exchange%rad(1, 1)+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "rad", error)
++   exchange%rad(1, 1) = cache%bvk_model_rad(1, 1)
++   if (allocated(error)) return
++   exchange%kq(1, 1) = exchange%kq(1, 1)+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "kq", error)
++   exchange%kq(1, 1) = cache%bvk_model_kq(1, 1)
++   if (allocated(error)) return
++   exchange%corr_scale(1, 1) = exchange%corr_scale(1, 1)+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "corr_scale", error)
++   exchange%corr_scale(1, 1) = cache%bvk_model_corr_scale(1, 1)
++   if (allocated(error)) return
++   exchange%corr_rad(1, 1) = exchange%corr_rad(1, 1)+real_delta
++   call require_bvk_model_mismatch(exchange, cache, "corr_rad", error)
++   exchange%corr_rad(1, 1) = cache%bvk_model_corr_rad(1, 1)
++   if (allocated(error)) return
++
++   if (.not.exchange%bvk_model_matches(cache)) then
++      call test_failed(error, "Restored BvK model signature does not match")
++   end if
++end subroutine check_bvk_model_signature
++
++
+ subroutine test_bvk_exchange_kernel(error)
+    type(error_type), allocatable, intent(out) :: error
+ 
+@@ -12170,7 +12297,8 @@ subroutine test_bvk_exchange_kernel(error)
+    type(basis_cache) :: bcache, bcache_sc
+    type(container_cache) :: cache, cache_cp2k, cache_sc
+    type(exchange_cache), pointer :: ptr, ptr_cp2k, ptr_sc
+-   type(exchange_bvk_kernel) :: kernel, kernel_large, kernel_one
++   type(exchange_bvk_kernel) :: kernel, kernel_large, kernel_one, &
++      & kernel_order_probe
+    type(cp2k_exchange_stream_type) :: stream, stream_large, stream_order, &
+       & stream_permuted, stream_reverse, stream_reverse_missing, &
+       & stream_reverse_reduced, stream_reverse_batch, &
+@@ -14032,6 +14160,31 @@ subroutine test_bvk_exchange_kernel(error)
+    if (allocated(error)) return
+    if (ptr_cp2k%bvk_plan_builds /= bvk_builds) err = max(err, 1.0_wp)
+ 
++   ! Every stored model component and the active representative ordering are
++   ! part of the persistent-plan identity.  Mutating any one of them must
++   ! reject the cache before a stale transform can be selected.
++   select type (fock_cp2k_model => calc_cp2k%exchange)
++   type is (exchange_fock)
++      call check_bvk_model_signature(fock_cp2k_model, ptr_cp2k, error)
++      if (allocated(error)) return
++      kernel_order_probe = ptr_cp2k%bvk_kernel
++      if (.not.fock_cp2k_model%bvk_plan_matches(mol, ptr_cp2k, &
++         & kernel_order_probe, kfrac, weights, require_phases=.false.)) then
++         call test_failed(error, "Fresh BvK representative order does not match")
++         return
++      end if
++      kernel_order_probe%reps(:, [1, 2]) = &
++         & kernel_order_probe%reps(:, [2, 1])
++      if (fock_cp2k_model%bvk_plan_matches(mol, ptr_cp2k, &
++         & kernel_order_probe, kfrac, weights, require_phases=.false.)) then
++         call test_failed(error, "BvK plan accepted a changed representative order")
++         return
++      end if
++   class default
++      call test_failed(error, "Unexpected exchange implementation")
++      return
++   end select
++
+    call cp2k_exchange_kmesh(calc_cp2k, mol, cache_cp2k, wfn, nmesh, &
+       & kfrac_twist, weights, density_mesh, overlap_mesh, fock_cp2k, &
+       & vsh_cp2k, energy_mesh, error)
+-- 
+2.54.0
+

@@ -1,0 +1,4 @@
+[1/4] Building Fortran preprocessed test/unit/CMakeFiles/tblite-tester.dir/test_exchange.f90-pp.f90
+[2/4] Generating Fortran dyndep file test/unit/CMakeFiles/tblite-tester.dir/Fortran.dd
+[3/5] Building Fortran object test/unit/CMakeFiles/tblite-tester.dir/test_exchange.f90.o
+[4/4] Linking Fortran executable test/unit/tblite-tester

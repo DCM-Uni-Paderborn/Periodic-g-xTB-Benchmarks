@@ -6,6 +6,7 @@ The explicit expanded-full-mesh implementation remains the numerical oracle.
 
 | Archive | Validated scope | Performance claim |
 |---|---|---|
+| `cache_signature_order_20260722/` | Exact persistent BvK cache identity: field-by-field model-signature rejection plus changed representative-order rejection in macOS Debug/Release and Linux Release suites | Correctness qualification only; no speedup or whole-process RSS claim |
 | `acp_mesh_contraction_20260722/` | Bounded ACP Bloch batches and sparse projector-image reverse contraction; dense/streamed/qualify energy, force, stress, response-oracle, open-shell-neutrality, and fail-closed selector tests on macOS and Linux | Removes the complete ACP Bloch tensor and quadratic projector-difference set from production; scoped allocation claim only, with no total-RSS or speedup claim |
 | `provider_streamed_reverse/` | Bounded save_tblite reverse transaction; overlap adjoint, force, stress, state-machine and exact workspace tests | Provider AO-matrix storage is bounded by the declared image-batch size; the unit suite is not a speedup benchmark |
 | `cp2k_streamed_reverse_consumer/` | CP2K bounded derivative consumer; 21 Linux RKS/UKS, full/TR/K290/SPGLIB, shifted, 1D/2D/3D cases at MPI P=1/2/4 plus force/stress finite differences | Correctness and exact provider high-water are qualified; historical P=2/P=4 shared-mask timings are legacy/non-scaling and only numerical equivalence remains usable |

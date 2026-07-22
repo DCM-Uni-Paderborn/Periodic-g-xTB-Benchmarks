@@ -389,6 +389,29 @@ def test_acceleration_catalog_matches_the_existing_curated_archives():
     assert cases["distributed_kernel_scaling"]["status"] == "pending"
 
 
+def test_exact_bvk_cache_identity_archive_is_self_verifying():
+    archive = (
+        ROOT
+        / "validation"
+        / "accelerated_exchange"
+        / "cache_signature_order_20260722"
+    )
+    subprocess.run([str(archive / "verify_archive.sh")], check=True)
+
+    patch = (
+        archive
+        / "source"
+        / "0001-Qualify-exact-BvK-cache-identity.patch"
+    ).read_text()
+    assert "Restored BvK model signature does not match" in patch
+    assert "BvK plan accepted a changed representative order" in patch
+    assert "Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>" in patch
+
+    linux_log = (archive / "linux" / "ctest.log").read_text()
+    assert "100% tests passed, 0 tests failed out of 2" in linux_log
+    assert (archive / "linux" / "exit-code.txt").read_text().strip() == "0"
+
+
 def load_tests(loader, standard_tests, pattern):
     """Expose the assertion-style campaign checks to unittest discovery."""
     del loader, standard_tests, pattern

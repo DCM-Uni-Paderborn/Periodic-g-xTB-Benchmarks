@@ -1,0 +1,66 @@
+commit a5afdb5c5606e41c0e55004d02a93adea89e0319
+Author:     Thomas D. Kühne <tkuehne@cp2k.org>
+AuthorDate: 2026-07-22T04:58:03+02:00
+Commit:     Thomas D. Kühne <tkuehne@cp2k.org>
+CommitDate: 2026-07-22T04:58:03+02:00
+
+    Distribute exchange imports by image range
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit 866d87494c11318e6f3e2823948ed5f67fb85cbb
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: 2026-07-17T18:15:28+02:00
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: 2026-07-17T18:15:28+02:00
+
+    Add exact streamed Fourier composition
+
+commit 15915c9435644eb257178ca8f8bf7220c38b1a84
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: 2026-07-17T14:32:51+02:00
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: 2026-07-17T14:32:51+02:00
+
+    Stabilize ACP qeff finite-difference test
+
+commit db21e0c814648ab851866970aa8eba7545dbf0b5
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: 2026-07-17T04:43:11+02:00
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: 2026-07-17T04:43:11+02:00
+
+    perf: cache periodic ACP projector overlaps
+
+commit bef49671d1a238bc9f4098565f4d22b77050b657
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: 2026-07-17T03:56:22+02:00
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: 2026-07-17T03:56:22+02:00
+
+    Accelerate regular exchange transforms with mixed-radix FFT
+
+commit 56b233288f821c6f30e96dd10e03dd238d9e7e3b
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: 2026-07-17T02:13:47+02:00
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: 2026-07-17T02:13:52+02:00
+
+    Distribute nonlinear exchange over BvK images
+
+commit 496176f3cd4ac9b4de9badd24f343e3ccc5535c1
+Merge: 35e7942 c932120
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: 2026-07-17T01:21:22+02:00
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: 2026-07-17T01:40:24+02:00
+
+    Merge current pbc validation into CP2K integration
+
+commit 35e7942b60edd89bb407ab3da5768d3410af83f5
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: 2026-07-16T23:50:29+02:00
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: 2026-07-16T23:50:29+02:00
+
+    Harden streamed batch range arithmetic
