@@ -1,0 +1,2779 @@
+ DBCSR| CPU Multiplication driver                                           BLAS (U)
+ DBCSR| Multrec recursion limit                                              512 (U)
+ DBCSR| Multiplication stack size                                           1000 (D)
+ DBCSR| Maximum elements for images                                    UNLIMITED (U)
+ DBCSR| Multiplicative factor virtual images                                   1 (U)
+ DBCSR| Use multiplication densification                                       T (D)
+ DBCSR| Multiplication size stacks                                             3 (U)
+ DBCSR| Use memory pool for CPU allocation                                     F (U)
+ DBCSR| Number of 3D layers                                               SINGLE (U)
+ DBCSR| Use MPI memory allocation                                              F (U)
+ DBCSR| Use RMA algorithm                                                      F (U)
+ DBCSR| Use Communication thread                                               T (U)
+ DBCSR| Communication thread load                                             87 (D)
+ DBCSR| MPI: My process id                                                     0
+ DBCSR| MPI: Number of processes                                               1
+ DBCSR| OMP: Current number of threads                                         1
+ DBCSR| OMP: Max number of threads                                             1
+ DBCSR| Split modifier for TAS multiplication algorithm                  1.0E+00 (U)
+
+
+  **** **** ******  **  PROGRAM STARTED AT               2026-07-22 20:23:41.167
+ ***** ** ***  *** **   PROGRAM STARTED ON                                 terok
+ **    ****   ******    PROGRAM STARTED BY                              kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                                 52895
+  **** **  *******  **  PROGRAM STARTED IN /home/kuehne88/work/gxtb-expanded-der
+                                           ivatives-20260722/results/nh3_k222_sp
+                                           glib_fd
+
+ CP2K| version string:                 CP2K version 2026.2 (Development Version)
+ CP2K| source code revision number:                                    8520b2e59
+ CP2K| cp2kflags: omp parallel scalapack spglib s_dftd3 mctc-lib tblite tblite_g
+ CP2K|            xtb
+ CP2K| is freely available from                            https://www.cp2k.org/
+ CP2K| Program compiled at                                   2026-07-18 23:48:15
+ CP2K| Program compiled on                                                 terok
+ CP2K| Program compiled for                                               x86_64
+ CP2K| Data directory path                            /usr/local/share/cp2k/data
+ CP2K| Input file name        /home/kuehne88/work/gxtb-expanded-derivatives-2026
+
+ GLOBAL| Force Environment number                                              1
+ GLOBAL| Basis set file name                                           BASIS_SET
+ GLOBAL| Potential file name                                           POTENTIAL
+ GLOBAL| MM Potential file name                                     MM_POTENTIAL
+ GLOBAL| Coordinate file name                                      __STD_INPUT__
+ GLOBAL| Method name                                                        CP2K
+ GLOBAL| Project name                                         nh3_k222_spglib_fd
+ GLOBAL| Run type                                                          DEBUG
+ GLOBAL| FFT library                                                       FFTW3
+ GLOBAL| Diagonalization library                                       ScaLAPACK
+ GLOBAL| Cholesky decomposition library                                ScaLAPACK
+ GLOBAL| DGEMM library                                                      BLAS
+ GLOBAL| Direct generalized diagonalization requested                          F
+ GLOBAL| Orthonormality check for eigenvectors                          DISABLED
+ GLOBAL| Matrix multiplication library                                 ScaLAPACK
+ GLOBAL| All-to-all communication in single precision                          F
+ GLOBAL| FFTs using library dependent lengths                                  F
+ GLOBAL| Grid backend                                                       AUTO
+ GLOBAL| Global print level                                                  LOW
+ GLOBAL| MPI I/O enabled                                                       T
+ GLOBAL| Total number of message passing processes                             1
+ GLOBAL| Number of distributed systems (nodes)                                 1
+ GLOBAL| Number of threads for this process                                    1
+ GLOBAL| This output is from process                                           0
+ GLOBAL| OpenMP stack size per thread (OMP_STACKSIZE)                    default
+ GLOBAL| CPU model name                                       AMD EPYC Processor
+ GLOBAL| CPUID                                                              1002
+
+ MEMORY| system memory details [Kb]
+ MEMORY|                        rank 0           min           max       average
+ MEMORY| MemTotal            528104804     528104804     528104804     528104804
+ MEMORY| MemFree             454981488     454981488     454981488     454981488
+ MEMORY| Buffers                    20            20            20            20
+ MEMORY| Cached               67106768      67106768      67106768      67106768
+ MEMORY| Slab                  3826584       3826584       3826584       3826584
+ MEMORY| SReclaimable          2115428       2115428       2115428       2115428
+ MEMORY| MemLikelyFree       524203704     524203704     524203704     524203704
+
+
+ *** WARNING in environment.F:1098 :: FFT library FFTW3 is not available. ***
+ *** Trying FFT library FFTSG.                                            ***
+
+
+ GENERATE|  Preliminary Number of Bonds generated:                             0
+ GENERATE|  Achieved consistency in connectivity generation.
+
+
+                  #####   #####        #     #   #     #       #          
+                 #     # #     #      #    ##### #     #   # #####  ####  
+                 #     # #           #       #   ###   #       #   #    # 
+                 #     #  #####     #        #   #  #  #   #   #   ###### 
+                 #   # #       #   #         #   #   # #   #   #   #      
+                 #    #  #     #  #          #   #  #  # # #   #    #   # 
+                  #### #  #####  #           #   ###   ##  #   #     ###  
+
+                                     g-xTB   
+                                 Version 0.0                       
+                            Johann V. Pototschnig                  
+
+                tblite provider: SAVE
+                tblite source revision: 15915c9435644eb257178ca8f8bf7220c38b1a84
+                g-xTB support: enabled
+
+
+ TOTAL NUMBERS AND MAXIMUM NUMBERS
+
+  Total number of            - Atomic kinds:                                   2
+                             - Atoms:                                         16
+                             - Shell sets:                                    20
+                             - Shells:                                        20
+                             - Primitive Cartesian functions:                144
+                             - Cartesian basis functions:                     28
+                             - Spherical basis functions:                     28
+
+  Maximum angular momentum of the orbital basis functions:                     1
+
+
+ SCF PARAMETERS         Density guess:                                     MOPAC
+                        --------------------------------------------------------
+                        max_scf:                                             250
+                        max_scf_history:                                       0
+                        max_diis:                                              4
+                        --------------------------------------------------------
+                        eps_scf:                                        1.00E-10
+                        eps_scf_history:                                0.00E+00
+                        eps_diis:                                       1.00E-01
+                        eps_eigval:                                     1.00E-05
+                        --------------------------------------------------------
+                        level_shift [a.u.]:                             0.000000
+                        added MOs                                        12    0
+                        --------------------------------------------------------
+                        Mixing method:                           DIRECT_P_MIXING
+                        --------------------------------------------------------
+                        No outer SCF
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P2_13
+       Point Group Symbol:                                                    23
+       Schoenflies Symbol:                                                   T^4
+       Number of Symmetry Operations:                                         12
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             4
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      3
+          3   0.00000   0.50000   0.50000                                      3
+          4   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              2           2           3
+          4   0.00000   0.50000   0.50000              4           3           1
+          5   0.50000   0.00000   0.00000              2           2           2
+          6   0.50000   0.00000   0.50000              4           3           2
+          7   0.50000   0.50000   0.00000              4           3           3
+          8   0.50000   0.50000   0.50000              8           4           1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5    6    7    8    9   10   11   12
+                       13   14   15   16
+          Rot=    2     1    3    4    2    7    8    9   10    5    6   15   16
+                       12   11   14   13
+          Rot=    3     1    4    2    3    9   10    5    6    7    8   14   13
+                       16   15   11   12
+          Rot=    4     4    3    2    1   16   15   14   13   10    9   12   11
+                        8    7    6    5
+          Rot=    5     2    1    4    3    6    5   13   14   11   12    9   10
+                        7    8   16   15
+          Rot=    6     3    4    1    2   15   16    8    7   12   11   10    9
+                       14   13    5    6
+          Rot=    7     2    4    3    1   13   14   11   12    6    5   16   15
+                       10    9    8    7
+          Rot=    8     3    1    2    4    8    7   12   11   15   16    5    6
+                        9   10   13   14
+          Rot=    9     4    2    1    3   14   13   10    9   16   15    6    5
+                       11   12    7    8
+          Rot=   10     3    2    4    1   12   11   15   16    8    7   13   14
+                        6    5   10    9
+          Rot=   11     4    1    3    2   10    9   16   15   14   13    7    8
+                        5    6   12   11
+          Rot=   12     2    3    1    4   11   12    6    5   13   14    8    7
+                       15   16    9   10
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                               P2_13
+       Point Group Symbol:                                                    23
+       Schoenflies Symbol:                                                   T^4
+       Number of Symmetry Operations:                                         12
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             4
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      3
+          3   0.00000   0.50000   0.50000                                      3
+          4   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              2           2           3
+          4   0.00000   0.50000   0.50000              4           3           1
+          5   0.50000   0.00000   0.00000              2           2           2
+          6   0.50000   0.00000   0.50000              4           3           2
+          7   0.50000   0.50000   0.00000              4           3           3
+          8   0.50000   0.50000   0.50000              8           4           1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5    6    7    8    9   10   11   12
+                       13   14   15   16
+          Rot=    2     1    3    4    2    7    8    9   10    5    6   15   16
+                       12   11   14   13
+          Rot=    3     1    4    2    3    9   10    5    6    7    8   14   13
+                       16   15   11   12
+          Rot=    4     4    3    2    1   16   15   14   13   10    9   12   11
+                        8    7    6    5
+          Rot=    5     2    1    4    3    6    5   13   14   11   12    9   10
+                        7    8   16   15
+          Rot=    6     3    4    1    2   15   16    8    7   12   11   10    9
+                       14   13    5    6
+          Rot=    7     2    4    3    1   13   14   11   12    6    5   16   15
+                       10    9    8    7
+          Rot=    8     3    1    2    4    8    7   12   11   15   16    5    6
+                        9   10   13   14
+          Rot=    9     4    2    1    3   14   13   10    9   16   15    6    5
+                       11   12    7    8
+          Rot=   10     3    2    4    1   12   11   15   16    8    7   13   14
+                        6    5   10    9
+          Rot=   11     4    1    3    2   10    9   16   15   14   13    7    8
+                        5    6   12   11
+          Rot=   12     2    3    1    4   11   12    6    5   13   14    8    7
+                       15   16    9   10
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.3     1.33366471      -226.2783123374 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    1.9     0.04372037      -226.3344981671 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.0     0.04181277      -226.3682074500 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    1.9     0.29666220      -226.4305194013 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    1.9     0.03081715      -226.4351900455 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    1.9     0.01964912      -226.4352866657 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.0     0.00425844      -226.4352968663 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.1     0.00009390      -226.4352968802 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.0     0.00003090      -226.4352968809 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    1.9     0.00000232      -226.4352968809 -4.75E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    1.9     0.00000003      -226.4352968809 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    1.9     1.8208E-09      -226.4352968809  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.0     1.3852E-10      -226.4352968809  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.0     5.9908E-12      -226.4352968809 -2.84E-14
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992966430
+  Repulsive potential energy:                                   2.08458890081793
+  Electrostatic energy:                                         0.53018144702600
+  Self-consistent dispersion energy:                           -0.02731076325065
+  Non-self consistent dispersion energy:                        0.00565789197773
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688087807
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=REVERSE backend=DENSE fallback=0
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880878070
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                          P2_12_12_1
+       Point Group Symbol:                                                   222
+       Schoenflies Symbol:                                                  D2^4
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5    6    7    8    9   10   11   12
+                       13   14   15   16
+          Rot=    2     2    1    4    3    6    5   13   14   11   12    9   10
+                        7    8   16   15
+          Rot=    3     3    4    1    2   15   16    8    7   12   11   10    9
+                       14   13    5    6
+          Rot=    4     4    3    2    1   16   15   14   13   10    9   12   11
+                        8    7    6    5
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.7     1.33366610      -226.2783128370 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.4     0.04372031      -226.3344981497 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.4     0.04181274      -226.3682072198 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.4     0.29666188      -226.4305193032 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.4     0.03081677      -226.4351897717 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.4     0.01964930      -226.4352863944 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.5     0.00425844      -226.4352965949 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.4     0.00009391      -226.4352966088 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.4     0.00003090      -226.4352966095 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.4     0.00000232      -226.4352966095 -4.75E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.4     0.00000003      -226.4352966095  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.4     1.8208E-09      -226.4352966095 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.4     1.3852E-10      -226.4352966095  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.4     6.0448E-12      -226.4352966095  2.84E-14
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22098652301710
+  Repulsive potential energy:                                   2.08455877017598
+  Electrostatic energy:                                         0.53018081138308
+  Self-consistent dispersion energy:                           -0.02731034442066
+  Non-self consistent dispersion energy:                        0.00565774033320
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529660952464
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296609524642
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                          P2_12_12_1
+       Point Group Symbol:                                                   222
+       Schoenflies Symbol:                                                  D2^4
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5    6    7    8    9   10   11   12
+                       13   14   15   16
+          Rot=    2     4    3    2    1   16   15   14   13   10    9   12   11
+                        8    7    6    5
+          Rot=    3     2    1    4    3    6    5   13   14   11   12    9   10
+                        7    8   16   15
+          Rot=    4     3    4    1    2   15   16    8    7   12   11   10    9
+                       14   13    5    6
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.6     1.33367049      -226.2783118374 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.3     0.04372067      -226.3344981842 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.3     0.04181280      -226.3682076798 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.3     0.29666252      -226.4305194990 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.3     0.03081758      -226.4351903189 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.3     0.01964894      -226.4352869366 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.3     0.00425843      -226.4352971372 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.3     0.00009390      -226.4352971511 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.3     0.00003090      -226.4352971518 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.3     0.00000232      -226.4352971518 -4.77E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.3     0.00000003      -226.4352971518  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.3     1.8208E-09      -226.4352971518  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.3     1.3851E-10      -226.4352971518  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.3     6.0236E-12      -226.4352971518 -2.84E-14
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22101333636232
+  Repulsive potential energy:                                   2.08461903196080
+  Electrostatic energy:                                         0.53018208269648
+  Self-consistent dispersion energy:                           -0.02731118209082
+  Non-self consistent dispersion energy:                        0.00565804362752
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529715179892
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435297151798920
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5    6    7    8    9   10   11   12
+                       13   14   15   16
+          Rot=    2     4    3    2    1   16   15   14   13   10    9   12   11
+                        8    7    6    5
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.6     1.33366859      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.3     0.04372073      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.3     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.3     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.3     0.03081763      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.3     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.3     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.3     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.3     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.3     0.00000233      -226.4352968808 -4.69E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.3     0.00000003      -226.4352968808 -5.68E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.4     3.1333E-09      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.4     7.1587E-10      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.3     4.2178E-11      -226.4352968808  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963661
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075984
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759836
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5    6    7    8    9   10   11   12
+                       13   14   15   16
+          Rot=    2     4    3    2    1   16   15   14   13   10    9   12   11
+                        8    7    6    5
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.6     1.33366859      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.4     0.04372073      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.4     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.4     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.3     0.03081763      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.3     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.3     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.4     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.3     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.4     0.00000233      -226.4352968808 -4.77E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.3     0.00000003      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.3     3.1333E-09      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.3     7.1587E-10      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.3     4.2179E-11      -226.4352968808  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963661
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075984
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759836
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5    6    7    8    9   10   11   12
+                       13   14   15   16
+          Rot=    2     3    4    1    2   15   16    8    7   12   11   10    9
+                       14   13    5    6
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.7     1.33366626      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.3     0.04372065      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.4     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.4     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.3     0.03081751      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.3     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.4     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.3     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.4     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.4     0.00000233      -226.4352968808 -4.80E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.4     0.00000003      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.4     3.1333E-09      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.4     7.1588E-10      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.4     4.2178E-11      -226.4352968808  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963662
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075984
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759836
+
+ *******************************************************************************
+  **                     Special K-Point Generation by SPGLIB                 **
+ *******************************************************************************
+ *******************************************************************************
+  **                              Finished SPGLIB                             **
+ *******************************************************************************
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+       Atom Transformation Table
+          Rot=    1     1    2    3    4    5    6    7    8    9   10   11   12
+                       13   14   15   16
+          Rot=    2     3    4    1    2   15   16    8    7   12   11   10    9
+                       14   13    5    6
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.7     1.33366626      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.5     0.04372065      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.4     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.4     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.4     0.03081751      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.4     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.4     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.4     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.4     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.4     0.00000233      -226.4352968808 -4.77E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.4     0.00000003      -226.4352968808 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.4     3.1333E-09      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.4     7.1587E-10      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.4     4.2178E-11      -226.4352968808 -2.84E-14
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963663
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075986
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759864
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.7     1.33366626      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.4     0.04372065      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.4     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.4     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.3     0.03081751      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.4     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.4     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.3     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.4     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.4     0.00000233      -226.4352968808 -4.75E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.4     0.00000003      -226.4352968808 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.3     3.1333E-09      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.4     7.1587E-10      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.4     4.2179E-11      -226.4352968808  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963661
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075984
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759836
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33366626      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372065      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081751      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000233      -226.4352968808 -4.77E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     3.1333E-09      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     7.1588E-10      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     4.2178E-11      -226.4352968808  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963662
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075984
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759836
+
+ Crystal Symmetry Information
+       International Symbol:                                          P2_12_12_1
+       Point Group Symbol:                                                   222
+       Schoenflies Symbol:                                                  D2^4
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33366610      -226.2783128370 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372031      -226.3344981497 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181274      -226.3682072198 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666188      -226.4305193032 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081677      -226.4351897717 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964930      -226.4352863944 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425844      -226.4352965949 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009391      -226.4352966088 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003090      -226.4352966095 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000232      -226.4352966095 -4.75E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352966095  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     1.8208E-09      -226.4352966095 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     1.3852E-10      -226.4352966095  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     6.0447E-12      -226.4352966095 -2.84E-14
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22098652301711
+  Repulsive potential energy:                                   2.08455877017598
+  Electrostatic energy:                                         0.53018081138308
+  Self-consistent dispersion energy:                           -0.02731034442066
+  Non-self consistent dispersion energy:                        0.00565774033320
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529660952467
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296609524670
+
+ Crystal Symmetry Information
+       International Symbol:                                          P2_12_12_1
+       Point Group Symbol:                                                   222
+       Schoenflies Symbol:                                                  D2^4
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33367049      -226.2783118374 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372067      -226.3344981842 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181280      -226.3682076798 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666252      -226.4305194990 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081758      -226.4351903189 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964894      -226.4352869366 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425843      -226.4352971372 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009390      -226.4352971511 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003090      -226.4352971518 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000232      -226.4352971518 -4.77E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352971518  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     1.8208E-09      -226.4352971518  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     1.3851E-10      -226.4352971518 -5.68E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     6.0243E-12      -226.4352971518  2.84E-14
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22101333636233
+  Repulsive potential energy:                                   2.08461903196080
+  Electrostatic energy:                                         0.53018208269648
+  Self-consistent dispersion energy:                           -0.02731118209082
+  Non-self consistent dispersion energy:                        0.00565804362752
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529715179892
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435297151798920
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33366859      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372073      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081763      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000233      -226.4352968808 -4.75E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352968808 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     3.1333E-09      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.1     7.1587E-10      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     4.2179E-11      -226.4352968808  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963662
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075984
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759836
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33366859      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372073      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081763      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.3     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.4     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.3     0.00000233      -226.4352968808 -4.75E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.3     0.00000003      -226.4352968808 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.3     3.1333E-09      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.3     7.1587E-10      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.3     4.2179E-11      -226.4352968808  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963662
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075984
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759836
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33366859      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.1     0.04372073      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.1     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.1     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.1     0.03081763      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.1     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.1     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.1     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000233      -226.4352968808 -4.77E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352968808 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.1     3.1333E-09      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     7.1588E-10      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.1     4.2179E-11      -226.4352968808  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963661
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075984
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759836
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33366859      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372073      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081763      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000233      -226.4352968808 -4.75E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352968808 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     3.1333E-09      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     7.1587E-10      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     4.2179E-11      -226.4352968808  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963662
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075984
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759836
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33366626      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372065      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081751      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.1     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000233      -226.4352968808 -4.77E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352968808 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     3.1333E-09      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     7.1587E-10      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     4.2179E-11      -226.4352968808  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963661
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075984
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759836
+
+ Crystal Symmetry Information
+       International Symbol:                                                P2_1
+       Point Group Symbol:                                                     2
+       Schoenflies Symbol:                                                  C2^2
+       Number of Symmetry Operations:                                          2
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33366626      -226.2783123373 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372065      -226.3344981670 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181282      -226.3682074499 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666255      -226.4305194012 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081751      -226.4351900454 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964913      -226.4352866656 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425847      -226.4352968662 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009391      -226.4352968800 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003091      -226.4352968808 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000233      -226.4352968808 -4.80E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     3.1333E-09      -226.4352968808  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     7.1587E-10      -226.4352968808  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     4.2179E-11      -226.4352968808 -2.84E-14
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992963662
+  Repulsive potential energy:                                   2.08458890085084
+  Electrostatic energy:                                         0.53018144703566
+  Self-consistent dispersion energy:                           -0.02731076325143
+  Non-self consistent dispersion energy:                        0.00565789197765
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688075986
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880759864
+
+ Crystal Symmetry Information
+       International Symbol:                                          P2_12_12_1
+       Point Group Symbol:                                                   222
+       Schoenflies Symbol:                                                  D2^4
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33366610      -226.2783128370 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372031      -226.3344981497 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181274      -226.3682072198 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666188      -226.4305193032 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081677      -226.4351897717 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964930      -226.4352863944 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425844      -226.4352965949 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009391      -226.4352966088 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003090      -226.4352966095 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000232      -226.4352966095 -4.75E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352966095  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     1.8208E-09      -226.4352966095  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     1.3852E-10      -226.4352966095  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     6.0439E-12      -226.4352966095  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22098652301711
+  Repulsive potential energy:                                   2.08455877017598
+  Electrostatic energy:                                         0.53018081138308
+  Self-consistent dispersion energy:                           -0.02731034442066
+  Non-self consistent dispersion energy:                        0.00565774033320
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529660952467
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296609524670
+
+ Crystal Symmetry Information
+       International Symbol:                                          P2_12_12_1
+       Point Group Symbol:                                                   222
+       Schoenflies Symbol:                                                  D2^4
+       Number of Symmetry Operations:                                          4
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33367049      -226.2783118374 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372067      -226.3344981842 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181280      -226.3682076798 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666252      -226.4305194990 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081758      -226.4351903189 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964894      -226.4352869366 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425843      -226.4352971372 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009390      -226.4352971511 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003090      -226.4352971518 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000232      -226.4352971518 -4.77E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.1     0.00000003      -226.4352971518  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     1.8208E-09      -226.4352971518  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     1.3851E-10      -226.4352971518 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     6.0238E-12      -226.4352971518  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22101333636233
+  Repulsive potential energy:                                   2.08461903196080
+  Electrostatic energy:                                         0.53018208269648
+  Self-consistent dispersion energy:                           -0.02731118209082
+  Non-self consistent dispersion energy:                        0.00565804362752
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529715179892
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435297151798920
+
+ Crystal Symmetry Information
+       International Symbol:                                               P2_13
+       Point Group Symbol:                                                    23
+       Schoenflies Symbol:                                                   T^4
+       Number of Symmetry Operations:                                         12
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33366471      -226.2783123374 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372037      -226.3344981671 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181277      -226.3682074500 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666220      -226.4305194013 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081715      -226.4351900455 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01964912      -226.4352866657 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425844      -226.4352968663 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009390      -226.4352968802 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003090      -226.4352968809 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000232      -226.4352968809 -4.75E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352968809 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     1.8208E-09      -226.4352968809  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     1.3852E-10      -226.4352968809 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     5.9906E-12      -226.4352968809  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992966430
+  Repulsive potential energy:                                   2.08458890081793
+  Electrostatic energy:                                         0.53018144702600
+  Self-consistent dispersion energy:                           -0.02731076325065
+  Non-self consistent dispersion energy:                        0.00565789197773
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688087807
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880878070
+ DEBUG| Numerical pv_virial [a.u.]
+ DEBUG|                  -0.026287396191      0.000000000000     -0.000000000689
+ DEBUG|                   0.000000000000     -0.026287394813     -0.000000000689
+ DEBUG|                  -0.000000000689     -0.000000000689     -0.026287394813
+
+ DEBUG| Analytical pv_virial [a.u.]
+ DEBUG|                  -0.026287394573     -0.000000000000     -0.000000000000
+ DEBUG|                  -0.000000000000     -0.026287394574      0.000000000000
+ DEBUG|                  -0.000000000000      0.000000000000     -0.026287394575
+
+ DEBUG| Difference pv_virial [a.u.]
+ DEBUG|                  -0.000000001618      0.000000000000     -0.000000000689
+ DEBUG|                   0.000000000000     -0.000000000239     -0.000000000689
+ DEBUG|                  -0.000000000689     -0.000000000689     -0.000000000238
+ DEBUG| Sum of differences                                        0.000000004850
+
+ DEBUG| Relative error pv_virial
+ DEBUG| Threshold value for error check [a.u.]                    1.00000000E-05
+ DEBUG|                           0.00 %                 - %                 - %
+ DEBUG|                              - %              0.00 %                 - %
+ DEBUG|                              - %                 - %              0.00 %
+ DEBUG| Maximum accepted error                                            0.20 %
+
+ Extrapolation method: ASPC
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    2.2     2.0644E-13      -226.4352968809 -2.26E+02
+
+  *** SCF run converged in     1 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22099992966469
+  Repulsive potential energy:                                   2.08458890081793
+  Electrostatic energy:                                         0.53018144702665
+  Self-consistent dispersion energy:                           -0.02731076325064
+  Non-self consistent dispersion energy:                        0.00565789197773
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529688087801
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=REVERSE backend=DENSE fallback=0
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296880878013
+
+ Crystal Symmetry Information
+       International Symbol:                                                  P1
+       Point Group Symbol:                                                     1
+       Schoenflies Symbol:                                                  C1^1
+       Number of Symmetry Operations:                                          1
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.5     1.33367872      -226.2783116981 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372060      -226.3344977588 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181284      -226.3682070870 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666265      -226.4305186372 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081837      -226.4351893981 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.3     0.01964916      -226.4352860158 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425842      -226.4352962163 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009393      -226.4352962302 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003091      -226.4352962309 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000237      -226.4352962309 -4.80E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352962309  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     6.7491E-09      -226.4352962309  0.00E+00
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     7.2051E-10      -226.4352962309  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     4.2839E-11      -226.4352962309  0.00E+00
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22101634744925
+  Repulsive potential energy:                                   2.08461256949834
+  Electrostatic energy:                                         0.53018231461675
+  Self-consistent dispersion energy:                           -0.02731073574780
+  Non-self consistent dispersion energy:                        0.00565789605628
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529623091524
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435296230915242
+
+ Crystal Symmetry Information
+       International Symbol:                                                  P1
+       Point Group Symbol:                                                     1
+       Schoenflies Symbol:                                                  C1^1
+       Number of Symmetry Operations:                                          1
+
+ K-point Symmetry Information
+       Number of Special K-points:                                             8
+                   Wavevector Basis                                       Weight
+          1   0.00000   0.00000   0.00000                                      1
+          2   0.00000   0.00000   0.50000                                      1
+          3   0.00000   0.50000   0.00000                                      1
+          4   0.00000   0.50000   0.50000                                      1
+          5   0.50000   0.00000   0.00000                                      1
+          6   0.50000   0.00000   0.50000                                      1
+          7   0.50000   0.50000   0.00000                                      1
+          8   0.50000   0.50000   0.50000                                      1
+
+       K-point Mesh:                                               2     2     2
+                   Wavevector Basis                   Special Points    Rotation
+          1   0.00000   0.00000   0.00000              1           1           1
+          2   0.00000   0.00000   0.50000              2           2           1
+          3   0.00000   0.50000   0.00000              3           3           1
+          4   0.00000   0.50000   0.50000              4           4           1
+          5   0.50000   0.00000   0.00000              5           5           1
+          6   0.50000   0.00000   0.50000              6           6           1
+          7   0.50000   0.50000   0.00000              7           7           1
+          8   0.50000   0.50000   0.50000              8           8           1
+
+ Extrapolation method: initial_guess
+
+ Number of electrons:                                                         32
+ Number of occupied orbitals:                                                 16
+ Number of molecular orbitals:                                                28
+
+ Number of orbital functions:                                                 28
+ Number of independent orbital functions:                                     28
+
+
+ SCF WAVEFUNCTION OPTIMIZATION
+
+  Step     Update method      Time    Convergence         Total energy    Change
+  ------------------------------------------------------------------------------
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=1
+     1 GXTB-Raw    0.10E+01    3.6     1.33366847      -226.2783129712 -2.26E+02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=2
+     2 GXTB-Simple 0.20E+00    2.2     0.04372066      -226.3344985699 -5.62E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=3
+     3 GXTB-Simple 0.20E+00    2.2     0.04181440      -226.3682078075 -3.37E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=4
+     4 GXTB-FDIIS  0.10E+01    2.2     0.29666872      -226.4305201600 -6.23E-02
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=5
+     5 GXTB-FDIIS  0.10E+01    2.2     0.03081746      -226.4351906875 -4.67E-03
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=6
+     6 GXTB-FDIIS  0.10E+01    2.2     0.01965019      -226.4352873102 -9.66E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=7
+     7 GXTB-FDIIS  0.10E+01    2.2     0.00425851      -226.4352975108 -1.02E-05
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=8
+     8 GXTB-FDIIS  0.10E+01    2.2     0.00009391      -226.4352975247 -1.39E-08
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=9
+     9 GXTB-FDIIS  0.10E+01    2.2     0.00003094      -226.4352975254 -7.19E-10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=10
+    10 GXTB-FDIIS  0.10E+01    2.2     0.00000236      -226.4352975254 -4.77E-12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=11
+    11 GXTB-FDIIS  0.10E+01    2.2     0.00000003      -226.4352975254 -2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=12
+    12 GXTB-FDIIS  0.10E+01    2.2     5.8398E-09      -226.4352975254  2.84E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=13
+    13 GXTB-FDIIS  0.10E+01    2.2     7.1142E-10      -226.4352975254 -5.68E-14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+    14 GXTB-FDIIS  0.10E+01    2.2     4.2252E-11      -226.4352975254  5.68E-14
+
+  *** SCF run converged in    14 steps ***
+
+
+  Core Hamiltonian energy:                                    -14.22098351221843
+  Repulsive potential energy:                                   2.08456523601481
+  Electrostatic energy:                                         0.53018057968254
+  Self-consistent dispersion energy:                           -0.02731079075749
+  Non-self consistent dispersion energy:                        0.00565788789981
+  Correction for halogen bonding:                               0.00000000000000
+
+  Total energy:                                              -226.43529752539217
+ GXTB-EXCHANGE-TRANSFORM stage=FORWARD backend=DENSE fallback=0 iter=14
+
+ ENERGY| Total FORCE_EVAL ( QS ) energy [hartree]           -226.435297525392173
+
+ DEBUG| Atom    E(x + 0.0001)    E(x - 0.0001)     f(numerical)    f(analytical)
+ DEBUG|    1    -226.43529623    -226.43529753      -0.00647238      -0.00647238
+
+ DEBUG| Atom  Coordinate   f(numerical)   f(analytical)   Difference   Error [%]
+ DEBUG|    1      x         -0.00647238     -0.00647238   0.00000000        0.00
+
+ DEBUG|======================== BEGIN OF SUMMARY ===============================
+ DEBUG| Atom  Coordinate   f(numerical)   f(analytical)   Difference   Error [%]
+ DEBUG|    1      x         -0.00647238     -0.00647238   0.00000000        0.00
+ DEBUG| Sum of differences:                               0.00000000        0.00
+ DEBUG|======================== END OF SUMMARY =================================
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                DBCSR STATISTICS                             -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ COUNTER                                    TOTAL       BLAS       SMM       ACC
+ flops inhomo. stacks                           0       0.0%      0.0%      0.0%
+ flops total                         0.000000E+00       0.0%      0.0%      0.0%
+ flops max/rank                      0.000000E+00       0.0%      0.0%      0.0%
+ matmuls inhomo. stacks                         0       0.0%      0.0%      0.0%
+ matmuls total                                  0       0.0%      0.0%      0.0%
+ number of processed stacks                     0       0.0%      0.0%      0.0%
+ average stack size                                     0.0       0.0       0.0
+ marketing flops                     0.000000E+00
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                      DBCSR MESSAGE PASSING PERFORMANCE                      -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Bcast                1                     12.
+ MP_Allreduce           19                     21.
+ MP_Alltoall        204952                   6389.
+ -------------------------------------------------------------------------------
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                          OFFLOAD MEMPOOL STATISTICS                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ Memory consumption                Number of allocations  Used [MiB]  Size [MiB]
+ Host                                                  1           0           0
+ -------------------------------------------------------------------------------
+
+ MEMORY| Estimated peak process memory [MiB]                                 385
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                         MESSAGE PASSING PERFORMANCE                         -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+
+ ROUTINE             CALLS      AVE VOLUME [Bytes]
+ MP_Group               20
+ MP_Bcast           210357                      7.
+ MP_Allreduce      8075060                    198.
+ MP_Sync                20
+ MP_Wait            175040
+ MP_ISend           245056                    902.
+ MP_IRecv           245056                    902.
+ -------------------------------------------------------------------------------
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                           R E F E R E N C E S                               -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ 
+ CP2K version 2026.2 (Development Version), the CP2K developers group (2026).
+ CP2K is freely available from https://www.cp2k.org/ .
+ 
+ M. Iannuzzi, J. Wilhelm, F. Stein, A. Bussy, H. Elgabarty, D. Golze, A. Hehn, 
+ M. Graml, S. Marek, B. Sertcan Gökmen, C. Schran, H. Forbert, R. Z. 
+ Khaliullin, A. Kozhevnikov, M. Taillefumier, R. Meli, V. V. Rybkin, M. Brehm, 
+ R. Schade, O. Schütt, J. V. Pototschnig, H. Mirhosseini, A. Knüpfer, D. Marx, 
+ M. Krack, J. Hutter, T. D. Kühne.
+ J. Phys. Chem. B 130, 1237-1310 (2026).
+ The CP2K Program Package Made Simple.
+ https://doi.org/10.1021/acs.jpcb.5c05851
+
+ A. Katbashev, M. Stahn, T. Rose, V. Alizadeh, M. Friede, C. Plett, P. 
+ Steinbach, S. Ehlert.
+ J. Phys. Chem. A 129, 2667-2682 (2025).
+ Overview on Building Blocks and Applications of Efficient and Robust Extended 
+ Tight Binding.
+ https://doi.org/10.1021/acs.jpca.4c08263
+
+ T. D. Kühne, M. Iannuzzi, M. Del Ben, V. V. Rybkin, P. Seewald, F. Stein, T. 
+ Laino, R. Z. Khaliullin, O. Schütt, F. Schiffmann, D. Golze, J. Wilhelm, S. 
+ Chulkov, M. H. Bani-Hashemian, V. Weber, U. Borstnik, M. Taillefumier, A. S. 
+ Jakobovits, A. Lazzaro, H. Pabst, T. Müller, R. Schade, M. Guidon, S. 
+ Andermatt, N. Holmberg, G. K. Schenter, A. Hehn, A. Bussy, F. Belleflamme, G. 
+ Tabacchi, A. Glöß, M. Lass, I. Bethune, C. J. Mundy, C. Plessl, M. Watkins, 
+ J. VandeVondele, M. Krack, J. Hutter.
+ J. Chem. Phys. 152, 194103 (2020).
+ CP2K: An electronic structure and molecular dynamics software package - 
+ Quickstep: Efficient and accurate electronic structure calculations.
+ https://doi.org/10.1063/5.0007045
+
+ P. Pracht, E. Caldeweyher, S. Ehlert, S. Grimme.
+ ChemRxiv, (2019).
+ A Robust Non-Self-Consistent Tight-Binding Quantum Chemistry Method for large 
+ Molecules.
+ https://doi.org/10.26434/chemrxiv.8326202.v1
+
+ A. Togo, I. Tanaka.
+ arXiv, 1808.01590 (2018).
+ Spglib : a software library for crystal symmetry search.
+
+ S. Grimme, C. Bannwarth, P. Shushkov.
+ J. Chem. Theory Comput. 13, 1989 (2017).
+ A Robust and Accurate Tight-Binding Quantum Chemical Method for Structures, 
+ Vibrational Frequencies, and Noncovalent Interactions of Large Molecular 
+ Systems Parametrized for All spd-Block Elements (Z = 1-86).
+ https://doi.org/10.1021/acs.jctc.7b00118
+
+ O. Schuett, P. Messmer, J. Hutter, J. VandeVondele.
+ Electronic Structure Calculations on Graphics Processing Units, 173-190 (2016).
+ GPU-Accelerated Sparse Matrix-Matrix Multiplication for Linear Scaling Density 
+ Functional Theory.
+ https://doi.org/10.1002/9781118670712.ch8
+
+ U. Borstnik, J. VandeVondele, V. Weber, J. Hutter.
+ Parallel Comput. 40, 47-58 (2014).
+ Sparse matrix multiplication: The distributed block-compressed sparse row 
+ library.
+ https://doi.org/10.1016/j.parco.2014.03.012
+
+ T. D. Kühne, M. Krack, F. R. Mohamed, M. Parrinello.
+ Phys. Rev. Lett. 98, 066401 (2007).
+ Efficient and accurate Car-Parrinello-like approach to Born-Oppenheimer 
+ molecular dynamics.
+ https://doi.org/10.1103/PhysRevLett.98.066401
+
+ M. Frigo, S. G. Johnson.
+ Proc. IEEE 93, 216-231 (2005).
+ The design and implementation of FFTW3.
+ https://doi.org/10.1109/JPROC.2004.840301
+
+ J. Kolafa.
+ J. Comput. Chem. 25, 335-342 (2004).
+ Time-reversible always stable predictor-corrector method for molecular dynamics 
+ of polarizable molecules.
+ https://doi.org/10.1002/jcc.10385
+
+ C.-L. Fu, K.-M. Ho.
+ Phys. Rev. B 28, 5480-5486 (1983).
+ First-principles calculation of the equilibrium ground-state properties of 
+ transition metals: Applications to Nb and Mo.
+ https://doi.org/10.1103/PhysRevB.28.5480
+
+
+ -------------------------------------------------------------------------------
+ -                                                                             -
+ -                                T I M I N G                                  -
+ -                                                                             -
+ -------------------------------------------------------------------------------
+ SUBROUTINE                       CALLS  ASD         SELF TIME        TOTAL TIME
+                                MAXIMUM       AVERAGE  MAXIMUM  AVERAGE  MAXIMUM
+ CP2K                                 1  1.0    0.028    0.028 1914.069 1914.069
+ qs_energies                         23  2.1    0.045    0.045 1820.366 1820.366
+ cp_dbcsr_alloc_block_from_nbl   625116  5.0 1128.352 1128.352 1132.097 1132.097
+ build_tblite_matrices               25  4.0   25.721   25.721 1057.388 1057.388
+ qs_energies_init_hamiltonians       23  3.1    0.076    0.076 1024.326 1024.326
+ scf_env_do_scf                      23  3.1    0.001    0.001  720.591  720.591
+ scf_env_do_scf_inner_loop          309  4.0   69.341   69.341  720.590  720.590
+ rskp_transform                   12984  6.7  352.340  352.340  352.340  352.340
+ rebuild_ks_matrix                  332  5.9    0.001    0.001  312.726  312.726
+ build_tblite_ks_matrix             332  6.9  224.650  224.650  312.724  312.724
+ qs_ks_update_qs_env                330  4.9    0.002    0.002  306.868  306.868
+ qs_scf_new_mos_kp                  309  5.0    0.004    0.004  273.195  273.195
+ do_general_diag_kp                 309  6.0    0.740    0.740  273.191  273.191
+ qs_forces                            2  2.0    0.009    0.009  218.905  218.905
+ kpoint_density_transform           314  7.0    0.125    0.125   70.224   70.224
+ transform_dmat                    2512  8.0   66.222   66.222   66.222   66.222
+ qs_env_update_s_mstruct             23  4.1    0.000    0.000   47.861   47.861
+ qs_env_rebuild_rho                  23  5.1    0.000    0.000   47.803   47.803
+ qs_rho_rebuild                      23  6.1    0.051    0.051   47.803   47.803
+ -------------------------------------------------------------------------------
+
+ The number of warnings for this run is : 1
+ 
+ -------------------------------------------------------------------------------
+  **** **** ******  **  PROGRAM ENDED AT                 2026-07-22 20:55:36.788
+ ***** ** ***  *** **   PROGRAM RAN ON                                     terok
+ **    ****   ******    PROGRAM RAN BY                                  kuehne88
+ ***** **    ** ** **   PROGRAM PROCESS ID                                 52895
+  **** **  *******  **  PROGRAM STOPPED IN /home/kuehne88/work/gxtb-expanded-der
+                                           ivatives-20260722/results/nh3_k222_sp
+                                           glib_fd

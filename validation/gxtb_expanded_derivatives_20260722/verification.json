@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "cp2k_sha256": "b0dacc7dea4035ea5fb817eb1054f2b288016bfb63c9a96bceca878a44524c2f",
+  "dx": 0.0001,
+  "eps_scf": 1e-10,
+  "cases": {
+    "nh3_k222_spglib_fd": {
+      "full_kpoints": 8,
+      "retained_kpoints": 4,
+      "symmetry_operations": 12,
+      "checked_force_components": 1,
+      "force_sum_abs_hartree_per_bohr_printed": 0.0,
+      "virial_sum_abs_hartree": 4.850e-9,
+      "converged_scf_calculations": 23,
+      "exit_status": 0
+    },
+    "ch4_k666_spglib_fd": {
+      "full_kpoints": 216,
+      "retained_kpoints": 10,
+      "checked_force_components": 1,
+      "force_sum_abs_hartree_per_bohr_printed": 0.0,
+      "virial_sum_abs_hartree": 1.130e-9,
+      "converged_scf_calculations": 23,
+      "exit_status": 0
+    }
+  }
+}
