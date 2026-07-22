@@ -1,0 +1,9 @@
+Test project /home/kuehne88/work/gxtb-compact-partial-combination-20260722/provider-build-r3
+    Start 12: tblite/exchange
+1/2 Test #12: tblite/exchange ..................   Passed    2.66 sec
+    Start 16: tblite/gxtb
+2/2 Test #16: tblite/gxtb ......................   Passed   12.39 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =  15.05 sec

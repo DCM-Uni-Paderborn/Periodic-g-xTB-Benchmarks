@@ -1,0 +1,29 @@
+commit e01b895346411dc17e1df865ac0384dd48a0efdb
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 16:29:30 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 16:29:40 2026 +0200
+
+    Qualify ACP reverse on complex partial meshes
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit bd5b7aed038c3964d6dd58f2b742d8acd8d9d784
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 15:59:16 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 15:59:16 2026 +0200
+
+    Enable compact transforms for partial image exchange
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit 448a5e4d0316775a272f941a7f54434a5c9d6ce5
+Author:     Thomas D. Kühne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 11:46:22 2026 +0200
+Commit:     Thomas D. Kühne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 11:46:22 2026 +0200
+
+    Stream periodic ACP mesh contractions
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>

@@ -96,11 +96,15 @@ Negative records are retained but excluded from positive statistics:
    contraction correctly rejects an unreduced full grid. The accepted full
    grid case uses the dense star selector while retaining compact partial
    forward/reverse transforms.
-4. `matrix/local_pre_acp_gate` records an independent H2 ACP sparse-gradient
-   mismatch of about `3.9903e-5`, above the ACP-only `1e-7` gate. The compact
-   exchange forward/reverse checks in that run had already passed. This ACP
-   finding remains open and is not mixed into the compact-transform
-   acceptance claim.
+4. `matrix/local_pre_acp_gate` records the original independent H2 ACP
+   sparse-gradient mismatch of about `3.9903e-5`, above the ACP-only `1e-7`
+   gate. The compact exchange forward/reverse checks in that run had already
+   passed. The density-image orientation defect has since been diagnosed by
+   central finite differences, corrected, and qualified for complex 1D and 2D
+   meshes on macOS and Linux in
+   `../acp_complex_density_orientation_20260722/`. The historical failure is
+   retained here and remains excluded from this archive's acceptance
+   statistics.
 
 ## Verification
 

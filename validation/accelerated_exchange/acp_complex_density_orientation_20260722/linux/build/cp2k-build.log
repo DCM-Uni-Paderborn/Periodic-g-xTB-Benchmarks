@@ -1,0 +1,8 @@
+[1/8] Updating CP2K build timestamp and git revision
+[2/8] Building Fortran preprocessed src/CMakeFiles/cp2k.dir/cp2k_info.F-pp.f
+[3/8] Generating Fortran dyndep file src/CMakeFiles/cp2k.dir/Fortran.dd
+[4/592] Building Fortran object src/CMakeFiles/cp2k.dir/cp2k_info.F.o
+[5/8] Linking CXX shared library src/libcp2k.so.2026.2
+[6/8] Creating library symlink src/libcp2k.so
+[7/8] Generating Fortran dyndep file src/CMakeFiles/cp2k-bin.dir/Fortran.dd
+[8/8] Linking Fortran executable bin/cp2k.psmp

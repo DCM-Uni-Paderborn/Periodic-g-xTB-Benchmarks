@@ -1,0 +1,39 @@
+-- The Fortran compiler identification is GNU 15.2.0
+-- The C compiler identification is GNU 15.2.0
+-- Detecting Fortran compiler ABI info
+-- Detecting Fortran compiler ABI info - done
+-- Check for working Fortran compiler: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-gfortran - skipped
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/bin/x86_64-conda-linux-gnu-cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found OpenMP_C: -fopenmp (found version "4.5")
+-- Found OpenMP_Fortran: -fopenmp (found version "4.5")
+-- Found OpenMP: TRUE (found version "4.5")
+-- Looking for Fortran sgemm
+-- Looking for Fortran sgemm - not found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Looking for Fortran sgemm
+-- Looking for Fortran sgemm - found
+-- Found BLAS: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/lib/libopenblas.so
+-- Looking for Fortran cheev
+-- Looking for Fortran cheev - found
+-- Found LAPACK: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/lib/libopenblas.so;-lm;-ldl
+-- toml-f: Find installed package
+-- toml-f: Found installed package
+-- mctc-lib: Find installed package
+-- mctc-lib: Found installed package
+-- mstore: Find installed package
+-- mstore: Found installed package
+-- multicharge: Find installed package
+-- multicharge: Found installed package
+-- dftd4: Find installed package
+-- dftd4: Found installed package
+-- s-dftd3: Find installed package
+-- s-dftd3: Found installed package
+-- Configuring done (1.4s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/kuehne88/work/gxtb-compact-partial-combination-20260722/provider-build-r3

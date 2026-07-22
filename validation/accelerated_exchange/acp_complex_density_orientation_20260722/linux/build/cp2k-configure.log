@@ -1,0 +1,132 @@
+-- Found MPI: TRUE (found version "3.1") found components: C CXX Fortran
+-- Found MPI: TRUE (found version "3.1") found components: CXX C Fortran
+-- Found OpenMP_CXX: -fopenmp (found version "4.5")
+-- Found OpenMP_C: -fopenmp (found version "4.5")
+-- Found OpenMP_Fortran: -fopenmp (found version "4.5")
+-- Found OpenMP: TRUE (found version "4.5") found components: CXX C Fortran
+-- Could NOT find MKL (missing: CP2K_MKL_INCLUDE_DIRS) 
+-- Checking for module 'scalapack'
+--   Package 'mpi', required by 'scalapack', not found
+
+------------------------------------------------------------
+-                          DBCSR                           -
+------------------------------------------------------------
+
+-- Found MPI: TRUE (found version "3.1")
+-- Found OpenMP_C: -fopenmp (found version "4.5")
+-- Found OpenMP_CXX: -fopenmp (found version "4.5")
+-- Found OpenMP_Fortran: -fopenmp (found version "4.5")
+-- Found OpenMP: TRUE (found version "4.5")
+
+------------------------------------------------------------
+-                          OPENMP                          -
+------------------------------------------------------------
+
+-- Found OpenMP_Fortran: -fopenmp (found version "4.5")
+-- Found OpenMP_C: -fopenmp (found version "4.5")
+-- Found OpenMP_CXX: -fopenmp (found version "4.5")
+-- Found OpenMP: TRUE (found version "4.5") found components: Fortran C CXX
+
+------------------------------------------------------------
+-                    Other dependencies                    -
+------------------------------------------------------------
+
+-- Component omp of Spglib: NOT FOUND
+-- Component fortran of Spglib: FOUND (LIB_TYPE: shared)
+-- Found package: Spglib
+-- mctc-lib: Find installed package
+-- mctc-lib: Found installed package
+-- toml-f: Find installed package
+-- toml-f: Found installed package
+-- s-dftd3: Find installed package
+-- s-dftd3: Found installed package
+-- dftd4: Find installed package
+-- multicharge: Find installed package
+-- multicharge: Found installed package
+-- dftd4: Found installed package
+-- Performing Test CP2K_TBLITE_HAS_GXTB
+-- Performing Test CP2K_TBLITE_HAS_GXTB - Success
+-- FYPP preprocessor found.
+
+--------------------------------------------------------------------
+-                                                                  -
+-               Summary of enabled dependencies                    -
+-                                                                  -
+--------------------------------------------------------------------
+
+  - BLAS
+    - Vendor: OpenBLAS
+    - Include directories: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/include
+    - Libraries: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/lib/libopenblas.so
+
+  - LAPACK
+    - Include directories: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/include
+    - Libraries: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/lib/libopenblas.so
+
+  - MPI
+    - Include directories: 
+    - Libraries: 
+    - MPI_F08: Available but disabled by default
+      Enable it with -DCP2K_USE_MPI_F08=ON.
+
+  - ScaLAPACK
+    - Vendor: auto
+    - Include directories: 
+    - Libraries: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/lib/libscalapack.so
+
+  - Spglib
+    - Include directories: /home/kuehne88/work/gxtb-runtime-part-II-20260717/env/include;$<BUILD_INTERFACE:/home/kuehne88/work/gxtb-runtime-part-II-20260717/env/include>
+
+  - TBLITE
+    - Provider: SAVE
+    - Source revision: unknown
+    - g-xTB support: 1
+    - CP2K DFTD4 interface: OFF
+    - Include directories: /home/kuehne88/work/gxtb-compact-partial-combination-20260722/provider-install/include;/home/kuehne88/work/gxtb-compact-partial-combination-20260722/provider-install/include/tblite/GNU-15.2.0
+    - Libraries: 
+
+--------------------------------------------------------------------
+-                                                                  -
+-          Dependencies not included in this build                 -
+-                                                                  -
+--------------------------------------------------------------------
+
+  - DeePMD
+  - PEXSI
+  - ACE (libpace)
+  - SIRIUS
+  - LibSMEAGOL
+  - COSMA
+  - SpLA
+  - MiMiC
+  - HDF5
+  - Hardware acceleration
+  - ELPA
+  - DLA-Future
+  - PLUMED
+  - LIBXS
+  - LIBXSMM
+  - Libint2
+  - LibGint
+  - LibFCI
+  - LibXC
+  - GauXC
+  - Libvori
+  - FFTW3
+CMake Warning at CMakeLists.txt:1425 (message):
+  FFTW3 may become mandatory in future releases of CP2K.  Calculations
+  requiring large grid sizes may not work properly without FFTW3.  Please
+  consider installing and enabling it.
+
+
+  - LibTorch
+  - TREXIO
+  - OpenPMD
+  - GreenX
+
+After building and installing CP2K, run the regtests with:
+  /home/kuehne88/work/gxtb-compact-partial-combination-20260722/cp2k-src/tests/do_regtest.py /home/kuehne88/work/gxtb-compact-partial-combination-20260722/cp2k-install/bin psmp
+
+-- Configuring done (3.2s)
+-- Generating done (0.2s)
+-- Build files have been written to: /home/kuehne88/work/gxtb-compact-partial-combination-20260722/cp2k-build-r1

@@ -1,0 +1,81 @@
+From 5c25e149ad10f85bb12f31b0f50860cd3589a1ce Mon Sep 17 00:00:00 2001
+From: "Thomas D. Kuehne" <tkuehne@cp2k.org>
+Date: Wed, 22 Jul 2026 16:32:28 +0200
+Subject: [PATCH 2/2] Cover CP2K density phase in ACP regression
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+---
+ test/unit/test_gxtb.f90 | 27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+
+diff --git a/test/unit/test_gxtb.f90 b/test/unit/test_gxtb.f90
+index 2afec47..33a012e 100644
+--- a/test/unit/test_gxtb.f90
++++ b/test/unit/test_gxtb.f90
+@@ -3576,7 +3576,8 @@ subroutine test_kmesh_acp_h2o_pbc(error)
+       & dEdcn_cached(:), dEdcn_image(:), dEdcn_k(:), dEdq_cached(:), &
+       & dEdcn_sparse(:), dEdcn_stream(:), dEdq_image(:), dEdq_k(:), &
+       & dEdq_sparse(:), dEdq_stream(:), &
+-      & density_image(:, :, :, :), density_sparse(:, :, :, :), &
++      & density_cp2k(:, :, :, :), density_image(:, :, :, :), &
++      & density_sparse(:, :, :, :), &
+       & density_zero(:, :, :, :), gradient_cached(:, :), &
+       & gradient_image(:, :), gradient_k(:, :), gradient_sparse(:, :), &
+       & gradient_streamed(:, :), lattr(:, :), lattr_changed(:, :), &
+@@ -3604,6 +3605,7 @@ subroutine test_kmesh_acp_h2o_pbc(error)
+    nao = calc%bas%nao
+    nimg = size(images%translation, 2)
+    allocate(amat(nao, nao), bmat(nao, nao), cells(3, nimg), &
++      & density_cp2k(nao, nao, nimg, 1), &
+       & density_image(nao, nao, nimg, 1), source=0.0_wp)
+    allocate(density_k(nao, nao, 1, 2), h_compact(nao, nao, 2), &
+       & h_image(nao, nao, 2), h_k(nao, nao, 2), &
+@@ -3622,6 +3624,9 @@ subroutine test_kmesh_acp_h2o_pbc(error)
+    do itr = 1, nimg
+       angle = 2.0_wp*pi*dot_product(kfrac(:, 1), cells(:, itr))
+       density_image(:, :, itr, 1) = cos(angle)*amat + sin(angle)*bmat
++      ! CP2K's gathered AO/image matrices carry the opposite cell phase
++      ! relative to the provider's direct image-energy convention.
++      density_cp2k(:, :, itr, 1) = cos(angle)*amat - sin(angle)*bmat
+    end do
+ 
+    call cp2k_acp_kmesh(calc, mol, images, kfrac, h_k, error)
+@@ -3704,18 +3709,9 @@ subroutine test_kmesh_acp_h2o_pbc(error)
+       & gradient_image, sigma_image, error)
+    if (allocated(error)) return
+    call cp2k_acp_projector_image_gradient(calc, mol, bcache, acache, images, &
+-      & images%translation, density_image, dEdcn_sparse, dEdq_sparse, &
++      & images%translation, density_cp2k, dEdcn_sparse, dEdq_sparse, &
+       & gradient_sparse, sigma_sparse, error)
+    if (allocated(error)) return
+-   call check(error, max(maxval(abs(dEdcn_sparse-dEdcn_image)), &
+-      & maxval(abs(dEdq_sparse-dEdq_image)), &
+-      & maxval(abs(gradient_sparse-gradient_image)), &
+-      & maxval(abs(sigma_sparse-sigma_image))), 0.0_wp, thr=1.0e-11_wp)
+-   if (allocated(error)) then
+-      call test_failed(error, &
+-         & "Sparse full-support ACP derivative changed the image response")
+-      return
+-   end if
+    call cp2k_acp_kmesh_gradient(calc, mol, bcache, acache, images, &
+       & kfrac, weights, density_k, dEdcn_k, dEdq_k, gradient_k, sigma_k, error)
+    if (allocated(error)) return
+@@ -3738,6 +3734,15 @@ subroutine test_kmesh_acp_h2o_pbc(error)
+          & "Direct complex k-space ACP reverse sweep does not match image response")
+       return
+    end if
++   call check(error, max(maxval(abs(dEdcn_sparse-dEdcn_k)), &
++      & maxval(abs(dEdq_sparse-dEdq_k)), &
++      & maxval(abs(gradient_sparse-gradient_k)), &
++      & maxval(abs(sigma_sparse-sigma_k))), 0.0_wp, thr=1.0e-11_wp)
++   if (allocated(error)) then
++      call test_failed(error, &
++         & "Sparse CP2K-image ACP derivative changed the complex k-space response")
++      return
++   end if
+ 
+    ! The bounded reverse stream must reproduce the whole-mesh reverse sweep
+    ! while owning no AO-by-AO-by-k density or Hamiltonian payload.

@@ -1,0 +1,39 @@
+commit 5c25e149ad10f85bb12f31b0f50860cd3589a1ce
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 16:32:28 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 16:32:28 2026 +0200
+
+    Cover CP2K density phase in ACP regression
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit 331757ad2d4ac814521911a620bc724ad753bc57
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 16:29:30 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 16:29:40 2026 +0200
+
+    Fix ACP response orientation for complex meshes
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit 62e28eb7b89af51dd497fb780bc24cd19679ce14
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 15:59:16 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 15:59:16 2026 +0200
+
+    Compose range-local exchange with compact transforms
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>
+
+commit 5c430c5aa32ce84ca940b26d66f0482c517b3805
+Author:     Thomas D. Kuehne <tkuehne@cp2k.org>
+AuthorDate: Wed Jul 22 13:54:11 2026 +0200
+Commit:     Thomas D. Kuehne <tkuehne@cp2k.org>
+CommitDate: Wed Jul 22 13:54:11 2026 +0200
+
+    Qualify exact BvK cache identity
+    
+    Signed-off-by: Thomas D. Kühne <tkuehne@cp2k.org>

@@ -1,0 +1,12 @@
+ninja: Entering directory `/home/kuehne88/work/gxtb-compact-partial-combination-20260722/provider-build-r3'
+[1/11] Building Fortran preprocessed CMakeFiles/tblite-lib.dir/src/tblite/acp/type.f90-pp.f90
+[2/11] Generating Fortran dyndep file CMakeFiles/tblite-lib.dir/Fortran.dd
+[3/38] Building Fortran preprocessed test/unit/CMakeFiles/tblite-tester.dir/test_gxtb.f90-pp.f90
+[4/38] Building Fortran object CMakeFiles/tblite-lib.dir/src/tblite/acp/type.f90.o
+[5/11] Generating Fortran dyndep file app/CMakeFiles/tblite-exe.dir/Fortran.dd
+[6/11] Generating Fortran dyndep file test/unit/CMakeFiles/tblite-tester.dir/Fortran.dd
+[7/12] Linking Fortran static library libtblite.a
+[8/12] Building Fortran object test/unit/CMakeFiles/tblite-tester.dir/test_gxtb.f90.o
+[9/11] Linking Fortran executable app/tblite
+[10/11] Linking C executable test/api/tblite-api-tester
+[11/11] Linking Fortran executable test/unit/tblite-tester
