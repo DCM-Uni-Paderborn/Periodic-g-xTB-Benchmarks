@@ -356,6 +356,39 @@ def test_provider_forward_archive_manifest_is_self_verifying():
         assert digest(CAMPAIGN / relative) == expected
 
 
+def test_acceleration_catalog_matches_the_existing_curated_archives():
+    matrix = load_json("validation_matrix.json")
+    modules = {entry["id"]: entry for entry in matrix["modules"]}
+    cases = {entry["id"]: entry for entry in matrix["cases"]}
+
+    expected_modules = {
+        "regular_mesh_fft": "validation/accelerated_exchange/mixed_radix_fft_20260717",
+        "replicated_importer_disjoint_pull": (
+            "validation/accelerated_exchange/cp2k_distributed_images_20260717"
+        ),
+        "distributed_nonlinear_exchange_kernel": (
+            "validation/accelerated_exchange/cp2k_distributed_images_20260717"
+        ),
+        "streamed_symmetry_covariance_check": (
+            "validation/accelerated_exchange/cp2k_streamed_star_memory"
+        ),
+    }
+    for module_id, evidence in expected_modules.items():
+        entry = modules[module_id]
+        assert entry["status"] == "passed"
+        assert entry["evidence"] == evidence
+        assert (ROOT / evidence).is_dir()
+
+    assert cases["regular_mesh_fft_oracle_matrix"]["status"] == "passed"
+    assert cases["regular_mesh_fft_oracle_matrix"]["maximum_residuals"][
+        "energy_sequence_hartree"
+    ] < 1.0e-12
+    assert cases["streamed_symmetry_covariance_matrix"]["runs"] == 48
+    assert cases["distributed_nonlinear_oracle_matrix"]["pairs"] == 30
+    assert cases["distributed_nonlinear_oracle_matrix"]["faults"] == 6
+    assert cases["distributed_kernel_scaling"]["status"] == "pending"
+
+
 def load_tests(loader, standard_tests, pattern):
     """Expose the assertion-style campaign checks to unittest discovery."""
     del loader, standard_tests, pattern

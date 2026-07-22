@@ -133,9 +133,9 @@
     },
     {
       "id": "regular_mesh_fft",
-      "status": "pending",
-      "evidence": null,
-      "scope": "No FFT backend exists. Dense and separable direct transforms remain the oracle and optimized direct paths."
+      "status": "passed",
+      "evidence": "validation/accelerated_exchange/mixed_radix_fft_20260717",
+      "scope": "The internal mixed-radix Cooley-Tukey backend is selectable and matches the permanent dense oracle across RKS/UKS, shifted/unshifted K290, time-reversal and SPGLIB meshes in 1D/2D/3D for energy, force and stress. The archived matrix establishes numerical equivalence, not a speedup."
     },
     {
       "id": "cp2k_kgroup_owner",
@@ -151,15 +151,15 @@
     },
     {
       "id": "replicated_importer_disjoint_pull",
-      "status": "implementation_in_progress",
-      "evidence": "Provider API and provider-only tests are archived; CP2K integration is under qualification.",
-      "scope": "The planned intermediate path replicates the nonlinear kernel but assigns disjoint full-k R-to-k pulls, including empty importer ownership when P exceeds Nk. It is not distributed-kernel scaling."
+      "status": "passed",
+      "evidence": "validation/accelerated_exchange/cp2k_distributed_images_20260717",
+      "scope": "The archived implementation assigns disjoint nonlinear BvK-image ranges and returns additive all-k responses, including empty importer ownership when P exceeds the image count. The earlier replicated-importer precursor is not used as the qualification endpoint."
     },
     {
       "id": "distributed_nonlinear_exchange_kernel",
-      "status": "pending",
-      "evidence": null,
-      "scope": "A genuinely distributed nonlinear exchange kernel and strong/weak scaling evidence do not yet exist."
+      "status": "passed",
+      "evidence": "validation/accelerated_exchange/cp2k_distributed_images_20260717",
+      "scope": "A genuinely distributed nonlinear BvK-image kernel matches the dense oracle in 30 pairs and six fail-closed controls across RKS/UKS, Gamma/shifted, full/reduced and 1D/2D/3D cases at P=1,2,4. Repeated strong/weak scaling remains a separate pending case."
     },
     {
       "id": "cross_mesh_restart",
@@ -175,9 +175,9 @@
     },
     {
       "id": "streamed_symmetry_covariance_check",
-      "status": "implementation_in_progress",
-      "evidence": null,
-      "scope": "The remaining mixer covariance qualifier allocates a complete Fock mesh; a streamed selector with the dense qualifier retained as oracle is under implementation."
+      "status": "passed",
+      "evidence": "validation/accelerated_exchange/cp2k_streamed_star_memory",
+      "scope": "The post-mixer symmetry covariance and weighted-adjoint check streams one star member with exactly three reusable N-by-N work blocks. Forty-eight Linux dense/streamed/qualify calculations pass with the complete-mesh path retained as oracle."
     }
   ],
   "cases": [
@@ -333,7 +333,9 @@
       "modules": [
         "replicated_importer_disjoint_pull"
       ],
-      "status": "implementation_in_progress"
+      "pairs": 30,
+      "faults": 6,
+      "status": "passed"
     },
     {
       "id": "streamed_symmetry_covariance_matrix",
@@ -343,7 +345,8 @@
       "modules": [
         "streamed_symmetry_covariance_check"
       ],
-      "status": "implementation_in_progress"
+      "runs": 48,
+      "status": "passed"
     },
     {
       "id": "regular_mesh_fft_oracle_matrix",
@@ -353,7 +356,25 @@
       "modules": [
         "regular_mesh_fft"
       ],
-      "status": "pending"
+      "maximum_residuals": {
+        "energy_sequence_hartree": 1.4210854715202004e-14,
+        "force_hartree_per_bohr": 1.746074208e-16,
+        "stress_bar": 5.000001693e-7
+      },
+      "status": "passed"
+    },
+    {
+      "id": "distributed_nonlinear_oracle_matrix",
+      "periodicity": "1D_2D_3D",
+      "mesh": "Gamma_to_shifted_regular_meshes",
+      "symmetry": "full_time_reversal_K290_SPGLIB",
+      "mpi": [1, 2, 4],
+      "modules": [
+        "distributed_nonlinear_exchange_kernel"
+      ],
+      "pairs": 30,
+      "faults": 6,
+      "status": "passed"
     },
     {
       "id": "distributed_kernel_scaling",
