@@ -1,0 +1,3 @@
+mode	n	median_wall_s	mad_wall_s	median_peak_rss_kib	mad_peak_rss_kib	energy_eh
+DENSE	5	21.365591	0.080420	151508	648	-40.473748967057013
+STREAMED	5	21.238421	0.068826	151888	72	-40.473748967057013

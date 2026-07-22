@@ -4,9 +4,17 @@ This directory contains implementation-oracle evidence for Part II of the
 periodic g-xTB work.  Application benchmarks are intentionally kept separate.
 The explicit expanded-full-mesh implementation remains the numerical oracle.
 
+`completion_matrix.tsv` is the machine-readable completion ledger for every
+selectable exact acceleration module and the integrated symmetry-fused
+production composition.  It separates implementation and dense-oracle
+correctness from performance scope: all listed exact implementations and
+their stated correctness gates are complete, while a row explicitly marked as
+having no speedup claim is not silently promoted by a single-shot timing.
+
 | Archive | Validated scope | Performance claim |
 |---|---|---|
 | `acp_complex_density_orientation_20260722/` | Correct CP2K real-space density orientation in the compact ACP reverse; independent force finite differences plus same-build 1D/2D complex time-reversal response, coordination/charge, force, and strain gates on macOS and Linux | Correctness qualification only; the ACP energy is unchanged and no timing or whole-process RSS claim is made |
+| `acp_timing_rss_20260722/` | Alternating same-build DENSE/STREAMED CH4 K290 2x2x2 campaign with one warm-up and five measured repetitions per mode; exact energy and roundoff-level force/stress agreement; singleton affinity, thread, memory-budget, binary/provider/input hashes, and all raw RSS samples retained | STREAMED is 0.595% faster at the median but 380 KiB higher in median whole-process RSS; this small-system probe supports neither an end-to-end speedup nor a whole-process RSS-reduction claim |
 | `compact_partial_mixed_radix_20260722/` | Direct two-rank composition of range-local nonlinear image exchange, compact mixed-radix forward/reverse transforms, streamed post-mixer foldback, ACP, and analytical reverse; macOS/Linux main pair plus 1D/2D/UKS/shifted-full-grid/SPGLIB breadth matrix | Correctness and targeted complex-element counters only; no wall-time or whole-process RSS claim |
 | `cache_signature_order_20260722/` | Exact persistent BvK cache identity: field-by-field model-signature rejection plus changed representative-order rejection in macOS Debug/Release and Linux Release suites | Correctness qualification only; no speedup or whole-process RSS claim |
 | `acp_mesh_contraction_20260722/` | Bounded ACP Bloch batches and sparse projector-image reverse contraction; dense/streamed/qualify energy, force, stress, response-oracle, open-shell-neutrality, and fail-closed selector tests on macOS and Linux | Removes the complete ACP Bloch tensor and quadratic projector-difference set from production; scoped allocation claim only, with no total-RSS or speedup claim |

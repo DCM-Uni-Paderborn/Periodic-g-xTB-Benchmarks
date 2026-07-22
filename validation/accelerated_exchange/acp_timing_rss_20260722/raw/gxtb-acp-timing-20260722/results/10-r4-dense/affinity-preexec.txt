@@ -1,0 +1,5 @@
+pid=4083722 expected_cpu=90 mode=DENSE
+Name:	bash
+State:	R (running)
+Cpus_allowed:	0000,00000000,00000000,00000000,00000000,04000000,00000000,00000000
+Cpus_allowed_list:	90
